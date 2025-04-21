@@ -1,0 +1,33 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+
+development:
+  <<: *default
+  database: tree_recycle_development
+
+test:
+  <<: *default
+  database: tree_recycle_test
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: tree_recycle_production
+    username: tree_recycle
+    password: <%= ENV["TREE_RECYCLE_DATABASE_PASSWORD"] %>
+  cache:
+    <<: *primary_production
+    database: tree_recycle_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: tree_recycle_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: tree_recycle_production_cable
+    migrations_paths: db/cable_migrate

@@ -1,0 +1,99 @@
+<div class="w-full bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+          Welcome to Tree Recycle
+        </h1>
+        <p class="mt-5 max-w-xl mx-auto text-xl text-gray-500 dark:text-gray-400">
+          Your sustainable solution for tree recycling and environmental conservation.
+        </p>
+        <div class="mt-8">
+          <a href="/about" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+            Learn More About Our Program
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-16 max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+          <div class="px-6 py-8 sm:p-8">
+            <h3 class="text-2xl font-semibold leading-7 text-gray-900 dark:text-white">Make a Reservation</h3>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Fill out the form below to schedule your tree pickup.</p>
+            <div class="mt-8">
+              <%= form_with(model: @reservation, url: reservations_path, class: "space-y-8") do |f| %>
+                <% if @reservation.errors.any? %>
+                  <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
+                    <div class="flex">
+                      <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                          <%= pluralize(@reservation.errors.count, "error") %> prohibited this reservation from being saved:
+                        </h3>
+                        <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                          <ul class="list-disc pl-5 space-y-1">
+                            <% @reservation.errors.full_messages.each do |message| %>
+                              <li><%= message %></li>
+                            <% end %>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+
+                <div class="space-y-6">
+                  <div>
+                    <%= f.label :name, "Name *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <div class="mt-2">
+                      <%= f.text_field :name, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :street_address, "Street Address *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <div class="mt-2">
+                      <%= f.text_field :street_address, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :city, "City", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <div class="mt-2">
+                      <%= f.text_field :city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :email, "Email *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <div class="mt-2">
+                      <%= f.email_field :email, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :mobile, "Mobile (Recommended)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <div class="mt-2">
+                      <%= f.telephone_field :mobile, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                      <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">We'll use this to contact you if we can't find your tree.</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :notes, "Notes", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <div class="mt-2">
+                      <%= f.text_area :notes, rows: 3, placeholder: "Where will your tree be?", class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-6">
+                  <%= f.submit "Submit Reservation", class: "inline-flex justify-center rounded-md border border-transparent bg-green-600 py-3 px-6 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

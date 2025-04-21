@@ -41,39 +41,39 @@
                   </div>
                 <% end %>
 
-                <div class="space-y-6">
+                <div class="space-y-6 px-4 sm:px-6">
                   <div>
                     <%= f.label :name, "Name *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
                     <div class="mt-2">
-                      <%= f.text_field :name, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                      <%= f.text_field :name, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
                     </div>
                   </div>
 
                   <div>
-                    <%= f.label :street_address, "Street Address *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <%= f.label :street, "Street Address *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
                     <div class="mt-2">
-                      <%= f.text_field :street_address, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                      <%= f.text_field :street, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
                     </div>
                   </div>
 
                   <div>
                     <%= f.label :city, "City", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
                     <div class="mt-2">
-                      <%= f.text_field :city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                      <%= f.text_field :city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
                     </div>
                   </div>
 
                   <div>
                     <%= f.label :email, "Email *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
                     <div class="mt-2">
-                      <%= f.email_field :email, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                      <%= f.email_field :email, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
                     </div>
                   </div>
 
                   <div>
-                    <%= f.label :mobile, "Mobile (Recommended)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                    <%= f.label :phone, "Mobile (Recommended)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
                     <div class="mt-2">
-                      <%= f.telephone_field :mobile, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                      <%= f.telephone_field :phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
                       <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">We'll use this to contact you if we can't find your tree.</p>
                     </div>
                   </div>
@@ -81,12 +81,12 @@
                   <div>
                     <%= f.label :notes, "Notes", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
                     <div class="mt-2">
-                      <%= f.text_area :notes, rows: 3, placeholder: "Where will your tree be?", class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5" %>
+                      <%= f.text_area :notes, rows: 3, placeholder: "Where will your tree be?", class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
                     </div>
                   </div>
                 </div>
 
-                <div class="pt-6">
+                <div class="pt-6 px-4 sm:px-6">
                   <%= f.submit "Submit Reservation", class: "inline-flex justify-center rounded-md border border-transparent bg-green-600 py-3 px-6 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" %>
                 </div>
               <% end %>

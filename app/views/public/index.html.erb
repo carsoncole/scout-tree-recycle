@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <div class="text-center">
         <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Welcome to Tree Recycle
+          <%= setting.home_page_header %>
         </h1>
         <p class="mt-5 max-w-xl mx-auto text-xl text-gray-500 dark:text-gray-400">
           Your sustainable solution for tree recycling and environmental conservation.
@@ -59,7 +59,7 @@
                   <div>
                     <%= f.label :city, "City", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
                     <div class="mt-2">
-                      <%= f.text_field :city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+                      <%= f.text_field :city, value: @reservation.city, disabled: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed" %>
                     </div>
                   </div>
 

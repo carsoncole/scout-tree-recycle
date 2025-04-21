@@ -6,7 +6,7 @@ class Setting < ApplicationRecord
   attribute :contact_name, :string, default: 'John Doe'
   attribute :contact_email, :string, default: 'john@example.com'
   attribute :contact_phone, :string, default: '206-555-1212'
-  attribute :on_day_of_pickup_instructions, :string, default: 'Pickup day instructions...'
+  attribute :on_day_of_pickup_instructions, :string, default: 'To prepare your tree for pick-up, remove all decorations and tinsel from your tree. Prior to pickup, place your tree in a visible location at the curb or where you indicated to us in your reservation. Your tree will be collected and recycled into mulch. We cannot take wreaths, flocked trees, or artificial trees. If we can not find your tree, we will try contacting you by SMS or phone call to make arrangements to attempt another pick-up.'
 
   validates :default_city, presence: true
   validates :event_pickup, presence: true

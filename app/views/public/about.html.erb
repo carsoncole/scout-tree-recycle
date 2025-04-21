@@ -10,22 +10,27 @@
         </a>
       </div>
       <div class="prose dark:prose-invert max-w-none">
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl mb-20">
           Tree pickup details
         </h1>
 
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mt-8">Scout Troops 1564 & 1804</h2>
-        
-        <p class="text-lg text-gray-700 dark:text-gray-300">
-          Bainbridge Island BSA Troops 1564 for boys and 1804 for girls holds its Christmas tree recycling fundraiser every year to support our programs, assisting Scouts in learning leadership, citizenship, and outdoor skills, attending camps, and other adventures. This fundraiser is run by the Scouts from our Troops, who are directly involved in picking up the trees and arranging for them to be recycled by composting. To learn more about our Troops, please visit our Facebook page.
-        </p>
 
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mt-8">On the day of pickup</h3>
-        <p class="text-lg text-gray-700 dark:text-gray-300">
-          <%= setting.on_day_of_pickup_instructions %>
-        </p>
+        <div class="mt-8 space-y-7">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white"><%= setting.organization_name %></h2>
 
-        <div class="mt-8 space-y-4">
+            <p class="text-lg text-gray-700 dark:text-gray-300">
+              <%= setting.description %>
+            </p>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">On the day of pickup</h3>
+            <p class="text-lg text-gray-700 dark:text-gray-300">
+              <%= setting.on_day_of_pickup_instructions %>
+            </p>
+          </div>
+
           <div>
             <h4 class="text-lg font-medium text-gray-900 dark:text-white">Date of pick-up</h4>
             <p class="text-gray-700 dark:text-gray-300"><%= setting.event_pickup.strftime("%B %-d, %Y") %></p>

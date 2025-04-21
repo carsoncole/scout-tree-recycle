@@ -28,20 +28,16 @@
         <div class="mt-8 space-y-4">
           <div>
             <h4 class="text-lg font-medium text-gray-900 dark:text-white">Date of pick-up</h4>
-            <p class="text-gray-700 dark:text-gray-300">January 4, 2025</p>
+            <p class="text-gray-700 dark:text-gray-300"><%= setting.event_pickup.strftime("%B %-d, %Y") %></p>
           </div>
 
           <div>
-            <h4 class="text-lg font-medium text-gray-900 dark:text-white">Trees should be ready for pickup between</h4>
-            <p class="text-gray-700 dark:text-gray-300">8:00 AM - 3:00 PM</p>
+            <h4 class="text-lg font-medium text-gray-900 dark:text-white">Trees should be ready for pickup starting at</h4>
+            <p class="text-gray-700 dark:text-gray-300"><%= setting.event_pickup.strftime("%l:%M%P") %></p>
           </div>
         </div>
 
-        <div class="mt-8">
-          <h4 class="text-lg font-medium text-gray-900 dark:text-white">Have a question?</h4>
-          <p class="text-gray-700 dark:text-gray-300">Contact us for any inquiries about the tree recycling program.</p>
-        </div>
       </div>
     </div>
   </div>
-</div> 
+</div>

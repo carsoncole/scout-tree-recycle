@@ -1,6 +1,26 @@
 class ReservationsController < ApplicationController
   before_action :set_reservation, only: %i[ address_verification update ]
 
+  def create
+    @reservation = Reservation.new(reservation_params)
+
+    if !Reservation.open? && !signed_in?
+      redirect_to root_url, alert: "Reservations are CLOSED."
+    elsif @reservation.save
+      if @reservation.reservation_form?
+        redirect_to reservation_address_verification_url(@reservation)
+      elsif
+        @reservation.pending_pickup!
+        redirect_to new_reservation_donation_url(@reservation)
+      else
+        redirect_to reservation_address_verification_url(@reservation)
+      end
+    else
+    redirect_to root_path
+      # render :new, status: :unprocessable_entity
+    end
+  end
+
   def address_verification
     @reservation.address_verification!
   end
@@ -22,26 +42,6 @@ class ReservationsController < ApplicationController
       end
     else
       redirect_to reservation_url, alert: "Reservations are no longer changeable. #{view_context.link_to('Contact us', '/questions')} if you have questions."
-    end
-  end
-
-  def create
-    @reservation = Reservation.new(reservation_params)
-
-    if !Reservation.open? && !signed_in?
-      redirect_to root_url, alert: "Reservations are CLOSED."
-    elsif @reservation.save
-      if @reservation.pending?
-        redirect_to reservation_address_verification_url(@reservation)
-      elsif
-        @reservation.pending_pickup!
-        redirect_to new_reservation_donation_url(@reservation)
-      else
-        redirect_to reservation_address_verification_url(@reservation)
-      end
-    else
-    redirect_to root_path
-      # render :new, status: :unprocessable_entity
     end
   end
 

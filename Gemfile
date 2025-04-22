@@ -43,6 +43,9 @@ gem "thruster", require: false
 # gem "image_processing", "~> 1.2"
 
 gem 'phonelib'
+gem 'aws-sdk-locationservice'
+gem "geocoder" #address geocoding with lat/lon
+
 
 
 group :development, :test do

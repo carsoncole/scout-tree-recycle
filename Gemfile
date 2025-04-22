@@ -45,6 +45,7 @@ gem "thruster", require: false
 gem 'phonelib' #phone number parsing and cleanup
 gem 'aws-sdk-locationservice'
 gem "geocoder" #address geocoding with lat/lon
+gem "usps" #USPS address formatting
 
 
 group :development, :test do

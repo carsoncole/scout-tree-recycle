@@ -4,7 +4,7 @@ module Geocodable
   included do
     geocoded_by :address
 
-    validates :street, :city, :state, :country, presence: true, unless: -> (obj) { obj.class == Reservation && obj.remind_me? }
+    validates :street, :city, :state, :country, presence: true
 
     # attribute :city, :string, default: DEFAULT_CITY
     # attribute :state, :string, default: DEFAULT_STATE
@@ -60,11 +60,11 @@ module Geocodable
             self.latitude = result["geometry"]["point"][1]
             self.longitude = result["geometry"]["point"][0]
             self.house_number = result["geometry"]["address_number"]
-            self.street_name = result["street"]            
+            self.street_name = result["street"]
           end
         rescue
           # geocode
-        end        
+        end
       end
     end
 

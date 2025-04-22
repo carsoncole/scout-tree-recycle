@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   resources :reservations, only: [:create, :update] do
     get "address_verification", as: :address_verification
+    patch "address_confirmation", as: :address_confirmation
     get "confirmation", as: :confirmation
     resources :donations, only: [:new, :create]
   end

@@ -1,5 +1,5 @@
 class ReservationsController < ApplicationController
-  before_action :set_reservation, only: %i[ address_verification update confirmation ]
+  before_action :set_reservation, only: %i[ address_verification address_confirmation update confirmation ]
 
   def create
     @reservation = Reservation.new(reservation_params)
@@ -24,23 +24,37 @@ class ReservationsController < ApplicationController
 
   def address_verification
     @reservation.address_verification!
+
+    USPS.config.username = Rails.application.credentials.usps.username
+    address = USPS::Address.new(address1: @reservation.street, city: @reservation.city, state: @reservation.state)
+    req = USPS::Request::AddressStandardization.new(address)
+    begin
+      response = req.send!
+      @suggested_address = response.get(address).address1
+      render status: 200 # http :good_request
+    rescue USPS::MultipleAddressError
+      @multiple_addresses_found = true
+      render status: 409 # http :conflict
+    rescue USPS::AddressNotFoundError
+      @address_not_found = true
+      render status: 422 # http :not_found
+    rescue
+      @address_not_found = true
+      render status: 400 # http :bad_request
+    end
+  end
+
+  def address_confirmation
+    if params[:street].present?
+      @reservation.update(street: params[:street])
+    end
+    redirect_to new_reservation_donation_url(@reservation)
   end
 
   def update
     if Reservation.open?
-      if @reservation.address_verification?
-        redirect_to root_path, notice: "You are now on the Donation page"
-      elsif @reservation.update(reservation_params)
-        @reservation.pending_pickup! if @reservation.unconfirmed?
-        message = if @reservation.pending_pickup?
-          "Reservation was successfully updated and is confirmed for pick up."
-        else
-          "Please review your reservation"
-        end
-        redirect_to new_reservation_donation_url(@reservation), notice: message
-      else
-        render :edit, status: :unprocessable_entity
-      end
+      @reservation.update(reservation_params)
+      @reservation.pending_pickup!
     else
       redirect_to reservation_url, alert: "Reservations are no longer changeable. #{view_context.link_to('Contact us', '/questions')} if you have questions."
     end
@@ -64,6 +78,6 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:name, :email, :phone, :street, :city, :notes)
+    params.require(:reservation).permit(:name, :email, :phone, :street, :city, :notes, :use_suggested_address)
   end
 end

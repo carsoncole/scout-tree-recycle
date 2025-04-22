@@ -42,10 +42,9 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
-gem 'phonelib'
+gem 'phonelib' #phone number parsing and cleanup
 gem 'aws-sdk-locationservice'
 gem "geocoder" #address geocoding with lat/lon
-
 
 
 group :development, :test do

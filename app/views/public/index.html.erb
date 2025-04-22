@@ -11,9 +11,14 @@
         <% if setting.is_reservations_open %>
           <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg border-2 border-green-500">
             <div class="px-6 py-8 sm:p-8">
-              <div class="text-center mb-8">
-                <h3 class="text-3xl font-bold text-gray-900 dark:text-white">Make a Reservation</h3>
-                <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Schedule your tree pickup for <%= setting.event_pickup.strftime("%B %-d, %Y") %></p>
+              <div class="text-center mb-12">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mb-6">
+                  <svg class="w-8 h-8 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                </div>
+                <h3 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Make a Reservation</h3>
+                <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">Schedule your tree pickup for <%= setting.event_pickup.strftime("%B %-d, %Y") %></p>
               </div>
               <%= form_with(model: @reservation, url: reservations_path, class: "space-y-8") do |f| %>
                 <% if @reservation.errors.any? %>

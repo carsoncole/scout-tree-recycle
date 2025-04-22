@@ -1,10 +1,12 @@
 class Reservation < ApplicationRecord
   include Geocodable
 
+  has_many :donations, dependent: :nullify
+
   validates :name, :street, :email, :city, :state, presence: true
 
+  enum :status, { reservation_form: 0, address_verification: 1,  donation_type_selection: 2, pending_pickup: 3,picked_up: 4, missing: 5, cancelled: 6, archived: 99 }, default: :reservation_form
   enum :donation, { online_donation: 1, cash_or_check_donation: 2, no_donation: 3 }
-  enum :status, { reservation_form: 0, address_verification: 1,  making_donation: 2, pending_pickup: 3,picked_up: 4, missing: 5, cancelled: 6, archived: 99 }, default: :reservation_form
 
   attribute :city, :string, default: -> { Setting.instance.default_city }
   attribute :state, :string, default: -> { Setting.instance.default_state }

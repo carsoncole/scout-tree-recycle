@@ -1,5 +1,5 @@
 class ReservationsController < ApplicationController
-  before_action :set_reservation, only: %i[ address_verification update ]
+  before_action :set_reservation, only: %i[ address_verification update confirmation ]
 
   def create
     @reservation = Reservation.new(reservation_params)
@@ -13,6 +13,7 @@ class ReservationsController < ApplicationController
         @reservation.pending_pickup!
         redirect_to new_reservation_donation_url(@reservation)
       else
+        @reservation.address_verification!
         redirect_to reservation_address_verification_url(@reservation)
       end
     else
@@ -43,6 +44,10 @@ class ReservationsController < ApplicationController
     else
       redirect_to reservation_url, alert: "Reservations are no longer changeable. #{view_context.link_to('Contact us', '/questions')} if you have questions."
     end
+  end
+
+  def confirmation
+    @reservation.pending_pickup!
   end
 
   def destroy

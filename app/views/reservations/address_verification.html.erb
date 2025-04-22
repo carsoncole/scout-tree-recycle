@@ -3,4 +3,4 @@
   <p>Find me in app/views/reservations/address_verification.html.erb</p>
 </div>
 
-<%= button_to "Update Reservation", reservation_path(@reservation), method: :patch %>
+<%= button_to "Confirm address", new_reservation_donation_path(@reservation), method: :get, data: { "turbo_method": :get } %>

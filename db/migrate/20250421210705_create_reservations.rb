@@ -26,7 +26,7 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.integer "heard_about_source"
         t.string "unit"
         t.boolean "no_sms", default: false
-        t.integer "donation"
+        t.integer "donation_type"
         t.boolean "is_confirmed_reservation_email_sent", default: false
         t.boolean "is_marketing_email_1_sent", default: false
         t.boolean "is_marketing_email_2_sent", default: false

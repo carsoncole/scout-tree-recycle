@@ -5,15 +5,28 @@ class Reservation < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :phone, format: { with: /\A\+?[\d\s-]+\z/, allow_blank: true }
 
-  enum :donation, { online_donation: 1, cash_or_check_donation: 2, no_donation: 3 }
-  enum :status, { in_process: 0, pending_pickup: 1, picked_up: 2, missing: 3, cancelled: 4, archived: 99, remind_me: 999 }, default: :in_process
+  enum donation_type: {
+    online_donation: 1,
+    cash_or_check_donation: 2,
+    no_donation: 3
+  }, default: :online_donation
+
+  enum status: {
+    in_process: 0,
+    pending_pickup: 1,
+    picked_up: 2,
+    missing: 3,
+    cancelled: 4,
+    archived: 99,
+    remind_me: 999
+  }, default: :in_process
 
   attribute :city, :string, default: -> { Setting.instance.default_city }
   attribute :state, :string, default: -> { Setting.instance.default_state }
   attribute :country, :string, default: "United States"
 
-  before_save :normalize_phone!
-  before_save :downcase_email!
+  before_validation :normalize_phone!
+  before_validation :downcase_email!
 
   private
 
@@ -22,6 +35,7 @@ class Reservation < ApplicationRecord
   end
 
   def downcase_email!
-    self.email = self.email.downcase
+    self.email = self.email.downcase if self.email.present?
   end
+
 end

@@ -2,8 +2,9 @@ Rails.application.routes.draw do
   # Public pages
   root "public#index"
   get "about", to: "public#about"
-  resources :reservations, only: [:create, :update]
-  get "reservations/address_verification", to: "reservations#address_verification", as: :address_verification
+  resources :reservations, only: [:create, :update] do
+    get "address_verification", as: :address_verification
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

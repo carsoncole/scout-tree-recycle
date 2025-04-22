@@ -4,7 +4,7 @@ class Reservation < ApplicationRecord
   validates :name, :street, :email, :city, :state, presence: true
 
   enum :donation, { online_donation: 1, cash_or_check_donation: 2, no_donation: 3 }
-  enum :status, { in_process: 0, pending_pickup: 1, picked_up: 2, missing: 3, cancelled: 4, archived: 99, remind_me: 999 }, default: :in_process
+  enum :status, { pending: 0, address_verification: 1,  making_donation: 2, pending_pickup: 3,picked_up: 4, missing: 5, cancelled: 6, archived: 99, remind_me: 999 }, default: :pending
 
   attribute :city, :string, default: -> { Setting.instance.default_city }
   attribute :state, :string, default: -> { Setting.instance.default_state }

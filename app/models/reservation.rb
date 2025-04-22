@@ -13,6 +13,10 @@ class Reservation < ApplicationRecord
   before_validation :normalize_phone!
   before_validation :downcase_email!
 
+  def self.open?
+    Setting.instance.is_reservations_open?
+  end
+
   private
 
   def normalize_phone!

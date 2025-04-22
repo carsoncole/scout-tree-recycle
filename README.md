@@ -18,6 +18,8 @@ If you have any questions concerning this application, feel free to email me at 
 
 ## REQUIREMENTS
 
+* The application is configured for U.S. addresses and phone numbers.
+
 ### VM
 
 Kamal or Docker can be used when deploying this application. Kamal is recommended as it utilizes Docker and works great.

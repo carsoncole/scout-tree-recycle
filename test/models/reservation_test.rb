@@ -81,3 +81,4 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 1, Reservation.picked_up.count
   end
 end 
+ 

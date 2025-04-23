@@ -19,6 +19,14 @@ class Reservation < ApplicationRecord
     Setting.instance.is_reservations_open?
   end
 
+  def verify_address!
+    nil
+  end
+
+  def suggested_address?
+    nil
+  end
+
   private
 
   def normalize_phone!

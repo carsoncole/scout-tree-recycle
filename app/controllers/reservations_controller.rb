@@ -23,24 +23,11 @@ class ReservationsController < ApplicationController
   end
 
   def address_verification
-    @reservation.address_verification!
+    @suggested_address = @reservation.suggested_address?
 
-    USPS.config.username = Rails.application.credentials.usps.username
-    address = USPS::Address.new(address1: @reservation.street, city: @reservation.city, state: @reservation.state)
-    req = USPS::Request::AddressStandardization.new(address)
-    begin
-      response = req.send!
-      @suggested_address = response.get(address).address1
-      render status: 200 # http :good_request
-    rescue USPS::MultipleAddressError
-      @multiple_addresses_found = true
-      render status: 409 # http :conflict
-    rescue USPS::AddressNotFoundError
-      @address_not_found = true
-      render status: 422 # http :not_found
-    rescue
-      @address_not_found = true
-      render status: 400 # http :bad_request
+    if !@suggested_address.present?
+      @reservation.donation_type_selection!
+      redirect_to new_reservation_donation_url(@reservation)
     end
   end
 

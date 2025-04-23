@@ -1,25 +1,24 @@
 <div class="w-full bg-gray-50 dark:bg-gray-900">
   <div class="min-h-screen">
-    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
-        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-          <%= setting.home_page_header %>
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mb-6">
+          <svg class="w-8 h-8 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </div>
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+          Make a Reservation
         </h1>
+        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          Schedule your tree pickup for <%= Setting.instance.event_pickup.strftime("%B %-d, %Y") %>
+        </p>
       </div>
 
       <div class="max-w-2xl mx-auto">
         <% if setting.is_reservations_open %>
           <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg border-2 border-green-500">
             <div class="px-6 py-8 sm:p-8">
-              <div class="text-center mb-12">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mb-6">
-                  <svg class="w-8 h-8 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
-                </div>
-                <h3 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Make a Reservation</h3>
-                <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">Schedule your tree pickup for <%= setting.event_pickup.strftime("%B %-d, %Y") %></p>
-              </div>
               <%= form_with(model: @reservation, url: reservations_path, class: "space-y-8") do |f| %>
                 <% if @reservation.errors.any? %>
                   <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
@@ -83,7 +82,7 @@
 
                 <div class="pt-6 px-4 sm:px-6">
                   <button type="submit" class="w-full inline-flex justify-center items-center rounded-md border border-transparent bg-green-600 py-4 px-6 text-lg font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200">
-                    Next
+                    Submit Reservation
                     <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path>
                     </svg>
@@ -93,7 +92,7 @@
             </div>
           </div>
         <% else %>
-          <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg border-2 border-red-600">
+          <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg border-2 border-red-500">
             <div class="px-6 py-8 sm:p-8">
               <div class="text-center">
                 <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Reservations Closed</h3>
@@ -102,14 +101,6 @@
             </div>
           </div>
         <% end %>
-      </div>
-
-      <div class="mt-12 text-center">
-        <div class="mt-6">
-          <a href="/about" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-            Learn More About Our Program
-          </a>
-        </div>
       </div>
     </div>
   </div>

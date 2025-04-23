@@ -15,6 +15,10 @@ class Reservation < ApplicationRecord
   before_validation :normalize_phone!
   before_validation :downcase_email!
 
+  # email delivery
+    after_save :send_confirmed_reservation_email!, if: -> (obj){ obj.pending_pickup? && obj.saved_change_to_status? }
+
+
   def self.open?
     Setting.instance.is_reservations_open?
   end
@@ -25,6 +29,10 @@ class Reservation < ApplicationRecord
 
   def suggested_address?
     nil
+  end
+
+  def send_confirmed_reservation_email!
+    ReservationsMailer.with(reservation: self).send_new_reservation_email.deliver_later
   end
 
   private

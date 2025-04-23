@@ -12,6 +12,7 @@ class Setting < ApplicationRecord
   attribute :country, :string, default: "United States"
   attribute :on_day_of_pickup_instructions, :string, default: 'To prepare your tree for pick-up, remove all decorations and tinsel from your tree. Prior to pickup, place your tree in a visible location at the curb or where you indicated to us in your reservation. Your tree will be collected and recycled into mulch. We cannot take wreaths, flocked trees, or artificial trees. If we can not find your tree, we will try contacting you by SMS or phone call to make arrangements to attempt another pick-up.'
   attribute :description, :string, default: 'Description...'
+  attribute :email_from, :string, default: 'Anytown Tree Recycle <example@example.com>'
 
   validates :default_city, presence: true
   validates :event_pickup, presence: true

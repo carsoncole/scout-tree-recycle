@@ -16,8 +16,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_22_183819) do
   enable_extension "pgcrypto"
 
   create_table "donations", force: :cascade do |t|
+    t.uuid "reservation_id"
+    t.string "checkout_session_id"
+    t.decimal "amount", default: "0.0"
+    t.string "status"
+    t.string "payment_status"
+    t.string "receipt_url"
+    t.string "email"
+    t.boolean "is_receipt_email_sent"
+    t.string "stripe_payment_intent_id"
+    t.string "customer_name"
+    t.string "checkout_session_status"
+    t.string "checkout_session_customer_email"
+    t.string "payment_intent_id"
+    t.string "description"
+    t.string "last4"
+    t.string "exp_month"
+    t.string "exp_year"
+    t.integer "form"
+    t.string "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["reservation_id"], name: "index_donations_on_reservation_id"
   end
 
   create_table "reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -45,19 +65,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_22_183819) do
     t.string "unit"
     t.boolean "no_sms", default: false
     t.integer "donation"
-    t.boolean "is_confirmed_reservation_email_sent", default: false
-    t.boolean "is_marketing_email_1_sent", default: false
-    t.boolean "is_marketing_email_2_sent", default: false
     t.boolean "is_geocoded", default: true
     t.boolean "is_door_hanger"
     t.integer "collected"
     t.decimal "collected_amount"
     t.boolean "is_route_polygon", default: false
-    t.boolean "is_pickup_reminder_email_sent", default: false
     t.string "admin_notes"
     t.integer "years_recycling", default: 1
-    t.boolean "is_remind_me_we_are_live_email_sent", default: false
+    t.boolean "is_marketing_1_email_sent", default: false
+    t.boolean "is_marketing_2_email_sent", default: false
+    t.boolean "is_pending_pickup_email_sent", default: false
     t.boolean "is_missing_tree_email_sent", default: false
+    t.boolean "is_pickup_reminder_email_sent", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_reservations_on_email"

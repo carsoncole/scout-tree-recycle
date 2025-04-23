@@ -27,19 +27,18 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.string "unit"
         t.boolean "no_sms", default: false
         t.integer "donation"
-        t.boolean "is_confirmed_reservation_email_sent", default: false
-        t.boolean "is_marketing_email_1_sent", default: false
-        t.boolean "is_marketing_email_2_sent", default: false
         t.boolean "is_geocoded", default: true
         t.boolean "is_door_hanger"
         t.integer "collected"
         t.decimal "collected_amount"
         t.boolean "is_route_polygon", default: false
-        t.boolean "is_pickup_reminder_email_sent", default: false
         t.string "admin_notes"
         t.integer "years_recycling", default: 1
-        t.boolean "is_remind_me_we_are_live_email_sent", default: false
+        t.boolean "is_marketing_1_email_sent", default: false
+        t.boolean "is_marketing_2_email_sent", default: false
+        t.boolean "is_pending_pickup_email_sent", default: false
         t.boolean "is_missing_tree_email_sent", default: false
+        t.boolean "is_pickup_reminder_email_sent", default: false
         t.index ["email"], name: "index_reservations_on_email"
         t.index ["name"], name: "index_reservations_on_name"
         t.index ["phone", "status"], name: "index_reservations_on_phone_and_status"

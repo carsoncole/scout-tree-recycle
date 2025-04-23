@@ -1,4 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  helper ApplicationHelper
+  default from: Setting.instance.email_from || 'Anytown Tree Recycle <example@example.com>'
   layout "mailer"
 end

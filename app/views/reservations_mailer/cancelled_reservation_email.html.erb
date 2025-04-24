@@ -1,0 +1,53 @@
+<table style="width:100%; border:0;cellspacing:0;cellpadding:0">
+  <tr style='padding: 0;border:0'>
+    <td style="width: 100%;padding: 0;border:0">
+      <table style="max-width:800px;margin-left: auto;margin-right: auto;">
+        <tr>
+          <td style="text-align:left;padding: 0;border:0">
+            <div style='text-align:center;margin-left: auto;margin-right:auto;margin-top: 16px;margin-bottom:0'>
+              <%= image_tag 'bsa-logo.png', width:140 %>
+            </div>
+            <h1 style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; font-weight: 300; font-size: 40px; margin: 20px auto 70px auto;text-align: center;padding: 0;line-height: 1.5;">
+              Tree pick-up cancelled
+            </h1>
+
+            <h2 style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; line-height: 1.5;box-sizing: border-box; font-size: 16px; margin: 0 0 20px; padding: 0;">
+              Dear <%= @reservation.name %>,
+            </h2>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
+              This email is to confirm that your tree pickup reservation for <%= @event_pickup.strftime("%B %-d, %Y") %> has been cancelled.
+            </p>
+
+            <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 30px">
+              <tr>
+                <td>
+                  <table cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td syle="border-radius: 2px" bgcolor="#CE1126" width="100%" style='text-align:center;'>
+                        <div style="padding: 12px 15px; border: 1px solid #CE1126;border-radius: 2px;font-family: Helvetica, Arial, sans-serif;font-size: 16px; color: #ffffff !important;text-align:center;font-weight:bold;display: inline-block;">
+                          <%= @reservation.street %>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
+              If you would like to make a new reservation, you can do so at any time by visiting our website.
+            </p>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 50px; padding: 0;">
+              Thank You,<br>
+              Bainbridge Island Troop 1564 and Troop 1804
+            </p>
+
+            <%= render 'shared/mailer_footer' %>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

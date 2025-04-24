@@ -2,7 +2,7 @@
 
 # Tree Recycle
 
-Organize a Christmas tree recycling fundraiser seamlessly with Tree Recycle. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area, Tree Recycle offers the following features:
+Tree Recycle is a web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area, Tree Recycle offers the following features:
 
 - Establish a user-friendly public website for reserving tree pickups.
 - Process pickup reservations and geocode addresses for mapping purposes.
@@ -11,10 +11,7 @@ Organize a Christmas tree recycling fundraiser seamlessly with Tree Recycle. Str
 - Retain reservation data from year to year, enabling targeted marketing to previous customers through email reminders for the current year's event.
 - Issue SMS and email notifications in cases where drivers cannot locate a tree (a common occurrence when individuals forget to place them out). Deliver email confirmations for reservations, donation receipts, and promotional emails.
 
-Our Troop uses this application and it can be viewed at [https://treerecycle.net](https://treerecycle.net).
-
 If you have any questions concerning this application, feel free to email me at carson.cole@gmail.com.
-
 
 ## REQUIREMENTS
 
@@ -175,9 +172,9 @@ Maps of all pickups within a route are available in `Routes` in the adminstratio
 Zones are made up of Routes and are used for organizational purposes so that Zone leaders can be defined to oversee groups of Routes.
 
 
-## Secret credentials
+## Secrets
 
-The app maintains application secrets in a credential file within the codebase at `/credentials.yml.enc`. The secrets include passwords and keys to access email providers, Twilio and more. You will add your own secrets to this file, which will be encrypted, and then deployed within your codebase to be used in Production on Heroku.
+Application secrets are stored in Rails application secrets in a credential file `/credentials.yml.enc`. The secrets include passwords and keys to access email providers, Twilio and more. You will add your own secrets to this file, which will be encrypted, and then deployed within your codebase to be used in Production on Heroku.
 
 Delete any existing `config/credentials.yml.enc` file. Initialize your own secrets file:
 
@@ -187,14 +184,7 @@ Delete any existing `config/credentials.yml.enc` file. Initialize your own secre
 
 This will create your initial credentials file and open it in an editor. Copy the contents of `/config/credentials_sample.yml` as your initial template and edit it accordingly.
 
-Exit the credentials file with `esc-:-q`. This will save the file and the key for decrypting it into `config/master.key`. Copy this key and add it to your Heroku Vars (see App Credentials below), under your application settings, with a key value of `RAILS_MASTER_KEY`. This key is what Heroku will use to access the credentials file.
-
-On Heroku, you need to provide the master key so the file can be decrypted. You can do this through the Heroku UI, or in the Heroku console:
-
-
-```ruby
-    heroku config:set RAILS_MASTER_KEY=<your-master-key>
-```
+Docker and deployment secrets are stored in /.kamal/secrets. This file is in the .gitignore as it holds the Docker registry password.  You will need this file in your local environment to be able to deploy with Kamal. There is a sample secrets file /.kamal/sample_secrets.
 
 ## Error monitoring (optional)
 

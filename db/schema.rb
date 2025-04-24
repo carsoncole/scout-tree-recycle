@@ -77,6 +77,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_22_183819) do
     t.boolean "is_pending_pickup_email_sent", default: false
     t.boolean "is_missing_tree_email_sent", default: false
     t.boolean "is_pickup_reminder_email_sent", default: false
+    t.boolean "is_cancelled_email_sent", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_reservations_on_email"

@@ -39,6 +39,7 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.boolean "is_pending_pickup_email_sent", default: false
         t.boolean "is_missing_tree_email_sent", default: false
         t.boolean "is_pickup_reminder_email_sent", default: false
+        t.boolean "is_cancelled_email_sent", default: false
         t.index ["email"], name: "index_reservations_on_email"
         t.index ["name"], name: "index_reservations_on_name"
         t.index ["phone", "status"], name: "index_reservations_on_phone_and_status"

@@ -212,6 +212,11 @@ Trial seed data can be loaded. This will create the initial admin user (admin@ex
 
 ---
 
+## Additional Thoughts
+
+Tree Recycle can be the central engine for powering your fundraiser, but an important piece of advice in the event that the technology fails on the day of pickup, is to print out the Driver pickup sheets the night before. That way, while it may not be as convenient for the drivers, they will at least have a means for still getting the job done.
+
+
 ## Copyright
 
 Copyright (c) 2022, 2025 [Carson Cole](https://carsonrcole.com). It is free software, and may be redistributed under the terms specified in the LICENSE file.

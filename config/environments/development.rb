@@ -71,18 +71,19 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   config.asset_host = 'localhost:3000'
-  config.action_mailer.default_url_options = { host: 'localhost:3000' }
-  config.action_mailer.raise_delivery_errors = true
 
+  config.action_mailer.default_url_options = { host: 'localhost:3000' }
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :test
   config.action_mailer.smtp_settings = {
-    :address              => Rails.application.credentials.mailer.development.address,
-    :port                 => Rails.application.credentials.mailer.development.port,
-    :user_name            => Rails.application.credentials.mailer.development.user_name,
-    :password             => Rails.application.credentials.mailer.development.password,
-    :authentication       => Rails.application.credentials.mailer.development.authentication,
-    :tls                  => Rails.application.credentials.mailer.development.tls,
-    :enable_starttls_auto => Rails.application.credentials.mailer.development.enable_starttls_auto
+    :address              => Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :address),
+    :port                 => Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :port),
+    :user_name            => Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :user_name),
+    :password             => Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :password),
+    :authentication       => Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :authentication),
+    :tls                  => Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :tls),
+    :enable_starttls_auto => Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :enable_starttls_auto)
   }
 
 end

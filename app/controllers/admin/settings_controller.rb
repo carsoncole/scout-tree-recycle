@@ -12,8 +12,8 @@ class Admin::SettingsController < Admin::BaseController
 
   def toggle
     helpers.setting.update(params[:setting] => params[:value])
-    
-    if setting.save
+
+    if helpers.setting.save
       render json: { success: true }
     else
       render json: { success: false }, status: :unprocessable_entity

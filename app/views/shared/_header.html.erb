@@ -6,6 +6,11 @@
           <%= link_to Setting.instance.home_page_header, root_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition duration-150" %>
         </h1>
       </div>
+      <% if current_page?(root_path) %>
+        <div class="flex items-center">
+          <%= link_to "About", about_path, class: "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition duration-150" %>
+        </div>
+      <% end %>
     </div>
   </div>
 </header>

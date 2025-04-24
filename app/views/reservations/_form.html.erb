@@ -1,0 +1,77 @@
+<%= form_for @reservation, class: "space-y-8" do |f| %>
+  <% if @reservation.errors.any? %>
+    <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
+      <div class="flex">
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+            <%= pluralize(@reservation.errors.count, "error") %> prohibited this reservation from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+            <ul class="list-disc pl-5 space-y-1">
+              <% @reservation.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="space-y-6 px-4 sm:px-6">
+    <div>
+      <%= f.label :name, "Name *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <div class="mt-2">
+        <%= f.text_field :name, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :street, "Street Address *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <div class="mt-2">
+        <%= f.text_field :street, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+      </div>
+      <div class="mt-2">
+        <%= f.text_field :city, value: @reservation.city, disabled: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :email, "Email *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <div class="mt-2">
+        <%= f.email_field :email, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :phone, "Mobile (Recommended)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <div class="mt-2">
+        <%= f.telephone_field :phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">We'll use this to contact you if we can't find your tree.</p>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :notes, "Notes", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <div class="mt-2">
+        <%= f.text_area :notes, rows: 3, placeholder: "Where will your tree be?", class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-6 px-4 sm:px-6">
+    <%= f.submit class: "w-full inline-flex justify-center items-center rounded-md border border-transparent bg-green-600 py-4 px-6 text-lg font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200" %>
+  </div>
+<% end %>
+
+<% if @reservation.persisted? && @reservation.pending_pickup? %>
+  <div class="mt-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+    <%= button_to "Cancel Reservation", reservation_path(@reservation),
+        method: :delete,
+        data: {
+          turbo_confirm: "Are you sure you want to cancel your reservation? This action cannot be undone.",
+          turbo_method: :delete
+        },
+        class: "w-full inline-flex justify-center items-center rounded-md border border-transparent bg-red-600 py-4 px-6 text-lg font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200" %>
+  </div>
+<% end %>

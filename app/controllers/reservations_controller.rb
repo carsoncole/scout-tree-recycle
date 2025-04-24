@@ -1,5 +1,5 @@
 class ReservationsController < ApplicationController
-  before_action :set_reservation, only: %i[ address_verification address_confirmation update confirmation ]
+  before_action :set_reservation, only: %i[ address_verification address_confirmation update confirmation cancel edit ]
 
   def create
     @reservation = Reservation.new(reservation_params)
@@ -38,10 +38,16 @@ class ReservationsController < ApplicationController
     redirect_to new_reservation_donation_url(@reservation)
   end
 
+  def edit
+    unless Reservation.open?
+      redirect_to root_path, alert: 'Reservations are not currently changeable.'
+    end
+  end
+
   def update
     if Reservation.open?
       @reservation.update(reservation_params)
-      @reservation.pending_pickup!
+      redirect_to reservation_confirmation_path(@reservation)
     else
       redirect_to reservation_url, alert: "Reservations are no longer changeable. #{view_context.link_to('Contact us', '/questions')} if you have questions."
     end
@@ -49,6 +55,11 @@ class ReservationsController < ApplicationController
 
   def confirmation
     @reservation.pending_pickup!
+  end
+
+  def cancel
+    @reservation.cancelled!
+    redirect_to root_path, notice: "Your tree pickup has been cancelled."
   end
 
   def destroy

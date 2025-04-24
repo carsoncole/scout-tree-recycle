@@ -1,5 +1,5 @@
 class ReservationsController < ApplicationController
-  before_action :set_reservation, only: %i[ address_verification address_confirmation update confirmation cancel edit ]
+  before_action :set_reservation, only: %i[ address_verification address_confirmation update confirmation edit destroy ]
 
   def create
     @reservation = Reservation.new(reservation_params)
@@ -57,12 +57,9 @@ class ReservationsController < ApplicationController
     @reservation.pending_pickup!
   end
 
-  def cancel
+  def destroy # cancel
     @reservation.cancelled!
     redirect_to root_path, notice: "Your tree pickup has been cancelled."
-  end
-
-  def destroy
   end
 
   private

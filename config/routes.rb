@@ -5,8 +5,7 @@ Rails.application.routes.draw do
 
   get "about", to: "public#about"
 
-  resources :reservations, only: [:create, :update, :edit] do
-    patch "cancel", as: :cancel
+  resources :reservations, only: [:create, :update, :edit, :destroy] do
     get "address_verification", as: :address_verification
     patch "address_confirmation", as: :address_confirmation
     get "confirmation", as: :confirmation

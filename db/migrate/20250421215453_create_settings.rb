@@ -17,6 +17,8 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.text "on_day_of_pickup_instructions"
       t.boolean "is_reservations_open", default: true
       t.boolean "is_emailing_enabled", default: true
+      t.boolean "is_driver_site_enabled", default: true
+      t.boolean "is_sms_enabled", default: false, null: false
       t.string "driver_secret_key"
       t.string "facebook_page_id"
       t.string "meta_site_name"
@@ -24,13 +26,11 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.string "meta_description"
       t.string "meta_image_filename"
       t.string "reservations_closed_message"
-      t.boolean "is_driver_site_enabled", default: true
       t.string "email_footer"
       t.string "email_from"
       t.integer "email_batch_quantity", default: 300
       t.text "driver_instructions"
-      t.boolean "is_remind_mes_enabled", default: false
-      t.boolean "is_sms_enabled", default: false, null: false
+
 
       t.timestamps
     end

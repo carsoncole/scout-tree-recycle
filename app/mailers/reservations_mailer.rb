@@ -1,7 +1,6 @@
 #TODO text versions of emails needed
 
 class ReservationsMailer < ApplicationMailer
-  include ApplicationHelper
   before_action :set_reservation
 
   def set_reservation
@@ -23,6 +22,6 @@ class ReservationsMailer < ApplicationMailer
     @event_pickup = setting.event_pickup
     @email_footer = setting.email_footer
     mail(to: @reservation.email, subject: "Your tree pickup reservation has been cancelled")
-    @reservation.update(is_cancelled_email_sent: true)
+    @reservation.update(is_cancelled_reservation_email_sent: true)
   end
 end

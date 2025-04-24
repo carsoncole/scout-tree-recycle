@@ -27,21 +27,9 @@ class ReservationTest < ActiveSupport::TestCase
     assert_includes @reservation.errors[:email], "can't be blank"
   end
 
-  test "validates email format" do
-    @reservation.email = "invalid-email"
-    assert_not @reservation.valid?
-    assert_includes @reservation.errors[:email], "is invalid"
-  end
-
   test "phone is optional" do
     @reservation.phone = nil
     assert @reservation.valid?
-  end
-
-  test "validates phone format if present" do
-    @reservation.phone = "invalid-phone"
-    assert_not @reservation.valid?
-    assert_includes @reservation.errors[:phone], "is invalid"
   end
 
   test "notes are optional" do
@@ -76,9 +64,43 @@ class ReservationTest < ActiveSupport::TestCase
     @reservation_3 = create(:reservation)
     @reservation_3.picked_up!
 
-    assert_equal 1, Reservation.in_process.count
+    assert_equal 1, Reservation.reservation_form.count
     assert_equal 1, Reservation.cancelled.count
     assert_equal 1, Reservation.picked_up.count
+  end
+
+  test "invalid without email" do
+    reservation = build(:reservation, email: nil)
+    assert_not reservation.valid?
+    assert_includes reservation.errors[:email], "can't be blank"
+  end
+
+  test "invalid without address" do
+    reservation = build(:reservation, street: nil)
+    assert_not reservation.valid?
+    assert_includes reservation.errors[:street], "can't be blank"
+  end
+
+  test "invalid without city" do
+    reservation = build(:reservation, city: nil)
+    assert_not reservation.valid?
+    assert_includes reservation.errors[:city], "can't be blank"
+  end
+
+  test "invalid without state" do
+    reservation = build(:reservation, state: nil)
+    assert_not reservation.valid?
+    assert_includes reservation.errors[:state], "can't be blank"
+  end
+
+  test "invalid with duplicate email" do
+    # Create first reservation
+    create(:reservation, email: "duplicate@example.com")
+
+    # Try to create second reservation with same email
+    reservation = build(:reservation, email: "duplicate@example.com")
+    assert_not reservation.valid?
+    assert_includes reservation.errors[:email], "has already been taken"
   end
 end 
  

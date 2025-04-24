@@ -17,8 +17,11 @@ class ReservationsController < ApplicationController
         redirect_to reservation_address_verification_url(@reservation)
       end
     else
-    redirect_to root_path
-      # render :new, status: :unprocessable_entity
+      if @reservation.errors[:email].include? "has already been taken"
+        redirect_to root_url, alert: "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received."
+      else
+        render "public/index", status: :unprocessable_entity
+      end
     end
   end
 

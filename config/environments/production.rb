@@ -88,18 +88,6 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  config.action_mailer.default_url_options = { host: 'treerecycle.net', :protocol => 'https' }
-  config.action_mailer.raise_delivery_errors = true
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    :address              => Rails.application.credentials.mailer.development.address,
-    :port                 => Rails.application.credentials.mailer.development.port,
-    :user_name            => Rails.application.credentials.mailer.development.user_name,
-    :password             => Rails.application.credentials.mailer.development.password,
-    :authentication       => Rails.application.credentials.mailer.development.authentication,
-    :tls                  => Rails.application.credentials.mailer.development.tls,
-    :enable_starttls_auto => Rails.application.credentials.mailer.development.enable_starttls_auto
-  }
 
 end

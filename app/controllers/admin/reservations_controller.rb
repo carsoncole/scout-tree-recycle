@@ -1,4 +1,4 @@
-class Admin::ReservationsController < ApplicationController
+class Admin::ReservationsController < Admin::BaseController
   before_action :set_reservation, only: %i[ show edit destroy ]
 
   def index

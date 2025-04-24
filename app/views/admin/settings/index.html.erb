@@ -1,0 +1,245 @@
+<div class="w-full bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 mb-6">
+          <svg class="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+          </svg>
+        </div>
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+          Settings
+        </h1>
+        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          Manage application settings
+        </p>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="space-y-6">
+            <%= form_tag admin_setting_path(1), method: :patch, class: "space-y-8" do %>
+              <!-- Feature Toggles Section -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6" data-controller="toggle">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Feature Toggles</h2>
+                <div class="space-y-4">
+                  <!-- Reservations Toggle -->
+                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Reservations</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations</p>
+                      </div>
+                      <div class="flex items-center">
+                        <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open, 
+                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
+                            data: { 
+                              toggle_target: "toggle",
+                              setting: "is_reservations_open"
+                            } %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Email Toggle -->
+                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Email Notifications</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Send email notifications to users</p>
+                      </div>
+                      <div class="flex items-center">
+                        <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled, 
+                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
+                            data: { 
+                              toggle_target: "toggle",
+                              setting: "is_emailing_enabled"
+                            } %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SMS Toggle -->
+                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable SMS Notifications</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Send SMS notifications to users</p>
+                      </div>
+                      <div class="flex items-center">
+                        <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled, 
+                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
+                            data: { 
+                              toggle_target: "toggle",
+                              setting: "is_sms_enabled"
+                            } %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Driver Site Toggle -->
+                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Driver Site</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Allow drivers to access the driver portal</p>
+                      </div>
+                      <div class="flex items-center">
+                        <%= check_box_tag "setting[is_driver_site_enabled]", "1", setting.is_driver_site_enabled, 
+                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
+                            data: { 
+                              toggle_target: "toggle",
+                              setting: "is_driver_site_enabled"
+                            } %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Content Settings Section -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Content Settings</h2>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <%= label_tag "setting[site_title]", "Site Title", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= text_field_tag "setting[site_title]", setting.site_title, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[home_page_header]", "Home Page Header", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= text_field_tag "setting[home_page_header]", setting.home_page_header, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[organization_name]", "Organization Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= text_field_tag "setting[organization_name]", setting.organization_name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= label_tag "setting[site_description]", "Site Description", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= text_area_tag "setting[site_description]", setting.site_description, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= label_tag "setting[reservations_closed_message]", "Reservations Closed Message", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Event Settings Section -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Event Settings</h2>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <%= label_tag "setting[event_pickup]", "Event Pickup Date/Time", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= datetime_field_tag "setting[event_pickup]", setting.event_pickup&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[event_pickup_end]", "Event Pickup End Date/Time", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= datetime_field_tag "setting[event_pickup_end]", setting.event_pickup_end&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[event_sign_up_deadline]", "Sign Up Deadline", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= datetime_field_tag "setting[event_sign_up_deadline]", setting.event_sign_up_deadline&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[default_city]", "Default City", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= text_field_tag "setting[default_city]", setting.default_city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[default_state]", "Default State", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= text_field_tag "setting[default_state]", setting.default_state, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= label_tag "setting[on_day_of_pickup_instructions]", "On Day of Pickup Instructions", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contacts Section -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Contacts</h2>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <%= label_tag "setting[contact_name]", "Contact Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= text_field_tag "setting[contact_name]", setting.contact_name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[contact_email]", "Contact Email", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= email_field_tag "setting[contact_email]", setting.contact_email, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+                    <div>
+                      <%= label_tag "setting[contact_phone]", "Contact Phone", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= telephone_field_tag "setting[contact_phone]", setting.contact_phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pickup Driver Site Section -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Pickup Driver Site</h2>
+                <div class="space-y-4">
+                  <div>
+                    <%= label_tag "setting[driver_secret_key]", "Secret Key", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">To access, 'https://example.com/driver?key=SECRET_KEY'</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <%= submit_tag "Save Changes", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

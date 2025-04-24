@@ -14,7 +14,13 @@ Rails.application.routes.draw do
 
   # Admin pages
   namespace :admin do
-    resources :reservations, except: [:create, :new]
+    root to: "dashboard#index"
+    resources :reservations, only: [:index, :show, :edit, :update]
+    resources :settings, only: [:index, :update] do
+      member do
+        patch :toggle
+      end
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

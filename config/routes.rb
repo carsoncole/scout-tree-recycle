@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "reservations#index"
     resources :reservations, only: [:index, :show, :edit, :update]
+    resources :drivers
     resources :settings, only: [:index, :update] do
       member do
         patch :toggle

@@ -1,0 +1,79 @@
+<div class="w-full bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 mb-6">
+          <svg class="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+          </svg>
+        </div>
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+          Drivers
+        </h1>
+        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          Manage drivers and their routes
+        </p>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex justify-end mb-6">
+            <%= link_to 'New Driver', new_admin_driver_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Mobile</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Routes</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <% @drivers.each do |driver| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <%= driver.name %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <%= driver.mobile %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <% if driver.routes.any? %>
+                        <div class="space-y-1">
+                          <% driver.routes.each do |route| %>
+                            <div class="flex items-center">
+                              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                <%= route.name %>
+                              </span>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <span class="text-gray-500 dark:text-gray-400">No routes assigned</span>
+                      <% end %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <div class="flex space-x-3">
+                        <%= link_to "Edit", edit_admin_driver_path(driver), class: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+                        <%= button_to "Delete", admin_driver_path(driver), 
+                            method: :delete,
+                            data: { 
+                              turbo_confirm: "Are you sure you want to delete this driver? This action cannot be undone.",
+                              turbo_method: :delete
+                            },
+                            class: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

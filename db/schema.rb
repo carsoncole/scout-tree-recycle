@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_25_155710) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_25_210251) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -38,6 +38,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_25_155710) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["reservation_id"], name: "index_donations_on_reservation_id"
+  end
+
+  create_table "driver_routes", force: :cascade do |t|
+    t.bigint "driver_id"
+    t.bigint "route_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["driver_id"], name: "index_driver_routes_on_driver_id"
+    t.index ["route_id"], name: "index_driver_routes_on_route_id"
+  end
+
+  create_table "drivers", force: :cascade do |t|
+    t.string "name"
+    t.string "mobile"
+    t.string "email"
+    t.bigint "zone_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["zone_id"], name: "index_drivers_on_zone_id"
   end
 
   create_table "reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

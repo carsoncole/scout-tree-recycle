@@ -5,8 +5,8 @@ class Route < ApplicationRecord
 
   has_many :reservations, dependent: :nullify
 
-  # has_many :driver_routes, dependent: :destroy
-  # has_many :drivers, through: :driver_routes
+  has_many :driver_routes, dependent: :destroy
+  has_many :drivers, through: :driver_routes
   # has_many :points, dependent: :destroy
 
   belongs_to :zone, optional: true

@@ -1,8 +1,8 @@
 class Admin::ReservationsController < Admin::BaseController
-  before_action :set_reservation, only: %i[ show edit destroy ]
+  before_action :set_reservation, only: [:show, :edit, :update, :destroy]
 
   def index
-    @reservations = Reservation.order(created_at: :desc)
+    @reservations = Reservation.not_archived
   end
 
   def show
@@ -12,20 +12,28 @@ class Admin::ReservationsController < Admin::BaseController
   end
 
   def update
+    if @reservation.update(reservation_params)
+      redirect_to admin_reservation_path(@reservation), notice: 'Reservation was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def destroy
     @reservation.destroy
-    redirect_to admin_reservations_path
+    redirect_to admin_reservations_path, notice: 'Reservation was successfully deleted.'
   end
 
   private
 
   def set_reservation
-    if params[:id]
-      @reservation = Reservation.find(params[:id])
-    elsif params[:reservation_id]
-      @reservation = Reservation.find(params[:reservation_id])
-    end
+    @reservation = Reservation.find(params[:id])
+  end
+
+  def reservation_params
+    params.require(:reservation).permit(
+      :name, :email, :phone, :street, :city, :state, :country,
+      :route_id, :status, :notes, :donation
+    )
   end
 end

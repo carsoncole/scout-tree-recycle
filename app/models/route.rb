@@ -1,5 +1,5 @@
 class Route < ApplicationRecord
-  include Geocodable
+  # include Geocodable
 
   default_scope { order(name: :asc) }
 
@@ -12,10 +12,11 @@ class Route < ApplicationRecord
   belongs_to :zone, optional: true
 
   validates :name, presence: true
+  validates :name, length: { maximum: 40 }
 
   scope :unzoned, -> { where(zone_id: nil) }
 
-  after_validation :zone!, if: ->(obj){ obj.geocoded? && obj.is_zoned? && (obj.latitude_changed? && (obj.persisted? || obj.zone_id.nil?)) }
+  # after_validation :zone!, if: ->(obj){ obj.geocoded? && obj.is_zoned? && (obj.latitude_changed? && (obj.persisted? || obj.zone_id.nil?)) }
 
   attribute :is_zoned, :boolean, default: true
 

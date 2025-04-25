@@ -1,6 +1,6 @@
 class CreateZones < ActiveRecord::Migration[8.0]
   def change
-    create_table :zones do |t
+    create_table :zones do |t|
       t.string "name"
       t.string "street"
       t.string "city"

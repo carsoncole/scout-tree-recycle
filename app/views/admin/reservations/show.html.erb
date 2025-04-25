@@ -43,6 +43,22 @@
               </div>
             </div>
 
+            <!-- Route Information -->
+            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Route Information</h2>
+                <%= link_to "Edit", edit_admin_reservation_path(@reservation), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+              </div>
+              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Assigned Route</dt>
+                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <%= @reservation.route&.name || 'Unassigned' %>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
             <!-- Contact Information -->
             <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
               <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Contact Information</h2>

@@ -1,4 +1,160 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Reservations#edit</h1>
-  <p>Find me in app/views/admin/reservations/edit.html.erb</p>
+<div class="w-full bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen">
+    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+          Edit Reservation
+        </h1>
+        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          Update reservation #<%= @reservation.id %>
+        </p>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <%= form_with(model: [:admin, @reservation], class: "space-y-6") do |f| %>
+            <% if @reservation.errors.any? %>
+              <div class="bg-red-50 dark:bg-red-900 p-4 rounded-md">
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                      <%= pluralize(@reservation.errors.count, "error") %> prohibited this reservation from being saved:
+                    </h3>
+                    <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                      <ul class="list-disc pl-5 space-y-1">
+                        <% @reservation.errors.full_messages.each do |message| %>
+                          <li><%= message %></li>
+                        <% end %>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <div class="space-y-6">
+              <!-- Contact Information -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Contact Information</h2>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <%= f.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.text_field :name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :email, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.email_field :email, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :phone, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.telephone_field :phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address Information -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Address Information</h2>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <%= f.label :street, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.text_field :street, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :city, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.text_field :city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :state, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.text_field :state, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :country, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.text_field :country, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Route and Status -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Route and Status</h2>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <%= f.label :route_id, "Route", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.collection_select :route_id, Route.all, :id, :name, 
+                          { include_blank: 'Select a route' }, 
+                          class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :status, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.select :status, 
+                          Reservation.statuses.keys.map { |s| [s.titleize, s] },
+                          {},
+                          class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Information -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Additional Information</h2>
+                <div class="grid grid-cols-1 gap-6">
+                  <div>
+                    <%= f.label :notes, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.text_area :notes, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :donation, "Donation Type", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.select :donation, 
+                          ['cash', 'check', 'credit_card', 'paypal'],
+                          { include_blank: 'Select donation type' },
+                          class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+              <%= link_to "Cancel", admin_reservation_path(@reservation), class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+              <%= f.submit "Update Reservation", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

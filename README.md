@@ -4,14 +4,12 @@
 
 Tree Recycle is a web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area, Tree Recycle offers the following features:
 
-- Establish a user-friendly public website for reserving tree pickups.
+- Provides a user-friendly public website for reserving tree pickups;
+- Accepts online donations;
 - Process pickup reservations and geocode addresses for mapping purposes.
 - Efficiently categorize addresses into pre-defined Routes, grouped within Zones and assigned to designated drivers.
-- Facilitate online donations through a secure platform.
 - Retain reservation data from year to year, enabling targeted marketing to previous customers through email reminders for the current year's event.
 - Issue SMS and email notifications in cases where drivers cannot locate a tree (a common occurrence when individuals forget to place them out). Deliver email confirmations for reservations, donation receipts, and promotional emails.
-
-If you have any questions concerning this application, feel free to email me at carson.cole@gmail.com.
 
 ## REQUIREMENTS
 

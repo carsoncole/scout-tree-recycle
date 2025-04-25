@@ -19,11 +19,11 @@ class Reservation < ApplicationRecord
   before_validation :downcase_email!
 
   # destroy any archived and other not pending reservations
-    before_validation :destroy_not_pending_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
+  before_validation :destroy_not_pending_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
 
   # email delivery
-    after_update :send_confirmed_reservation_email!, if: -> (obj){ obj.pending_pickup? && obj.saved_change_to_status? }
-    after_update :send_cancelled_reservation_email!, if: -> (obj){ obj.cancelled? && obj.saved_change_to_status? }
+  after_update :send_confirmed_reservation_email!, if: -> (obj){ obj.pending_pickup? && obj.saved_change_to_status? }
+  after_update :send_cancelled_reservation_email!, if: -> (obj){ obj.cancelled? && obj.saved_change_to_status? }
 
   def self.open?
     Setting.instance.is_reservations_open?

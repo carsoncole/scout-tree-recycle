@@ -16,8 +16,8 @@ class Reservation < ApplicationRecord
   before_validation :normalize_phone!
   before_validation :downcase_email!
 
-  # merging old reservations
-    before_validation :merge_in_archived_and_not_pending!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
+  # destroy any archived and other not pending reservations
+    before_validation :destroy_not_pending_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
 
   # email delivery
     after_update :send_confirmed_reservation_email!, if: -> (obj){ obj.pending_pickup? && obj.saved_change_to_status? }
@@ -35,9 +35,9 @@ class Reservation < ApplicationRecord
     nil
   end
 
-  def merge_in_archived_and_not_pending!
-    archived_and_not_pending = Reservation.not_pending_pickup.where(email: email)
-    archived_and_not_pending.destroy_all if archived_and_not_pending
+  def destroy_not_pending_reservations!
+    not_pending = Reservation.not_pending_pickup.where(email: email)
+    not_pending.destroy_all if not_pending.any?
   end
 
   def send_confirmed_reservation_email!

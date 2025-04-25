@@ -1,6 +1,8 @@
 class Reservation < ApplicationRecord
   include Geocodable
 
+  belongs_to :route, optional: true
+  has_one :zone, through: :route
   has_many :donations, dependent: :nullify
 
   validates :name, :street, :email, :city, :state, presence: true

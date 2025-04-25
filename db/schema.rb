@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_22_183819) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_25_155422) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -89,6 +89,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_22_183819) do
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["street"], name: "index_reservations_on_street"
     t.index ["street_name", "house_number"], name: "index_reservations_on_street_name_and_house_number"
+  end
+
+  create_table "routes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "settings", force: :cascade do |t|

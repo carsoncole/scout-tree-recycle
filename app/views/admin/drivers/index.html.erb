@@ -38,7 +38,7 @@
                       <%= driver.name %>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      <%= driver.mobile %>
+                      <%= Phonelib.parse(driver.mobile).national if driver.mobile.present? %>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <% if driver.routes.any? %>

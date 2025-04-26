@@ -1,5 +1,5 @@
 class Zone < ApplicationRecord
-  include Geocodable
+  # include Geocodable
 
   default_scope { order(name: :asc) }
 

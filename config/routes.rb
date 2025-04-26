@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       end
     end
     resources :routes
+    resources :zones
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

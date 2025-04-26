@@ -1,6 +1,6 @@
-<%= form_with(model: [:admin, @route], class: "space-y-6") do |f| %>
+<%= form_with(model: [:admin, @route], class: "space-y-8 divide-y divide-gray-200 dark:divide-gray-700") do |f| %>
   <% if @route.errors.any? %>
-    <div class="bg-red-50 dark:bg-red-900 p-4 rounded-md">
+    <div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
       <div class="flex">
         <div class="flex-shrink-0">
           <svg class="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
@@ -26,27 +26,31 @@
   <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
     <div class="px-4 py-5 sm:p-6">
       <div class="space-y-6">
-        <div>
-          <%= f.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-          <div class="max-w-xs">
-            <%= f.text_field :name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2", placeholder: "Enter route name" %>
+        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div class="sm:col-span-4">
+            <%= f.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+            <div class="mt-1">
+              <%= f.text_field :name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2", placeholder: "Enter route name" %>
+            </div>
+          </div>
+
+          <div class="sm:col-span-4">
+            <%= f.label :zone_id, "Zone", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+            <div class="mt-1">
+              <%= f.collection_select :zone_id, Zone.all, :id, :name,
+                  { include_blank: 'Select a zone' },
+                  class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+            </div>
           </div>
         </div>
-
-        <!-- <div>
-          <%= f.label :zone_id, "Zone", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-          <div>
-            <%= f.collection_select :zone_id, Zone.all, :id, :name,
-                { include_blank: 'Select a zone' },
-                class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
 
-  <div class="flex justify-end">
-    <%= link_to 'Cancel', admin_routes_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-3" %>
-    <%= f.submit class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+  <div class="pt-5">
+    <div class="flex justify-end">
+      <%= link_to "Cancel", admin_routes_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      <%= f.submit class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    </div>
   </div>
 <% end %>

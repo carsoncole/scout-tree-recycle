@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_25_210251) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_26_164702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -57,6 +57,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_25_210251) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["zone_id"], name: "index_drivers_on_zone_id"
+  end
+
+  create_table "logs", force: :cascade do |t|
+    t.string "message"
+    t.integer "log_level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

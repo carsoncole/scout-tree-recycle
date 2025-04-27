@@ -2,7 +2,7 @@ class Admin::RoutesController < Admin::BaseController
   before_action :set_route, only: [:show, :edit, :update, :destroy]
 
   def index
-    @routes = Route.all
+    @pagy, @routes = pagy(Route.all)
   end
 
   def show
@@ -45,8 +45,8 @@ class Admin::RoutesController < Admin::BaseController
   end
 
   def route_params
-    params.require(:route).permit(:name, :street, :city, :state, :country, 
-                                :distance, :latitude, :longitude, :zone_id, 
+    params.require(:route).permit(:name, :street, :city, :state, :country,
+                                :distance, :latitude, :longitude, :zone_id,
                                 :distance_to_zone)
   end
-end 
+end

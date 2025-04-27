@@ -2,7 +2,7 @@ class Admin::DriversController < Admin::BaseController
   before_action :set_driver, only: [:show, :edit, :update, :destroy]
 
   def index
-    @drivers = Driver.all
+    @pagy, @drivers = pagy(Driver.all)
   end
 
   def show

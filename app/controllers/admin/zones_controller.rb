@@ -2,7 +2,7 @@ class Admin::ZonesController < Admin::BaseController
   before_action :set_zone, only: [:show, :edit, :update, :destroy]
 
   def index
-    @zones = Zone.all
+    @pagy, @zones = pagy(Zone.all)
   end
 
   def show
@@ -47,4 +47,4 @@ class Admin::ZonesController < Admin::BaseController
   def zone_params
     params.require(:zone).permit(:name, :street, :city, :state, :country)
   end
-end 
+end

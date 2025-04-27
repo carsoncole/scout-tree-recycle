@@ -18,4 +18,6 @@ unless Setting.any?
   4.times do
     FactoryBot.create(:pending_pickup_reservation, phone: [Faker::PhoneNumber.cell_phone, nil].sample)
   end
+
+  FactoryBot.create_list(:prior_reservation, 20)
 end

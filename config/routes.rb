@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   # Admin pages
   namespace :admin do
     root to: "reservations#index"
+    get "marketing/index"
     resources :reservations, only: [:index, :show, :edit, :update]
     resources :drivers
     resources :settings, only: [:index, :update] do

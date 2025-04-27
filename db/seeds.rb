@@ -15,7 +15,7 @@ unless Setting.any?
   driver_routes = drivers.each do |driver|
     FactoryBot.create(:driver_route, driver: driver, route: routes.sample)
   end
-  4.times do
+  30.times do
     FactoryBot.create(:pending_pickup_reservation, phone: [Faker::PhoneNumber.cell_phone, nil].sample)
   end
 

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "marketing/index"
   get "logs/index"
 
   # Public pages

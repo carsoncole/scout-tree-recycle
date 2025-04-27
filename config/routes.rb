@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  get "marketing/index"
-  get "logs/index"
-
   # Public pages
   root "public#index"
 
@@ -27,6 +24,7 @@ Rails.application.routes.draw do
     end
     resources :routes
     resources :zones
+    delete "logs", to: "logs#destroy"
     resources :logs, only: [:index]
   end
 

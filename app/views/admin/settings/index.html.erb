@@ -80,23 +80,7 @@
                     </div>
                   </div>
 
-                  <!-- Driver Site Toggle -->
-                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Driver Site</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Allow drivers to access the driver portal</p>
-                      </div>
-                      <div class="flex items-center">
-                        <%= check_box_tag "setting[is_driver_site_enabled]", "1", setting.is_driver_site_enabled, 
-                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: { 
-                              toggle_target: "toggle",
-                              setting: "is_driver_site_enabled"
-                            } %>
-                      </div>
-                    </div>
-                  </div>
+                
                 </div>
               </div>
 

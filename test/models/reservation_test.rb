@@ -95,7 +95,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "invalid with duplicate email" do
     # Create first reservation
-    create(:reservation, email: "duplicate@example.com")
+    create(:reservation, email: "duplicate@example.com", status: :pending_pickup)
 
     # Try to create second reservation with same email
     reservation = build(:reservation, email: "duplicate@example.com")

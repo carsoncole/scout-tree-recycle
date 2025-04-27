@@ -1,3 +1,11 @@
 class Log < ApplicationRecord
-  enum :log_level, { info: 1, warning: 2, error: 3 }
+
+  def self.report_error(error, context:, handled:, level:)
+    Log.create(
+      error: error,
+      context: context,
+      handled: handled,
+      level: level
+    )
+  end
 end

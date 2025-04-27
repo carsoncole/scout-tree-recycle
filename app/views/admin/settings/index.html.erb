@@ -100,6 +100,43 @@
                 </div>
               </div>
 
+              <!-- Tree Pickups Section -->
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Tree Pickups</h2>
+                  <%= link_to 'Manage Drivers', admin_drivers_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+                </div>
+                <div class="space-y-4">
+                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Driver Portal</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Enable the driver portal for tree pickup management</p>
+                      </div>
+                      <div class="flex items-center">
+                        <%= check_box_tag "setting[is_driver_site_enabled]", "1", setting.is_driver_site_enabled, 
+                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
+                            data: { 
+                              toggle_target: "toggle",
+                              setting: "is_driver_site_enabled"
+                            } %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Driver Portal Access</h3>
+                      <div class="space-y-2">
+                        <%= label_tag "setting[driver_secret_key]", "Secret Key", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                        <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">To access, 'https://example.com/driver?key=SECRET_KEY'</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Content Settings Section -->
               <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
                 <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Content Settings</h2>
@@ -218,20 +255,6 @@
                         <%= telephone_field_tag "setting[contact_phone]", setting.contact_phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Pickup Driver Site Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Pickup Driver Site</h2>
-                <div class="space-y-4">
-                  <div>
-                    <%= label_tag "setting[driver_secret_key]", "Secret Key", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div>
-                      <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                    </div>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">To access, 'https://example.com/driver?key=SECRET_KEY'</p>
                   </div>
                 </div>
               </div>

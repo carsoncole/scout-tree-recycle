@@ -200,6 +200,11 @@ For mailers, previews exist for the confirmation and reminder emails. To view in
     http://localhost:3000/rails/mailers/
 ```
 
+## Configuration
+
+Certain settings can be adjusted in the ```config/initializers/tree_recycle.rb```.
+
+
 ## Seed Data
 
 Trial seed data can be loaded. This will create the initial admin user (admin@example.com, password: password), route, zone and reservation data. Use this data to only preview the apps functionality, not for production purposes.

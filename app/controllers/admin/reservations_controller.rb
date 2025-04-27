@@ -2,7 +2,7 @@ class Admin::ReservationsController < Admin::BaseController
   before_action :set_reservation, only: [:show, :edit, :update, :destroy]
 
   def index
-    @pagy, @reservations = pagy(Reservation.not_archived.order(created_at: :desc))
+    @pagy, @reservations = pagy(Reservation.order(created_at: :desc))
   end
 
   def show

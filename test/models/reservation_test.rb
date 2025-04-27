@@ -42,7 +42,7 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "short_address returns street and city" do
-    assert_equal "215 Ericksen Ave NE, Bainbridge Island, Washington", @reservation.short_address
+    assert_equal @reservation.street + ", " + @reservation.city + ", " + @reservation.state, @reservation.short_address
   end
 
   test "can be cancelled" do
@@ -102,5 +102,4 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not reservation.valid?
     assert_includes reservation.errors[:email], "has already been taken"
   end
-end 
- 
+end

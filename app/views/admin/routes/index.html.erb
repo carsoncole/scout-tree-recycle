@@ -47,7 +47,7 @@
                       <%= route.zone&.name || 'Unzoned' %>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      <%= route.reservations.not_archived.count %>
+                      <%= route.reservations.count %>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <% if route.drivers.any? %>
@@ -86,7 +86,7 @@
                     -
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    <%= Reservation.not_archived.where(route_id: nil).count %>
+                    <%= Reservation.where(route_id: nil).count %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                     <div class="flex space-x-3">

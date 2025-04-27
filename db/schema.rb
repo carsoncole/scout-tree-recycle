@@ -63,7 +63,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.string "error"
     t.string "context"
     t.string "handled"
-    t.integer "level"
+    t.string "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

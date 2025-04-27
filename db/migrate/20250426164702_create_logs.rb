@@ -4,7 +4,7 @@ class CreateLogs < ActiveRecord::Migration[8.0]
       t.string "error"
       t.string "context"
       t.string "handled"
-      t.integer "level"
+      t.string "level"
 
       t.timestamps
     end

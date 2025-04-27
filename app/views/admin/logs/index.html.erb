@@ -44,29 +44,8 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                        <%= case log.level
-                            when 0
-                              'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-                            when 1
-                              'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
-                            when 2
-                              'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-                            else
-                              'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
-                            end %>">
-                        <%= case log.level
-                            when 0
-                              'Error'
-                            when 1
-                              'Warning'
-                            when 2
-                              'Info'
-                            else
-                              'Unknown'
-                            end %>
-                      </span>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">
+                      <%= log.level %>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                       <%= log.error %>

@@ -1,6 +1,6 @@
 class CreatePriorReservations < ActiveRecord::Migration[8.0]
   def change
-    create_table :prior_reservations do |t|
+    create_table :prior_reservations, id: :uuid, default: -> { "gen_random_uuid()" } do |t|
       t.string :name
       t.string :street
       t.string :email

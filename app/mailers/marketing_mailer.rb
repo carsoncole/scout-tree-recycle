@@ -11,6 +11,7 @@ class MarketingMailer < ApplicationMailer
     return unless setting.is_emailing_enabled?
     return if @prior_reservation.marketing_1_email_sent_at?
     @setting = setting
+    @email_footer = Setting.instance.organization_name
     mail(to: @prior_reservation.email, subject: "Tree recycling #{setting.event_pickup.strftime('%B %-d')}. Register today.")
     @prior_reservation.update(marketing_1_email_sent_at: Time.now)
   end
@@ -21,6 +22,7 @@ class MarketingMailer < ApplicationMailer
     return unless setting.is_emailing_enabled?
     return if @prior_reservation.marketing_2_email_sent_at?
     @setting = setting
+    @email_footer = Setting.instance.organization_name
     mail(to: @prior_reservation.email, subject: "Last call! Tree recycling #{setting.event_pickup.strftime('%B %-d')}. Register today.")
     @prior_reservation.update(marketing_2_email_sent_at: Time.now)
   end

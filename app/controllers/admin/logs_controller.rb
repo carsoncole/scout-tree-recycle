@@ -1,6 +1,7 @@
 class Admin::LogsController < Admin::BaseController
   def index
     @pagy, @logs = pagy(Log.order(created_at: :desc))
+    Log.update_all(is_viewed: true)
   end
 
   def destroy

@@ -64,9 +64,12 @@ class ReservationTest < ActiveSupport::TestCase
     @reservation_3 = create(:reservation)
     @reservation_3.picked_up!
 
+    @reservation_4 = create(:pending_pickup_reservation)
+
     assert_equal 1, Reservation.reservation_form.count
     assert_equal 1, Reservation.cancelled.count
     assert_equal 1, Reservation.picked_up.count
+    assert_equal 1, Reservation.pending_pickup.count
   end
 
   test "invalid without email" do
@@ -75,7 +78,7 @@ class ReservationTest < ActiveSupport::TestCase
     assert_includes reservation.errors[:email], "can't be blank"
   end
 
-  test "invalid without address" do
+  test "invalid without street" do
     reservation = build(:reservation, street: nil)
     assert_not reservation.valid?
     assert_includes reservation.errors[:street], "can't be blank"
@@ -102,4 +105,38 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not reservation.valid?
     assert_includes reservation.errors[:email], "has already been taken"
   end
+
+  # remove existing prior_reservation (same email) when reservation becomes pending pickup
+  test "removing prior reservation on pending pickup" do
+    prior = create(:prior_reservation, email: "test@example.com")
+    reservation = create(:reservation, email: "test@example.com")
+    assert PriorReservation.find_by(email: "test@example.com")
+    reservation.update(status: :pending_pickup)
+    assert_not PriorReservation.find_by(email: "test@example.com")
+    assert Reservation.find_by(email: "test@example.com")
+    assert_equal "pending_pickup", reservation.status
+  end
+
+  test "normalizing of phone number" do
+    reservation = create(:reservation, phone: "1234567890")
+    assert_equal "+11234567890", reservation.phone
+
+    reservation = create(:reservation, phone: "123-456-7890")
+    assert_equal "+11234567890", reservation.phone
+
+    reservation = create(:reservation, phone: "(123) 456-7890")
+    assert_equal "+11234567890", reservation.phone
+
+    reservation = create(:reservation, phone: "(123)456-7890")
+    assert_equal "+11234567890", reservation.phone
+
+    reservation = create(:reservation, phone: "123.456.7890")
+    assert_equal "+11234567890", reservation.phone
+  end
+
+  test "downcasing of email" do
+    reservation = create(:reservation, email: "TEST@EXAMPLE.COM")
+    assert_equal "test@example.com", reservation.email
+  end
+
 end

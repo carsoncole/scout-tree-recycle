@@ -1,5 +1,6 @@
 class Admin::SettingsController < Admin::BaseController
   def index
+    @unviewed_logs_count = Log.where(is_viewed: false).count
   end
 
   def update

@@ -64,8 +64,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.string "context"
     t.string "handled"
     t.string "level"
+    t.boolean "is_viewed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["is_viewed"], name: "index_logs_on_is_viewed"
   end
 
   create_table "prior_reservations", force: :cascade do |t|

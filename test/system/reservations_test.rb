@@ -104,7 +104,6 @@ class ReservationsTest < ApplicationSystemTestCase
     fill_in "Name", with: Faker::Name.name
     fill_in "Street", with: Faker::Address.street_address
     fill_in "Email", with: "test@example.com"
-    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
     click_button "Create Reservation"
     click_button "Select donation type"
     assert_text "Reservation Confirmed"
@@ -114,7 +113,6 @@ class ReservationsTest < ApplicationSystemTestCase
     fill_in "Name", with: Faker::Name.name
     fill_in "Street", with: Faker::Address.street_address
     fill_in "Email", with: "test@example.com"
-    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
     click_button "Create Reservation"
     
     # Should show error message

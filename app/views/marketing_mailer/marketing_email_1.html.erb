@@ -1,0 +1,61 @@
+<table style="width:100%; border:0;cellspacing:0;cellpadding:0">
+  <tr style='padding: 0;border:0'>
+    <td style="width: 100%;padding: 0;border:0">
+      <table style="max-width:800px;margin-left: auto;margin-right: auto;">
+        <tr>
+          <td style="text-align:left;padding: 0;border:0">
+            <div style='text-align:center;margin-left: auto;margin-right:auto;margin-top: 16px;margin-bottom:0'>
+              <%= image_tag 'tree.png', alt: 'tree', width: 200 %>
+            </div>
+
+            <h1 style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; font-weight: 300; font-size: 40px; margin: 20px auto 70px auto;text-align: center;padding: 0;line-height: 1.5;">
+              Register for a tree pickup!
+            </h1>
+
+            <% if @prior_reservation.name.present? && @prior_reservation.name.downcase != 'no name provided' %>
+              <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
+                Hello <%= @prior_reservation.name %>,
+              </p>
+            <% end %>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
+                It is that time again for Christmas tree recycling!
+            </p>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
+              We've picked up up your tree in the past, and if you would like us to pick up again this year, please let us know by registering at <%= root_url %>.
+            </p>
+
+            <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 20px">
+              <tr>
+                <td>
+                  <table cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td style="border-radius: 2px" bgcolor="#ED2939" width="100%" style='text-align:center;'>
+                        <a href="<%= root_url(prior_reservation_id: @prior_reservation.id) %>" target="_blank" style="padding: 8px 12px; border: 1px solid #ED2939;border-radius: 2px;font-family: Helvetica, Arial, sans-serif;font-size: 14px; color: #ffffff !important;text-decoration: none;font-weight:bold;display: inline-block;">
+                          Register for a tree pickup
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 40px; padding: 0;">
+              Once registered, we will send you a confirmation email and then pick up your tree on <%= @setting.event_pickup.strftime('%A, %B %-d') %>.
+            </p>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 60px; padding: 0;">
+              Thank You,<br>
+              <%= @setting.organization_name %>
+            </p>
+
+            <%= render 'unsubscribe_links' %>
+            <%= render 'shared/mailer_footer' %>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

@@ -30,7 +30,7 @@
     <div>
       <%= f.label :street, "Street Address *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
       <div class="mt-2">
-        <%= f.text_field :street, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+        <%= f.text_field :street, required: true, value: @reservation.street, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
       </div>
       <div class="mt-2">
         <%= f.text_field :city, value: @reservation.city, disabled: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed" %>

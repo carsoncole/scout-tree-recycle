@@ -73,7 +73,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.index ["is_viewed"], name: "index_logs_on_is_viewed"
   end
 
-  create_table "prior_reservations", force: :cascade do |t|
+  create_table "prior_reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "street"
     t.string "email"

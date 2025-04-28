@@ -1,0 +1,27 @@
+class MarketingMailer < ApplicationMailer
+  before_action :set_prior_reservation
+
+  def set_prior_reservation
+    @prior_reservation = PriorReservation.find(params[:prior_reservation_id])
+  end
+
+  #FIXME replace website address in view with dynamic value
+  #FIXME replace mentions of Bainbridge Island with dynamic value
+  def marketing_email_1
+    return unless setting.is_emailing_enabled?
+    return if @prior_reservation.marketing_1_email_sent_at?
+    @setting = setting
+    mail(to: @prior_reservation.email, subject: "Tree recycling #{setting.event_pickup.strftime('%B %-d')}. Register today.")
+    @prior_reservation.update(marketing_1_email_sent_at: Time.now)
+  end
+
+  #FIXME replace website address in view with dynamic value
+  #FIXME replace mentions of Bainbridge Island with dynamic value
+  def marketing_email_2
+    return unless setting.is_emailing_enabled?
+    return if @prior_reservation.marketing_2_email_sent_at?
+    @setting = setting
+    mail(to: @prior_reservation.email, subject: "Last call! Tree recycling #{setting.event_pickup.strftime('%B %-d')}. Register today.")
+    @prior_reservation.update(marketing_2_email_sent_at: Time.now)
+  end
+end

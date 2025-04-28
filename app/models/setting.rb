@@ -3,6 +3,8 @@ class Setting < ApplicationRecord
   attribute :home_page_header, :string, default: 'Tree Recycle'
   attribute :organization_name, :string, default: 'Troop 100'
   attribute :event_pickup, :datetime, default: '2099-01-06 08:00:00 -0800'
+  attribute :event_pickup_end, :datetime, default: '2099-01-06 15:00:00 -0800'
+  attribute :event_sign_up_deadline, :datetime, default: '2099-01-05 11:59:00 -0800'
   attribute :default_city, :string, default: 'Anytown'
   attribute :contact_name, :string, default: 'John Doe'
   attribute :contact_email, :string, default: 'john@example.com'
@@ -17,6 +19,8 @@ class Setting < ApplicationRecord
   validates :default_city, presence: true
   validates :event_pickup, presence: true
   validates :home_page_header, presence: true
+  validates :event_pickup, :event_pickup_end, :event_sign_up_deadline, presence: true
+  validates :organization_name, presence: true
 
   def self.instance
     first_or_create!

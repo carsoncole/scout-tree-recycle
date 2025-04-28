@@ -1,6 +1,15 @@
 class PublicController < ApplicationController
   def index
-    @reservation = Reservation.new
+    if params[:prior_reservation_id]
+      prior_reservation = PriorReservation.find_by(id: params[:prior_reservation_id])
+      if prior_reservation
+        @reservation = Reservation.new(email: prior_reservation.email, street: prior_reservation.street, name: prior_reservation.name, phone: prior_reservation.phone)
+      else
+        @reservation = Reservation.new
+      end
+    else
+      @reservation = Reservation.new
+    end
     @reservation.city = Setting.instance.default_city
   end
 

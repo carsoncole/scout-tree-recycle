@@ -60,10 +60,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
   end
 
   create_table "logs", force: :cascade do |t|
-    t.string "error"
-    t.string "context"
-    t.string "handled"
-    t.string "level"
+    t.text "message"
+    t.string "error_type"
+    t.text "backtrace"
+    t.string "environment", default: "development"
+    t.jsonb "context", default: {}
+    t.boolean "handled", default: true
+    t.string "severity"
     t.boolean "is_viewed", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

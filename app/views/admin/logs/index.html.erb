@@ -32,10 +32,12 @@
               <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Timestamp</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Level</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Error</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Severity</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Message</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Error Type</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Environment</th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Context</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Handled</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
               <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -44,19 +46,33 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">
-                      <%= log.level %>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                        <%= case log.severity
+                            when 'error' then 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                            when 'warning' then 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+                            when 'info' then 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                            else 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+                            end %>">
+                        <%= log.severity&.titleize %>
+                      </span>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      <%= log.error %>
+                      <%= log.message %>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                      <%= log.error_type %>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                      <%= log.environment %>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                       <pre class="whitespace-pre-wrap"><%= JSON.pretty_generate(log.context) if log.context.present? %></pre>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                        <%= log.handled == 'true' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' %>">
-                        <%= log.handled == 'true' ? 'Yes' : 'No' %>
+                        <%= log.handled ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' %>">
+                        <%= log.handled ? 'Handled' : 'Unhandled' %>
                       </span>
                     </td>
                   </tr>

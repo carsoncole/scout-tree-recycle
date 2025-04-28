@@ -127,6 +127,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.boolean "is_cancelled_reservation_email_sent", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_reservations_on_created_at"
     t.index ["email"], name: "index_reservations_on_email"
     t.index ["name"], name: "index_reservations_on_name"
     t.index ["phone", "status"], name: "index_reservations_on_phone_and_status"
@@ -134,7 +135,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.index ["status", "email"], name: "index_reservations_on_status_and_email"
     t.index ["status", "route_id"], name: "index_reservations_on_status_and_route_id"
     t.index ["status"], name: "index_reservations_on_status"
-    t.index ["street"], name: "index_reservations_on_street"
     t.index ["street_name", "house_number"], name: "index_reservations_on_street_name_and_house_number"
   end
 
@@ -180,7 +180,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.string "meta_description"
     t.string "meta_image_filename"
     t.string "reservations_closed_message"
-    t.string "email_footer"
     t.string "email_from"
     t.integer "email_batch_quantity", default: 300
     t.text "driver_instructions"

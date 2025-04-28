@@ -11,7 +11,6 @@ class ReservationsMailer < ApplicationMailer
     return if @reservation.no_emails? || !setting.is_emailing_enabled
     return if @reservation.is_pending_pickup_email_sent?
     @event_pickup = setting.event_pickup
-    @email_footer = setting.email_footer
     mail(to: @reservation.email, subject: 'Your tree pickup is confirmed')
     @reservation.update(is_pending_pickup_email_sent: true)
   end
@@ -20,7 +19,6 @@ class ReservationsMailer < ApplicationMailer
     return if @reservation.no_emails? || !setting.is_emailing_enabled
     return if @reservation.is_cancelled_reservation_email_sent?
     @event_pickup = setting.event_pickup
-    @email_footer = setting.email_footer
     mail(to: @reservation.email, subject: "Your tree pickup reservation has been cancelled")
     @reservation.update(is_cancelled_reservation_email_sent: true)
   end

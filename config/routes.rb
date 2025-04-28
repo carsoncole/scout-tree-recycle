@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   # Public pages
   root "public#index"
 
@@ -9,6 +10,14 @@ Rails.application.routes.draw do
     patch "address_confirmation", as: :address_confirmation
     get "confirmation", as: :confirmation
     resources :donations, only: [:new, :create]
+  end
+
+  # Prior Reservations
+  resources :prior_reservations, only: [] do
+    member do
+      get :unsubscribe
+      delete :destroy
+    end
   end
 
   # Admin pages

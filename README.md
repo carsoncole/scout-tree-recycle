@@ -202,8 +202,11 @@ For mailers, previews exist for the confirmation and reminder emails. To view in
 
 ## Configuration
 
-Certain settings can be adjusted in the ```config/initializers/tree_recycle.rb```.
+Certain settings can be adjusted in the ```config/initializers/tree_recycle.rb```, but settings that are not in the initializer can be adjusted through the Admin settings page.
 
+### Images
+
+Default BSA Scouting images are used in emails and are stored in the `app/assets/images` directory. You can customize these images by replacing them with your own.
 
 ## Seed Data
 
@@ -214,6 +217,8 @@ Trial seed data can be loaded. This will create the initial admin user (admin@ex
 ```
 
 ---
+
+
 
 ## Additional Thoughts
 

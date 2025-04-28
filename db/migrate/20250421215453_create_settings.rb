@@ -26,7 +26,6 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.string "meta_description"
       t.string "meta_image_filename"
       t.string "reservations_closed_message"
-      t.string "email_footer"
       t.string "email_from"
       t.integer "email_batch_quantity", default: 300
       t.text "driver_instructions"

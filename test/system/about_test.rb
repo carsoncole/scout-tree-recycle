@@ -84,4 +84,18 @@ class AboutsTest < ApplicationSystemTestCase
     assert_text "6:00pm"
     assert_text "11:00pm"
   end
+
+  test "should display organization url" do
+    setting = Setting.instance
+    setting.save
+
+    visit about_url
+    assert_no_link "Learn more"
+
+    setting.organization_url = "https://example.com"
+    setting.save
+
+    visit about_url
+    assert_link "Learn more", href: "https://example.com"    
+  end
 end

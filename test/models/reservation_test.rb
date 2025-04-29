@@ -139,4 +139,35 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal "test@example.com", reservation.email
   end
 
+  test "migrating reservations" do
+    reservation_form_reservation = create(:reservation, email: "reservation_form@example.com", status: :reservation_form)
+    address_verification_reservation = create(:reservation, email: "address_verification@example.com", status: :address_verification)
+    donation_selection_reservation = create(:reservation, email: "donation@example.com", status: :donation_type_selection)
+    pending_reservation = create(:pending_pickup_reservation, email: "pending_pickup@example.com")
+    picked_up_reservation = create(:reservation, email: "picked_up@example.com", status: :picked_up)    
+    cancelled_reservation = create(:reservation, email: "cancelled@example.com", status: :cancelled)
+    missing_reservation = create(:reservation, email: "missing@example.com", status: :missing)
+
+    assert_equal 8, Reservation.count
+    assert_equal 0, PriorReservation.count
+
+    Reservation.migrate_reservations!
+
+    # should not be any reservations
+    assert_not Reservation.find_by(email: "reservation_form@example.com")
+    assert_not Reservation.find_by(email: "pending_pickup@example.com")
+    assert_not Reservation.find_by(email: "donation@example.com")
+    assert_not Reservation.find_by(email: "cancelled@example.com")
+    assert_not Reservation.find_by(email: "address_verification@example.com")
+    assert_not Reservation.find_by(email: "picked_up@example.com")
+    assert_not Reservation.find_by(email: "missing@example.com")
+    # should be 5 prior reservations based on their status
+    assert_not PriorReservation.find_by(email: "reservation_form@example.com") # reservation_form don't get migrated
+    assert_not PriorReservation.find_by(email: "address_verification@example.com") # address_verification don't get migrated
+    assert_not PriorReservation.find_by(email: "donation@example.com") # donation_type_selection don't get migrated
+    assert PriorReservation.find_by(email: "pending_pickup@example.com")
+    assert PriorReservation.find_by(email: "picked_up@example.com")
+    assert PriorReservation.find_by(email: "cancelled@example.com")
+    assert PriorReservation.find_by(email: "missing@example.com")
+  end
 end

@@ -61,7 +61,7 @@ class Reservation < ApplicationRecord
   def self.migrate_reservations!
     Reservation.active.each do |r|
       PriorReservation.where(email: r.email).destroy_all
-      PriorReservation.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street, last_event_date: Setting.instance.event_pickup)
+      PriorReservation.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
     end
     Reservation.destroy_all
   end

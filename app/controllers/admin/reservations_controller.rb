@@ -32,7 +32,7 @@ class Admin::ReservationsController < Admin::BaseController
 
   def reservation_params
     params.require(:reservation).permit(
-      :name, :email, :phone, :street, :city, :state, :country,
+      :name, :email, :mobile, :street, :city, :state, :country,
       :route_id, :status, :notes, :donation
     )
   end

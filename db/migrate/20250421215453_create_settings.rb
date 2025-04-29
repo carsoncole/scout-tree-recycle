@@ -14,7 +14,7 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.string "contact_name"
       t.string "contact_email"
       t.string "contact_phone"
-      t.text "description"
+      t.text "about_event_description"
       t.text "on_day_of_pickup_instructions"
       t.boolean "is_reservations_open", default: true
       t.boolean "is_emailing_enabled", default: true

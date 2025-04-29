@@ -172,6 +172,13 @@
                   </div>
 
                   <div>
+                    <%= label_tag "setting[about_event_description]", "About Event Description", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= text_area_tag "setting[about_event_description]", setting.about_event_description, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
                     <%= label_tag "setting[reservations_closed_message]", "Reservations Closed Message", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
                     <div>
                       <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>

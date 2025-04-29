@@ -17,22 +17,20 @@ unless Route.any?
   end
 end
 
-unless Reservation.any?
-  30.times do
-    FactoryBot.create(:pending_pickup_reservation, phone: [Faker::PhoneNumber.cell_phone, nil].sample)
-  end
+Reservation.destroy_all
+100.times do
+  FactoryBot.create(:pending_pickup_reservation, phone: [Faker::PhoneNumber.cell_phone, nil].sample)
 end
-
-unless PriorReservation.any?
-  100.times do
-    FactoryBot.create(:prior_reservation)
-    FactoryBot.create(:prior_reservation_with_phone)
-  end
-
-
-  PriorReservation.all.each do |reservation|
-    reservation.update(marketing_1_email_sent_at: [Time.now, nil].sample)
-  end
+15.times do
+  FactoryBot.create(:reservation, status: :cancelled,phone: [Faker::PhoneNumber.cell_phone, nil].sample)
+end
+3.times do
+  FactoryBot.create(:reservation, status: :missing, phone: [Faker::PhoneNumber.cell_phone, nil].sample)
 end
 
 
+PriorReservation.destroy_all
+100.times do
+  method = [:prior_reservation, :prior_reservation_with_street,:prior_reservation_with_street].sample
+  reservation = FactoryBot.create(method, marketing_1_email_sent_at: [Time.now, nil].sample)
+end

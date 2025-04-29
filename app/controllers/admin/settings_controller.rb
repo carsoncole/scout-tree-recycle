@@ -28,6 +28,7 @@ class Admin::SettingsController < Admin::BaseController
       :site_title,
       :home_page_header,
       :organization_name,
+      :organization_url,
       :site_description,
       :reservations_closed_message,
       :event_pickup,
@@ -35,6 +36,7 @@ class Admin::SettingsController < Admin::BaseController
       :event_sign_up_deadline,
       :default_city,
       :default_state,
+      :country,
       :on_day_of_pickup_instructions,
       :is_reservations_open,
       :is_emailing_enabled,
@@ -43,7 +45,10 @@ class Admin::SettingsController < Admin::BaseController
       :contact_name,
       :contact_email,
       :contact_phone,
-      :driver_secret_key
+      :driver_secret_key,
+      :description,
+      :email_batch_quantity,
+      :email_from
     )
   end
 end

@@ -1,0 +1,9 @@
+<footer class="my-10 p-5 flex justify-center items-center">
+  <p class="text-sm text-gray-500 dark:text-gray-400">
+    <% if setting.organization_url.present? %>
+      <%= link_to setting.organization_name, setting.organization_url, target: "_blank" %>
+    <% else %>
+      <%= Setting.instance.organization_name %>
+    <% end %>
+  </p>
+</footer>

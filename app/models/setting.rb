@@ -1,7 +1,8 @@
 class Setting < ApplicationRecord
-  attribute :site_title, :string, default: 'Tree Recycle'
-  attribute :home_page_header, :string, default: 'Tree Recycle'
+  attribute :site_title, :string, default: 'Troop 100Tree Recycle'
+  attribute :home_page_header, :string, default: 'Tropp 100 Tree Recycle'
   attribute :organization_name, :string, default: 'Troop 100'
+  attribute :organization_url, :string
   attribute :event_pickup, :datetime, default: '2099-01-06 08:00:00 -0800'
   attribute :event_pickup_end, :datetime, default: '2099-01-06 15:00:00 -0800'
   attribute :event_sign_up_deadline, :datetime, default: '2099-01-05 11:59:00 -0800'

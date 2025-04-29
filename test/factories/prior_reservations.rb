@@ -4,7 +4,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
 
     factory :prior_reservation_with_phone do
-      phone { Faker::PhoneNumber.cell_phone }
+      mobile { Faker::PhoneNumber.cell_phone }
     end
 
     factory :prior_reservation_with_street do

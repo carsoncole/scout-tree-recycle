@@ -27,8 +27,8 @@ class ReservationTest < ActiveSupport::TestCase
     assert_includes @reservation.errors[:email], "can't be blank"
   end
 
-  test "phone is optional" do
-    @reservation.phone = nil
+  test "mobile is optional" do
+    @reservation.mobile = nil
     assert @reservation.valid?
   end
 
@@ -117,21 +117,21 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal "pending_pickup", reservation.status
   end
 
-  test "normalizing of phone number" do
-    reservation = create(:reservation, phone: "1234567890")
-    assert_equal "+11234567890", reservation.phone
+  test "normalizing of mobile number" do
+    reservation = create(:reservation, mobile: "1234567890")
+    assert_equal "+11234567890", reservation.mobile
 
-    reservation = create(:reservation, phone: "123-456-7890")
-    assert_equal "+11234567890", reservation.phone
+    reservation = create(:reservation, mobile: "123-456-7890")
+    assert_equal "+11234567890", reservation.mobile
 
-    reservation = create(:reservation, phone: "(123) 456-7890")
-    assert_equal "+11234567890", reservation.phone
+    reservation = create(:reservation, mobile: "(123) 456-7890")
+    assert_equal "+11234567890", reservation.mobile
 
-    reservation = create(:reservation, phone: "(123)456-7890")
-    assert_equal "+11234567890", reservation.phone
+    reservation = create(:reservation, mobile: "(123)456-7890")
+    assert_equal "+11234567890", reservation.mobile
 
-    reservation = create(:reservation, phone: "123.456.7890")
-    assert_equal "+11234567890", reservation.phone
+    reservation = create(:reservation, mobile: "123.456.7890")
+    assert_equal "+11234567890", reservation.mobile
   end
 
   test "downcasing of email" do

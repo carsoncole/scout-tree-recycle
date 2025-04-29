@@ -4,8 +4,7 @@ class CreatePriorReservations < ActiveRecord::Migration[8.0]
       t.string :name
       t.string :street
       t.string :email
-      t.string :phone
-      t.date :last_event_date
+      t.string :mobile
       t.datetime :marketing_1_email_sent_at
       t.datetime :marketing_2_email_sent_at
       t.index ["email"], name: "index_prior_reservations_on_email"

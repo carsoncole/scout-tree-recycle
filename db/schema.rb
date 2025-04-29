@@ -77,8 +77,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.string "name"
     t.string "street"
     t.string "email"
-    t.string "phone"
-    t.date "last_event_date"
+    t.string "mobile"
     t.datetime "marketing_1_email_sent_at"
     t.datetime "marketing_2_email_sent_at"
     t.datetime "created_at", null: false
@@ -90,7 +89,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
   create_table "reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.string "phone"
+    t.string "mobile"
     t.string "street"
     t.string "house_number"
     t.string "street_name"
@@ -114,11 +113,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.integer "donation"
     t.boolean "is_geocoded", default: true
     t.boolean "is_door_hanger"
-    t.integer "collected"
-    t.decimal "collected_amount"
     t.boolean "is_route_polygon", default: false
-    t.string "admin_notes"
-    t.integer "years_recycling", default: 1
     t.boolean "is_marketing_1_email_sent", default: false
     t.boolean "is_marketing_2_email_sent", default: false
     t.boolean "is_pending_pickup_email_sent", default: false
@@ -129,8 +124,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_reservations_on_created_at"
     t.index ["email"], name: "index_reservations_on_email"
+    t.index ["mobile", "status"], name: "index_reservations_on_mobile_and_status"
     t.index ["name"], name: "index_reservations_on_name"
-    t.index ["phone", "status"], name: "index_reservations_on_phone_and_status"
     t.index ["route_id"], name: "index_reservations_on_route_id"
     t.index ["status", "email"], name: "index_reservations_on_status_and_email"
     t.index ["status", "route_id"], name: "index_reservations_on_status_and_route_id"
@@ -159,6 +154,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_033622) do
     t.string "home_page_header"
     t.text "site_description"
     t.string "organization_name"
+    t.string "organization_url"
     t.datetime "event_pickup"
     t.datetime "event_pickup_end"
     t.datetime "event_sign_up_deadline"

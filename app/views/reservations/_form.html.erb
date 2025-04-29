@@ -29,33 +29,37 @@
 
     <div>
       <%= f.label :street, "Street Address *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-      <div class="mt-2">
-        <%= f.text_field :street, required: true, value: @reservation.street, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
-      </div>
-      <div class="mt-2">
-        <%= f.text_field :city, value: @reservation.city, disabled: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed" %>
-      </div>
-    </div>
-
-    <div>
-      <%= f.label :email, "Email *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-      <div class="mt-2">
-        <%= f.email_field :email, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+      <div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <div class="sm:col-span-2">
+          <%= f.text_field :street, required: true, value: @reservation.street, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+        </div>
+        <div class="sm:col-span-2">
+          <%= f.text_field :city, value: @reservation.city, disabled: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed" %>
+        </div>
       </div>
     </div>
 
-    <div>
-      <%= f.label :phone, "Mobile (Recommended)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-      <div class="mt-2">
-        <%= f.telephone_field :phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
-        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">We'll use this to contact you if we can't find your tree.</p>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <%= f.label :email, "Email *", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+        <div class="mt-2">
+          <%= f.email_field :email, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :mobile, "Mobile (Recommended)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+        <div class="mt-2">
+          <%= f.telephone_field :mobile, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">We'll use this to contact you if we can't find your tree.</p>
+        </div>
       </div>
     </div>
 
     <div>
       <%= f.label :notes, "Notes", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
       <div class="mt-2">
-        <%= f.text_area :notes, rows: 3, placeholder: "Where will your tree be?", class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
+        <%= f.text_area :notes, rows: 2, placeholder: "Where will your tree be?", class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
       </div>
     </div>
   </div>

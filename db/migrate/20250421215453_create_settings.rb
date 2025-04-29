@@ -5,6 +5,7 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.string "home_page_header"
       t.text "site_description"
       t.string "organization_name"
+      t.string "organization_url"
       t.datetime "event_pickup"
       t.datetime "event_pickup_end"
       t.datetime "event_sign_up_deadline"

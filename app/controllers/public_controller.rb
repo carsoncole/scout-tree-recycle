@@ -3,7 +3,7 @@ class PublicController < ApplicationController
     if params[:prior_reservation_id]
       prior_reservation = PriorReservation.find_by(id: params[:prior_reservation_id])
       if prior_reservation
-        @reservation = Reservation.new(email: prior_reservation.email, street: prior_reservation.street, name: prior_reservation.name, phone: prior_reservation.phone)
+        @reservation = Reservation.new(email: prior_reservation.email, street: prior_reservation.street, name: prior_reservation.name, mobile: prior_reservation.mobile)
       else
         @reservation = Reservation.new
       end
@@ -29,6 +29,6 @@ class PublicController < ApplicationController
   private
 
   def reservation_params
-    params.require(:reservation).permit(:name, :street, :city, :email, :phone, :notes)
+    params.require(:reservation).permit(:name, :street, :city, :email, :mobile, :notes)
   end
 end

@@ -11,7 +11,7 @@
       </div>
       <div class="prose dark:prose-invert max-w-none">
         <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl mb-20">
-          Tree pickup details
+          About
         </h1>
 
 
@@ -19,9 +19,20 @@
           <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white"><%= setting.organization_name %></h2>
 
-            <p class="text-lg text-gray-700 dark:text-gray-300">
-              <%= setting.description %>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-3">
+              <%= setting.about_event_description %>
             </p>
+
+            <% if setting.organization_url.present? %>
+              <p class="text-lg text-gray-700 dark:text-gray-300">
+                <%= link_to setting.organization_url, target: "_blank", class: "inline-flex items-center" do %>
+                  Learn more
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                <% end %>
+              </p>
+            <% end %>
           </div>
 
           <div>
@@ -37,9 +48,30 @@
           </div>
 
           <div>
-            <h4 class="text-lg font-medium text-gray-900 dark:text-white">Trees should be ready for pickup starting at</h4>
-            <p class="text-gray-700 dark:text-gray-300"><%= setting.event_pickup.strftime("%l:%M%P") %></p>
+            <h4 class="text-lg font-medium text-gray-900 dark:text-white">Your tree should be ready for pickup:</h4>
+            <p class="text-gray-700 dark:text-gray-300">
+              <%= setting.event_pickup.strftime("%l:%M%P") %>
+              -
+              <%= setting.event_pickup_end.strftime("%l:%M%P") %>
+            </p>
           </div>
+
+          <% if setting.contact_email.present? || setting.contact_phone.present? %> 
+            <div>
+              <h4 class="text-lg font-medium text-gray-900 dark:text-white">Questions?</h4>
+              <p class="text-gray-700 dark:text-gray-300">
+                  
+                <% if setting.contact_name.present? %>
+                  Contact <%= setting.contact_name %>
+                <% else %>
+                  Contact us  
+                <% end %>
+                at
+                <%= [setting.contact_email, setting.contact_phone].compact.join(" or ") %>
+                
+              </p>
+            </div>
+          <% end %>
         </div>
 
       </div>

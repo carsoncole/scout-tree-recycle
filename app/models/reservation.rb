@@ -15,6 +15,8 @@ class Reservation < ApplicationRecord
   attribute :state, :string, default: -> { Setting.instance.default_state }
   attribute :country, :string, default: "United States"
 
+  scope :active, -> { where(status: ['pending_pickup', 'picked_up', 'missing', 'cancelled'])}
+
   before_validation :normalize_phone!
   before_validation :downcase_email!
 
@@ -54,6 +56,14 @@ class Reservation < ApplicationRecord
 
   def send_cancelled_reservation_email!
     ReservationsMailer.with(reservation: self).cancelled_reservation_email.deliver_later
+  end
+
+  def self.migrate_reservations!
+    Reservation.active.each do |r|
+      PriorReservation.where(email: r.email).destroy_all
+      PriorReservation.create(email: r.email, name: r.name, phone: r.phone, street: r.street, last_event_date: Setting.instance.event_pickup)
+    end
+    Reservation.destroy_all
   end
 
   private

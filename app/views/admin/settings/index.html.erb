@@ -43,9 +43,9 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open, 
+                        <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open,
                             class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: { 
+                            data: {
                               toggle_target: "toggle",
                               setting: "is_reservations_open"
                             } %>
@@ -61,9 +61,9 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Send email notifications and marketing emails to users</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled, 
+                        <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
                             class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: { 
+                            data: {
                               toggle_target: "toggle",
                               setting: "is_emailing_enabled"
                             } %>
@@ -79,9 +79,9 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Send SMS notifications to users</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled, 
+                        <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled,
                             class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: { 
+                            data: {
                               toggle_target: "toggle",
                               setting: "is_sms_enabled"
                             } %>
@@ -89,7 +89,7 @@
                     </div>
                   </div>
 
-                
+
                 </div>
               </div>
 
@@ -107,9 +107,9 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Enable the driver portal for tree pickup management</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_driver_site_enabled]", "1", setting.is_driver_site_enabled, 
+                        <%= check_box_tag "setting[is_driver_site_enabled]", "1", setting.is_driver_site_enabled,
                             class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: { 
+                            data: {
                               toggle_target: "toggle",
                               setting: "is_driver_site_enabled"
                             } %>
@@ -260,7 +260,7 @@
                     <div>
                       <%= label_tag "setting[email_batch_quantity]", "Email Batch Quantity", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
                       <div>
-                        <%= number_field_tag "setting[email_batch_quantity]", setting.email_batch_quantity, 
+                        <%= number_field_tag "setting[email_batch_quantity]", setting.email_batch_quantity,
                             class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2",
                             min: 1,
                             step: 1 %>
@@ -271,7 +271,7 @@
                     <div>
                       <%= label_tag "setting[email_from]", "From Email Address", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
                       <div>
-                        <%= text_field_tag "setting[email_from]", setting.email_from, 
+                        <%= text_field_tag "setting[email_from]", setting.email_from,
                             class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Email address to send marketing emails from</p>
                       </div>
@@ -280,13 +280,42 @@
                 </div>
               </div>
 
+
+
               <div class="flex justify-end">
                 <%= submit_tag "Save Changes", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
               </div>
             <% end %>
+            <!-- Operations Section -->
+            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Operations</h2>
+              <div class="space-y-4">
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Migrate Reservations</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Migrate reservations to marketing</p>
+                    </div>
+                    <div class="flex items-center">
+                      <%= button_to admin_migrate_reservations_path,
+                          class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                          data: {
+                            turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to prior reservations which will be used for marketing. This action cannot be undone. ",
+                            turbo_method: :post
+                          } do %>
+                        <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                        Migrate
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div> 
+</div>

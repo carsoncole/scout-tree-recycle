@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   # Public pages
   root "public#index"
 
@@ -35,6 +34,10 @@ Rails.application.routes.draw do
     resources :zones
     delete "logs", to: "logs#destroy"
     resources :logs, only: [:index]
+
+    # Operations
+    post 'migrate_reservations', to: 'operations#migrate_reservations'
+
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

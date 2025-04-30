@@ -36,8 +36,12 @@ Rails.application.routes.draw do
     resources :logs, only: [:index]
 
     # Operations
-    post 'migrate_reservations', to: 'operations#migrate_reservations'
+    post 'post-event-cleanup', to: 'operations#post_event_cleanup'
 
+    # Marketing
+    post 'send-marketing-email-1', to: 'marketing#send_marketing_email_1', as: :send_marketing_email_1
+    post 'send-marketing-email-2', to: 'marketing#send_marketing_email_2', as: :send_marketing_email_2
+  
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

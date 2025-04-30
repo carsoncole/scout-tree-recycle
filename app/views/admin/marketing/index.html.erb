@@ -16,6 +16,32 @@
         </p>
       </div>
 
+      <div class="flex justify-center space-x-4 mb-8">
+        <div class="flex flex-col items-center">
+          <%= button_to admin_send_marketing_email_1_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            Send Marketing Email 1
+          <% end %>
+          <span class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <%= PriorReservation.where(marketing_1_email_sent_at: nil).count %> emails remaining
+          </span>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <%= button_to admin_send_marketing_email_2_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            Send Marketing Email 2
+          <% end %>
+          <span class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <%= PriorReservation.where(marketing_2_email_sent_at: nil).count %> emails remaining
+          </span>
+        </div>
+      </div>
+
       <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
         <div class="px-4 py-5 sm:p-6">
           <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Prior Reservations</h2>

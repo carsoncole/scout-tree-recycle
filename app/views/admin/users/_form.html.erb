@@ -1,4 +1,4 @@
-<%= form_with(model: [:admin, user], class: "space-y-8 divide-y divide-gray-200 dark:divide-gray-700") do |form| %>
+<%= form_with(model: [:admin, user], class: "space-y-8 divide-y divide-gray-200 dark:divide-gray-700 max-w-xl mx-auto") do |form| %>
   <% if user.errors.any? %>
     <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
       <div class="flex">
@@ -31,24 +31,34 @@
       </div>
 
       <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-        <div class="sm:col-span-4">
+        <div class="sm:col-span-6">
           <%= form.label :email_address, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
             <%= form.email_field :email_address, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
           </div>
         </div>
 
-        <div class="sm:col-span-4">
+        <div class="sm:col-span-6">
           <%= form.label :password, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
             <%= form.password_field :password, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
           </div>
         </div>
 
-        <div class="sm:col-span-4">
+        <div class="sm:col-span-6">
           <%= form.label :password_confirmation, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
             <%= form.password_field :password_confirmation, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
+          </div>
+        </div>
+
+        <div class="sm:col-span-6 mb-6">
+          <%= form.label :role, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <div class="mt-2">
+            <%= form.select :role, 
+                options_for_select([['User', 'user'], ['Admin', 'admin']], user.role),
+                {},
+                class: "block w-[10ch] rounded-md border-0 py-2 px-2 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
           </div>
         </div>
       </div>

@@ -17,10 +17,11 @@ class Reservation < ApplicationRecord
 
   scope :active, -> { where(status: ['pending_pickup', 'picked_up', 'missing', 'cancelled'])}
 
-  before_validation :normalize_phone!
-  normalizes :email_address, with: ->(e) { e.strip.downcase }
+  # data normalization
+  normalizes :email, with: -> e { e.strip.downcase }
+  normalizes :mobile, with: -> m { Phonelib.parse(m).full_e164.presence if m.present? }
 
-  # destroy any not pending reservations
+  # destroy any related not pending reservations
   before_validation :destroy_not_pending_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
 
   # email delivery
@@ -64,10 +65,6 @@ class Reservation < ApplicationRecord
       PriorReservation.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
     end
     Reservation.destroy_all
-  end
-
-  def normalize_phone!
-    self.mobile = Phonelib.parse(mobile).full_e164.presence if mobile.present?
   end
 
 end

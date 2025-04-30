@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   # Public pages
   root "public#index"
 
@@ -34,6 +36,7 @@ Rails.application.routes.draw do
     resources :zones
     delete "logs", to: "logs#destroy"
     resources :logs, only: [:index]
+    resources :users
 
     # Operations
     post 'post-event-cleanup', to: 'operations#post_event_cleanup'

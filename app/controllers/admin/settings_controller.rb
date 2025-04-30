@@ -4,10 +4,14 @@ class Admin::SettingsController < Admin::BaseController
   end
 
   def update
-    if helpers.setting.update(setting_params)
-      redirect_to admin_settings_path, notice: "Settings were successfully updated."
+    if Current.user.admin?
+      if helpers.setting.update(setting_params)
+        redirect_to admin_settings_path, notice: "Settings were successfully updated."
+      else
+        render :index, status: :unprocessable_entity
+      end
     else
-      render :index, status: :unprocessable_entity
+      redirect_to admin_settings_path, alert: "You are not authorized to update settings."
     end
   end
 

@@ -1,10 +1,10 @@
 <%= form_with(model: [:admin, driver], class: "space-y-8 divide-y divide-gray-200 dark:divide-gray-700") do |f| %>
   <% if driver.errors.any? %>
-    <div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4">
+    <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
       <div class="flex">
         <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          <svg class="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
           </svg>
         </div>
         <div class="ml-3">
@@ -12,7 +12,7 @@
             <%= pluralize(driver.errors.count, "error") %> prohibited this driver from being saved:
           </h3>
           <div class="mt-2 text-sm text-red-700 dark:text-red-300">
-            <ul class="list-disc pl-5 space-y-1">
+            <ul role="list" class="list-disc space-y-1 pl-5">
               <% driver.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
               <% end %>
@@ -25,34 +25,39 @@
 
   <div class="space-y-8 divide-y divide-gray-200 dark:divide-gray-700">
     <div class="pt-8">
-      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-        <div class="sm:col-span-3">
-          <%= f.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-          <div class="mt-1">
-            <%= f.text_field :name, class: "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" %>
-          </div>
-        </div>
+      <div>
+        <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">Driver Information</h3>
+        <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">Enter the driver's details below.</p>
+      </div>
 
-        <div class="sm:col-span-4">
-          <%= f.label :email, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-          <div class="mt-1">
-            <%= f.email_field :email, class: "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" %>
-          </div>
-        </div>
-
-        <div class="sm:col-span-4">
-          <%= f.label :mobile, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-          <div class="mt-1">
-            <%= f.telephone_field :mobile, class: "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" %>
+      <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-6">
+          <%= f.label :name, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <div class="mt-2">
+            <%= f.text_field :name, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
           </div>
         </div>
 
         <div class="sm:col-span-6">
-          <%= f.label :route_ids, "Routes", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-          <div class="mt-1">
+          <%= f.label :email, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <div class="mt-2">
+            <%= f.email_field :email, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
+          </div>
+        </div>
+
+        <div class="sm:col-span-6">
+          <%= f.label :mobile, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <div class="mt-2">
+            <%= f.telephone_field :mobile, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
+          </div>
+        </div>
+
+        <div class="sm:col-span-6">
+          <%= f.label :route_ids, "Routes", class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <div class="mt-2">
             <%= f.collection_check_boxes :route_ids, Route.all, :id, :name do |b| %>
               <div class="flex items-center mb-2">
-                <%= b.check_box class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded" %>
+                <%= b.check_box class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded" %>
                 <%= b.label class: "ml-2 block text-sm text-gray-900 dark:text-white" %>
               </div>
             <% end %>
@@ -62,10 +67,8 @@
     </div>
   </div>
 
-  <div class="pt-5">
-    <div class="flex justify-end">
-      <%= link_to "Cancel", admin_drivers_path, class: "bg-white dark:bg-gray-700 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-      <%= f.submit class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-    </div>
+  <div class="mt-6 flex items-center justify-end gap-x-6">
+    <%= link_to "Cancel", admin_drivers_path, class: "text-sm font-semibold leading-6 text-gray-900 dark:text-white" %>
+    <%= f.submit class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
   </div>
 <% end %>

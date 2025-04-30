@@ -45,6 +45,6 @@ class Admin::ZonesController < Admin::BaseController
   end
 
   def zone_params
-    params.require(:zone).permit(:name, :street, :city, :state, :country)
+    params.require(:zone).permit(:name, route_ids: [])
   end
 end

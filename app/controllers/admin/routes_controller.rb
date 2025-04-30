@@ -45,8 +45,6 @@ class Admin::RoutesController < Admin::BaseController
   end
 
   def route_params
-    params.require(:route).permit(:name, :street, :city, :state, :country,
-                                :distance, :latitude, :longitude, :zone_id,
-                                :distance_to_zone)
+    params.require(:route).permit(:name, :zone_id)
   end
 end

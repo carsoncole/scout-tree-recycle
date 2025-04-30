@@ -4,19 +4,14 @@ class Route < ApplicationRecord
   default_scope { order(name: :asc) }
 
   has_many :reservations, dependent: :nullify
-
   has_many :driver_routes, dependent: :destroy
   has_many :drivers, through: :driver_routes
-  # has_many :points, dependent: :destroy
-
   belongs_to :zone, optional: true
 
   validates :name, presence: true
   validates :name, length: { maximum: 40 }
 
   scope :unzoned, -> { where(zone_id: nil) }
-
-  # after_validation :zone!, if: ->(obj){ obj.geocoded? && obj.is_zoned? && (obj.latitude_changed? && (obj.persisted? || obj.zone_id.nil?)) }
 
   attribute :is_zoned, :boolean, default: true
 

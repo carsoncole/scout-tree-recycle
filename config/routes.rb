@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resource :session
+  
   resources :passwords, param: :token
   # Public pages
   root "public#index"
@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
   # Admin pages
   namespace :admin do
+    resource :session
     root to: "reservations#index"
     get "marketing/index"
     resources :reservations, only: [:index, :show, :edit, :update]

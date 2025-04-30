@@ -1,5 +1,4 @@
 class DonationsController < ApplicationController
-  allow_unauthenticated_access
   
   before_action :set_reservation, only: %i[ new create ]
 

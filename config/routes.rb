@@ -36,8 +36,8 @@ Rails.application.routes.draw do
     end
     resources :routes
     resources :zones
-    delete "logs", to: "logs#destroy"
-    resources :logs, only: [:index]
+    delete "logs", to: "logs#destroy_all", as: :destroy_all_logs
+    resources :logs, only: [:index, :show, :destroy]
     resources :users
     resources :prior_reservations, only: [:destroy]
 

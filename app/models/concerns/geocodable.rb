@@ -34,15 +34,14 @@ module Geocodable
       self.street_name = nil
       self.route_id = nil if self.class == Reservation && self.is_routed
       if Geocoder.config.lookup == :nominatum
-        begin
+        Rails.error.handle do
           results = Geocoder.search(self.address)
           self.latitude = results.as_json[0]["data"]["lat"]
           self.longitude = results.as_json[0]["data"]["lon"]
           self.house_number = results.as_json[0]["data"]["address"]["house_number"]
           self.street_name = results.as_json[0]["data"]["address"]["road"]
-        rescue
-          geocode
         end
+        geocode
       elsif Geocoder.config.lookup == :amazon_location_service
         # multiple results (seems like 2) can be return, the second being a coordinate of just the street, not number
         Rails.error.handle do

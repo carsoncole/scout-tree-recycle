@@ -5,7 +5,7 @@ class Reservation < ApplicationRecord
   has_one :zone, through: :route
   has_many :donations, dependent: :nullify
 
-  validates :name, :street, :email, :city, :state, presence: true
+  validates :name, :street, :email, :city, :state, :country, presence: true
   validates :email, uniqueness: true
 
   enum :status, { reservation_form: 0, address_verification: 1,  donation_type_selection: 2, pending_pickup: 3,picked_up: 4, missing: 5, cancelled: 6 }, default: :reservation_form

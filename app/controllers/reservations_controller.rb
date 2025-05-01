@@ -12,10 +12,10 @@ class ReservationsController < ApplicationController
       if @reservation.reservation_form?
         redirect_to reservation_address_verification_url(@reservation)
       elsif
-        @reservation.pending_pickup!
+        @reservation.pending_pickup?
         redirect_to new_reservation_donation_url(@reservation)
       else
-        @reservation.address_verification!
+        @reservation.address_verification?
         redirect_to reservation_address_verification_url(@reservation)
       end
     else

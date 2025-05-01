@@ -107,9 +107,10 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "before_validation :destroy_not_pending_reservations! removes not pending reservations" do
-    reservation = create(:reservation, email: "test@example.com", status: :reservation_form)
+    reservation = create(:reservation, email: "test@example.com")
     assert_equal reservation.id, Reservation.find_by(email: "test@example.com").id
-    new_reservation = create(:reservation, email: "test@example.com", status: :donation_type_selection)
+    assert_equal "reservation_form", Reservation.find_by(email: "test@example.com").status
+    new_reservation = create(:reservation, email: "test@example.com")
 
     assert_not Reservation.find_by(id: reservation.id)
     assert Reservation.find_by(id: new_reservation.id)

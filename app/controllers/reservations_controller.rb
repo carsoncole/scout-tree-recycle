@@ -52,7 +52,7 @@ class ReservationsController < ApplicationController
   def update
     if Reservation.open?
       @reservation.update(reservation_params)
-      redirect_to reservation_confirmation_path(@reservation)
+      redirect_to reservation_confirmation_path(@reservation), notice: "Reservation updated."
     else
       redirect_to reservation_url, alert: "Reservations are no longer changeable. #{view_context.link_to('Contact us', '/questions')} if you have questions."
     end

@@ -21,7 +21,7 @@ class Reservation < ApplicationRecord
   normalizes :email, with: -> e { e.strip.downcase }
   normalizes :mobile, with: -> m { Phonelib.parse(m).full_e164.presence if m.present? }
 
-  # destroy any related not pending reservations
+  # destroy any same-email not pending reservations since they're not needed
   before_validation :destroy_not_pending_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
 
   # email delivery

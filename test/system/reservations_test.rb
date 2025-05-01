@@ -26,26 +26,24 @@ class ReservationsTest < ApplicationSystemTestCase
 
   # test starting a reservation but stopping at donation, then trying again later from start
   test "starting a reservation but stopping at donation, then trying again later from start" do
-    reservation = build(:reservation)
-
     visit root_url
-    fill_in "Name", with: reservation.name
+    fill_in "Name", with: "Charlie"
     fill_in "Street", with: '1 Main Street'
-    fill_in "Email", with: reservation.email
+    fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
 
-    sleep 0.25
+    sleep 0.35
     assert_equal 1, Reservation.donation_type_selection.count
 
     visit root_url
-    fill_in "Name", with: reservation.name
+    fill_in "Name", with: "Charlie"
     fill_in "Street", with: '100 Main St'
-    fill_in "Email", with: reservation.email
+    fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
 
     sleep 0.25
     assert_equal 1, Reservation.donation_type_selection.count
-    assert_equal '100 Main St', Reservation.find_by(email: reservation.email).street
+    assert_equal '100 Main St', Reservation.find_by(email: "test@example.com").street
 
     click_button "Select donation type"
     sleep 0.25
@@ -95,7 +93,8 @@ class ReservationsTest < ApplicationSystemTestCase
     accept_confirm
     sleep 0.25
     assert_equal 0, Reservation.pending_pickup.count
-    assert_equal "cancelled", Reservation.find_by(id: reservation.id).status
+    assert_text "Your tree pickup has been cancelled."
+    assert Reservation.find_by(id: reservation.id).cancelled?
   end
 
   test "cannot create reservation with duplicate email" do
@@ -120,4 +119,23 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_equal 1, Reservation.where(email: "test@example.com").count
   end
 
+  test "editing a reservation" do
+    visit root_url
+    fill_in "Name", with: Faker::Name.name
+    fill_in "Street", with: Faker::Address.street_address
+    fill_in "Email", with: Faker::Internet.email
+    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
+    click_button "Create Reservation"
+    click_button "Select donation type"
+    assert_text "Reservation Confirmed"
+
+    click_link "Edit Reservation"
+    fill_in "Name", with: "Joey"
+    fill_in "Street", with: Faker::Address.street_address
+    fill_in "Email", with: Faker::Internet.email
+    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
+    click_button "Update Reservation"
+    assert_text "Joey"
+    assert_text "Reservation updated."
+  end
 end

@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
   # Admin pages
   namespace :admin do
+    get "prior_reservations/destroy"
     resource :session
     root to: "reservations#index"
     get "marketing/index"
@@ -38,6 +39,7 @@ Rails.application.routes.draw do
     delete "logs", to: "logs#destroy"
     resources :logs, only: [:index]
     resources :users
+    resources :prior_reservations, only: [:destroy]
 
     # Operations
     post 'post-event-cleanup', to: 'operations#post_event_cleanup'

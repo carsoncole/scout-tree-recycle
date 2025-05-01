@@ -106,15 +106,24 @@ class ReservationTest < ActiveSupport::TestCase
     assert_includes reservation.errors[:email], "has already been taken"
   end
 
+  test "before_validation :destroy_not_pending_reservations! removes not pending reservations" do
+    reservation = create(:reservation, email: "test@example.com", status: :reservation_form)
+    assert_equal reservation.id, Reservation.find_by(email: "test@example.com").id
+    new_reservation = create(:reservation, email: "test@example.com", status: :donation_type_selection)
+
+    assert_not Reservation.find_by(id: reservation.id)
+    assert Reservation.find_by(id: new_reservation.id)
+  end
+
   # remove existing prior_reservation (same email) when reservation becomes pending pickup
   test "removing prior reservation on pending pickup" do
     prior = create(:prior_reservation, email: "test@example.com")
-    reservation = create(:reservation, email: "test@example.com")
+    reservation = create(:reservation, status: :donation_type_selection, email: "test@example.com")
     assert PriorReservation.find_by(email: "test@example.com")
-    reservation.update(status: :pending_pickup)
+    reservation.pending_pickup!
     assert_not PriorReservation.find_by(email: "test@example.com")
     assert Reservation.find_by(email: "test@example.com")
-    assert_equal "pending_pickup", reservation.status
+    assert reservation.pending_pickup?
   end
 
   test "normalizing of mobile number" do

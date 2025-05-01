@@ -1,3 +1,3 @@
-Rails.application.config.to_prepare do
-  Rails.error.subscribe(ErrorLogSubscriber.new)
-end
+require Rails.root.join('lib/error_log_subscriber')
+
+Rails.error.subscribe(ErrorLogSubscriber.new)

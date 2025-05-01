@@ -44,12 +44,15 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open,
-                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_reservations_open"
-                            } %>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open,
+                              class: "sr-only peer",
+                              data: {
+                                toggle_target: "toggle",
+                                setting: "is_reservations_open"
+                              } %>
+                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -62,12 +65,15 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Send email notifications and marketing emails to users</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
-                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_emailing_enabled"
-                            } %>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
+                              class: "sr-only peer",
+                              data: {
+                                toggle_target: "toggle",
+                                setting: "is_emailing_enabled"
+                              } %>
+                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -80,12 +86,15 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Send SMS notifications to users</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled,
-                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_sms_enabled"
-                            } %>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled,
+                              class: "sr-only peer",
+                              data: {
+                                toggle_target: "toggle",
+                                setting: "is_sms_enabled"
+                              } %>
+                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -108,12 +117,15 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Enable the driver portal for tree pickup management</p>
                       </div>
                       <div class="flex items-center">
-                        <%= check_box_tag "setting[is_driver_site_enabled]", "1", setting.is_driver_site_enabled,
-                            class: "h-6 w-6 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:checked:bg-blue-600",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_driver_site_enabled"
-                            } %>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <%= check_box_tag "setting[is_driver_site_enabled]", "1", setting.is_driver_site_enabled,
+                              class: "sr-only peer",
+                              data: {
+                                toggle_target: "toggle",
+                                setting: "is_driver_site_enabled"
+                              } %>
+                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label>
                       </div>
                     </div>
                   </div>

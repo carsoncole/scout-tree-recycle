@@ -8,9 +8,15 @@ module ActiveSupport
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    def sign_in_as(user)
+      visit new_admin_session_url
+      fill_in "Email address", with: user.email_address
+      fill_in "Password", with: user.password
+      click_button "Sign in"
+      sleep 0.2
+    end
+
   end
 end

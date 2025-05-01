@@ -19,4 +19,21 @@ class Admin::LogsTest < ApplicationSystemTestCase
     assert_text "admin@example.com"
     assert_text "Info"
   end
+
+  test "deleting a log" do
+    log = Log.create(message: "Test log message", context: { user: @user.email_address })
+    visit admin_logs_url
+    click_on "Test log message"
+    click_on "Delete Log"
+    accept_confirm
+    assert_text "Log has been deleted successfully."
+  end
+
+  test "deleting all logs" do
+    log = create_list(:log, 20, message: "Test log message", context: { user: @user.email_address })
+    visit admin_logs_url
+    click_on "Delete All Logs"
+    accept_confirm
+    assert_text "All logs have been deleted successfully."
+  end
 end

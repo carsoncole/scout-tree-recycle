@@ -32,7 +32,7 @@ class ReservationsTest < ApplicationSystemTestCase
     fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
 
-    sleep 0.35
+    sleep 0.75
     assert_equal 1, Reservation.donation_type_selection.count
 
     visit root_url
@@ -41,9 +41,9 @@ class ReservationsTest < ApplicationSystemTestCase
     fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
 
-    sleep 0.25
-    assert_equal 1, Reservation.donation_type_selection.count
+    sleep 0.50
     assert_equal '100 Main St', Reservation.find_by(email: "test@example.com").street
+    assert_equal 1, Reservation.donation_type_selection.count
 
     click_button "Select donation type"
     sleep 0.25

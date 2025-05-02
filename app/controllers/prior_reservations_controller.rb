@@ -3,7 +3,7 @@ class PriorReservationsController < ApplicationController
   def unsubscribe
     @prior_reservation = PriorReservation.find_by(id: params[:id])
     if @prior_reservation.nil?
-      redirect_to root_path, alert: "Invalid unsubscribe link."
+      redirect_to root_path, alert: "Your email has already been unsubscribed."
     end
   end
 

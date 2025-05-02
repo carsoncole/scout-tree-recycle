@@ -31,7 +31,7 @@ class ReservationsController < ApplicationController
     @suggested_address = @reservation.suggested_address?
 
     if !@suggested_address.present?
-      @reservation.donation_type_selection!
+      @reservation.donation!
       redirect_to new_reservation_donation_url(@reservation)
     end
   end

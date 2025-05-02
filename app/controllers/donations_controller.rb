@@ -3,7 +3,7 @@ class DonationsController < ApplicationController
   before_action :set_reservation, only: %i[ new create ]
 
   def new
-    @reservation.donation_type_selection!
+    @reservation.donation!
   end
 
   def create

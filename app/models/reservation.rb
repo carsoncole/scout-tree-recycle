@@ -8,27 +8,28 @@ class Reservation < ApplicationRecord
   validates :name, :street, :email, :city, :state, :country, presence: true
   validates :email, uniqueness: true
 
-  enum :status, { reservation_form: 0, address_verification: 1,  donation_type_selection: 2, pending_pickup: 3,picked_up: 4, missing: 5, cancelled: 6 }, default: :reservation_form
-  enum :donation, { online_donation: 1, cash_or_check_donation: 2, no_donation: 3 }
+  enum :status, { reservation_form: 0, address_verification: 1,  donation: 2, routing: 3, pending_pickup: 4, picked_up: 5, missing: 6, cancelled: 7 }, default: :reservation_form
 
   attribute :city, :string, default: -> { Setting.instance.default_city }
   attribute :state, :string, default: -> { Setting.instance.default_state }
   attribute :country, :string, default: "United States"
 
-  scope :active, -> { where(status: ['pending_pickup', 'picked_up', 'missing', 'cancelled'])}
-  # scope :ungeocoded, -> { where(latitude: nil, longitude: nil) }
+  scope :completed, -> { where(status: ['routing','pending_pickup', 'picked_up', 'missing', 'cancelled'])}
+  scope :not_completed, -> { where.not(status: ['routing','pending_pickup', 'picked_up', 'missing', 'cancelled'])}
+  scope :active, -> { where(status: ['routing', 'pending_pickup'])}
+  scope :not_active, -> { where.not(status: ['routing', 'pending_pickup'])}
 
   # data normalization
   normalizes :email, with: -> e { e.strip.downcase }
   normalizes :mobile, with: -> m { Phonelib.parse(m).full_e164.presence if m.present? }
 
   # destroy any same-email not pending reservations since they're not needed
-  before_validation :destroy_not_pending_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
+  before_validation :destroy_not_active_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
 
   # email delivery
-  after_update :send_confirmed_reservation_email!, if: -> (obj){ obj.pending_pickup? && obj.saved_change_to_status? }
+  after_update :send_confirmed_reservation_email!, if: -> (obj){ obj.routing? && obj.saved_change_to_status? }
   after_update :send_cancelled_reservation_email!, if: -> (obj){ obj.cancelled? && obj.saved_change_to_status? }
-  after_save :remove_prior_reservation!, if: -> (obj){ obj.pending_pickup? && obj.saved_change_to_status? }
+  after_save :remove_prior_reservation!, if: -> (obj){ obj.routing? && obj.saved_change_to_status? }
 
   def self.open?
     Setting.instance.is_reservations_open?
@@ -42,9 +43,9 @@ class Reservation < ApplicationRecord
     nil
   end
 
-  def destroy_not_pending_reservations!
-    not_pending = Reservation.not_pending_pickup.where(email: email)
-    not_pending.destroy_all if not_pending.any?
+  def destroy_not_active_reservations!
+    not_active = Reservation.not_active.where(email: email)
+    not_active.destroy_all if not_active.any?
   end
 
   # remove prior reservation if it exists
@@ -61,7 +62,7 @@ class Reservation < ApplicationRecord
   end
 
   def self.migrate_reservations!
-    Reservation.active.each do |r|
+    Reservation.completed.each do |r|
       PriorReservation.where(email: r.email).destroy_all
       PriorReservation.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
     end

@@ -33,7 +33,7 @@ class ReservationsTest < ApplicationSystemTestCase
     click_button "Create Reservation"
 
     sleep 0.75
-    assert_equal 1, Reservation.donation_type_selection.count
+    assert_equal 1, Reservation.donation.count
 
     visit root_url
     fill_in "Name", with: "Charlie"
@@ -43,18 +43,16 @@ class ReservationsTest < ApplicationSystemTestCase
 
     sleep 0.50
     assert_equal '100 Main St', Reservation.find_by(email: "test@example.com").street
-    assert_equal 1, Reservation.donation_type_selection.count
+    assert_equal 1, Reservation.donation.count
 
     click_button "Select donation type"
     sleep 0.25
     assert_equal 1, Reservation.pending_pickup.count
   end
 
-
-
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
   test "making reservation and destroying all other non pending_pickup reservations" do
-    Reservation.statuses.except(*[:reservation_form, :donation_type_selection, :pending_pickup]).each do |status,id|
+    Reservation.statuses.except(*[:reservation_form, :donation, :address_verification, :routing, :pending_pickup]).each do |status,id|
       existing_reservation = create(:reservation, status: status, email: Faker::Internet.email)
       assert_equal 1, Reservation.send(status.to_sym).count
 
@@ -69,7 +67,7 @@ class ReservationsTest < ApplicationSystemTestCase
       new_reservation = Reservation.find_by(email: existing_reservation.email)
       sleep 0.25
       assert_equal 0, Reservation.where(id: existing_reservation.id).count
-      assert_equal "donation_type_selection", new_reservation.status
+      assert_equal "donation", new_reservation.status
     end
   end
 

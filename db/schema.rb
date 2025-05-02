@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_02_194544) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -104,17 +104,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_02_194544) do
     t.bigint "route_id"
     t.decimal "distance_to_route"
     t.integer "status"
-    t.boolean "no_emails", default: false
     t.string "route_name"
     t.boolean "is_routed", default: true
     t.integer "heard_about_source"
     t.string "unit"
-    t.boolean "no_sms", default: false
     t.boolean "is_geocoded", default: true
     t.boolean "is_door_hanger"
     t.boolean "is_route_polygon", default: false
-    t.boolean "is_marketing_1_email_sent", default: false
-    t.boolean "is_marketing_2_email_sent", default: false
     t.boolean "is_pending_pickup_email_sent", default: false
     t.boolean "is_missing_tree_email_sent", default: false
     t.boolean "is_pickup_reminder_email_sent", default: false
@@ -192,12 +188,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_02_194544) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email_address", null: false
+    t.string "email", null: false
     t.string "password_digest", null: false
     t.string "role", default: "user", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "zones", force: :cascade do |t|

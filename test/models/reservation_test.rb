@@ -117,14 +117,14 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   # remove existing prior_reservation (same email) when reservation becomes pending pickup
-  test "removing prior reservation on pending pickup" do
+  test "removing prior reservation on routing" do
     prior = create(:prior_reservation, email: "test@example.com")
     reservation = create(:reservation, status: :donation, email: "test@example.com")
     assert PriorReservation.find_by(email: "test@example.com")
-    reservation.pending_pickup!
+    reservation.routing!
     assert_not PriorReservation.find_by(email: "test@example.com")
     assert Reservation.find_by(email: "test@example.com")
-    assert reservation.pending_pickup?
+    assert reservation.routing?
   end
 
   test "normalizing of mobile number" do

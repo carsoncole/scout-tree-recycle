@@ -20,18 +20,13 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.bigint "route_id"
         t.decimal "distance_to_route"
         t.integer "status"
-        t.boolean "no_emails", default: false
         t.string "route_name"
         t.boolean "is_routed", default: true
         t.integer "heard_about_source"
         t.string "unit"
-        t.boolean "no_sms", default: false
-        t.integer "donation"
         t.boolean "is_geocoded", default: true
         t.boolean "is_door_hanger"
         t.boolean "is_route_polygon", default: false
-        t.boolean "is_marketing_1_email_sent", default: false
-        t.boolean "is_marketing_2_email_sent", default: false
         t.boolean "is_pending_pickup_email_sent", default: false
         t.boolean "is_missing_tree_email_sent", default: false
         t.boolean "is_pickup_reminder_email_sent", default: false

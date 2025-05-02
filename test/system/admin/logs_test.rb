@@ -2,7 +2,7 @@ require "application_system_test_case"
 
 class Admin::LogsTest < ApplicationSystemTestCase
   setup do
-    @user = create(:user, email_address: "admin@example.com", password: "password")
+    @user = create(:user, email: "admin@example.com", password: "password")
     sign_in_as(@user)
   end
   
@@ -13,7 +13,7 @@ class Admin::LogsTest < ApplicationSystemTestCase
   end
 
   test "creating a basic log" do
-    Log.create(message: "Test log message", context: { user: @user.email_address })
+    Log.create(message: "Test log message", context: { user: @user.email })
     visit admin_logs_url
     assert_text "Test log message"
     assert_text "admin@example.com"
@@ -21,7 +21,7 @@ class Admin::LogsTest < ApplicationSystemTestCase
   end
 
   test "deleting a log" do
-    log = Log.create(message: "Test log message", context: { user: @user.email_address })
+    log = Log.create(message: "Test log message", context: { user: @user.email })
     visit admin_logs_url
     click_on "Test log message"
     click_on "Delete Log"
@@ -30,7 +30,7 @@ class Admin::LogsTest < ApplicationSystemTestCase
   end
 
   test "deleting all logs" do
-    log = create_list(:log, 20, message: "Test log message", context: { user: @user.email_address })
+    log = create_list(:log, 20, message: "Test log message", context: { user: @user.email })
     visit admin_logs_url
     click_on "Delete All Logs"
     accept_confirm

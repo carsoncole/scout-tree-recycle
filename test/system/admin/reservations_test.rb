@@ -2,7 +2,7 @@ require "application_system_test_case"
 
 class Admin::ReservationsTest < ApplicationSystemTestCase
   setup do
-    @admin = create(:user, :admin, email_address: "admin@example.com", password: "password")
+    @admin = create(:user, :admin, email: "admin@example.com", password: "password")
     sign_in_as(@admin)
   end
 

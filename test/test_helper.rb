@@ -12,7 +12,7 @@ module ActiveSupport
 
     def sign_in_as(user)
       visit new_admin_session_url
-      fill_in "Email address", with: user.email_address
+      fill_in "Email", with: user.email
       fill_in "Password", with: user.password
       click_button "Sign in"
       sleep 0.2

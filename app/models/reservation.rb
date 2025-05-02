@@ -16,6 +16,7 @@ class Reservation < ApplicationRecord
   attribute :country, :string, default: "United States"
 
   scope :active, -> { where(status: ['pending_pickup', 'picked_up', 'missing', 'cancelled'])}
+  # scope :ungeocoded, -> { where(latitude: nil, longitude: nil) }
 
   # data normalization
   normalizes :email, with: -> e { e.strip.downcase }

@@ -3,6 +3,7 @@ class ErrorLogSubscriber
       Log.create(
         message: error.message,
         error_type: error.class.name,
+        context: context,
         backtrace: error.backtrace.join("\n"),
         environment: Rails.env,
         severity: severity.to_s,

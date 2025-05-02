@@ -8,7 +8,7 @@ module Geocodable
     validates :street, :city, :state, :country, presence: true
 
     # geocoding and routing
-    before_validation :full_geocode!, if: ->(obj){ obj.address.present? && obj.street_changed? && !(obj.latitude_changed? && obj.longitude_changed?) }
+    #before_validation :full_geocode!, if: ->(obj){ obj.address.present? && obj.street_changed? && !(obj.latitude_changed? && obj.longitude_changed?) }
 
     def address
       [street, city, state, country].compact.join(', ')
@@ -44,7 +44,8 @@ module Geocodable
         geocode
       elsif Geocoder.config.lookup == :amazon_location_service
         # multiple results (seems like 2) can be return, the second being a coordinate of just the street, not number
-        Rails.error.handle do
+        Rails.error.handle(context: { reservation_id: id, email: email }) do
+          adf
           results = Geocoder.search(self.address)
           if results.count == 1
             geocode

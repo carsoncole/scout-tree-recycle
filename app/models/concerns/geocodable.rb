@@ -45,7 +45,6 @@ module Geocodable
       elsif Geocoder.config.lookup == :amazon_location_service
         # multiple results (seems like 2) can be return, the second being a coordinate of just the street, not number
         Rails.error.handle(context: { reservation_id: id, email: email }) do
-          adf
           results = Geocoder.search(self.address)
           if results.count == 1
             geocode

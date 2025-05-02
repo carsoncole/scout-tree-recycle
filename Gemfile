@@ -46,6 +46,8 @@ gem 'phonelib' #phone number parsing and cleanup
 gem 'aws-sdk-locationservice'
 gem "geocoder" #address geocoding with lat/lon
 gem "pagy" #pagination
+gem "mission_control-jobs"
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

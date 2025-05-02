@@ -48,6 +48,7 @@ Rails.application.routes.draw do
     post 'send-marketing-email-1', to: 'marketing#send_marketing_email_1', as: :send_marketing_email_1
     post 'send-marketing-email-2', to: 'marketing#send_marketing_email_2', as: :send_marketing_email_2
   
+    mount MissionControl::Jobs::Engine, at: "/jobs"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

@@ -17,13 +17,13 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.decimal "stripe_charge_amount"
         t.decimal "latitude"
         t.decimal "longitude"
+        t.boolean "was_geocoded", default: false
         t.bigint "route_id"
         t.decimal "distance_to_route"
         t.integer "status"
-        t.string "route_name"
-        t.boolean "is_routed", default: true
         t.integer "heard_about_source"
         t.string "unit"
+        t.boolean "is_routed", default: true
         t.boolean "is_geocoded", default: true
         t.boolean "is_door_hanger"
         t.boolean "is_route_polygon", default: false

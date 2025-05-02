@@ -1,5 +1,5 @@
 class Admin::ReservationsController < Admin::BaseController
-  before_action :set_reservation, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode ]
 
   def index
     @pagy, @reservations = pagy(Reservation.order(created_at: :desc))
@@ -24,6 +24,12 @@ class Admin::ReservationsController < Admin::BaseController
     redirect_to admin_reservations_path, notice: "Reservation was successfully deleted."
   end
 
+  def geocode
+    @reservation.full_geocode!
+    @reservation.save
+    redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully geocoded."
+  end
+
   private
 
   def set_reservation
@@ -33,7 +39,7 @@ class Admin::ReservationsController < Admin::BaseController
   def reservation_params
     params.require(:reservation).permit(
       :name, :email, :mobile, :street, :city, :state, :country,
-      :route_id, :status, :notes, :donation, :latitude, :longitude, :is_geocoded
+      :route_id, :status, :notes, :latitude, :longitude, :is_geocoded
     )
   end
 end

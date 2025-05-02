@@ -26,7 +26,11 @@ Rails.application.routes.draw do
     resource :session
     root to: "reservations#index"
     get "marketing/index"
-    resources :reservations, only: [ :index, :show, :edit, :update ]
+    resources :reservations, only: [ :index, :show, :edit, :update ] do
+      member do
+        post :geocode
+      end
+    end
     resources :drivers
     resources :settings, only: [ :index, :update ] do
       member do

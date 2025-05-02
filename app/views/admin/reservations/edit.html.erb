@@ -96,6 +96,27 @@
                       <%= f.text_field :country, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
                     </div>
                   </div>
+
+                  <div>
+                    <%= f.label :latitude, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.number_field :latitude, step: :any, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :longitude, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= f.number_field :longitude, step: :any, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+
+                  <div>
+                    <%= f.label :is_geocoded, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div class="mt-2">
+                      <%= f.check_box :is_geocoded, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+                    </div>
+                  </div>
                 </div>
               </div>
 

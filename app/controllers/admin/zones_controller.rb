@@ -1,5 +1,5 @@
 class Admin::ZonesController < Admin::BaseController
-  before_action :set_zone, only: [:show, :edit, :update, :destroy]
+  before_action :set_zone, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @pagy, @zones = pagy(Zone.all)
@@ -19,7 +19,7 @@ class Admin::ZonesController < Admin::BaseController
     @zone = Zone.new(zone_params)
 
     if @zone.save
-      redirect_to admin_zones_path, notice: 'Zone was successfully created.'
+      redirect_to admin_zones_path, notice: "Zone was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class Admin::ZonesController < Admin::BaseController
 
   def update
     if @zone.update(zone_params)
-      redirect_to admin_zones_path, notice: 'Zone was successfully updated.'
+      redirect_to admin_zones_path, notice: "Zone was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +35,7 @@ class Admin::ZonesController < Admin::BaseController
 
   def destroy
     @zone.destroy
-    redirect_to admin_zones_path, notice: 'Zone was successfully deleted.'
+    redirect_to admin_zones_path, notice: "Zone was successfully deleted."
   end
 
   private

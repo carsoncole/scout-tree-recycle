@@ -8,7 +8,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
   test "visiting the index" do
     visit admin_settings_url
-  
+
     assert_selector "h1", text: "Settings"
   end
 end

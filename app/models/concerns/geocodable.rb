@@ -1,4 +1,4 @@
-#OPTIMIZE: geocoding is working, need to clean up
+# OPTIMIZE: geocoding is working, need to clean up
 module Geocodable
   extend ActiveSupport::Concern
 
@@ -8,19 +8,19 @@ module Geocodable
     validates :street, :city, :state, :country, presence: true
 
     # geocoding and routing
-    #before_validation :full_geocode!, if: ->(obj){ obj.address.present? && obj.street_changed? && !(obj.latitude_changed? && obj.longitude_changed?) }
+    # before_validation :full_geocode!, if: ->(obj){ obj.address.present? && obj.street_changed? && !(obj.latitude_changed? && obj.longitude_changed?) }
 
     def address
-      [street, city, state, country].compact.join(', ')
+      [ street, city, state, country ].compact.join(", ")
     end
 
     def short_address
-      [street, city, state].compact.join(', ')
+      [ street, city, state ].compact.join(", ")
     end
 
     def coordinates
       if geocoded?
-        [latitude, longitude]
+        [ latitude, longitude ]
       end
     end
 
@@ -59,6 +59,5 @@ module Geocodable
         end
       end
     end
-
   end
 end

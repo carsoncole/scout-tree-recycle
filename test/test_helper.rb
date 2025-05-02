@@ -17,6 +17,5 @@ module ActiveSupport
       click_button "Sign in"
       sleep 0.2
     end
-
   end
 end

@@ -16,7 +16,7 @@ class Route < ApplicationRecord
   attribute :is_zoned, :boolean, default: true
 
   def name_with_zone
-    (zone&.name || 'No Zone') + ' / ' + self&.name
+    (zone&.name || "No Zone") + " / " + self&.name
   end
 
   # def zone!

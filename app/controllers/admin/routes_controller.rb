@@ -1,5 +1,5 @@
 class Admin::RoutesController < Admin::BaseController
-  before_action :set_route, only: [:show, :edit, :update, :destroy]
+  before_action :set_route, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @pagy, @routes = pagy(Route.all)
@@ -19,7 +19,7 @@ class Admin::RoutesController < Admin::BaseController
     @route = Route.new(route_params)
 
     if @route.save
-      redirect_to admin_route_path(@route), notice: 'Route was successfully created.'
+      redirect_to admin_route_path(@route), notice: "Route was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class Admin::RoutesController < Admin::BaseController
 
   def update
     if @route.update(route_params)
-      redirect_to admin_route_path(@route), notice: 'Route was successfully updated.'
+      redirect_to admin_route_path(@route), notice: "Route was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +35,7 @@ class Admin::RoutesController < Admin::BaseController
 
   def destroy
     @route.destroy
-    redirect_to admin_routes_path, notice: 'Route was successfully deleted.'
+    redirect_to admin_routes_path, notice: "Route was successfully deleted."
   end
 
   private

@@ -11,12 +11,11 @@ class Admin::LogsController < Admin::BaseController
   def destroy
     log = Log.find(params[:id])
     log.destroy
-    redirect_to admin_logs_path, notice: 'Log has been deleted successfully.'
+    redirect_to admin_logs_path, notice: "Log has been deleted successfully."
   end
 
   def destroy_all
     Log.delete_all
-    redirect_to admin_logs_path, notice: 'All logs have been deleted successfully.'
+    redirect_to admin_logs_path, notice: "All logs have been deleted successfully."
   end
 end
- 

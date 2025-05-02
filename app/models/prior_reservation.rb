@@ -11,7 +11,7 @@ class PriorReservation < ApplicationRecord
   def self.clear_email_flags!
     PriorReservation.update_all(marketing_1_email_sent_at: nil, marketing_2_email_sent_at: nil)
   end
-  
+
 
   private
 

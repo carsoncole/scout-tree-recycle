@@ -1,6 +1,6 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :require_admin_access, except: [:index, :show]
+  before_action :set_user, only: [ :show, :edit, :update, :destroy ]
+  before_action :require_admin_access, except: [ :index, :show ]
 
   def index
     @users = User.all.order(created_at: :desc)
@@ -54,4 +54,4 @@ class Admin::UsersController < Admin::BaseController
       redirect_to admin_settings_path, alert: "You are not authorized to manage users."
     end
   end
-end 
+end

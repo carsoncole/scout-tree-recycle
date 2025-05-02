@@ -4,7 +4,7 @@ Geocoder.configure(
   # lookup: :nominatim,         # name of geocoding service (symbol)
   lookup: :amazon_location_service,
   amazon_location_service: {
-    index_name: 'tree_recycle',
+    index_name: "tree_recycle",
     api_key: {
       access_key_id: Rails.application.credentials.dig(:amazon_location_service, :access_key_id),
       secret_access_key: Rails.application.credentials.dig(:amazon_location_service, :secret_access_key)
@@ -35,4 +35,4 @@ Geocoder.configure(
   # }
 )
 
-Aws.config.update({region: 'us-west-2'})
+Aws.config.update({ region: "us-west-2" })

@@ -9,6 +9,5 @@ class ErrorLogSubscriber
       handled: handled
     )
     rescue StandardError => e
-
     end
 end

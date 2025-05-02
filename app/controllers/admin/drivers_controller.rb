@@ -1,5 +1,5 @@
 class Admin::DriversController < Admin::BaseController
-  before_action :set_driver, only: [:show, :edit, :update, :destroy]
+  before_action :set_driver, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @pagy, @drivers = pagy(Driver.all)
@@ -19,7 +19,7 @@ class Admin::DriversController < Admin::BaseController
     @driver = Driver.new(driver_params)
 
     if @driver.save
-      redirect_to admin_drivers_path, notice: 'Driver was successfully created.'
+      redirect_to admin_drivers_path, notice: "Driver was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class Admin::DriversController < Admin::BaseController
 
   def update
     if @driver.update(driver_params)
-      redirect_to admin_drivers_path, notice: 'Driver was successfully updated.'
+      redirect_to admin_drivers_path, notice: "Driver was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +35,7 @@ class Admin::DriversController < Admin::BaseController
 
   def destroy
     @driver.destroy
-    redirect_to admin_drivers_path, notice: 'Driver was successfully deleted.'
+    redirect_to admin_drivers_path, notice: "Driver was successfully deleted."
   end
 
   private

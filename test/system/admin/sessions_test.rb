@@ -24,5 +24,4 @@ class Admin::SessionsTest < ApplicationSystemTestCase
     click_button "Log out"
     assert_text "Sign in to your account"
   end
-
 end

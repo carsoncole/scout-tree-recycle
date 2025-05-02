@@ -154,7 +154,7 @@ class ReservationTest < ActiveSupport::TestCase
     address_verification_reservation = create(:reservation, email: "address_verification@example.com", status: :address_verification)
     donation_selection_reservation = create(:reservation, email: "donation@example.com", status: :donation)
     pending_reservation = create(:pending_pickup_reservation, email: "pending_pickup@example.com")
-    picked_up_reservation = create(:reservation, email: "picked_up@example.com", status: :picked_up)    
+    picked_up_reservation = create(:reservation, email: "picked_up@example.com", status: :picked_up)
     cancelled_reservation = create(:reservation, email: "cancelled@example.com", status: :cancelled)
     missing_reservation = create(:reservation, email: "missing@example.com", status: :missing)
 

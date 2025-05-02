@@ -14,22 +14,22 @@ class Reservation < ApplicationRecord
   attribute :state, :string, default: -> { Setting.instance.default_state }
   attribute :country, :string, default: "United States"
 
-  scope :completed, -> { where(status: ['routing','pending_pickup', 'picked_up', 'missing', 'cancelled'])}
-  scope :not_completed, -> { where.not(status: ['routing','pending_pickup', 'picked_up', 'missing', 'cancelled'])}
-  scope :active, -> { where(status: ['routing', 'pending_pickup'])}
-  scope :not_active, -> { where.not(status: ['routing', 'pending_pickup'])}
+  scope :completed, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
+  scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
+  scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }
+  scope :not_active, -> { where.not(status: [ "routing", "pending_pickup" ]) }
 
   # data normalization
-  normalizes :email, with: -> e { e.strip.downcase }
-  normalizes :mobile, with: -> m { Phonelib.parse(m).full_e164.presence if m.present? }
+  normalizes :email, with: ->(e) { e.strip.downcase }
+  normalizes :mobile, with: ->(m) { Phonelib.parse(m).full_e164.presence if m.present? }
 
   # destroy any same-email not pending reservations since they're not needed
-  before_validation :destroy_not_active_reservations!, if: -> (obj){ obj.reservation_form? && !obj.persisted? }
+  before_validation :destroy_not_active_reservations!, if: ->(obj) { obj.reservation_form? && !obj.persisted? }
 
   # email delivery
-  after_update :send_confirmed_reservation_email!, if: -> (obj){ obj.routing? && obj.saved_change_to_status? }
-  after_update :send_cancelled_reservation_email!, if: -> (obj){ obj.cancelled? && obj.saved_change_to_status? }
-  after_save :remove_prior_reservation!, if: -> (obj){ obj.routing? && obj.saved_change_to_status? }
+  after_update :send_confirmed_reservation_email!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
+  after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? }
+  after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
 
   def self.open?
     Setting.instance.is_reservations_open?
@@ -68,5 +68,4 @@ class Reservation < ApplicationRecord
     end
     Reservation.destroy_all
   end
-
 end

@@ -12,7 +12,7 @@ class Admin::PasswordsController < Admin::BaseController
     end
 
     redirect_to new_admin_session_path, notice: "Password reset instructions sent (if user with that email address exists)."
-  end 
+  end
 
   def edit
   end

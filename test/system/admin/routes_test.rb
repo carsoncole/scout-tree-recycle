@@ -5,7 +5,7 @@ class Admin::RoutesTest < ApplicationSystemTestCase
     @admin = create(:user, email: "admin@example.com", password: "password")
     sign_in_as(@admin)
   end
-  
+
   test "visiting index" do
     visit admin_routes_url
     assert_selector "h1", text: "Routes"

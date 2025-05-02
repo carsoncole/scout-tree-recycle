@@ -3,7 +3,7 @@ require "application_system_test_case"
 class AboutsTest < ApplicationSystemTestCase
   test "visiting the index" do
     visit about_url
-  
+
     assert_selector "h1", text: "About"
   end
 
@@ -28,7 +28,7 @@ class AboutsTest < ApplicationSystemTestCase
     assert_text "john@example.com"
     assert_text "206-555-1212"
     assert_text "Questions?"
-    
+
     setting.update(contact_email: nil)
     visit about_url
 
@@ -96,6 +96,6 @@ class AboutsTest < ApplicationSystemTestCase
     setting.save
 
     visit about_url
-    assert_link "Learn more", href: "https://example.com"    
+    assert_link "Learn more", href: "https://example.com"
   end
 end

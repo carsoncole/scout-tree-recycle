@@ -1,6 +1,5 @@
-#OPTIMIZE new in process reservations will destroy archived reservations even if they are not confirmed
+# OPTIMIZE new in process reservations will destroy archived reservations even if they are not confirmed
 class ReservationsController < ApplicationController
-
   before_action :set_reservation, only: %i[ address_verification address_confirmation update confirmation edit destroy ]
 
   def create
@@ -45,7 +44,7 @@ class ReservationsController < ApplicationController
 
   def edit
     unless Reservation.open?
-      redirect_to root_path, alert: 'Reservations are not currently changeable.'
+      redirect_to root_path, alert: "Reservations are not currently changeable."
     end
   end
 

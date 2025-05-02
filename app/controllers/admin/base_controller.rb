@@ -1,5 +1,5 @@
 class Admin::BaseController < ApplicationController
   include Authentication
-  layout 'admin'
+  layout "admin"
   include Pagy::Backend
 end

@@ -19,18 +19,18 @@ end
 
 Reservation.destroy_all
 100.times do
-  FactoryBot.create(:pending_pickup_reservation, mobile: [Faker::PhoneNumber.cell_phone, nil].sample)
+  FactoryBot.create(:pending_pickup_reservation, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample)
 end
 15.times do
-  FactoryBot.create(:reservation, status: :cancelled,mobile: [Faker::PhoneNumber.cell_phone, nil].sample)
+  FactoryBot.create(:reservation, status: :cancelled, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample)
 end
 3.times do
-  FactoryBot.create(:reservation, status: :missing, mobile: [Faker::PhoneNumber.cell_phone, nil].sample)
+  FactoryBot.create(:reservation, status: :missing, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample)
 end
 
 
 PriorReservation.destroy_all
 100.times do
-  method = [:prior_reservation, :prior_reservation_with_street,:prior_reservation_with_street].sample
-  reservation = FactoryBot.create(method, marketing_1_email_sent_at: [Time.now, nil].sample)
+  method = [ :prior_reservation, :prior_reservation_with_street, :prior_reservation_with_street ].sample
+  reservation = FactoryBot.create(method, marketing_1_email_sent_at: [ Time.now, nil ].sample)
 end

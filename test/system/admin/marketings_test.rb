@@ -8,7 +8,7 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
 
   test "visiting the index" do
     visit admin_marketing_index_url
-  
+
     assert_selector "h1", text: "Marketing"
   end
 end

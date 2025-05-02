@@ -31,20 +31,17 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.boolean "is_missing_tree_email_sent", default: false
         t.boolean "is_pickup_reminder_email_sent", default: false
         t.boolean "is_cancelled_reservation_email_sent", default: false
-        t.index ["email"], name: "index_reservations_on_email"
-        t.index ["name"], name: "index_reservations_on_name"
-        t.index ["mobile", "status"], name: "index_reservations_on_mobile_and_status"
-        t.index ["route_id"], name: "index_reservations_on_route_id"
-        t.index ["status", "email"], name: "index_reservations_on_status_and_email"
-        t.index ["status", "route_id"], name: "index_reservations_on_status_and_route_id"
-        t.index ["status"], name: "index_reservations_on_status"
-        t.index ["created_at"], name: "index_reservations_on_created_at"
-        t.index ["street_name", "house_number"], name: "index_reservations_on_street_name_and_house_number"
+        t.index [ "email" ], name: "index_reservations_on_email"
+        t.index [ "name" ], name: "index_reservations_on_name"
+        t.index [ "mobile", "status" ], name: "index_reservations_on_mobile_and_status"
+        t.index [ "route_id" ], name: "index_reservations_on_route_id"
+        t.index [ "status", "email" ], name: "index_reservations_on_status_and_email"
+        t.index [ "status", "route_id" ], name: "index_reservations_on_status_and_route_id"
+        t.index [ "status" ], name: "index_reservations_on_status"
+        t.index [ "created_at" ], name: "index_reservations_on_created_at"
+        t.index [ "street_name", "house_number" ], name: "index_reservations_on_street_name_and_house_number"
 
         t.timestamps
       end
-
-
-
   end
 end

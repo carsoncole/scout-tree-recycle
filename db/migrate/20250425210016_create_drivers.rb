@@ -5,7 +5,7 @@ class CreateDrivers < ActiveRecord::Migration[8.0]
       t.string "mobile"
       t.string "email"
       t.bigint "zone_id"
-      t.index ["zone_id"], name: "index_drivers_on_zone_id"
+      t.index [ "zone_id" ], name: "index_drivers_on_zone_id"
 
       t.timestamps
     end

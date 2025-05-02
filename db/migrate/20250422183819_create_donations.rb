@@ -20,7 +20,7 @@ class CreateDonations < ActiveRecord::Migration[8.0]
       t.string "exp_year"
       t.integer "form"
       t.string "note"
-      t.index ["reservation_id"], name: "index_donations_on_reservation_id"
+      t.index [ "reservation_id" ], name: "index_donations_on_reservation_id"
 
       t.timestamps
     end

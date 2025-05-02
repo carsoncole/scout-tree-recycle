@@ -1,5 +1,5 @@
 class Admin::ReservationsController < Admin::BaseController
-  before_action :set_reservation, only: [:show, :edit, :update, :destroy]
+  before_action :set_reservation, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @pagy, @reservations = pagy(Reservation.order(created_at: :desc))
@@ -13,7 +13,7 @@ class Admin::ReservationsController < Admin::BaseController
 
   def update
     if @reservation.update(reservation_params)
-      redirect_to admin_reservation_path(@reservation), notice: 'Reservation was successfully updated.'
+      redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -21,7 +21,7 @@ class Admin::ReservationsController < Admin::BaseController
 
   def destroy
     @reservation.destroy
-    redirect_to admin_reservations_path, notice: 'Reservation was successfully deleted.'
+    redirect_to admin_reservations_path, notice: "Reservation was successfully deleted."
   end
 
   private

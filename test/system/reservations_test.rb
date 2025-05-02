@@ -9,7 +9,6 @@ class ReservationsTest < ApplicationSystemTestCase
   end
 
   test "making a reservation" do
-
     10.times do
       visit root_url
       fill_in "Name", with: Faker::Name.name
@@ -28,7 +27,7 @@ class ReservationsTest < ApplicationSystemTestCase
   test "starting a reservation but stopping at donation, then trying again later from start" do
     visit root_url
     fill_in "Name", with: "Charlie"
-    fill_in "Street", with: '1 Main Street'
+    fill_in "Street", with: "1 Main Street"
     fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
 
@@ -37,12 +36,12 @@ class ReservationsTest < ApplicationSystemTestCase
 
     visit root_url
     fill_in "Name", with: "Charlie"
-    fill_in "Street", with: '100 Main St'
+    fill_in "Street", with: "100 Main St"
     fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
 
     sleep 0.50
-    assert_equal '100 Main St', Reservation.find_by(email: "test@example.com").street
+    assert_equal "100 Main St", Reservation.find_by(email: "test@example.com").street
     assert_equal 1, Reservation.donation.count
 
     click_button "Select donation type"
@@ -52,7 +51,7 @@ class ReservationsTest < ApplicationSystemTestCase
 
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
   test "making reservation and destroying all other non pending_pickup reservations" do
-    Reservation.statuses.except(*[:reservation_form, :donation, :address_verification, :routing, :pending_pickup]).each do |status,id|
+    Reservation.statuses.except(*[ :reservation_form, :donation, :address_verification, :routing, :pending_pickup ]).each do |status, id|
       existing_reservation = create(:reservation, status: status, email: Faker::Internet.email)
       assert_equal 1, Reservation.send(status.to_sym).count
 
@@ -111,7 +110,7 @@ class ReservationsTest < ApplicationSystemTestCase
     fill_in "Street", with: Faker::Address.street_address
     fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
-    
+
     # Should show error message
     assert_text "There appears to already be a reservation with that email"
     assert_equal 1, Reservation.where(email: "test@example.com").count

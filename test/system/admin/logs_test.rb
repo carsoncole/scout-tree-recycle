@@ -5,10 +5,10 @@ class Admin::LogsTest < ApplicationSystemTestCase
     @user = create(:user, email: "admin@example.com", password: "password")
     sign_in_as(@user)
   end
-  
+
   test "visiting the index" do
     visit admin_logs_url
-  
+
     assert_selector "h1", text: "System Logs"
   end
 

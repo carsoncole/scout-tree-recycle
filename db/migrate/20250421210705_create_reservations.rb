@@ -13,7 +13,7 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.string "state"
         t.string "zip"
         t.string "country", default: "United States"
-        t.string "notes"
+        t.string "pickup_notes"
         t.decimal "stripe_charge_amount"
         t.decimal "latitude"
         t.decimal "longitude"

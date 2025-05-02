@@ -31,7 +31,7 @@
               </thead>
               <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 <% @reservations.each do |reservation| %>
-                  <tr>
+                  <tr class="<%= 'bg-red-100 dark:bg-red-900/40' unless reservation.routed? %>">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <%= reservation.name %>
                     </td>

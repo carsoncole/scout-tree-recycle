@@ -33,7 +33,7 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "notes are optional" do
-    @reservation.notes = nil
+    @reservation.pickup_notes = nil
     assert @reservation.valid?
   end
 

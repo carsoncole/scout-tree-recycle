@@ -42,6 +42,10 @@ class Reservation < ApplicationRecord
   def suggested_address?
     nil
   end
+  
+  def routed?
+    route.present?
+  end
 
   def destroy_not_active_reservations!
     not_active = Reservation.not_active.where(email: email)

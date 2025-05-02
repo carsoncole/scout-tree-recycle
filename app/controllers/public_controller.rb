@@ -29,6 +29,6 @@ class PublicController < ApplicationController
   private
 
   def reservation_params
-    params.require(:reservation).permit(:name, :street, :city, :email, :mobile, :notes)
+    params.require(:reservation).permit(:name, :street, :city, :email, :mobile, :pickup_notes)
   end
 end

@@ -39,7 +39,7 @@ class Admin::ReservationsController < Admin::BaseController
   def reservation_params
     params.require(:reservation).permit(
       :name, :email, :mobile, :street, :city, :state, :country,
-      :route_id, :status, :notes, :latitude, :longitude, :is_geocoded
+      :route_id, :status, :pickup_notes, :latitude, :longitude, :is_geocoded
     )
   end
 end

@@ -15,134 +15,121 @@
         </p>
       </div>
 
+      <!-- Feature Toggles Section -->
+      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="space-y-6">
+            <div class="border-b border-gray-200 dark:border-gray-700 pb-6" data-controller="toggle">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Feature Toggles</h2>
+                <div class="flex items-center space-x-4">
+                  <%= link_to admin_logs_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+                    <span>System Logs</span>
+                    <% if @unviewed_logs_count.to_i > 0 %>
+                      <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                        <%= @unviewed_logs_count %>
+                      </span>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <!-- Reservations Toggle -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Reservations</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations</p>
+                    </div>
+                    <div class="flex items-center">
+                      <label class="relative inline-flex items-center cursor-pointer" id="reservations-toggle">
+                        <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open,
+                            class: "sr-only peer",
+                            data: {
+                              testid: "reservations-toggle",
+                              toggle_target: "toggle",
+                              target: "toggle",
+                              setting: "is_reservations_open"
+                            } %>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Email Toggle -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Email Notifications</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Send email notifications and marketing emails to users</p>
+                    </div>
+                    <div class="flex items-center">
+                      <label class="relative inline-flex items-center cursor-pointer" id="emailing-toggle">
+                        <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
+                            class: "sr-only peer",
+                            data: {
+                              toggle_target: "toggle",
+                              setting: "is_emailing_enabled"
+                            } %>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SMS Toggle -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable SMS Notifications</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Send SMS notifications to users</p>
+                    </div>
+                    <div class="flex items-center">
+                      <label class="relative inline-flex items-center cursor-pointer" id="sms-toggle">
+                        <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled,
+                            class: "sr-only peer",
+                            data: {
+                              toggle_target: "toggle",
+                              setting: "is_sms_enabled"
+                            } %>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pickups Portal Toggle -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Pickups Portal</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal for tree pickup management</p>
+                    </div>
+                    <div class="flex items-center">
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <%= check_box_tag "setting[is_pickups_site_enabled]", "1", setting.is_pickups_site_enabled,
+                            class: "sr-only peer",
+                            data: {
+                              toggle_target: "toggle",
+                              setting: "is_pickups_site_enabled"
+                            } %>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Form Sections -->
       <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
         <div class="px-4 py-5 sm:p-6">
           <div class="space-y-6">
             <%= form_tag admin_setting_path(1), method: :patch, class: "space-y-8" do %>
-              <!-- Feature Toggles Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6" data-controller="toggle">
-                <div class="flex justify-between items-center mb-4">
-                  <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Feature Toggles</h2>
-                  <div class="flex items-center space-x-4">
-                    <%= link_to admin_logs_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
-                      <span>System Logs</span>
-                      <% if @unviewed_logs_count.to_i > 0 %>
-                        <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                          <%= @unviewed_logs_count %>
-                        </span>
-                      <% end %>
-                    <% end %>
-                  </div>
-                </div>
-                <div class="space-y-4">
-                  <!-- Reservations Toggle -->
-                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Reservations</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations</p>
-                      </div>
-                      <div class="flex items-center">
-                        <label class="relative inline-flex items-center cursor-pointer" id="reservations-toggle">
-                          <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open,
-                              class: "sr-only peer",
-                              data: {
-                                testid: "reservations-toggle",
-                                toggle_target: "toggle",
-                                target: "toggle",
-                                setting: "is_reservations_open"
-                              } %>
-                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Email Toggle -->
-                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Email Notifications</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Send email notifications and marketing emails to users</p>
-                      </div>
-                      <div class="flex items-center">
-                        <label class="relative inline-flex items-center cursor-pointer" id="emailing-toggle">
-                          <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
-                              class: "sr-only peer",
-                              data: {
-                                toggle_target: "toggle",
-                                setting: "is_emailing_enabled"
-                              } %>
-                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- SMS Toggle -->
-                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable SMS Notifications</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Send SMS notifications to users</p>
-                      </div>
-                      <div class="flex items-center">
-                        <label class="relative inline-flex items-center cursor-pointer" id="sms-toggle">
-                          <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled,
-                              class: "sr-only peer",
-                              data: {
-                                toggle_target: "toggle",
-                                setting: "is_sms_enabled"
-                              } %>
-                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>  
-              </div>
-
-              <!-- Tree Pickups Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6" data-controller="toggle">
-                <div class="flex justify-between items-center mb-4">
-                  <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Tree Pickups</h2>
-                  <%= link_to 'Manage Drivers', admin_drivers_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-                </div>
-                <div class="space-y-4">
-                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Pickups Portal</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal for tree pickup management</p>
-                      </div>
-                      <div class="flex items-center">
-                        <label class="relative inline-flex items-center cursor-pointer">
-                          <%= check_box_tag "setting[is_pickups_site_enabled]", "1", setting.is_pickups_site_enabled,
-                              class: "sr-only peer",
-                              data: {
-                                toggle_target: "toggle",
-                                setting: "is_pickups_site_enabled"
-                              } %>
-                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Driver Portal Access</h3>
-                      <div class="space-y-2">
-                        <%= label_tag "setting[driver_secret_key]", "Secret Key", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-                        <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">To access, 'https://example.com/driver?key=SECRET_KEY'</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <!-- Content Settings Section -->
               <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
                 <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Content Settings</h2>
@@ -315,6 +302,35 @@
         </div>
       </div>
 
+      <!-- Tree Pickups Section -->
+      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="space-y-6">
+            <div class="">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Tree Pickups</h2>
+                <%= link_to 'Manage Drivers', admin_drivers_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+              </div>
+              <%= form_tag admin_setting_path(1), method: :patch, class: "space-y-4" do %>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Driver Portal Access</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">https://url/driver</p>
+                    <div class="space-y-2">
+                      <%= label_tag "setting[driver_secret_key]", "Secret Key", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+                      <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "block lg:w-1/2 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <%= submit_tag "Save Portal Settings", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Operations Section -->
       <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
         <div class="px-4 py-5 sm:p-6">
@@ -354,7 +370,7 @@
               <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">Manage system users and their permissions.</p>
             </div>
             <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-              <%= link_to "View Users", admin_users_path, class: "block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+              <%= link_to "Manage Users", admin_users_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
             </div>
           </div>
         </div>

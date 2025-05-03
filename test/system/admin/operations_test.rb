@@ -3,7 +3,7 @@ require "application_system_test_case"
 class Admin::OperationsTest < ApplicationSystemTestCase
   setup do
     create_list(:picked_up_reservation, 40)
-    create_list(:pending_reservation, 1)
+    create_list(:pending_pickup_reservation, 1)
     create_list(:routing_reservation, 10)
     create_list(:cancelled_reservation, 9)
     create_list(:missing_reservation, 8)

@@ -13,5 +13,25 @@ FactoryBot.define do
     factory :pending_pickup_reservation do
       status { :pending_pickup }
     end
+  
+    factory :routing_reservation do
+      status { :routing }
+    end
+
+    factory :donation_reservation do
+      status { :donation }
+    end
+
+    factory :picked_up_reservation do
+      status { :picked_up }
+    end
+  
+    factory :cancelled_reservation do
+      status { :cancelled }
+    end
+
+    factory :missing_reservation do
+      status { :missing }
+    end
   end
 end

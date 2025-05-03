@@ -2,7 +2,7 @@ class Admin::ReservationsController < Admin::BaseController
   before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode ]
 
   def index
-    @pagy, @reservations = pagy(Reservation.order(created_at: :desc))
+    @pagy, @reservations = pagy(Reservation.includes(:route).order(created_at: :desc))
     flash[:notice] = "Reservations are CLOSED." unless Reservation.open?
   end
 

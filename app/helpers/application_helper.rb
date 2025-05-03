@@ -1,5 +1,5 @@
 module ApplicationHelper
   def setting
-    Setting.instance
+    @setting ||= Setting.instance
   end
 end

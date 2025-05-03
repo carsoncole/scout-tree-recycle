@@ -2,7 +2,7 @@ class Admin::RoutesController < Admin::BaseController
   before_action :set_route, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @pagy, @routes = pagy(Route.all)
+    @pagy, @routes = pagy(Route.includes(:drivers, :zone))
   end
 
   def show

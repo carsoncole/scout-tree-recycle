@@ -25,7 +25,7 @@
             Send Marketing Email 1
           <% end %>
           <span class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            <%= PriorReservation.where(marketing_1_email_sent_at: nil).count %> emails remaining
+            <%= @marketing_1_count %> emails remaining
           </span>
         </div>
 
@@ -37,7 +37,7 @@
             Send Marketing Email 2
           <% end %>
           <span class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            <%= PriorReservation.where(marketing_2_email_sent_at: nil).count %> emails remaining
+            <%= @marketing_2_count %> emails remaining
           </span>
         </div>
       </div>

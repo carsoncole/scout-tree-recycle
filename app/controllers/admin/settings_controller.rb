@@ -10,7 +10,7 @@ class Admin::SettingsController < Admin::BaseController
       else
         render :index, status: :unprocessable_entity
       end
-    else
+    else 
       redirect_to admin_settings_path, alert: "You are not authorized to update settings."
     end
   end

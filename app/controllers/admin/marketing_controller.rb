@@ -1,6 +1,8 @@
 class Admin::MarketingController < Admin::BaseController
   def index
     @pagy, @prior_reservations = pagy(PriorReservation.order(:email))
+    @marketing_1_count = PriorReservation.where(marketing_1_email_sent_at: nil).count
+    @marketing_2_count = PriorReservation.where(marketing_2_email_sent_at: nil).count
   end
 
   def send_marketing_email_1

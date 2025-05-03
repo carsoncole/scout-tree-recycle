@@ -58,7 +58,7 @@
                       </span>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      <%= link_to log.message, admin_log_path(log), class: "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" %>
+                      <%= link_to log.message.truncate(100), admin_log_path(log), class: "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" %>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                       <%= log.error_type %>

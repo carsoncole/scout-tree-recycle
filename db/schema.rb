@@ -172,7 +172,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
     t.boolean "is_reservations_open", default: true
     t.boolean "is_emailing_enabled", default: true
     t.boolean "is_driver_site_enabled", default: true
-    t.boolean "is_sms_enabled", default: false, null: false
+    t.boolean "is_sms_enabled", default: true
     t.string "driver_secret_key"
     t.string "facebook_page_id"
     t.string "meta_site_name"

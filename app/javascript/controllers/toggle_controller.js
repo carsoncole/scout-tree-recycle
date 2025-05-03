@@ -66,6 +66,8 @@ export default class extends Controller {
         setTimeout(() => flash.remove(), 3000)
         // Revert the toggle
         toggle.checked = !value
+        // Remove the arrow
+        arrow.remove()
       }
     })
     .catch(error => {

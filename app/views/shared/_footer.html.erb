@@ -1,9 +1,11 @@
-<footer class="mb-7 flex justify-center items-center">
+<footer class="mb-10 flex justify-center items-center">
   <p class="text-sm text-gray-500 dark:text-gray-400">
     <% if setting.organization_url.present? %>
       <%= link_to setting.organization_name, setting.organization_url, target: "_blank" %>
     <% else %>
       <%= Setting.instance.organization_name %>
     <% end %>
+    | <%= link_to "Privacy Policy", privacy_path, class: "hover:text-gray-700 dark:hover:text-gray-300" %>
+    | <%= link_to "Source Code", "https://github.com/carsoncole/tree_recycle", target: "_blank", class: "hover:text-gray-700 dark:hover:text-gray-300" %>
   </p>
 </footer>

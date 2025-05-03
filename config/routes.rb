@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   root "public#index"
 
   get "about", to: "public#about"
+  get "privacy", to: "public#privacy"
+  get "questions", to: "public#questions"
 
   resources :reservations, only: [ :create, :update, :edit, :destroy ] do
     get "address_verification", as: :address_verification

@@ -3,6 +3,7 @@ class Admin::ReservationsController < Admin::BaseController
 
   def index
     @pagy, @reservations = pagy(Reservation.order(created_at: :desc))
+    flash[:notice] = "Reservations are CLOSED." if !Reservation.open?
   end
 
   def show

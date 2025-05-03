@@ -244,3 +244,11 @@ Tests, including System integration tests can be run with:
 For an address to be routed, it is first geocoded. By default, geocoding occurs on schedule set in ```recurring.yml```. Only one attempt is made to automatically geocode an address, however any address changes will retrigger another geocoding attempt. You can disable geocoding entirely in Settings for a specific reservation. 
 
 There is a job ```GeocodeReservationsJob`` that runs on a schedule set in ```recurring.yml``.
+
+# Images
+
+The image displayed on the About page is in ```app/assets/images/about.jpg``.
+
+# Privacy Policy
+
+The privacy policy is at ```app/views/privacy```.

@@ -16,6 +16,12 @@ class PublicController < ApplicationController
   def about
   end
 
+  def privacy
+  end
+
+  def questions
+  end
+
   def create
     @reservation = Reservation.new(reservation_params)
 

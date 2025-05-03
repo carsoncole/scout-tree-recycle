@@ -8,6 +8,7 @@ class ReservationsController < ApplicationController
     if !Reservation.open? && !signed_in?
       redirect_to root_url, alert: "Reservations are CLOSED."
     elsif @reservation.save
+      @reservation.address_verification!
       if @reservation.reservation_form?
         redirect_to reservation_address_verification_url(@reservation)
       elsif
@@ -26,19 +27,17 @@ class ReservationsController < ApplicationController
     end
   end
 
+  #TODO address verfication 
   def address_verification
-    @suggested_address = @reservation.suggested_address?
-
-    if !@suggested_address.present?
-      @reservation.donation!
-      redirect_to new_reservation_donation_url(@reservation)
-    end
+    @reservation.donation!
+    redirect_to new_reservation_donation_url(@reservation)
   end
 
   def address_confirmation
     if params[:street].present?
       @reservation.update(street: params[:street])
     end
+    @reservation.donation!
     redirect_to new_reservation_donation_url(@reservation)
   end
 

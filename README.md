@@ -228,3 +228,19 @@ Tree Recycle can be the central engine for powering your fundraiser, but an impo
 ## Copyright
 
 Copyright (c) 2022, 2025 [Carson Cole](https://carsonrcole.com). It is free software, and may be redistributed under the terms specified in the LICENSE file.
+
+
+
+# Tests
+
+Tests, including System integration tests can be run with: 
+
+```ruby
+  rails test:all
+```
+
+# Geocoding
+
+For an address to be routed, it is first geocoded. By default, geocoding occurs on schedule set in ```recurring.yml```. Only one attempt is made to automatically geocode an address, however any address changes will retrigger another geocoding attempt. You can disable geocoding entirely in Settings for a specific reservation. 
+
+There is a job ```GeocodeReservationsJob`` that runs on a schedule set in ```recurring.yml``.

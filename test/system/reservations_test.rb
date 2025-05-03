@@ -135,4 +135,5 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "Joey"
     assert_text "Reservation updated."
   end
+
 end

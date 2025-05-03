@@ -16,10 +16,7 @@
               Driver
             </th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Routes
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Total Stops
+              Routes (pickups)
             </th>
           </tr>
         </thead>
@@ -33,16 +30,17 @@
                 <% if driver.routes.any? %>
                   <ul class="list-disc list-inside">
                     <% driver.routes.each do |route| %>
-                      <li><%= route.name %></li>
+                      <li>
+                        <%= route.name %>
+                        <%= surround_text(route.reservations_count, " (", ")") %>
+                      </li>
                     <% end %>
                   </ul>
                 <% else %>
                   <span class="text-gray-400 dark:text-gray-500">No routes assigned</span>
                 <% end %>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                <% #driver.routes.sum(&:reservations_count) %>
-              </td>
+
             </tr>
           <% end %>
         </tbody>

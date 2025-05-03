@@ -1,7 +1,7 @@
 class Reservation < ApplicationRecord
   include Geocodable
 
-  belongs_to :route, optional: true
+  belongs_to :route, optional: true, counter_cache: true
   has_one :zone, through: :route
   has_many :donations, dependent: :nullify
 

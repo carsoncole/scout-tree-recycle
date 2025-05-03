@@ -36,7 +36,7 @@ class SettingsTest < ApplicationSystemTestCase
     visit admin_settings_url
     assert_link "System Logs", href: admin_logs_path
     assert_link "Manage Drivers", href: admin_drivers_path
-    assert_link "View Users", href: admin_users_path
+    assert_link "Manage Users", href: admin_users_path
   end
 
   test "update settings" do

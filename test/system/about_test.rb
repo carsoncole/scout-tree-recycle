@@ -87,6 +87,7 @@ class AboutsTest < ApplicationSystemTestCase
 
   test "should display organization url" do
     setting = Setting.instance
+    setting.organization_url = nil
     setting.save
 
     visit about_url

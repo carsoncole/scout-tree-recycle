@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_03_171222) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -171,8 +171,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
     t.text "on_day_of_pickup_instructions"
     t.boolean "is_reservations_open", default: true
     t.boolean "is_emailing_enabled", default: true
-    t.boolean "is_driver_site_enabled", default: true
-    t.boolean "is_sms_enabled", default: true
+    t.boolean "is_pickups_site_enabled", default: true
+    t.boolean "is_sms_enabled", default: false, null: false
     t.string "driver_secret_key"
     t.string "facebook_page_id"
     t.string "meta_site_name"

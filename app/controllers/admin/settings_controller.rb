@@ -16,12 +16,17 @@ class Admin::SettingsController < Admin::BaseController
   end
 
   def toggle
-    helpers.setting.update(params[:setting] => params[:value])
+    if Current.user.admin?
+      setting = helpers.setting
+      setting[params[:setting]] = params[:value]
 
-    if helpers.setting.save
-      render json: { success: true }
+      if setting.save
+        render json: { success: true }
+      else
+        render json: { success: false, errors: setting.errors.full_messages }, status: :unprocessable_entity
+      end
     else
-      render json: { success: false }, status: :unprocessable_entity
+      render json: { success: false, errors: ["You are not authorized to update settings."] }, status: :unauthorized
     end
   end
 
@@ -45,7 +50,7 @@ class Admin::SettingsController < Admin::BaseController
       :is_reservations_open,
       :is_emailing_enabled,
       :is_sms_enabled,
-      :is_driver_site_enabled,
+      :is_pickups_site_enabled,
       :contact_name,
       :contact_email,
       :contact_phone,

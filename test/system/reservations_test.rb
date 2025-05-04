@@ -53,7 +53,7 @@ class ReservationsTest < ApplicationSystemTestCase
 
     click_button "Select donation type"
     sleep 0.25
-    assert_equal 1, Reservation.pending_pickup.count
+    assert_equal 1, Reservation.routing.count
   end
 
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
@@ -91,7 +91,7 @@ class ReservationsTest < ApplicationSystemTestCase
 
     reservation = Reservation.first
     sleep 0.25
-    assert_equal 1, Reservation.pending_pickup.count
+    assert_equal 1, Reservation.routing.count
 
     click_link_or_button "Cancel Reservation"
     accept_confirm
@@ -143,4 +143,10 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "Reservation updated."
   end
 
+  test "editing a reservation when reservations are closed" do
+    Setting.instance.update(is_reservations_open: false)
+    reservation = create(:reservation, status: :pending_pickup)
+    visit edit_reservation_path(reservation)
+    assert_text "Reservations are not currently changeable."
+  end
 end

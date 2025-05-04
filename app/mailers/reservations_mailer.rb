@@ -4,7 +4,7 @@ class ReservationsMailer < ApplicationMailer
   before_action :set_reservation
 
   def set_reservation
-    @reservation = params[:reservation]
+    @reservation = Reservation.find(params[:reservation_id])
   end
 
   def new_reservation_email
@@ -16,7 +16,7 @@ class ReservationsMailer < ApplicationMailer
   end
 
   def cancelled_reservation_email
-    return unlesssetting.is_emailing_enabled
+    return unless setting.is_emailing_enabled
     return if @reservation.is_cancelled_reservation_email_sent?
     @event_pickup = setting.event_pickup
     mail(to: @reservation.email, subject: "Your tree pickup reservation has been cancelled")

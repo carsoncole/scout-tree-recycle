@@ -1,6 +1,6 @@
 # OPTIMIZE new in process reservations will destroy archived reservations even if they are not confirmed
 class ReservationsController < ApplicationController
-  before_action :set_reservation, only: %i[ address_verification address_confirmation update confirmation edit destroy ]
+  before_action :set_reservation, only: %i[ update confirmation edit destroy ]
 
   def create
     @reservation = Reservation.new(reservation_params)
@@ -25,20 +25,6 @@ class ReservationsController < ApplicationController
         render "public/index", status: :unprocessable_entity
       end
     end
-  end
-
-  #TODO address verfication 
-  def address_verification
-    @reservation.donation!
-    redirect_to new_reservation_donation_url(@reservation)
-  end
-
-  def address_confirmation
-    if params[:street].present?
-      @reservation.update(street: params[:street])
-    end
-    @reservation.donation!
-    redirect_to new_reservation_donation_url(@reservation)
   end
 
   def edit

@@ -31,9 +31,9 @@ class Reservation < ApplicationRecord
   after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
 
   # reset geocoding data if address is changed
-  before_save :reset_geocoding!, if: ->(obj) { obj.saved_change_to_street? || obj.saved_change_to_city? || obj.saved_change_to_state? || obj.saved_change_to_zip? }
+  before_save :reset_geocoding!, if: ->(obj) { obj.pending_pickup?  && (obj.saved_change_to_street? || obj.saved_change_to_city? || obj.saved_change_to_state? || obj.saved_change_to_zip?) }
 
-  # email delivery
+  # emails on confirmation and cancellation
   after_update :send_confirmed_reservation_email!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
   after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? }
 
@@ -75,11 +75,11 @@ class Reservation < ApplicationRecord
   end
 
   def send_confirmed_reservation_email!
-    ReservationsMailer.with(reservation: self).new_reservation_email.deliver_later
+    ReservationsMailer.with(reservation_id: id).new_reservation_email.deliver_later
   end
 
   def send_cancelled_reservation_email!
-    ReservationsMailer.with(reservation: self).cancelled_reservation_email.deliver_later
+    ReservationsMailer.with(reservation_id: id).cancelled_reservation_email.deliver_later
   end
 
   def self.migrate_reservations!

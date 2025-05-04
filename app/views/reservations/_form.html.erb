@@ -69,7 +69,7 @@
   </div>
 <% end %>
 
-<% if @reservation.persisted? && @reservation.pending_pickup? %>
+<% if @reservation.persisted? && @reservation.routing? || @reservation.pending_pickup? %>
   <div class="mt-4 pt-6 border-t border-gray-200 dark:border-gray-700">
     <%= button_to "Cancel Reservation", reservation_path(@reservation),
         method: :delete,

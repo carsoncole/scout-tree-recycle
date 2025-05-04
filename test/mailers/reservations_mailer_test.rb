@@ -73,7 +73,43 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal "Your tree pickup reservation has been cancelled", email.subject
     assert_match "Tree pick-up cancelled", email.body.encoded
   end
-  
+
+  test "mailers for all statuses" do
+    reservation = build(:reservation, status: :reservation_form)
+
+    assert_emails 0 do
+      reservation.save!
+    end
+
+    assert_emails 0 do
+      reservation.address_verification!
+    end
+
+    assert_emails 0 do
+      reservation.donation!
+    end
+
+    assert_emails 1 do
+      reservation.routing!
+      assert_equal ActionMailer::Base.deliveries.last.subject, "Your tree pickup is confirmed"
+    end
+
+    assert_emails 0 do
+      reservation.pending_pickup!
+    end
+
+    assert_emails 0 do
+      reservation.picked_up!
+    end
+
+    assert_emails 0 do
+      reservation.missing!
+    end
+
+    assert_emails 1 do
+      reservation.cancelled!
+      assert_equal ActionMailer::Base.deliveries.last.subject, "Your tree pickup reservation has been cancelled"
+    end
+  end
 end
-  
 

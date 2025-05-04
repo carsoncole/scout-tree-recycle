@@ -19,7 +19,8 @@ class AboutsTest < ApplicationSystemTestCase
     assert_text "John Doe"
     assert_text "john@example.com"
     assert_text "206-555-1212"
-    assert_text "Questions?"
+    assert_text "Contact John Doe at john@example.com or 206-555-1212"
+    assert_selector "h4", text: "Questions?"
 
     setting.update(contact_name: nil)
     visit about_url
@@ -27,7 +28,8 @@ class AboutsTest < ApplicationSystemTestCase
     assert_no_text "John Doe"
     assert_text "john@example.com"
     assert_text "206-555-1212"
-    assert_text "Questions?"
+    assert_text "Contact us at john@example.com or 206-555-1212"
+    assert_selector "h4", text: "Questions?"
 
     setting.update(contact_email: nil)
     visit about_url
@@ -35,7 +37,8 @@ class AboutsTest < ApplicationSystemTestCase
     assert_no_text "John Doe"
     assert_no_text "john@example.com"
     assert_text "206-555-1212"
-    assert_text "Questions?"
+    assert_text "Contact us at 206-555-1212"
+    assert_selector "h4", text: "Questions?"
 
     setting.update(contact_phone: nil)
     visit about_url
@@ -43,17 +46,31 @@ class AboutsTest < ApplicationSystemTestCase
     assert_no_text "John Doe"
     assert_no_text "john@example.com"
     assert_no_text "206-555-1212"
-    assert_no_text "Questions?"
+    assert_no_text "Contact us"
+    assert_no_selector "h4", text: "Questions?"
+  
+    setting.update(contact_email: "jill@example.com")
+    visit about_url
+
+    assert_text "Contact us at jill@example.com"
+    assert_selector "h4", text: "Questions?"
+  
+    setting.update(contact_name: "Jill Doe", contact_email: nil)
+    visit about_url
+    assert_no_text "Contact us"
+    assert_no_selector "h4", text: "Questions?"
   end
 
   test "should diplay on day of pickup info" do
     setting = Setting.instance
+    setting.organization_name = "Troop 222"
     setting.on_day_of_pickup_instructions = "Some instructions"
     setting.save
 
     visit about_url
-
+    assert_selector "h2", text: "Troop 222"
     assert_text "Some instructions"
+    assert_text "Troop 222"
   end
 
   test "should display about event info" do
@@ -81,8 +98,7 @@ class AboutsTest < ApplicationSystemTestCase
     setting.save
 
     visit about_url
-    assert_text "10:00am"
-    assert_text "3:00pm"
+    assert_text "10:00am - 3:00pm"
   end
 
   test "should display organization url" do
@@ -99,4 +115,5 @@ class AboutsTest < ApplicationSystemTestCase
     visit about_url
     assert_link "Learn more", href: "https://example.com"
   end
-end
+
+  end

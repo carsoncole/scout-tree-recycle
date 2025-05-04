@@ -8,19 +8,26 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "Schedule your tree pickup for " + Setting.instance.event_pickup.strftime("%B %-d, %Y")
   end
 
-  test "making a reservation" do
-    10.times do
-      visit root_url
-      fill_in "Name", with: Faker::Name.name
-      fill_in "Street", with: Faker::Address.street_address
-      fill_in "Email", with: Faker::Internet.email
-      fill_in "Mobile", with: Faker::PhoneNumber.phone_number
-      click_button "Create Reservation"
+  test "making a reservation and checking status" do
+    visit root_url
+    fill_in "Name", with: Faker::Name.name
+    fill_in "Street", with: Faker::Address.street_address
+    fill_in "Email", with: "test@example.com"
+    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
+    click_button "Create Reservation"
+    assert_text "Make a Donation"
 
-      click_button "Select donation type"
-    end
-    sleep 1
-    assert_equal 10, Reservation.pending_pickup.count
+    sleep 0.25
+    reservation = Reservation.find_by(email: "test@example.com")
+
+    sleep 0.25
+    assert_equal "donation", reservation.status
+
+    click_button "Select donation type"
+    
+    sleep 0.25
+    assert_text "Reservation Confirmed"
+    assert_equal "routing", reservation.reload.status
   end
 
   # test starting a reservation but stopping at donation, then trying again later from start

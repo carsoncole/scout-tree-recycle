@@ -197,10 +197,12 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not_nil reservation.longitude
   end
 
-  test "reset_geocoding when address is changed" do
-    reservation = create(:reservation, latitude: 31.1212, longitude: 1212.1212, route_id: nil, distance_to_route: nil, was_geocoded: true, is_geocoded: true)
+  test "reset_geocoding and status to routingwhen address is changed" do
+    reservation = create(:pending_pickup_reservation, latitude: 31.1212, longitude: 1212.1212, route_id: nil, distance_to_route: nil, was_geocoded: true, is_geocoded: true)
     reservation.update(street: "123 Main St", city: "Anytown", state: "CA", zip: "12345")
+    reservation.reload
     assert_nil reservation.latitude
     assert_nil reservation.longitude
+    assert_equal "routing", reservation.status
   end
 end

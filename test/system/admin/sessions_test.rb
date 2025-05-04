@@ -21,7 +21,7 @@ class Admin::SessionsTest < ApplicationSystemTestCase
     fill_in "Password", with: @admin.password
     click_button "Sign in"
     assert_text "Reservations"
-    click_button "Log out"
+    click_link "Log out"
     assert_text "Sign in to your account"
   end
 end

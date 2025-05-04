@@ -61,6 +61,7 @@ class Reservation < ApplicationRecord
     self.route_id = nil
     self.distance_to_route = nil
     self.was_geocoded = false
+    self.status = "routing"
   end
 
   def destroy_not_active_reservations!

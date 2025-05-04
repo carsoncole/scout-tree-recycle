@@ -57,7 +57,7 @@ class ReservationsController < ApplicationController
   end
 
   def confirmation
-    @reservation.pending_pickup!
+    @reservation.routing!
   end
 
   def destroy # cancel

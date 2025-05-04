@@ -32,5 +32,5 @@ end
 PriorReservation.destroy_all
 100.times do
   method = [ :prior_reservation, :prior_reservation_with_street, :prior_reservation_with_street ].sample
-  reservation = FactoryBot.create(method, marketing_1_email_sent_at: [ Time.now, nil ].sample)
+  reservation = FactoryBot.create(method, marketing_1_email_sent_at: [ Time.current, nil ].sample)
 end

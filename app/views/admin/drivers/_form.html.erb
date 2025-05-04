@@ -1,4 +1,4 @@
-<%= form_with(model: [:admin, driver], class: "space-y-8 divide-y divide-gray-200 dark:divide-gray-700") do |f| %>
+<%= form_with(model: [:admin, driver], class: "space-y-8 divide-y divide-gray-200 dark:divide-gray-700 max-w-xl mx-auto") do |form| %>
   <% if driver.errors.any? %>
     <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
       <div class="flex">
@@ -27,35 +27,35 @@
     <div class="pt-8">
       <div>
         <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">Driver Information</h3>
-        <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">Enter the driver's details below.</p>
+        <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">Enter the driver details below.</p>
       </div>
 
       <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div class="sm:col-span-6">
-          <%= f.label :name, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <%= form.label :name, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
-            <%= f.text_field :name, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
+            <%= form.text_field :name, class: "block w-full rounded-md border-0 py-2 px-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
           </div>
         </div>
 
         <div class="sm:col-span-6">
-          <%= f.label :email, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <%= form.label :email, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
-            <%= f.email_field :email, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
+            <%= form.email_field :email, class: "block w-full rounded-md border-0 py-2 px-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
           </div>
         </div>
 
         <div class="sm:col-span-6">
-          <%= f.label :mobile, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <%= form.label :phone, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
-            <%= f.telephone_field :mobile, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
+            <%= form.telephone_field :phone, class: "block w-full rounded-md border-0 py-2 px-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
           </div>
         </div>
 
         <div class="sm:col-span-6">
-          <%= f.label :route_ids, "Routes", class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
+          <%= form.label :route_ids, "Routes", class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
-            <%= f.collection_check_boxes :route_ids, Route.all, :id, :name do |b| %>
+            <%= form.collection_check_boxes :route_ids, Route.all, :id, :name do |b| %>
               <div class="flex items-center mb-2">
                 <%= b.check_box class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded" %>
                 <%= b.label class: "ml-2 block text-sm text-gray-900 dark:text-white" %>
@@ -69,6 +69,6 @@
 
   <div class="mt-6 flex items-center justify-end gap-x-6">
     <%= link_to "Cancel", admin_drivers_path, class: "text-sm font-semibold leading-6 text-gray-900 dark:text-white" %>
-    <%= f.submit class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+    <%= form.submit class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
   </div>
 <% end %>

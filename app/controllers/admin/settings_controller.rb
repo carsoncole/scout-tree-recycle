@@ -46,6 +46,7 @@ class Admin::SettingsController < Admin::BaseController
       :default_city,
       :default_state,
       :country,
+      :about_event_description,
       :on_day_of_pickup_instructions,
       :is_reservations_open,
       :is_emailing_enabled,
@@ -57,7 +58,8 @@ class Admin::SettingsController < Admin::BaseController
       :driver_secret_key,
       :description,
       :email_batch_quantity,
-      :email_from
+      :email_from,
+      :time_zone
     )
   end
 end

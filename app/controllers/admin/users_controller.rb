@@ -3,7 +3,7 @@ class Admin::UsersController < Admin::BaseController
   before_action :require_admin_access, except: [ :index, :show ]
 
   def index
-    @users = User.all.order(created_at: :desc)
+    @pagy, @users = pagy(User.all.order(created_at: :desc))
   end
 
   def show
@@ -20,7 +20,7 @@ class Admin::UsersController < Admin::BaseController
     @user = User.new(user_params)
 
     if @user.save
-      redirect_to admin_user_path(@user), notice: "User was successfully created."
+      redirect_to admin_users_path, notice: "User was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -28,15 +28,19 @@ class Admin::UsersController < Admin::BaseController
 
   def update
     if @user.update(user_params)
-      redirect_to admin_user_path(@user), notice: "User was successfully updated."
+      redirect_to admin_users_path, notice: "User was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @user.destroy
-    redirect_to admin_users_path, notice: "User was successfully deleted."
+    if @user.role == "admin" && User.where(role: "admin").count <= 1
+      redirect_to admin_users_path, alert: "Cannot delete the last admin user."
+    else
+      @user.destroy
+      redirect_to admin_users_path, notice: "User was successfully deleted."
+    end
   end
 
   private
@@ -46,7 +50,7 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :role)
+    params.require(:user).permit(:email, :password, :password_confirmation, :role, :time_zone)
   end
 
   def require_admin_access

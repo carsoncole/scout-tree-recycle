@@ -26,10 +26,15 @@ class Reservation < ApplicationRecord
   # destroy any same-email not pending reservations since they're not needed
   before_validation :destroy_not_active_reservations!, if: ->(obj) { obj.reservation_form? && !obj.persisted? }
 
+  # remove prior reservation if it exists
+  after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
+
+  # reset geocoding data if address is changed
+  before_save :reset_geocoding!, if: ->(obj) { obj.saved_change_to_street? || obj.saved_change_to_city? || obj.saved_change_to_state? || obj.saved_change_to_zip? }
+
   # email delivery
   after_update :send_confirmed_reservation_email!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
   after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? }
-  after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
 
   def self.open?
     Setting.instance.is_reservations_open?
@@ -45,6 +50,16 @@ class Reservation < ApplicationRecord
   
   def routed?
     route.present?
+  end
+
+  # reset geocoding data if it's geocoded
+  def reset_geocoding!
+    return unless is_geocoded?
+    self.latitude = nil
+    self.longitude = nil
+    self.route_id = nil
+    self.distance_to_route = nil
+    self.was_geocoded = false
   end
 
   def destroy_not_active_reservations!

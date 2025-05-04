@@ -180,4 +180,27 @@ class ReservationTest < ActiveSupport::TestCase
     assert PriorReservation.find_by(email: "cancelled@example.com")
     assert PriorReservation.find_by(email: "missing@example.com")
   end
+
+  test "reset_geocoding! resets geocoding data" do
+    reservation = create(:reservation, latitude: 1.0, longitude: 1.0, route_id: 1, distance_to_route: 1.0, was_geocoded: true, is_geocoded: true)
+    reservation.reset_geocoding!
+    assert_nil reservation.latitude
+    assert_nil reservation.longitude
+    assert_nil reservation.route_id
+    assert_nil reservation.distance_to_route
+  end
+
+  test "reset_geocoding! does not reset geocoding data if it's not geocoded" do
+    reservation = create(:reservation, latitude: 31.1212, longitude: 1212.1212, route_id: nil, distance_to_route: nil, was_geocoded: true, is_geocoded: false)
+    reservation.reset_geocoding!
+    assert_not_nil reservation.latitude
+    assert_not_nil reservation.longitude
+  end
+
+  test "reset_geocoding when address is changed" do
+    reservation = create(:reservation, latitude: 31.1212, longitude: 1212.1212, route_id: nil, distance_to_route: nil, was_geocoded: true, is_geocoded: true)
+    reservation.update(street: "123 Main St", city: "Anytown", state: "CA", zip: "12345")
+    assert_nil reservation.latitude
+    assert_nil reservation.longitude
+  end
 end

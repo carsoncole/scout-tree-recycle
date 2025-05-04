@@ -1,4 +1,14 @@
 class Setting < ApplicationRecord
+  AVAILABLE_TIME_ZONES = [
+    "Eastern Time (US & Canada)",
+    "Central Time (US & Canada)",
+    "Mountain Time (US & Canada)",
+    "Pacific Time (US & Canada)",
+    "Alaska",
+    "Hawaii",
+    "UTC"
+  ].freeze
+
   attribute :site_title, :string, default: "Troop 100 Tree Recycle"
   attribute :home_page_header, :string, default: "Troop 100 Tree Recycle"
   attribute :organization_name, :string, default: "Troop 100"
@@ -18,6 +28,7 @@ class Setting < ApplicationRecord
   attribute :organization_url, :string, default: "https://www.scouting.org"
   attribute :email_from, :string, default: "Anytown Tree Recycle <example@example.com>"
   attribute :reservations_closed_message, :string, default: "Stay tuned for when we open reservations again."
+  attribute :time_zone, :string, default: "UTC"
 
   validates :default_city, presence: true
   validates :event_pickup, presence: true
@@ -26,6 +37,7 @@ class Setting < ApplicationRecord
   validates :organization_name, presence: true
   validates :about_event_description, presence: true
   validates :on_day_of_pickup_instructions, presence: true
+  validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
 
   def self.instance
     first_or_create!

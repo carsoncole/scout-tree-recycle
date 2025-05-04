@@ -18,6 +18,7 @@ class Reservation < ApplicationRecord
   scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }
   scope :not_active, -> { where.not(status: [ "routing", "pending_pickup" ]) }
+  scope :pickup, -> { where(status: [ "pending_pickup", "missing" ]) }
 
   # data normalization
   normalizes :email, with: ->(e) { e.strip.downcase }

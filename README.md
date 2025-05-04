@@ -59,6 +59,13 @@ Aws.config.update({region: 'us-west-2'})
 ```
 
 
+## Add admin user
+There are no default users so you need to add at least one. There are two roles: "admin" and "user". This can be done in the console:
+
+```ruby
+  User.create(email: "admin@example.com", password: "password", role: "admin")
+```
+
 
 ### USPS
 
@@ -252,3 +259,5 @@ The image displayed on the About page is in ```app/assets/images/about.jpg``.
 # Privacy Policy
 
 The privacy policy is at ```app/views/privacy```.
+
+

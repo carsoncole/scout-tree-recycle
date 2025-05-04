@@ -35,7 +35,7 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def destroy
-    if @user.role == "admin" && User.where(role: "admin").count <= 1
+    if @user.admin? && User.where(role: "admin").count <= 1
       redirect_to admin_users_path, alert: "Cannot delete the last admin user."
     else
       @user.destroy

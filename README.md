@@ -82,12 +82,34 @@ Kamal (https://kamal-deploy.org) is a deployment tool that will provision, deplo
 1. Configure ```config/deploy.yml```. Make sure to configure the proxy settings to include your domain name. This is important as when you deploy, it will attempt to secure an SSL certificate for your domain.
 2. Congifigure your DNS settings for your domain with an 'A' record that points to the IP address of your host.
 2. Launch your host. This can be any dedicated server, or even your local machine. It must have SSH root access enabled.
-3. Setup and deploy to the host:
+3. Create and configure ```.kamal/secrets```. You can use the sample file ```.kamal/secrets.sample```. Replace ```$KAMAL_REGISTRY_PASSWORD``` with your Docker access key. 
+4. With your configuration complete, you need to commit your code, which is what will be used in the Docker image creation.
+```ruby
+$ git add .
+$ git commit -a -m 'some message'
+```
+4. Setup and deploy to the host:
 
 ```ruby
 $ kamal setup
 $ kamal deploy
 ```
+
+## Deploying to Production with Heroku
+
+- Heroku account
+- Heroku console install locally
+- Heroku add on database service
+
+### Steps
+
+1. Deploy to Heroku.
+```ruby
+$ heroku push origin master
+```
+2. Add a database addon service in your account. Database configuration in ```database.yml``` is not necessary as Heroku will replace the settings with whatever database add on service you have installed in your account.
+[TODO] explain how heroku would handle the cache and job dbs....
+3. Configure your domain in Heroku.
 
 
 

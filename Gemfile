@@ -43,10 +43,10 @@ gem "thruster", require: false
 # gem "image_processing", "~> 1.2"
 
 gem "phonelib" # phone number parsing and cleanup
-gem "aws-sdk-locationservice"
+gem "aws-sdk-locationservice" # address geocoding and geospatial queries
 gem "geocoder" # address geocoding with lat/lon
 gem "pagy" # pagination
-gem "mission_control-jobs"
+gem "mission_control-jobs" # job processing monitoring at /admin/jobs
 
 
 group :development, :test do

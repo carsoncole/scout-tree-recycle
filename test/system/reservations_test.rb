@@ -1,6 +1,10 @@
 require "application_system_test_case"
 
 class ReservationsTest < ApplicationSystemTestCase
+  setup do
+    Setting.instance.update(is_routing_enabled: true)
+  end
+
   test "visiting root" do
     visit root_url
 
@@ -148,5 +152,12 @@ class ReservationsTest < ApplicationSystemTestCase
     reservation = create(:reservation, status: :pending_pickup)
     visit edit_reservation_path(reservation)
     assert_text "Reservations are not currently changeable."
+  end
+
+  test "geocoding a reservation when routing is disabled" do
+    Setting.instance.update(is_routing_enabled: false)
+    reservation = create(:reservation, status: :pending_pickup)
+    click_link "Geocode Address"
+    assert_text "Routing is disabled"
   end
 end

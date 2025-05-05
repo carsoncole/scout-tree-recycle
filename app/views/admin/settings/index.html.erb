@@ -57,6 +57,27 @@
                   </div>
                 </div>
 
+                <!-- Pickups Portal Toggle -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Pickups Portal</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal at "/pickups" for tree pickup management</p>
+                    </div>
+                    <div class="flex items-center">
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <%= check_box_tag "setting[is_pickups_site_enabled]", "1", setting.is_pickups_site_enabled,
+                            class: "sr-only peer",
+                            data: {
+                              toggle_target: "toggle",
+                              setting: "is_pickups_site_enabled"
+                            } %>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Email Toggle -->
                 <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                   <div class="flex items-center justify-between">
@@ -99,20 +120,21 @@
                   </div>
                 </div>
 
-                <!-- Pickups Portal Toggle -->
+
+                <!-- Routing Toggle -->
                 <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                   <div class="flex items-center justify-between">
                     <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Pickups Portal</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal for tree pickup management</p>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Automatic Routing</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable automatic routing for tree pickups</p>
                     </div>
                     <div class="flex items-center">
                       <label class="relative inline-flex items-center cursor-pointer">
-                        <%= check_box_tag "setting[is_pickups_site_enabled]", "1", setting.is_pickups_site_enabled,
+                        <%= check_box_tag "setting[is_routing_enabled]", "1", setting.is_routing_enabled,
                             class: "sr-only peer",
                             data: {
                               toggle_target: "toggle",
-                              setting: "is_pickups_site_enabled"
+                              setting: "is_routing_enabled"
                             } %>
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                       </label>

@@ -8,7 +8,11 @@ class ReservationsController < ApplicationController
     if !Reservation.open? && !signed_in?
       redirect_to root_url, alert: "Reservations are CLOSED."
     elsif @reservation.save
-      @reservation.address_verification!
+      if helpers.setting.is_routing_enabled
+        @reservation.address_verification!
+      else
+        @reservation.routing!
+      end
       if @reservation.reservation_form?
         redirect_to reservation_address_verification_url(@reservation)
       elsif

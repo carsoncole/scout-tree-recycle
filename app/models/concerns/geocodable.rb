@@ -7,6 +7,7 @@ module Geocodable
 
     validates :street, :city, :state, :country, presence: true
 
+    # DISABLED: geocoding and routing is handled by a job
     # geocoding and routing
     # before_validation :full_geocode!, if: ->(obj){ obj.address.present? && obj.street_changed? && !(obj.latitude_changed? && obj.longitude_changed?) }
 

@@ -26,9 +26,13 @@ class Admin::ReservationsController < Admin::BaseController
   end
 
   def geocode
-    @reservation.full_geocode!
-    @reservation.save
-    redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully geocoded."
+    if helpers.setting.is_routing_enabled
+      @reservation.full_geocode!
+      @reservation.save
+      redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully geocoded."
+    else
+      redirect_back fallback_location: admin_reservation_path(@reservation), alert: "Routing is disabled"
+    end
   end
 
   private

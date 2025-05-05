@@ -52,6 +52,7 @@ class Admin::SettingsController < Admin::BaseController
       :is_emailing_enabled,
       :is_sms_enabled,
       :is_pickups_site_enabled,
+      :is_routing_enabled,
       :contact_name,
       :contact_email,
       :contact_phone,

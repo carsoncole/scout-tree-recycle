@@ -29,6 +29,7 @@ class Setting < ApplicationRecord
   attribute :email_from, :string, default: "Anytown Tree Recycle <example@example.com>"
   attribute :reservations_closed_message, :string, default: "Stay tuned for when we open reservations again."
   attribute :time_zone, :string, default: "UTC"
+  attribute :is_routing_enabled, :boolean, default: false
 
   validates :default_city, presence: true
   validates :event_pickup, presence: true

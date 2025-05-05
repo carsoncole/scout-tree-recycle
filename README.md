@@ -1,6 +1,7 @@
 ** Documentation is far from complete.
 
 ![Example Image](public_screenshot.png)
+![Example Image](confirmation2_screenshot.png)
 
 # Tree Recycle
 
@@ -9,6 +10,7 @@ Tree Recycle is a comprehensive web application that supports the running of a C
 - Provides a user-friendly public website for reserving tree pickups;
 - Accepts online donations;
 - Process pickup reservations and geocode addresses for mapping purposes.
+- Reservations can be manually routed without the need for external services.
 - Efficiently categorize addresses into pre-defined Routes, grouped within Zones and assigned to designated drivers.
 - Retain reservation data from year to year, enabling targeted marketing to previous customers through email reminders for the current year's event.
 - Issue SMS and email notifications in cases where drivers cannot locate a tree (a common occurrence when individuals forget to place them out). Deliver email confirmations for reservations, donation receipts, and promotional emails.
@@ -18,13 +20,16 @@ Tree Recycle is a comprehensive web application that supports the running of a C
 - Ruby 3.4
 - Ruby on Rails 8+
 - PostgreSQL
-- SMTP Mail account (Gmail works)
-- Twilio SMS
-- AWS Map Service
+- SMTP Mail account (Gmail works) (optional)
+- Twilio SMS (optional)
+- AWS Map Service (optional)
 
-# Getting started
+## Get started locally
 
-1. Make sure you have Ruby and Rails installed on your computer to run it locally.
+Instructions for running the application locally. By default all external services are disabled to simplify getting up and running with the installation.
+
+
+1. Install Ruby (3.0+), Ruby on Rails (8.0+), and PostgreSQL on your local computer.
 
 2. Clone the repo and cd into the directory:
 
@@ -45,7 +50,7 @@ $ bundle install
 $ rails db:migrate
 ```
 
-5. Configure credentials. For now this can be skipped if you are running your database locally. Most of the settings are for additional services. Delete the existing credentials file (if there) at ```config/credentials.yml.enc```. Then run the command below which will generate a new encrypted credentials file for you. Copy the contents of ```config/credentials.yml.enc.sample``` into it and configure as necessary.
+5. Configure encrypted Rails credentials. Most of the settings are for additional services. Delete the existing credentials file (if there) at ```config/credentials.yml.enc```. Then run the command below which will generate a new encrypted credentials file for you. Copy the contents of ```config/credentials.yml.enc.sample``` into it and configure as necessary.
 
 ```ruby
 EDITOR=vim rails credentials:edit
@@ -94,23 +99,6 @@ $ git commit -a -m 'some message'
 $ kamal setup
 $ kamal deploy
 ```
-
-## Deploying to Production with Heroku
-
-- Heroku account
-- Heroku console install locally
-- Heroku add on database service
-
-### Steps
-
-1. Deploy to Heroku.
-```ruby
-$ heroku push origin master
-```
-2. Add a database addon service in your account. Database configuration in ```database.yml``` is not necessary as Heroku will replace the settings with whatever database add on service you have installed in your account.
-[TODO] explain how heroku would handle the cache and job dbs....
-3. Configure your domain in Heroku.
-
 
 
 ### Mapping service

@@ -1,8 +1,10 @@
 ** Documentation is far from complete.
 
+![Example Image](public_screenshot.png)
+
 # Tree Recycle
 
-Tree Recycle is a web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area, Tree Recycle offers the following features:
+Tree Recycle is a comprehensive web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area, Tree Recycle offers the following features:
 
 - Provides a user-friendly public website for reserving tree pickups;
 - Accepts online donations;
@@ -11,17 +13,83 @@ Tree Recycle is a web application that supports the running of a Christmas tree 
 - Retain reservation data from year to year, enabling targeted marketing to previous customers through email reminders for the current year's event.
 - Issue SMS and email notifications in cases where drivers cannot locate a tree (a common occurrence when individuals forget to place them out). Deliver email confirmations for reservations, donation receipts, and promotional emails.
 
-## REQUIREMENTS
+## Prerequisites
 
-* The application is configured for U.S. addresses and phone numbers.
+- Ruby 3.4
+- Ruby on Rails 8+
+- PostgreSQL
+- SMTP Mail account (Gmail works)
+- Twilio SMS
+- AWS Map Service
 
-### VM
+# Getting started
 
-Kamal or Docker can be used when deploying this application. Kamal is recommended as it utilizes Docker and works great.
+1. Make sure you have Ruby and Rails installed on your computer to run it locally.
 
-### Database
+2. Clone the repo and cd into the directory:
 
-An external PostgreSQL database is required. Configure its settings in database.yml.
+```ruby
+$ git clone https://github.com/carsoncole/tree_recycle.git 
+$ cd tree_recycle
+```
+
+3. Install gems:
+
+```ruby
+$ bundle install
+```
+
+4. Configure database by adding your database settings to the ```config/database.yml``` file. Then migrate the database:
+
+```ruby
+$ rails db:migrate
+```
+
+5. Configure credentials. For now this can be skipped if you are running your database locally. Most of the settings are for additional services. Delete the existing credentials file (if there) at ```config/credentials.yml.enc```. Then run the command below which will generate a new encrypted credentials file for you. Copy the contents of ```config/credentials.yml.enc.sample``` into it and configure as necessary.
+
+```ruby
+EDITOR=vim rails credentials:edit
+```
+
+
+6. Launch the app, and it will be accessible at http://localhost:3000:
+
+```ruby
+$ bin/dev
+```
+
+To access the admin section (localhost:3000/admin), create an initial admin user:
+
+```ruby
+$ rails console
+> User.create(email: test@example.com, password: password, role: "admin")
+```
+
+
+## Deploying to Production with Kamal
+
+Kamal (https://kamal-deploy.org) is a deployment tool that will provision, deploy, and manage the application in production.
+
+### Prerequisites
+
+- Docker Compose (installed locally)
+- A host for the application with SSH root access enabled
+- Docker account
+- Domain name and access to the domain records
+
+### Steps
+
+1. Configure ```config/deploy.yml```. Make sure to configure the proxy settings to include your domain name. This is important as when you deploy, it will attempt to secure an SSL certificate for your domain.
+2. Congifigure your DNS settings for your domain with an 'A' record that points to the IP address of your host.
+2. Launch your host. This can be any dedicated server, or even your local machine. It must have SSH root access enabled.
+3. Setup and deploy to the host:
+
+```ruby
+$ kamal setup
+$ kamal deploy
+```
+
+
 
 ### Mapping service
 
@@ -130,6 +198,7 @@ Once the initial user is setup, you can manage the user roles (`viewer`, `editor
 ```ruby
     config.allow_sign_up = true
 ```
+
 
 #### Setup
 

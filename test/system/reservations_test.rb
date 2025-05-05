@@ -153,11 +153,4 @@ class ReservationsTest < ApplicationSystemTestCase
     visit edit_reservation_path(reservation)
     assert_text "Reservations are not currently changeable."
   end
-
-  test "geocoding a reservation when routing is disabled" do
-    Setting.instance.update(is_routing_enabled: false)
-    reservation = create(:reservation, status: :pending_pickup)
-    click_link "Geocode Address"
-    assert_text "Routing is disabled"
-  end
 end

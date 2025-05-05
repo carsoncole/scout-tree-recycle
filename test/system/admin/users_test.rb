@@ -2,8 +2,7 @@ require "application_system_test_case"
 
 class Admin::UsersTest < ApplicationSystemTestCase
   setup do
-    @user = create(:user, email: "admin@example.com", password: "abCDefg123", role: "admin")
-    sign_in_as(@user)
+    sign_in_as(users(:one),true)
   end
 
   test "visiting the index" do
@@ -78,7 +77,7 @@ class Admin::UsersTest < ApplicationSystemTestCase
   end
 
   test "user can not perform any CRUD operations" do
-    @user.update(role: "user")
+    User.find_by(email: "one@example.com").update(role: "user")
 
     visit admin_users_url
     click_on "Add user"

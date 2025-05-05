@@ -4,7 +4,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :email, null: false
       t.string :password_digest, null: false
       t.string :role, null: false, default: "user"
-
+      t.string :time_zone, default: "Eastern Time (US & Canada)"
       t.timestamps
     end
     add_index :users, :email, unique: true

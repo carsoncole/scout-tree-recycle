@@ -11,6 +11,7 @@ class CreateRoutes < ActiveRecord::Migration[8.0]
       t.decimal "longitude"
       t.integer "zone_id"
       t.decimal "distance_to_zone"
+      t.integer "reservations_count", default: 0
       t.index [ "name" ], name: "index_routes_on_name"
 
       t.timestamps

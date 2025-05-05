@@ -33,7 +33,7 @@ module Geocodable
       self.longitude = nil
       self.house_number = nil
       self.street_name = nil
-      self.route_id = nil if self.class == Reservation && self.is_routed
+      self.route_id = nil if self.class == Reservation
       if Geocoder.config.lookup == :nominatum
         Rails.error.handle do
           results = Geocoder.search(self.address)

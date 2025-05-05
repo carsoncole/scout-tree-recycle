@@ -12,6 +12,7 @@ FactoryBot.define do
 
     factory :pending_pickup_reservation do
       status { :pending_pickup }
+      route
     end
   
     factory :routing_reservation do

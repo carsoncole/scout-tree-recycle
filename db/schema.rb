@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_05_180131) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_05_224123) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -107,7 +107,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_180131) do
     t.integer "status"
     t.integer "heard_about_source"
     t.string "unit"
-    t.boolean "is_routed", default: true
     t.boolean "is_geocoded", default: true
     t.boolean "is_door_hanger"
     t.boolean "is_route_polygon", default: false
@@ -139,9 +138,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_180131) do
     t.decimal "longitude"
     t.integer "zone_id"
     t.decimal "distance_to_zone"
+    t.integer "reservations_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "reservations_count"
     t.index ["name"], name: "index_routes_on_name"
   end
 
@@ -168,12 +167,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_180131) do
     t.string "contact_name"
     t.string "contact_email"
     t.string "contact_phone"
+    t.string "time_zone", default: "Eastern Time (US & Canada)"
     t.text "about_event_description"
     t.text "on_day_of_pickup_instructions"
     t.boolean "is_reservations_open", default: true
-    t.boolean "is_emailing_enabled", default: true
     t.boolean "is_pickups_site_enabled", default: true
-    t.boolean "is_sms_enabled", default: false, null: false
+    t.boolean "is_emailing_enabled", default: false
+    t.boolean "is_sms_enabled", default: false
+    t.boolean "is_routing_enabled", default: false
     t.string "driver_secret_key"
     t.string "facebook_page_id"
     t.string "meta_site_name"
@@ -186,17 +187,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_180131) do
     t.text "driver_instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "time_zone"
-    t.boolean "is_routing_enabled", default: false
   end
 
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "password_digest", null: false
     t.string "role", default: "user", null: false
+    t.string "time_zone", default: "Eastern Time (US & Canada)"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "time_zone", default: "Eastern Time (US & Canada)"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

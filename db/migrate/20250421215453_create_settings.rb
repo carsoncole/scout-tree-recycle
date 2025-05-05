@@ -14,12 +14,14 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.string "contact_name"
       t.string "contact_email"
       t.string "contact_phone"
+      t.string "time_zone", default: "Eastern Time (US & Canada)"
       t.text "about_event_description"
       t.text "on_day_of_pickup_instructions"
       t.boolean "is_reservations_open", default: true
-      t.boolean "is_driver_site_enabled", default: true
+      t.boolean "is_pickups_site_enabled", default: true
       t.boolean "is_emailing_enabled", default: false
-      t.boolean "is_sms_enabled", default: false, null: false
+      t.boolean "is_sms_enabled", default: false
+      t.boolean "is_routing_enabled", default: false
       t.string "driver_secret_key"
       t.string "facebook_page_id"
       t.string "meta_site_name"

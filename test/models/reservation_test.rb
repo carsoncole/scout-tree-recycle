@@ -198,11 +198,36 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "reset_geocoding and status to routing when address is changed" do
-    reservation = create(:pending_pickup_reservation, latitude: 31.1212, longitude: 1212.1212, route_id: nil, distance_to_route: nil, was_geocoded: true, is_geocoded: true)
+    reservation = create(:pending_pickup_reservation, latitude: 31.1212, longitude: 1212.1212, distance_to_route: nil, was_geocoded: true, is_geocoded: true)
     reservation.update(street: "123 Main St", city: "Anytown", state: "CA", zip: "12345")
     reservation.reload
     assert_nil reservation.latitude
     assert_nil reservation.longitude
     assert_equal "routing", reservation.status
   end
+
+  test "routing has no route" do
+    reservation = create(:routing_reservation)
+    assert_not reservation.route
+  end
+
+  test "pending pickup has a route" do
+    reservation = create(:pending_pickup_reservation)
+    assert reservation.route
+  end
+
+  test "status changes to routing when route is removed" do
+    reservation = create(:pending_pickup_reservation)
+    reservation.route = nil
+    reservation.save
+    assert reservation.routing?
+  end
+
+  test "status changes to pending pickup when route is added" do
+    reservation = create(:routing_reservation)
+    reservation.route = create(:route)
+    reservation.save
+    assert reservation.pending_pickup?
+  end
 end
+

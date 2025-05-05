@@ -129,7 +129,7 @@
                       <p class="text-sm text-gray-500 dark:text-gray-400">Enable automatic routing for tree pickups</p>
                     </div>
                     <div class="flex items-center">
-                      <label class="relative inline-flex items-center cursor-pointer">
+                      <label class="relative inline-flex items-center cursor-pointer" id="routing-toggle">
                         <%= check_box_tag "setting[is_routing_enabled]", "1", setting.is_routing_enabled,
                             class: "sr-only peer",
                             data: {

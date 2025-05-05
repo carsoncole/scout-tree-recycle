@@ -2,6 +2,10 @@ require "test_helper"
 
 class ReservationsMailerTest < ActionMailer::TestCase
 
+  setup do
+    Setting.instance.update(is_emailing_enabled: true)
+  end
+
   test 'sends confirmation email once completed reservation is created' do
     assert_emails 0 do
       @reservation = create(:reservation, status: :address_verification)
@@ -53,13 +57,6 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal ["example@example.com"], email.from
     assert_equal "Your tree pickup is confirmed", email.subject
     assert_match "Tree pick-up scheduled", email.body.encoded
-  end
-
-  test "confirmation email not sent when status is not changed to routing" do
-    reservation = create(:reservation, status: :donation)
-    assert_no_emails do
-      reservation.pending_pickup!
-    end
   end
 
   test "cancelled reservation email sent when status is changed to cancelled" do

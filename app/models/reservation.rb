@@ -33,6 +33,10 @@ class Reservation < ApplicationRecord
   # reset geocoding data if address is changed
   before_save :reset_geocoding!, if: ->(obj) { obj.pending_pickup?  && (obj.saved_change_to_street? || obj.saved_change_to_city? || obj.saved_change_to_state? || obj.saved_change_to_zip?) }
 
+  # reset status if route changes made
+  before_save :reset_status_to_routing_if_route_removed!, if: ->(obj) { obj.pending_pickup? && obj.route_id.blank? }
+  before_save :reset_status_to_pending_pickup_if_route_added!, if: ->(obj) { obj.routing? && obj.route_id.present? }
+
   # emails on confirmation and cancellation
   after_update :send_confirmed_reservation_email!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
   after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? }
@@ -72,6 +76,14 @@ class Reservation < ApplicationRecord
   # remove prior reservation if it exists
   def remove_prior_reservation!
     PriorReservation.where(email: email).destroy_all
+  end
+
+  def reset_status_to_routing_if_route_removed!
+    self.status = "routing" if route_id.blank?
+  end
+
+  def reset_status_to_pending_pickup_if_route_added!
+    self.status = "pending_pickup" if route_id.present?
   end
 
   def send_confirmed_reservation_email!

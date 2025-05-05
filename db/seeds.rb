@@ -10,8 +10,8 @@
 #
 
 unless Route.any?
-  routes = FactoryBot.create_list(:route, 3)
-  drivers = FactoryBot.create_list(:driver, 5)
+  routes = FactoryBot.create_list(:route, 15)
+  drivers = FactoryBot.create_list(:driver, 10)
   driver_routes = drivers.each do |driver|
     FactoryBot.create(:driver_route, driver: driver, route: routes.sample)
   end

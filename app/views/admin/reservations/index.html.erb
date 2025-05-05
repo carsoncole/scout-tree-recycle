@@ -15,6 +15,30 @@
         </p>
       </div>
 
+      <% unless setting.is_routing_enabled %>
+        <div class="mb-8">
+          <div class="rounded-md bg-yellow-50 dark:bg-yellow-900/40 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-yellow-400 dark:text-yellow-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  Automatic routing is disabled
+                </h3>
+                <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                  <p>
+                    Routes will need to be manually assigned. Enable automatic routing in the <%= link_to "admin settings", admin_settings_path, class: "font-medium underline hover:text-yellow-600 dark:hover:text-yellow-400" %>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
       <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
         <div class="px-4 py-5 sm:p-6">
           <div class="overflow-x-auto">
@@ -45,7 +69,16 @@
                       <%= reservation.mobile.present? ? Phonelib.parse(reservation.mobile).national : nil %>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      <%= reservation.route&.name || 'Unassigned' %>
+                      <div class="flex items-center">
+                        <%= reservation.route&.name || (reservation.is_geocoded? ? 'Routing Pending' : 'Unrouted') %>
+                        <% if ((reservation.was_geocoded == true && reservation.geocoded?) || reservation.is_geocoded == false) && !reservation.route_id.present? %>
+                          <span class="inline-flex items-center ml-2" title="Route needs to be manually set">
+                            <svg class="h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+                          </span>
+                        <% end %>
+                      </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full

@@ -23,6 +23,12 @@ export default class extends Controller {
       existingIndicator.remove()
     }
 
+    // Remove any existing error indicators
+    const existingErrorIndicator = toggleContainer.querySelector('.error-indicator')
+    if (existingErrorIndicator) {
+      existingErrorIndicator.remove()
+    }
+
     fetch(`/admin/settings/1/toggle`, {
       method: "PATCH",
       headers: {
@@ -52,6 +58,30 @@ export default class extends Controller {
       } else {
         // Revert the toggle
         toggle.checked = !value
+
+        // Create error indicator
+        const errorIndicator = document.createElement('div')
+        errorIndicator.className = 'error-indicator mr-2'
+        errorIndicator.innerHTML = `
+          <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+        `
+        // Insert before the toggle label
+        toggleParent.insertBefore(errorIndicator, toggleLabel)
+
+        // Show error message
+        const errorMessage = document.createElement('div')
+        errorMessage.className = 'text-red-500 text-sm mr-4 whitespace-nowrap'
+        errorMessage.textContent = data.errors?.[0] || 'An error occurred'
+        // Insert before the toggle parent div
+        toggleContainer.insertBefore(errorMessage, toggleParent)
+
+        // Remove error indicator and message after 3 seconds
+        setTimeout(() => {
+          errorIndicator.remove()
+          errorMessage.remove()
+        }, 3000)
       }
     })
     .catch(error => {

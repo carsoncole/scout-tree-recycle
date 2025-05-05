@@ -10,10 +10,10 @@ module ActiveSupport
 
     fixtures :all
 
-    def sign_in_as(user)
+    def sign_in_as(user,fixture=false)
       visit new_admin_session_url
       fill_in "Email", with: user.email
-      fill_in "Password", with: user.password
+      fill_in "Password", with: fixture ? "password123456789" : user.password
       click_button "Sign in"
       sleep 0.2
     end

@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     get "address_verification", to: "address_verification#address_verification", as: :address_verification
     patch "address_confirmation", to: "address_verification#address_confirmation", as: :address_confirmation
     get "confirmation", to: "reservations#confirmation", as: :confirmation
-    resources :donations, only: [ :new, :create ]
+    resources :donations, only: [ :index, :new, :create ]
   end
 
   # Prior Reservations

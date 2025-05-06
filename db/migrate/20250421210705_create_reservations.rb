@@ -24,7 +24,6 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.integer "heard_about_source"
         t.string "unit"
         t.boolean "is_routed", default: true
-        t.boolean "is_geocoded", default: true
         t.boolean "is_door_hanger"
         t.boolean "is_route_polygon", default: false
         t.boolean "is_pending_pickup_email_sent", default: false
@@ -44,6 +43,5 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.timestamps
       end
 
-      add_foreign_key :reservations, :routes, column: :route_id
   end
 end

@@ -22,6 +22,7 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.boolean "is_emailing_enabled", default: false
       t.boolean "is_sms_enabled", default: false
       t.boolean "is_routing_enabled", default: false
+      t.boolean "is_donations_enabled", default: false
       t.string "driver_secret_key"
       t.string "facebook_page_id"
       t.string "meta_site_name"
@@ -30,9 +31,8 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.string "meta_image_filename"
       t.string "reservations_closed_message"
       t.string "email_from"
-      t.integer "email_batch_quantity", default: 300
+      t.integer "email_batch_quantity", default: 100
       t.text "driver_instructions"
-
 
       t.timestamps
     end

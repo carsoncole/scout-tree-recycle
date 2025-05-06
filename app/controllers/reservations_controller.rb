@@ -11,13 +11,18 @@ class ReservationsController < ApplicationController
       if helpers.setting.is_routing_enabled
         @reservation.address_verification!
       else
-        @reservation.routing!
+        @reservation.donation!
       end
       if @reservation.reservation_form?
         redirect_to reservation_address_verification_url(@reservation)
       elsif
-        @reservation.pending_pickup?
-        redirect_to new_reservation_donation_url(@reservation)
+        @reservation.donation?
+        if helpers.setting.is_donations_enabled
+          redirect_to new_reservation_donation_url(@reservation)
+        else
+          @reservation.routing!
+          redirect_to reservation_donations_url(reservation_id: @reservation.id)
+        end
       else
         @reservation.address_verification?
         redirect_to reservation_address_verification_url(@reservation)

@@ -1,0 +1,50 @@
+<div class="w-full bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen">
+    <div class="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 mb-6">
+          <svg class="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+          Donations
+        </h1>
+        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          Support our mission
+        </p>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
+        <div class="px-6 py-8 sm:p-8">
+          <div class="prose dark:prose-invert max-w-none">
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+              Thank you for your interest in supporting <%= setting.organization_name %>! Your generosity helps us continue our mission of environmental stewardship and community service.
+            </p>
+
+            <div class="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg mb-8">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                How to Donate
+              </h2>
+              <p class="text-gray-700 dark:text-gray-300 mb-4">
+                If you would like to make a donation, you can leave it in a ziplock bag with your tree on the day of pickup. Our volunteers will collect it along with your tree.
+              </p>
+              <p class="text-gray-700 dark:text-gray-300">
+                Your support makes a real difference in our community and helps us continue our important work.
+              </p>
+            </div>
+
+            <div class="text-center mt-12">
+              <%= link_to reservation_confirmation_path(@reservation), class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Confirm Your Tree Pickup Reservation
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

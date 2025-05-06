@@ -1,5 +1,8 @@
 class DonationsController < ApplicationController
-  before_action :set_reservation, only: %i[ new create ]
+  before_action :set_reservation, only: %i[ index new create ]
+
+  def index
+  end
 
   def new
   end

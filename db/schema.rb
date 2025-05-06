@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_06_002409) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -52,7 +52,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_002409) do
   create_table "drivers", force: :cascade do |t|
     t.string "name"
     t.string "mobile"
-    t.string "email"
     t.bigint "zone_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -175,6 +174,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_002409) do
     t.boolean "is_emailing_enabled", default: false
     t.boolean "is_sms_enabled", default: false
     t.boolean "is_routing_enabled", default: false
+    t.boolean "is_donations_enabled", default: false
     t.string "driver_secret_key"
     t.string "facebook_page_id"
     t.string "meta_site_name"
@@ -183,7 +183,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_002409) do
     t.string "meta_image_filename"
     t.string "reservations_closed_message"
     t.string "email_from"
-    t.integer "email_batch_quantity", default: 300
+    t.integer "email_batch_quantity", default: 100
     t.text "driver_instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

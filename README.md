@@ -7,22 +7,61 @@
 
 Tree Recycle is a comprehensive web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area, Tree Recycle offers the following features:
 
-- Provides a user-friendly public website for reserving tree pickups;
-- Accepts online donations;
-- Process pickup reservations and geocode addresses for mapping purposes.
-- Reservations can be manually routed without the need for external services.
-- Efficiently categorize addresses into pre-defined Routes, grouped within Zones and assigned to designated drivers.
-- Retain reservation data from year to year, enabling targeted marketing to previous customers through email reminders for the current year's event.
-- Issue SMS and email notifications in cases where drivers cannot locate a tree (a common occurrence when individuals forget to place them out). Deliver email confirmations for reservations, donation receipts, and promotional emails.
+- **Reservation Management**
+  - Public website for tree pickup reservations
+  - Address verification and geocoding
+  - Automatic or manual routing system
+  - Status tracking (pending, picked up, missing, cancelled)
 
-## Prerequisites
+- **Routing System**
+  - Automatic routing with geocoding
+  - Manual routing option
+  - Route assignment to drivers
+  - Zone-based organization
+
+- **Donation Processing**
+  - Online donation acceptance
+  - Stripe integration
+  - Receipt generation
+  - Donation tracking
+
+- **Communication**
+  - Email notifications for:
+    - Reservation confirmations
+    - Pickup reminders
+    - Missing tree alerts
+    - Donation receipts
+  - SMS notifications for missing trees
+  - Marketing emails to previous customers
+
+- **Admin Features**
+  - Dashboard for reservation management
+  - Route assignment interface
+  - Settings configuration
+  - Marketing campaign management
+  - User management
+
+- **Tree Pickups Site for Drivers**
+  - Dedicated site for drivers at "/pickups"
+  - PDF pickup lists (backup in case online connectivity is down)
+  - Map showing pickup locations and status
+  - Drivers can update status of pickups and register missing trees
+
+## Technical Stack
 
 - Ruby 3.4
-- Ruby on Rails 8+
+- Rails 8+
 - PostgreSQL
-- SMTP Mail account (Gmail works) (optional)
-- Twilio SMS (optional)
-- AWS Map Service (optional)
+- Tailwind CSS
+- Stimulus.js
+- Docker (for deployment)
+
+## Optional Integrations
+
+- AWS Location Service (for geocoding)
+- Twilio (for SMS)
+- Stripe (for donations)
+- SMTP (for email)
 
 ## Get started locally
 

@@ -8,6 +8,8 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 #
+require 'factory_bot_rails'
+
 
 unless Route.any?
   routes = FactoryBot.create_list(:route, 15)

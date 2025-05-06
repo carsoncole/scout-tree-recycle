@@ -60,7 +60,7 @@ Rails.application.routes.draw do
   namespace :pickups do
     root to: "drivers#index"
     get "unauthorized", to: "drivers#unauthorized"
-    resources :drivers, only: [ :index, :show ]
+    resources :drivers, only: [ :index ]
     get "driver_pickup_lists", to: "drivers#driver_pickup_lists"
   end
 

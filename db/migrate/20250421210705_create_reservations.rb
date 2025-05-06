@@ -18,7 +18,7 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.decimal "latitude"
         t.decimal "longitude"
         t.boolean "was_geocoded", default: false
-        t.bigint "route_id"
+        t.bigint "route_id", null: true
         t.decimal "distance_to_route"
         t.integer "status"
         t.integer "heard_about_source"
@@ -43,5 +43,7 @@ class CreateReservations < ActiveRecord::Migration[8.0]
 
         t.timestamps
       end
+
+      add_foreign_key :reservations, :routes, column: :route_id
   end
 end

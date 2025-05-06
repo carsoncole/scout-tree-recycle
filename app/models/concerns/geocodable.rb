@@ -27,7 +27,7 @@ module Geocodable
 
     def full_geocode!
       if self.class == Reservation
-        return unless self.is_geocoded?
+        return unless self.is_routed?
       end
       self.latitude = nil
       self.longitude = nil

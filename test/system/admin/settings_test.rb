@@ -33,7 +33,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_selector "#flash", text: "The Pickups site is CLOSED."
   end
 
-  test "toggle settings" do
+  # test "toggle settings" do
     # Setting.instance.update(is_reservations_open: true, is_emailing_enabled: true, is_sms_enabled: true)
 
     # # visit admin_settings_url
@@ -58,7 +58,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     # sleep 2
     # assert_not Setting.instance.is_routing_enabled?
 
-  end
+  # end
 
   test "page links" do
     visit admin_settings_url

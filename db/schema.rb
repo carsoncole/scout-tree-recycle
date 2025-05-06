@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_05_224123) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_06_002409) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -107,7 +107,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_224123) do
     t.integer "status"
     t.integer "heard_about_source"
     t.string "unit"
-    t.boolean "is_geocoded", default: true
+    t.boolean "is_routed", default: true
     t.boolean "is_door_hanger"
     t.boolean "is_route_polygon", default: false
     t.boolean "is_pending_pickup_email_sent", default: false

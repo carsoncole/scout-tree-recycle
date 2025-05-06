@@ -45,4 +45,17 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
       assert_text "Reservation Details"
       assert_selector "#status-pending_pickup", text: "Pending Pickup"
     end
+
+    test "routing status when system routing is enabled" do
+      Setting.instance.update(is_routing_enabled: true)
+      reservation = create(:pending_pickup_reservation)
+      visit admin_reservations_path
+      assert_text reservation.route.name
+
+      click_link "Edit"
+      find("#reservation_route_id").select("Select a route")
+      click_button "Update Reservation"
+      visit admin_reservations_url
+      assert_text "Routing Pending"
+    end
 end

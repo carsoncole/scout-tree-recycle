@@ -59,7 +59,7 @@ class Reservation < ApplicationRecord
 
   # reset geocoding data if it's geocoded
   def reset_geocoding!
-    return unless is_geocoded?
+    return unless is_routed?
     self.latitude = nil
     self.longitude = nil
     self.route_id = nil
@@ -84,6 +84,28 @@ class Reservation < ApplicationRecord
 
   def reset_status_to_pending_pickup_if_route_added!
     self.status = "pending_pickup" if route_id.present?
+  end
+
+  def manual_routing_required?
+    response = false
+    if route_id.blank? && was_geocoded == true
+      response = true
+    elsif route_id.blank? && Setting.instance.is_routing_enabled == false
+      response = true
+    elsif route_id.blank? && !is_routed?
+      response = true
+    end
+    response
+  end
+
+  def routing_status
+    if route
+      route.name
+    elsif route_id.blank? && Setting.instance.is_routing_enabled && is_routed? && was_geocoded == false
+      "Routing Pending"
+    else
+      "Unrouted"
+    end
   end
 
   def send_confirmed_reservation_email!

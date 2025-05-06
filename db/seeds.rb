@@ -19,12 +19,22 @@ end
 
 Reservation.destroy_all
 @routes = Route.all
-100.times do
+25.times do
   FactoryBot.create(:pending_pickup_reservation, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample, route: @routes.sample)
 end
-15.times do
-  FactoryBot.create(:reservation, status: :cancelled, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample, route: @routes.sample)
+
+5.times do
+  FactoryBot.create(:routing_reservation, is_routed: false) 
 end
+
+7.times do
+  FactoryBot.create(:cancelled_reservation, route: @routes.sample)
+end
+
+3.times do 
+  FactoryBot.create(:routing_reservation, is_routed: true)
+end
+
 3.times do
   FactoryBot.create(:reservation, status: :missing, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample, route: @routes.sample)
 end

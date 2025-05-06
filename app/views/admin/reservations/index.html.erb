@@ -15,6 +15,15 @@
         </p>
       </div>
 
+      <div class="flex justify-center mb-8">
+        <div class="inline-flex rounded-md shadow-sm" role="group">
+          <%= link_to "All Reservations", admin_reservations_path, 
+              class: "px-4 py-2 text-sm font-medium rounded-l-lg border border-gray-200 dark:border-gray-600 #{params[:status].nil? ? 'bg-blue-600 text-white dark:bg-blue-500' : 'bg-white text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}" %>
+          <%= link_to "Needs Routing", admin_reservations_path(status: 'routing'), 
+              class: "px-4 py-2 text-sm font-medium rounded-r-lg border border-gray-200 dark:border-gray-600 #{params[:status] == 'routing' ? 'bg-blue-600 text-white dark:bg-blue-500' : 'bg-white text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}" %>
+        </div>
+      </div>
+
       <% unless setting.is_routing_enabled %>
         <div class="mb-8">
           <div class="rounded-md bg-yellow-50 dark:bg-yellow-900/40 p-4">

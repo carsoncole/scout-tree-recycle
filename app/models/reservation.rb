@@ -87,26 +87,18 @@ class Reservation < ApplicationRecord
   end
 
   def manual_routing_required?
-    response = false
-    if routing_status == "Manual Routing"
-      if Setting.instance.is_routing_enabled == false
-        response = true
-      elsif was_geocoded == true
-        response = true
-      elsif !is_routed?
-        response = true
-      end
-    end
-    response
+    routing_status == "Manual" ? true : false
   end
 
   def routing_status
     if route
       route.name
-    elsif route_id.blank? && Setting.instance.is_routing_enabled && is_routed? && was_geocoded == false
-      "Routing Pending"
+    elsif Setting.instance.is_routing_enabled == false
+      "Manual"
+    elsif Setting.instance.is_routing_enabled && is_routed? && was_geocoded == false
+      "Pending"
     else
-      "Manual Routing"
+      "Manual"
     end
   end
 

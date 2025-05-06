@@ -47,6 +47,7 @@ gem "aws-sdk-locationservice" # address geocoding and geospatial queries
 gem "geocoder" # address geocoding with lat/lon
 gem "pagy" # pagination
 gem "mission_control-jobs" # job processing monitoring at /admin/jobs
+gem "ferrum_pdf" # pdf generation
 
 
 group :development, :test do

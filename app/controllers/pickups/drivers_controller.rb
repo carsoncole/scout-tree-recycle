@@ -5,8 +5,17 @@ module Pickups
     end
 
     def show
-      @driver = Driver.find(params[:id])
-      @routes = @driver.routes.includes(:zone, :reservations)
+      @drivers = Driver.all.order(:name)
+      respond_to do |format|
+        format.html
+        format.pdf {
+          pdf = render_pdf()
+          send_data pdf, disposition: :inline, filename: "example.pdf"
+        }
+      end
+    end
+
+    def driver_pickup_lists
     end
   end
 end 

@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include Pagy::Frontend
   def setting
     @setting ||= Setting.instance
   end

@@ -25,7 +25,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
   end
 
     test "status changes to routing when route is removed" do
-      reservation = create(:pending_pickup_reservation)
+      create(:pending_pickup_reservation)
       visit admin_reservation_path(reservation)
       click_link "Edit"
       find("#reservation_route_id").select("Select a route")
@@ -36,7 +36,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     end
 
     test "status changes to pending pickup when route is added" do
-      reservation = create(:routing_reservation)
+      create(:routing_reservation)
       visit admin_reservation_path(reservation)
       click_link "Edit"
       find("#reservation_route_id").select("Route 2")
@@ -46,16 +46,54 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
       assert_selector "#status-pending_pickup", text: "Pending Pickup"
     end
 
-    test "routing status when system routing is enabled" do
+    test "routing status when system routing is enabled and reservations are routed" do
       Setting.instance.update(is_routing_enabled: true)
-      reservation = create(:pending_pickup_reservation)
+      create(:routing_reservation, is_routed: true)
       visit admin_reservations_path
-      assert_text reservation.route.name
+      assert_text "Routing Pending"
 
       click_link "Edit"
       find("#reservation_route_id").select("Select a route")
       click_button "Update Reservation"
       visit admin_reservations_url
       assert_text "Routing Pending"
+    end
+
+    test "routing status when system routing is disabled and reservations are routed" do
+      Setting.instance.update(is_routing_enabled: false)
+      create(:routing_reservation, is_routed: true)
+      visit admin_reservations_path
+      assert_text "Manual Routing"
+
+      click_link "Edit"
+      find("#reservation_route_id").select("Select a route")
+      click_button "Update Reservation"
+      visit admin_reservations_url
+      assert_text "Manual Routing"
+    end
+
+    test "routing status when system routing is disabled and reservations are not routed" do
+      Setting.instance.update(is_routing_enabled: false)
+      reservation = create(:routing_reservation, is_routed: false)
+      visit admin_reservation_paths
+      assert_text "Manual Routing"
+
+      click_link "Edit"
+      find("#reservation_route_id").select("Route 1")
+      click_button "Update Reservation"
+      visit admin_reservations_url
+      assert_text reservation.route.name
+    end
+
+    test "routing status when system routing is enabled and reservations are not routed" do
+      Setting.instance.update(is_routing_enabled: true)
+      create(:routing_reservation, is_routed: false, email: "test@example.com")
+      visit admin_reservations_path
+      assert_text "Manual Routing"
+      click_link "Edit"
+      find("#reservation_route_id").select("Route 1")
+      click_button "Update Reservation"
+      visit admin_reservations_url
+      assert_text Reservation.find_by(email: "test@example.com").route.name
     end
 end

@@ -88,12 +88,14 @@ class Reservation < ApplicationRecord
 
   def manual_routing_required?
     response = false
-    if route_id.blank? && was_geocoded == true
-      response = true
-    elsif route_id.blank? && Setting.instance.is_routing_enabled == false
-      response = true
-    elsif route_id.blank? && !is_routed?
-      response = true
+    if routing_status == "Manual Routing"
+      if Setting.instance.is_routing_enabled == false
+        response = true
+      elsif was_geocoded == true
+        response = true
+      elsif !is_routed?
+        response = true
+      end
     end
     response
   end
@@ -104,7 +106,7 @@ class Reservation < ApplicationRecord
     elsif route_id.blank? && Setting.instance.is_routing_enabled && is_routed? && was_geocoded == false
       "Routing Pending"
     else
-      "Unrouted"
+      "Manual Routing"
     end
   end
 

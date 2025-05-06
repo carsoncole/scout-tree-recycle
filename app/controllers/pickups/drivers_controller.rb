@@ -1,7 +1,7 @@
 module Pickups
   class DriversController < BaseController
     def index
-      @drivers = Driver.includes(routes: :reservations).all
+      @drivers = Driver.includes(routes: { reservations: :route }).all
     end
 
     def show

@@ -9,6 +9,7 @@
 #   end
 #
 require 'factory_bot_rails'
+require 'faker'
 
 
 unless Route.any?

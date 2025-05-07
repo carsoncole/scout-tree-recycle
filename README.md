@@ -1,4 +1,3 @@
-** Documentation is far from complete.
 
 ![Example Image](public_screenshot.png)
 ![Example Image](confirmation2_screenshot.png)
@@ -110,20 +109,19 @@ $ rails console
 ```
 
 
-## Deploying to Production with Kamal
+## Deployment
 
-Kamal (https://kamal-deploy.org) is a deployment tool that will provision, deploy, and manage the application in production.
+The application can be deployed with Kamal (https://kamal-deploy.org). 
 
 ### Prerequisites
 
 - Docker Compose (installed locally)
-- A host for the application with SSH root access enabled
 - Docker account
-- Domain name and access to the domain records
+- A host for the application with SSH root access enabled
 
 ### Steps
 
-1. Configure ```config/deploy.yml```. Make sure to configure the proxy settings to include your domain name. This is important as when you deploy, it will attempt to secure an SSL certificate for your domain.
+1. Configure ```config/deploy.yml```.
 2. Congifigure your DNS settings for your domain with an 'A' record that points to the IP address of your host.
 2. Launch your host. This can be any dedicated server, or even your local machine. It must have SSH root access enabled.
 3. Create and configure ```.kamal/secrets```. You can use the sample file ```.kamal/secrets.sample```. Replace ```$KAMAL_REGISTRY_PASSWORD``` with your Docker access key. 
@@ -132,7 +130,7 @@ Kamal (https://kamal-deploy.org) is a deployment tool that will provision, deplo
 $ git add .
 $ git commit -a -m 'some message'
 ```
-4. Setup and deploy to the host:
+4. Deploy:
 
 ```ruby
 $ kamal setup
@@ -231,42 +229,6 @@ The default URL for mail is set in the environment configuration file `productio
 An SMS service is needed if you want to be able to send SMS notifications. This is particularly useful when a driver can not locate a tree pickup. They can indicate a missing tree in the app and it will immediately send an SMS notification. It is not uncommon for people to forget to put their trees out for pickup. SMS notifications are configured to send via Twilio, but this could be modified for any service in the Sms class `sms.rb`. Keys must be set in the Rails ```config/credentials.yml.enc``` file.
 
 ---
-
-## Installation
-
-You will need to install the application locally, before which you can deploy it using Kamal to a remote server. Kamal will handle the Docker installation on the remote server and prepare the server to host the application.
-
-Configure admin users for management access. The initial adminstrator/owner user should be created directly in the console.
-
-```ruby
-    %  User.create(email: 'admin email', password: 'admin password', role: 'administrator')
-```
-
-Once the initial user is setup, you can manage the user roles (`viewer`, `editor`, `administrator`) through the UI, after any user signs up at `/sign_up`. The ability to sign up is configured in `initializers/clearance.rb`
-
-```ruby
-    config.allow_sign_up = true
-```
-
-
-#### Setup
-
-
-To start up the application:
-
-```ruby
-    % bundle install
-    % rails s
-```
-
-### Driver
-
-The driver component of the app is at `/driver`. By default, resources under this namespace are open publicly by default, with the risks being that reservation personal information as well as the ability to toggle the status of the pickup. It is suggested that once your app is live, that you enable authenticated accessed by configuring a `Driver secret key` in admin `Settings`. Then access to these resources require the initial request to have the key, but subsequent requests do not, unless the key is reset in the settings.
-
-With a driver secret key of `happy`: `/driver/key=happy`. So the URL for accessing the driver part of the app:
-
-    https://example.com/driver?key=happy
-
 
 ### Marketing emails
 

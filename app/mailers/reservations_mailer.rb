@@ -11,9 +11,22 @@ class ReservationsMailer < ApplicationMailer
     return unless setting.is_emailing_enabled
     return if @reservation.is_pending_pickup_email_sent?
     @event_pickup = setting.event_pickup
+    @setting = setting
+    @email_footer = Setting.instance.organization_name
     mail(to: @reservation.email, subject: "Your tree pickup is confirmed")
     @reservation.update(is_pending_pickup_email_sent: true)
   end
+
+  def new_reservation_email1
+    return unless setting.is_emailing_enabled
+    return if @reservation.is_pending_pickup_email_sent?
+    @event_pickup = setting.event_pickup
+    @setting = setting
+    @email_footer = Setting.instance.organization_name
+    mail(to: @reservation.email, subject: "Your tree pickup is confirmed")
+    @reservation.update(is_pending_pickup_email_sent: true)
+  end
+
 
   def cancelled_reservation_email
     return unless setting.is_emailing_enabled

@@ -109,10 +109,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
     t.boolean "is_routed", default: true
     t.boolean "is_door_hanger"
     t.boolean "is_route_polygon", default: false
-    t.boolean "is_pending_pickup_email_sent", default: false
-    t.boolean "is_missing_tree_email_sent", default: false
-    t.boolean "is_pickup_reminder_email_sent", default: false
-    t.boolean "is_cancelled_reservation_email_sent", default: false
+    t.datetime "confirmed_reservation_email_sent_at"
+    t.datetime "cancelled_reservation_email_sent_at"
+    t.datetime "missing_tree_email_sent_at"
+    t.datetime "pickup_reminder_email_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_reservations_on_created_at"

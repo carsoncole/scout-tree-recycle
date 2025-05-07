@@ -2,39 +2,39 @@ require "application_system_test_case"
 
 class Admin::UsersTest < ApplicationSystemTestCase
   setup do
-    sign_in_as(users(:one),true)
+    @admin = users(:one)
+    sign_in_as(@admin, true)
   end
 
   test "visiting the index" do
     visit admin_users_url
-  
     assert_selector "h1", text: "Users"
   end
 
   test "should create admin user" do
     visit admin_users_url
-    click_on "Add user"
+    click_link "Add user"
 
     fill_in "Email", with: "test@example.com"
     fill_in "Password", with: "abCDefg123"
     fill_in "Password confirmation", with: "abCDefg123"
     select "Admin", from: "Role"
     select "Eastern Time (US & Canada)", from: "Time zone"
-    click_on "Create User"
+    click_button "Create User"
 
     assert_text "User was successfully created."
   end
 
   test "should create non-admin user" do
     visit admin_users_url
-    click_on "Add user"
+    click_link "Add user"
     sleep 0.25
     fill_in "Email", with: "test@example.com"
     fill_in "Password", with: "abCDefg123"
     fill_in "Password confirmation", with: "abCDefg123"
     select "User", from: "Role"
     select "UTC", from: "Time zone"
-    click_on "Create User"
+    click_button "Create User"
 
     assert_text "User was successfully created."
   end
@@ -45,7 +45,7 @@ class Admin::UsersTest < ApplicationSystemTestCase
     all(:link, "Edit").first.click
 
     fill_in "Email", with: "test2@example.com"
-    click_on "Update User"
+    click_button "Update User"
 
     assert_text "User was successfully updated."
   end
@@ -80,7 +80,7 @@ class Admin::UsersTest < ApplicationSystemTestCase
     User.find_by(email: "one@example.com").update(role: "user")
 
     visit admin_users_url
-    click_on "Add user"
+    click_link "Add user"
     assert_text "You are not authorized to manage users."
     visit admin_users_url
     all(:link, "Edit").first.click

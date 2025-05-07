@@ -137,7 +137,64 @@
                     <%= @reservation.pickup_notes.present? ? @reservation.pickup_notes : "No notes provided" %>
                   </dd>
                 </div>
+              </dl>
+            </div>
 
+            <!-- Email History -->
+            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Email History</h2>
+              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Confirmation Email</dt>
+                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <% if @reservation.confirmed_reservation_email_sent_at.present? %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                        Sent <%= @reservation.confirmed_reservation_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                      </span>
+                    <% else %>
+                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
+                    <% end %>
+                  </dd>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Cancellation Email</dt>
+                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <% if @reservation.cancelled_reservation_email_sent_at.present? %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                        Sent <%= @reservation.cancelled_reservation_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                      </span>
+                    <% else %>
+                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
+                    <% end %>
+                  </dd>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Missing Tree Email</dt>
+                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <% if @reservation.missing_tree_email_sent_at.present? %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                        Sent <%= @reservation.missing_tree_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                      </span>
+                    <% else %>
+                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
+                    <% end %>
+                  </dd>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Pickup Reminder Email</dt>
+                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+                    <% if @reservation.pickup_reminder_email_sent_at.present? %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                        Sent <%= @reservation.pickup_reminder_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                      </span>
+                    <% else %>
+                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
+                    <% end %>
+                  </dd>
+                </div>
               </dl>
             </div>
 

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: #1a56db; margin: 0; font-size: 24px;">New Log Entry</h1>
+      </div>
+
+      <div style="background-color: #f3f4f6; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+        <div style="margin-bottom: 15px;">
+          <p style="margin: 0 0 10px 0;"><strong>User:</strong> <%= @user.email %></p>
+          <p style="margin: 0 0 10px 0;"><strong>Time:</strong> <%= @log.created_at.strftime("%B %-d, %Y at %-l:%M %p") %></p>
+        </div>
+
+        <div style="margin-bottom: 15px; padding: 10px; background-color: #ffffff; border-radius: 4px; border: 1px solid #e5e7eb;">
+          <p style="margin: 0 0 10px 0;"><strong>Message:</strong> <%= @log.message %></p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="padding: 10px; background-color: #ffffff; border-radius: 4px; border: 1px solid #e5e7eb;">
+            <p style="margin: 0;"><strong>Error Type:</strong></p>
+            <p style="margin: 5px 0 0 0;"><%= @log.error_type.present? ? @log.error_type : 'N/A' %></p>
+          </div>
+
+          <div style="padding: 10px; background-color: #ffffff; border-radius: 4px; border: 1px solid #e5e7eb;">
+            <p style="margin: 0;"><strong>Environment:</strong></p>
+            <p style="margin: 5px 0 0 0;"><%= @log.environment %></p>
+          </div>
+
+          <div style="padding: 10px; background-color: #ffffff; border-radius: 4px; border: 1px solid #e5e7eb;">
+            <p style="margin: 0;"><strong>Severity:</strong></p>
+            <p style="margin: 5px 0 0 0;">
+              <span style="
+                display: inline-block;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 500;
+                <%= case @log.severity
+                    when 'error'
+                      'background-color: #fee2e2; color: #dc2626;'
+                    when 'warning'
+                      'background-color: #fef3c7; color: #d97706;'
+                    when 'info'
+                      'background-color: #dbeafe; color: #2563eb;'
+                    else
+                      'background-color: #f3f4f6; color: #4b5563;'
+                    end %>
+              ">
+                <%= @log.severity.titleize %>
+              </span>
+            </p>
+          </div>
+
+          <div style="padding: 10px; background-color: #ffffff; border-radius: 4px; border: 1px solid #e5e7eb;">
+            <p style="margin: 0;"><strong>Created At:</strong></p>
+            <p style="margin: 5px 0 0 0;"><%= @log.created_at.strftime("%B %-d, %Y at %-l:%M:%S %p") %></p>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+        <p style="color: #6b7280; font-size: 14px; margin: 0;">
+          This is an automated notification from the Tree Recycle system.
+        </p>
+      </div>
+    </div>
+  </body>
+</html> 

@@ -17,7 +17,7 @@ class ReservationsMailer < ApplicationMailer
     @reservation.update(is_pending_pickup_email_sent: true)
   end
 
-  def new_reservation_email1
+  def new_reservation_email
     return unless setting.is_emailing_enabled
     return if @reservation.is_pending_pickup_email_sent?
     @event_pickup = setting.event_pickup

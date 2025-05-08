@@ -31,7 +31,7 @@ class Reservation < ApplicationRecord
   after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
 
   # reset geocoding data if address is changed
-  before_save :reset_geocoding!, if: ->(obj) { obj.pending_pickup?  && (obj.saved_change_to_street? || obj.saved_change_to_city? || obj.saved_change_to_state? || obj.saved_change_to_zip?) }
+  before_save :reset_geocoding!, if: ->(obj) { obj.pending_pickup?  && (obj.will_save_change_to_street? || obj.will_save_change_to_city? || obj.will_save_change_to_state? || obj.will_save_change_to_zip?) }
 
   # reset status if route changes made
   before_save :reset_status_to_routing_if_route_removed!, if: ->(obj) { obj.pending_pickup? && obj.route_id.blank? }

@@ -1,11 +1,171 @@
-one:
-  name: "John Doe"
-  street: "123 Main St"
-  city: "Portland"
-  state: "OR"
-  country: "United States"
-  email: "john.doe@example.com"
-  mobile: "1234567890"
-  pickup_notes: "This is a test note"
-  status: "pending_pickup"
+reservation_form_1:
+  name: Steve Jobs
+  street: 123 Main St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: steve.jobs@example.com
+  mobile: 1234567890
+  pickup_notes: Tree will be leaning against the fence
+  status: reservation_form
+  is_routed: false
+
+address_verification_1:
+  name: John Doe
+  street: 123 Main St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: john.doe@example.com
+  mobile: 1234567890
+  pickup_notes: Tree will be leaning against the fence
+  status: address_verification
   is_routed: true
+
+address_verification_2:
+  name: Jane Doe
+  street: 1 Main St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: jane.doe@example.com
+  mobile: 1234567890
+  pickup_notes: Tree will be in the back yard
+  status: address_verification
+  is_routed: true
+
+address_verification_3:
+  name: Lisa Doe
+  street: 17 South Main St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: lisa.doe@example.com
+  mobile: 1234567890
+  pickup_notes: By the mailbox 
+  status: address_verification
+  is_routed: true
+
+donation_1:
+  name: Lisa Mills
+  street: 12 South Shore St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: lisa.mills@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: donation
+  is_routed: true
+
+donation_2:
+  name: Sam Trellis
+  street: 12 Commodore
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: sam.trellis@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: donation
+  is_routed: true
+
+routing_1:
+  name: Icky Jones
+  street: 1273 Capstan Drive
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: icky.jones@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: routing
+  is_routed: true
+
+routing_2:
+  name: Trellis Wilson
+  street: 14 Commodore
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: trellis.wilson@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: routing
+  is_routed: true
+
+pending_pickup_1  :
+  name: Mary Jones
+  street: 176 Harlan St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: mary.jones@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: pending_pickup
+  is_routed: true
+  latitude: 31.1212
+  longitude: 1212.1212
+  route: one 
+
+pending_pickup_not_routed:
+  name: Susan Banks
+  street: 189 Harlan St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: susan.banks@example.com
+  mobile: 1234567890
+  pickup_notes: Tree will be in the back yard
+  status: pending_pickup
+  is_routed: false
+  latitude: 31.1212
+  longitude: 1212.1212
+  route: two 
+
+picked_up_1:
+  name: Bob Jones
+  street: 12 Winslow St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: bob.jones@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: picked_up
+  is_routed: true
+  latitude: 31.1212
+  longitude: 1212.1212
+  route: one 
+
+missing_1:
+  name: Bill Carson
+  street: 1 ABC Ave
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: bill.carson@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: missing
+  is_routed: true
+  latitude: 31.1212
+  longitude: 1212.1212
+  route: one 
+
+cancelled_1:
+  name: Bob Miurtha
+  street: 15 Winslow St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: bob.miurtha@example.com
+  mobile: 1234567890
+  pickup_notes: 
+  status: cancelled
+  is_routed: true
+
+
+
+

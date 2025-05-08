@@ -1,10 +1,24 @@
 one:
   name: "Route 1"
+  zone: one
 
 two:
   name: "Route 2"
+  zone: two
 
 three:
   name: "Route 3"
+  zone: three
+
+four:
+  name: "Route 4"
+  zone: one
+
+five:
+  name: "Route 5"
+  zone: one
+
+unzoned:
+  name: "Unzoned"
 
 

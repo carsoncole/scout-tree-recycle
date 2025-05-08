@@ -92,7 +92,7 @@ routing_2:
   mobile: 1234567890
   pickup_notes: 
   status: routing
-  is_routed: true
+  is_routed: false
 
 pending_pickup_1  :
   name: Mary Jones

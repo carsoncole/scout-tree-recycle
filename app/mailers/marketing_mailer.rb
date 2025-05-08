@@ -7,13 +7,15 @@ class MarketingMailer < ApplicationMailer
 
   # FIXME replace website address in view with dynamic value
   # FIXME replace mentions of Bainbridge Island with dynamic value
+  # FIXME emails sent even if disabled!
   def marketing_email_1
-    return unless setting.is_emailing_enabled?
-    return if @prior_reservation.marketing_1_email_sent_at?
-    @setting = setting
-    @email_footer = Setting.instance.organization_name
-    mail(to: @prior_reservation.email, subject: "Tree recycling #{setting.event_pickup.strftime('%B %-d')}. Register today.")
-    @prior_reservation.update(marketing_1_email_sent_at: Time.current)
+    if setting.is_emailing_enabled?
+      return if @prior_reservation.marketing_1_email_sent_at?
+      @setting = setting
+      @email_footer = Setting.instance.organization_name
+      mail(to: @prior_reservation.email, subject: "Tree recycling #{setting.event_pickup.strftime('%B %-d')}. Register today.")
+      @prior_reservation.update(marketing_1_email_sent_at: Time.current)
+    end
   end
 
   # FIXME replace website address in view with dynamic value

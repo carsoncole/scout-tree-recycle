@@ -80,6 +80,7 @@ class Reservation < ApplicationRecord
 
   def reset_status_to_routing_if_route_removed!
     self.status = "routing" if route_id.blank?
+    reset_geocoding!
   end
 
   def reset_status_to_pending_pickup_if_route_added!

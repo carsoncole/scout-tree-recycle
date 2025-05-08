@@ -60,6 +60,7 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_equal 1, Reservation.routing.count
   end
 
+  #FIXME factory_bot => fixtures
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
   test "making reservation and destroying all other non pending_pickup reservations" do
     Reservation.statuses.except(*[ :reservation_form, :donation, :address_verification, :routing, :pending_pickup ]).each do |status, id|
@@ -149,8 +150,7 @@ class ReservationsTest < ApplicationSystemTestCase
 
   test "editing a reservation when reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
-    reservation = create(:reservation, status: :pending_pickup)
-    visit edit_reservation_path(reservation)
+    visit edit_reservation_path(reservations(:pending_pickup_1))
     assert_text "Reservations are not currently changeable."
   end
 end

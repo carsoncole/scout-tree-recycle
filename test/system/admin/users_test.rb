@@ -55,10 +55,11 @@ class Admin::UsersTest < ApplicationSystemTestCase
     all(:button, "Delete").last.click
     accept_alert
     sleep 0.25
-    assert_not User.exists?(email: "two@example.com")
+    assert_not User.exists?(email: "three@example.com")
   end
 
   test "admin user can not be deleted if there is only one admin user" do
+    users(:admin_2).destroy
     visit admin_users_url
     all(:button, "Delete").first.click
     accept_alert
@@ -67,7 +68,6 @@ class Admin::UsersTest < ApplicationSystemTestCase
   end
 
   test "admin user can be deleted if there is more than one admin user" do
-    create(:user, email: "test2@example.com", password: "abCDefg123", role: "admin")
     visit admin_users_url
     all(:button, "Delete").first.click
     accept_alert

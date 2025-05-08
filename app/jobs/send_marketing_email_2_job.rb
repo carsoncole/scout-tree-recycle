@@ -1,3 +1,4 @@
+#FIXME email flag set as sent even if email is not sent
 class SendMarketingEmail2Job < ApplicationJob
   queue_as :default
 

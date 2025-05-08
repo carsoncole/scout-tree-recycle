@@ -90,7 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
     t.string "email"
     t.string "mobile"
     t.string "street"
-    t.string "house_number" 
+    t.string "house_number"
     t.string "street_name"
     t.string "city"
     t.string "state"
@@ -170,7 +170,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_071229) do
     t.text "about_event_description"
     t.text "on_day_of_pickup_instructions"
     t.boolean "is_reservations_open", default: true
-    t.boolean "is_pickups_site_enabled", default: true
+    t.boolean "is_pickups_site_enabled", default: false
     t.boolean "is_emailing_enabled", default: false
     t.boolean "is_sms_enabled", default: false
     t.boolean "is_routing_enabled", default: false

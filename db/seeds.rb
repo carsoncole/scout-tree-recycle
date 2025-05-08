@@ -1,5 +1,13 @@
 require 'faker'
 
+# Settings
+Setting.destroy_all
+
+# Users
+User.destroy_all
+User.create(email: "admin@example.com", password: "password1234", role: "admin")
+User.create(email: "user@example.com", password: "password1234", role: "user")
+
 # Drivers
 Driver.destroy_all
 drivers = [ "John Smith", "Mary Johnson", "Lisa Davis", "William Brown", "James Garcia", "Robert Miller", "Michael Davis", "David Rodriguez", "Richard Wilson", "Joseph Moore" ]

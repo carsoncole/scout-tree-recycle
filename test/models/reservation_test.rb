@@ -159,7 +159,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "migrating reservations" do
     assert_equal 13, Reservation.count
-    assert_equal 2, PriorReservation.count
+    assert_equal 3, PriorReservation.count
 
     Reservation.migrate_reservations!
 
@@ -179,6 +179,20 @@ class ReservationTest < ActiveSupport::TestCase
     assert PriorReservation.find_by(email: "bob.jones@example.com")
     assert PriorReservation.find_by(email: "bob.miurtha@example.com")
     assert PriorReservation.find_by(email: "bill.carson@example.com")
+  end
+
+  test "migration removes prior reservations with same email" do
+    assert Reservation.find_by(email: "bob.jones@example.com")
+    current_reservation = Reservation.find_by(email: "bob.jones@example.com")
+    current_reservation.update(name: "Bobby Jones")
+
+    assert PriorReservation.find_by(email: "bob.jones@example.com")
+    prior_reservation = PriorReservation.find_by(email: "bob.jones@example.com")
+
+    Reservation.migrate_reservations!
+    assert_not Reservation.find_by(email: "bob.jones@example.com")
+    assert PriorReservation.find_by(email: "bob.jones@example.com")
+    assert_equal "Bobby Jones", PriorReservation.find_by(email: "bob.jones@example.com").name
   end
 
   test "reset_geocoding! resets geocoding data" do

@@ -60,26 +60,47 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_equal 1, Reservation.routing.count
   end
 
-  #FIXME factory_bot => fixtures
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
-  test "making reservation and destroying all other non pending_pickup reservations" do
-    Reservation.statuses.except(*[ :reservation_form, :donation, :address_verification, :routing, :pending_pickup ]).each do |status, id|
-      existing_reservation = create(:reservation, status: status, email: Faker::Internet.email)
-      assert_equal 1, Reservation.send(status.to_sym).count
+  test "making confirned reservation and destroying reservation with reservation_form status with same email" do
+    existing_non_pending_reservation = Reservation.find_by(email: "steve.jobs@example.com")
+    assert_equal "reservation_form", existing_non_pending_reservation.status
 
-      visit root_url
-      fill_in "Name", with: Faker::Name.name
-      fill_in "Street", with: Faker::Address.street_address
-      fill_in "Email", with: existing_reservation.email
-      fill_in "Mobile", with: Faker::PhoneNumber.phone_number
-      click_button "Create Reservation"
-      assert_text "Make a Donation"
+    visit root_url
+    fill_in "Name", with: "Faker::Name.name"
+    fill_in "Street", with: Faker::Address.street_address
+    fill_in "Email", with: "steve.jobs@example.com"
+    click_button "Create Reservation"
+    click_button "Select donation type"
+    assert_equal "donation", Reservation.find_by(email: "steve.jobs@example.com").status
+    assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
+  end
 
-      new_reservation = Reservation.find_by(email: existing_reservation.email)
-      sleep 0.25
-      assert_equal 0, Reservation.where(id: existing_reservation.id).count
-      assert_equal "donation", new_reservation.status
-    end
+  test "making confirned reservation and destroying reservation with address_verification status with same email" do
+    existing_non_pending_reservation = Reservation.find_by(email: "john.doe@example.com")
+    assert_equal "address_verification", existing_non_pending_reservation.status
+
+    visit root_url
+    fill_in "Name", with: "Faker::Name.name"
+    fill_in "Street", with: Faker::Address.street_address
+    fill_in "Email", with: "john.doe@example.com"
+    click_button "Create Reservation"
+    click_button "Select donation type"
+    assert_equal "donation", Reservation.find_by(email: "john.doe@example.com").status
+    assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
+  end
+
+  test "making confirned reservation and destroying reservation with donation status with same email" do
+    existing_non_pending_reservation = Reservation.find_by(email: "lisa.mills@example.com")
+    assert_equal "donation", existing_non_pending_reservation.status
+
+    visit root_url
+    fill_in "Name", with: "Faker::Name.name"
+    fill_in "Street", with: Faker::Address.street_address
+    fill_in "Email", with: "lisa.mills@example.com"
+    click_button "Create Reservation"
+    click_button "Select donation type"
+    assert_equal "donation", Reservation.find_by(email: "lisa.mills@example.com").status
+    assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
   end
 
   test "cancelling a reservation" do

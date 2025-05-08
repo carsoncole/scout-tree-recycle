@@ -72,7 +72,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
   end
 
   test "mailers for all statuses" do
-    reservation = Reservation.new(status: :reservation_form, email: "test99@example.com", name: "Test User", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", phone: "123-456-7890", pickup_notes: "Pickup notes")
+    reservation = Reservation.new(status: :reservation_form, email: "test99@example.com", name: "Test User", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", mobile: "123-456-7890", pickup_notes: "Pickup notes")
 
     assert_emails 0 do
       reservation.save!

@@ -1,10 +1,6 @@
 require "application_system_test_case"
 
 class Admin::SessionsTest < ApplicationSystemTestCase
-  setup do
-    @admin = create(:user, email: "admin@example.com", password: "password")
-  end
-
   test "visiting root" do
     visit admin_root_url
     assert_text "Sign in"
@@ -17,8 +13,8 @@ class Admin::SessionsTest < ApplicationSystemTestCase
   test "signing in and out" do
     visit admin_root_url
     assert_text "Sign in"
-    fill_in "Email", with: @admin.email
-    fill_in "Password", with: @admin.password
+    fill_in "Email", with: users(:user).email
+    fill_in "Password", with: "password123456789"
     click_button "Sign in"
     assert_text "Reservations"
     click_link "Log out"

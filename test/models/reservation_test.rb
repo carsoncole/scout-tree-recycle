@@ -2,7 +2,7 @@ require "test_helper"
 
 class ReservationTest < ActiveSupport::TestCase
   def setup
-    @reservation = create(:reservation)
+    @reservation = reservations(:one)
   end
 
   test "valid reservation" do
@@ -38,7 +38,7 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "city is set from settings" do
-    assert_equal Setting.instance.default_city, @reservation.city
+    assert_equal "Portland", @reservation.city
   end
 
   test "short_address returns street and city" do

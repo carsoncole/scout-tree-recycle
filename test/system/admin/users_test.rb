@@ -2,7 +2,7 @@ require "application_system_test_case"
 
 class Admin::UsersTest < ApplicationSystemTestCase
   setup do
-    @admin = users(:one)
+    @admin = users(:admin)
     sign_in_as(@admin, true)
   end
 
@@ -40,7 +40,7 @@ class Admin::UsersTest < ApplicationSystemTestCase
   end
 
   test "should edit user" do
-    user = create(:user, email: "test@example.com", password: "abCDefg123", role: "user", time_zone: "UTC")
+    user = users(:user)
     visit admin_users_url
     all(:link, "Edit").first.click
 
@@ -51,12 +51,11 @@ class Admin::UsersTest < ApplicationSystemTestCase
   end
 
   test "should delete user" do
-    user = create(:user, email: "test@example.com", password: "abCDefg123", role: "user", time_zone: "UTC")
     visit admin_users_url
-    all(:button, "Delete").first.click
+    all(:button, "Delete").last.click
     accept_alert
     sleep 0.25
-    assert_not User.exists?(email: "test@example.com")
+    assert_not User.exists?(email: "two@example.com")
   end
 
   test "admin user can not be deleted if there is only one admin user" do

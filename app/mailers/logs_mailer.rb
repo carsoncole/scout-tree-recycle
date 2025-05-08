@@ -1,6 +1,5 @@
-class NotificationMailer < ApplicationMailer
+class LogsMailer < ApplicationMailer
   def log_message_email
-    @user = User.find(params[:user_id])
     @log = Log.find(params[:log_id])
     
     # Get all admin users
@@ -8,9 +7,10 @@ class NotificationMailer < ApplicationMailer
     
     # Send email to all admin users
     admin_users.each do |admin|
+      @user = admin
       mail(
         to: admin.email,
-        subject: "New Log Entry: #{@log.message.truncate(50)}"
+        subject: "New Log Entry: #{@log&.message&.truncate(50)}"
       )
     end
   end

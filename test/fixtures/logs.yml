@@ -1,0 +1,23 @@
+one:
+  message: wrong number of arguments (given 1, expected 0)
+  error_type: ArgumentError
+  backtrace: [\"/path/to/file.rb:123:in `method_name'\"]
+  environment: test
+  context: "{\"user\" => \"admin@example.com\"}"
+  handled: false
+  severity: error
+  is_viewed: true
+  created_at: 2021-01-01 12:00:00
+  updated_at: 2021-01-01 12:00:00
+
+two:
+  message: "missing keyword: :user_id"
+  error_type: ArgumentError
+  backtrace: [\"/path/to/file.rb:123:in `method_name'\"]
+  environment: test
+  context: 
+  handled: false
+  severity: error
+  is_viewed: true
+  created_at: 2021-01-01 12:01:00
+  updated_at: 2021-01-01 12:01:00

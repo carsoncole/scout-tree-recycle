@@ -1,0 +1,11 @@
+one:
+  name: "John Doe"
+  street: "123 Main St"
+  city: "Portland"
+  state: "OR"
+  country: "United States"
+  email: "john.doe@example.com"
+  mobile: "1234567890"
+  pickup_notes: "This is a test note"
+  status: "pending_pickup"
+  is_routed: true

@@ -8,12 +8,10 @@ class Admin::OperationsTest < ApplicationSystemTestCase
     create_list(:cancelled_reservation, 9)
     create_list(:missing_reservation, 8)
     create_list(:donation_reservation, 7)
-    @user = create(:user, email: "admin@example.com", password: "password", role: "admin")
-    
-    sign_in_as(@user)
   end
 
   test "migration as an admin user" do
+    sign_in_as(users(:admin), true)
     assert_equal 0, PriorReservation.count
     assert_equal 75, Reservation.count
   
@@ -27,7 +25,7 @@ class Admin::OperationsTest < ApplicationSystemTestCase
   end
 
   test "migration as a non-admin user" do
-    @user.update(role: "user")
+    sign_in_as(users(:user), true)
     visit admin_settings_url
     click_button "Migrate"
     accept_confirm

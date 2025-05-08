@@ -3,7 +3,7 @@ class ErrorLogSubscriber
       Log.create(
       message: error.message,
       error_type: error.class.name,
-      # context: context,
+      context: context,
       backtrace: error.backtrace.join("\n"),
       severity: severity.to_s,
       handled: handled

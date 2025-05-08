@@ -1,0 +1,18 @@
+New Log Entry
+============
+
+Log Details:
+-----------
+
+Severity: <%= @log.severity&.titleize %>
+Message: <%= @log.message %>
+<% if @log.error_type.present? %>
+Error Type: <%= @log.error_type %>
+<% end %>
+<% if @log.context.present? %>
+Context:
+<%= JSON.pretty_generate(@log.context) %>
+<% end %>
+Environment: <%= @log.environment %>
+
+This email was sent to <%= @user.email %>. If you have any questions, please contact the system administrator. 

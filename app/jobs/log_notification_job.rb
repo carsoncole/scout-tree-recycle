@@ -1,7 +1,7 @@
 class LogNotificationJob < ApplicationJob
   queue_as :default
 
-  def perform(user_id:, log_id:)
-    NotificationMailer.log_message_email(user_id: user_id, log_id: log_id).deliver_now
+  def perform(log_id:)
+    LogsMailer.with(log_id: log_id).log_message_email.deliver_now
   end
 end 

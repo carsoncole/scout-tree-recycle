@@ -1,3 +1,5 @@
+:construction: Still being updated
+
 
 ![Example Image](public_screenshot.png)
 ![Example Image](confirmation2_screenshot.png)
@@ -164,7 +166,7 @@ config.action_mailer.smtp_settings = {
   :enable_starttls_auto => true
 }
 ```
-> :exclamation: **Important GMAIL Note** Gmail is free, but there are limitations. If you are on a free account, the daily sending limit is ~500 emails. If you do hit a limit, they will temporarily shut your account. For the marketing emails, you can control the batch size of emails in Settings and it is recommended that you keep it low (<50) and send multiple times. Sending a massive block of emails may not only shut your account, but it also could get your emails flagged as SPAM, by receiving email servers. Caution is advised.
+> :warning: **Important GMAIL Note** Gmail is free, but there are limitations. If you are on a free account, the daily sending limit is ~500 emails. If you do hit a limit, they will temporarily shut your account. For the marketing emails, you can control the batch size of emails in Settings and it is recommended that you keep it low (<50) and send multiple times. Sending a massive block of emails may not only shut your account, but it also could get your emails flagged as SPAM, by receiving email servers. Caution is advised.
 
 ### Routing
 

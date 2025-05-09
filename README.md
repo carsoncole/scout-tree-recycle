@@ -4,7 +4,9 @@
 
 # Tree Recycle
 
-Tree Recycle is a comprehensive web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area, Tree Recycle offers the following features:
+Tree Recycle is a comprehensive web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area.
+
+## Features
 
 - **Reservation Management**
   - Public website for tree pickup reservations
@@ -46,6 +48,7 @@ Tree Recycle is a comprehensive web application that supports the running of a C
   - Map showing pickup locations and status
   - Drivers can update status of pickups and register missing trees
 
+
 ## Technical Stack
 
 - Ruby 3.4
@@ -57,61 +60,63 @@ Tree Recycle is a comprehensive web application that supports the running of a C
 
 ## Optional Integrations
 
-- AWS Location Service (for geocoding)
+- SMTP (for email)
+- AWS Location Service (for geocoding and routing)
 - Twilio (for SMS)
 - Stripe (for donations)
-- SMTP (for email)
-
-## Get started locally
-
-Instructions for running the application locally. By default all external services are disabled to simplify getting up and running with the installation.
 
 
-1. Install Ruby (3.0+), Ruby on Rails (8.0+), and PostgreSQL on your local computer.
+## Getting started
 
-2. Clone the repo and cd into the directory:
+1. Install Ruby and PostgreSQL on your local computer.
+
+2. Install Rails:
 
 ```ruby
-$ git clone https://github.com/carsoncole/tree_recycle.git 
+$ gem install rails
+```
+
+3. Clone the repo:
+
+```ruby
+$ git clone https://github.com/carsoncole/tree_recycle.gt
 $ cd tree_recycle
 ```
 
-3. Install gems:
+4. Install gems:
 
 ```ruby
 $ bundle install
 ```
 
-4. Configure database by adding your database settings to the ```config/database.yml``` file. Then migrate the database:
+5. Migrate the database:
 
 ```ruby
 $ rails db:migrate
 ```
 
-5. Configure encrypted Rails credentials. Most of the settings are for additional services. Delete the existing credentials file (if there) at ```config/credentials.yml.enc```. Then run the command below which will generate a new encrypted credentials file for you. Copy the contents of ```config/credentials.yml.enc.sample``` into it and configure as necessary.
-
-```ruby
-EDITOR=vim rails credentials:edit
-```
-
-
-6. Launch the app, and it will be accessible at http://localhost:3000:
+6. Start the web server:
 
 ```ruby
 $ bin/dev
 ```
 
-To access the admin section (localhost:3000/admin), create an initial admin user:
+7. Go to ```http://localhost:3000``` and you should see the main reservation page.
+
+8. Create an admin user:
 
 ```ruby
 $ rails console
 > User.create(email: test@example.com, password: password, role: "admin")
 ```
 
+9. Go to ```localhost:3000/admin``` to access the admin site.
+
+
 
 ## Deployment
 
-The application can be deployed with Kamal (https://kamal-deploy.org). 
+The application can be deployed with Kamal (https://kamal-deploy.org) to any cloud-based or local server as long as SSH root access is available.
 
 ### Prerequisites
 
@@ -137,12 +142,46 @@ $ kamal setup
 $ kamal deploy
 ```
 
+## Configure secrets
 
-## Services
+Use encrypted credentials to store application secrets. Remove the existing secrets:
 
-### Mapping service
+    $ rm config/credentials.yml.enc
+    $ EDITOR=vim rails credentials:edit
 
-A mapping service is required to provide geocoding and geofencing services.
+Copy the sample ```credentials.ymp.enc.sample```. 
+
+
+## Email
+
+With emailing configured, Tree Recycle will send automated emails confirming tree reservations, cancellations, and donation receipts. Two funnel-type marketing emails are also available to market to people who have made tree pickup reservations in the past.
+
+
+
+Settings for GMAIL:
+- address:              smtp.gmail.com
+- port:                 587
+- user_name:            username
+- password:             password
+- authentication:       plain
+- enable_starttls_auto: true
+
+Use encrypted credentials to store the settings. The follow should be your ```development.rb``` and ```production.rb``` environment files.
+
+``` ruby
+config.action_mailer.smtp_settings = {
+  :address              => Rails.application.credentials.mailer.development.address,
+  :port                 => Rails.application.credentials.mailer.development.port,
+  :user_name            => Rails.application.credentials.mailer.development.user_name,
+  :password             => Rails.application.credentials.mailer.development.password,
+  :authentication       => plain,
+  :enable_starttls_auto => true
+}
+```
+
+## AWS Mapping Service
+
+A mapping service is required to provide geocoding and routing.
 
 
 For the Amazon Locations Service, you'll need an AWS account. Create a Place Index and give it a name, ie. 'tree_recycle', with the data provider 'Esri' with a single use.  You'll then need API credentials which you can obtain in your main profile under 'Security Credentials'.
@@ -175,21 +214,20 @@ Geocoder.configure(
 Aws.config.update({region: 'us-west-2'})
 ```
 
+For an address to be routed, it is first geocoded. By default, geocoding occurs on schedule set in ```recurring.yml```. Only one attempt is made to automatically geocode an address, however any address changes will retrigger another geocoding attempt. You can disable geocoding entirely in Settings for a specific reservation. 
 
-## Add admin user
-There are no default users so you need to add at least one. There are two roles: "admin" and "user". This can be done in the console:
-
-```ruby
-  User.create(email: "admin@example.com", password: "password", role: "admin")
-```
+There is a job ```GeocodeReservationsJob`` that runs on a schedule set in ```recurring.yml``.
 
 
-### USPS
+### Twilio
 
-USPS API access is needed for address verification (https://www.usps.com/business/web-tools-apis/). A required key should be configured in the credentials `config/credentials.yml.enc` file.
+Twilio is used for SMS. Automatic messages for missing trees and general messaging with customers.
 
+### Stripe
 
-### Email
+Stripe is used for taking donations.
+
+### SMTP Email - Gmail
 
 An email provider, such as Gmail, can be configured for reservation notifications, reminders, cancellations, marketing emails, and donation receipts. The default configuration is Gmail, as it is free and normally would provide a high enough daily limit (300-500 emails) to meet the needs of most users.
 
@@ -201,36 +239,30 @@ Configure each environment with mail settings. Setting and credentials are manag
 Mail settings in `production.rb`.
 
 ``` ruby
-    config.action_mailer.smtp_settings = {
-    :address              => Rails.application.credentials.mailer.development.address,
-    :port                 => Rails.application.credentials.mailer.development.port,
-    :user_name            => Rails.application.credentials.mailer.development.user_name,
-    :password             => Rails.application.credentials.mailer.development.password,
-    :authentication       => Rails.application.credentials.mailer.development.authentication,
-    :tls                  => Rails.application.credentials.mailer.development.tls,
-    :enable_starttls_auto => Rails.application.credentials.mailer.development.enable_starttls_auto
+config.action_mailer.smtp_settings = {
+:address              => Rails.application.credentials.mailer.development.address,
+:port                 => Rails.application.credentials.mailer.development.port,
+:user_name            => Rails.application.credentials.mailer.development.user_name,
+:password             => Rails.application.credentials.mailer.development.password,
+:authentication       => Rails.application.credentials.mailer.development.authentication,
+:tls                  => Rails.application.credentials.mailer.development.tls,
+:enable_starttls_auto => Rails.application.credentials.mailer.development.enable_starttls_auto
 ```
 
 The mailer itself should be updated to default to the sending address in `application_mailer.rb`.
 
 ``` ruby
-    class ApplicationMailer < ActionMailer::Base
-      default from: "from@example.com"
-      layout "mailer"
-    end
+class ApplicationMailer < ActionMailer::Base
+  default from: "from@example.com"
+  layout "mailer"
+end
 ```
 
 The default URL for mail is set in the environment configuration file `production.rb` or `development.rb`.
 
 ```ruby
-    config.action_mailer.default_url_options = { host: 'site@example.com' }
+\config.action_mailer.default_url_options = { host: 'site@example.com' }
 ```
-
-### SMS notifications
-
-An SMS service is needed if you want to be able to send SMS notifications. This is particularly useful when a driver can not locate a tree pickup. They can indicate a missing tree in the app and it will immediately send an SMS notification. It is not uncommon for people to forget to put their trees out for pickup. SMS notifications are configured to send via Twilio, but this could be modified for any service in the Sms class `sms.rb`. Keys must be set in the Rails ```config/credentials.yml.enc``` file.
-
----
 
 ### Marketing emails
 
@@ -266,7 +298,7 @@ Application secrets are stored in Rails application secrets in a credential file
 Delete any existing `config/credentials.yml.enc` file. Initialize your own secrets file:
 
 ```ruby
-    % EDITOR=vim rails credentials:edit
+$ EDITOR=vim rails credentials:edit
 ```
 
 This will create your initial credentials file and open it in an editor. Copy the contents of `/config/credentials_sample.yml` as your initial template and edit it accordingly.
@@ -285,7 +317,7 @@ Run tests and system tests:
 For mailers, previews exist for the confirmation and reminder emails. To view in `development`:
 
 ```ruby
-    http://localhost:3000/rails/mailers/
+http://localhost:3000/rails/mailers/
 ```
 
 ### Seed Data
@@ -308,10 +340,8 @@ Default BSA Scouting images are used in emails and are stored in the `app/assets
 Trial seed data can be loaded. This will create the initial admin user (admin@example.com, password: password), route, zone and reservation data. Use this data to only preview the apps functionality, not for production purposes.
 
 ```ruby
-    rails db:seed
+rails db:seed
 ```
-
----
 
 
 
@@ -320,32 +350,18 @@ Trial seed data can be loaded. This will create the initial admin user (admin@ex
 Tree Recycle can be the central engine for powering your fundraiser, but an important piece of advice in the event that the technology fails on the day of pickup, is to print out the Driver pickup sheets the night before. That way, while it may not be as convenient for the drivers, they will at least have a means for still getting the job done.
 
 
-## Copyright
-
-Copyright (c) 2022, 2025 [Carson Cole](https://carsonrcole.com). It is free software, and may be redistributed under the terms specified in the LICENSE file.
-
-
-
 # Tests
 
-Tests, including System integration tests can be run with: 
+To run tests: 
 
 ```ruby
-  rails test:all
+rails test
+rails test:system
 ```
 
-# Geocoding
+# License
 
-For an address to be routed, it is first geocoded. By default, geocoding occurs on schedule set in ```recurring.yml```. Only one attempt is made to automatically geocode an address, however any address changes will retrigger another geocoding attempt. You can disable geocoding entirely in Settings for a specific reservation. 
+Tree Recycle is released under the [MIT License](https://opensource.org/licenses/MIT).
 
-There is a job ```GeocodeReservationsJob`` that runs on a schedule set in ```recurring.yml``.
-
-# Images
-
-The image displayed on the About page is in ```app/assets/images/about.jpg``.
-
-# Privacy Policy
-
-The privacy policy is at ```app/views/privacy```.
 
 

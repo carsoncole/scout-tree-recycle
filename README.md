@@ -138,6 +138,8 @@ $ kamal deploy
 ```
 
 
+## Services
+
 ### Mapping service
 
 A mapping service is required to provide geocoding and geofencing services.
@@ -271,21 +273,27 @@ This will create your initial credentials file and open it in an editor. Copy th
 
 Docker and deployment secrets are stored in /.kamal/secrets. This file is in the .gitignore as it holds the Docker registry password.  You will need this file in your local environment to be able to deploy with Kamal. There is a sample secrets file /.kamal/sample_secrets.
 
-## Error monitoring (optional)
 
-Rollbar.io is integrated for error monitoring, This can be easily replaced with other services. The configuration file is `config/initializers/rollbar.rb` and the access token is stored in the Rails credentials file, which is the only thing that needs to be updated for it to work within your own Rollbar account. Rollbar is free for 5,000 errors a month, which should easily cover it.
+## Tests
 
-To remove Rollbar completely, removed from the ```Gemfile``` and ```initializers/rollbar.rb```.
+Run tests and system tests:
 
-## Testing
+    $ rails test
+    $ rails system:test
 
-There are Rails minitest tests, including system tests.
 
 For mailers, previews exist for the confirmation and reminder emails. To view in `development`:
 
 ```ruby
     http://localhost:3000/rails/mailers/
 ```
+
+### Seed Data
+
+You can load seed data:
+
+    $ rails db:seed
+
 
 ## Configuration
 

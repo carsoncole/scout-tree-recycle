@@ -1,3 +1,6 @@
+# Seed Data for development use. 
+# Run with: rails db:seed
+
 require 'faker'
 
 # Settings
@@ -10,12 +13,23 @@ User.create(email: "user@example.com", password: "password1234", role: "user")
 
 # Drivers
 Driver.destroy_all
-drivers = [ "John Smith", "Mary Johnson", "Lisa Davis", "William Brown", "James Garcia", "Robert Miller", "Michael Davis", "David Rodriguez", "Richard Wilson", "Joseph Moore" ]
+drivers = [ 
+  "John Smith", "Mary Johnson", 
+  "Lisa Davis", "William Brown", 
+  "James Garcia", "Robert Miller", 
+  "Michael Davis", "David Rodriguez", 
+  "Richard Wilson", "Joseph Moore" ]
 drivers.each { |driver| Driver.find_or_create_by(name: driver, mobile: Faker::PhoneNumber.cell_phone) }
 
 # Zones
 Zone.destroy_all
-zones = [ 'Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5' ]
+zones = [ 
+  'Zone 1', 
+  'Zone 2', 
+  'Zone 3', 
+  'Zone 4', 
+  'Zone 5' 
+]
 zones.each { |zone| Zone.find_or_create_by(name: zone) }
 
 # Routes with zones

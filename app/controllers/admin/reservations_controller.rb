@@ -5,7 +5,7 @@ class Admin::ReservationsController < Admin::BaseController
     @reservations = Reservation.includes(:route).order(created_at: :desc)
     @reservations = @reservations.where(status: params[:status]) if params[:status].present?
     @pagy, @reservations = pagy(@reservations)
-    flash[:notice] = "Reservations are CLOSED." unless Reservation.open?
+    flash.now[:alert] = "Reservations are CLOSED." unless Reservation.open?
   end
 
   def show

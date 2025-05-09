@@ -3,6 +3,7 @@ class Admin::MarketingController < Admin::BaseController
     @pagy, @prior_reservations = pagy(PriorReservation.order(:email))
     @marketing_1_count = PriorReservation.where(marketing_1_email_sent_at: nil).count
     @marketing_2_count = PriorReservation.where(marketing_2_email_sent_at: nil).count
+    flash.now[:alert] = "Emailing is disabled. Enable email in Settings to send marketing emails." unless helpers.setting.is_emailing_enabled?
   end
 
   def send_marketing_email_1

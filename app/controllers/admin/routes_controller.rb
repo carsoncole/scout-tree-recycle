@@ -3,6 +3,7 @@ class Admin::RoutesController < Admin::BaseController
 
   def index
     @pagy, @routes = pagy(Route.includes(:drivers, :zone))
+    flash.now[:alert] = "Routing is disabled. Enable routing in Settings to automatically route pickups." unless helpers.setting.is_routing_enabled?
   end
 
   def show

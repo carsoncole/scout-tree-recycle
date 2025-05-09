@@ -2,10 +2,10 @@ require "application_system_test_case"
 
 class PriorReservationsTest < ApplicationSystemTestCase
   test "unsubscribe from prior reservations" do
-    visit unsubscribe_prior_reservation_url(prior_reservations(:prior_reservation_1).id)
+    visit unsubscribe_prior_reservation_url(prior_reservations(:one).id)
     click_on "Yes, Unsubscribe Me"
     assert_text "You have been successfully unsubscribed from our mailing list."
-    assert_not PriorReservation.exists?(prior_reservations(:prior_reservation_1).id)
+    assert_not PriorReservation.exists?(prior_reservations(:one).id)
   end
 
   test "unsubscribe from prior reservations with wrong id" do

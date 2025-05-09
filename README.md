@@ -48,24 +48,6 @@ Tree Recycle is a comprehensive web application that supports the running of a C
   - Map showing pickup locations and status
   - Drivers can update status of pickups and register missing trees
 
-
-## Technical Stack
-
-- Ruby 3.4
-- Rails 8+
-- PostgreSQL
-- Tailwind CSS
-- Stimulus.js
-- Docker (for deployment)
-
-## Optional Integrations
-
-- SMTP (for email)
-- AWS Location Service (for geocoding and routing)
-- Twilio (for SMS)
-- Stripe (for donations)
-
-
 ## Getting started
 
 1. Install Ruby and PostgreSQL on your local computer.
@@ -152,7 +134,12 @@ Use encrypted credentials to store application secrets. Remove the existing secr
 Copy the sample ```credentials.ymp.enc.sample```. 
 
 
-## Email
+## Optional Integrations Installation
+
+Integrations provide additional features for Tree Recycle, including emails, automatic routing, SMS messaging, and donations.
+
+
+### Email
 
 With emailing configured, Tree Recycle will send automated emails confirming tree reservations, cancellations, and donation receipts. Two funnel-type marketing emails are also available to market to people who have made tree pickup reservations in the past.
 
@@ -179,9 +166,9 @@ config.action_mailer.smtp_settings = {
 ```
 > **Important GMAIL Note** Gmail is free, but there are limitations. If you are on a free account, the daily sending limit is ~500 emails. If you do hit a limit, they will temporarily shut your account. For the marketing emails, you can control the batch size of emails in Settings and it is recommended that you keep it low (<50) and send multiple times. Sending a massive block of emails may not only shut your account, but it also could get your emails flagged as SPAM, by receiving email servers. Caution is advised.
 
-## AWS Mapping Service
+### Routing
 
-A mapping service is required to provide geocoding and routing.
+Routing requries a mapping service to provide geocoding and geo-fencing for the assignment of pickups to routes.
 
 
 For the Amazon Locations Service, you'll need an AWS account. Create a Place Index and give it a name, ie. 'tree_recycle', with the data provider 'Esri' with a single use.  You'll then need API credentials which you can obtain in your main profile under 'Security Credentials'.
@@ -219,60 +206,27 @@ For an address to be routed, it is first geocoded. By default, geocoding occurs 
 There is a job ```GeocodeReservationsJob`` that runs on a schedule set in ```recurring.yml``.
 
 
-### Twilio
+### SMS Messaging
 
 Twilio is used for SMS. Automatic messages for missing trees and general messaging with customers.
 
-### Stripe
+
+### Donations
 
 Stripe is used for taking donations.
 
-### SMTP Email - Gmail
+---
 
-An email provider, such as Gmail, can be configured for reservation notifications, reminders, cancellations, marketing emails, and donation receipts. The default configuration is Gmail, as it is free and normally would provide a high enough daily limit (300-500 emails) to meet the needs of most users.
+## Marketing emails
 
-It is not recommended that you send out marketing emails in large quantities as they could be flagged as spam by both Gmail and the receiving email servers. There is a batch quantity limit setting where you can set the maximum number of emails to send at a time. The exact limits that Gmail applies to outgoing quantity limits are uncertain, but believed to be 20/hour, or 500 over a rolling 24 hour period. Depending on your emailing needs, there are alternate commercial email providers that you can integrate at substantially higher outgoing levels.
-
-Configure each environment with mail settings. Setting and credentials are managed in the Rails credentials file. The sample settings have the correct values if you use Gmail for sending emails. If you use a different service, you may need to modify or add to the settings in the individual environment files.
-
-
-Mail settings in `production.rb`.
-
-``` ruby
-config.action_mailer.smtp_settings = {
-:address              => Rails.application.credentials.mailer.development.address,
-:port                 => Rails.application.credentials.mailer.development.port,
-:user_name            => Rails.application.credentials.mailer.development.user_name,
-:password             => Rails.application.credentials.mailer.development.password,
-:authentication       => Rails.application.credentials.mailer.development.authentication,
-:tls                  => Rails.application.credentials.mailer.development.tls,
-:enable_starttls_auto => Rails.application.credentials.mailer.development.enable_starttls_auto
-```
-
-The mailer itself should be updated to default to the sending address in `application_mailer.rb`.
-
-``` ruby
-class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
-  layout "mailer"
-end
-```
-
-The default URL for mail is set in the environment configuration file `production.rb` or `development.rb`.
-
-```ruby
-\config.action_mailer.default_url_options = { host: 'site@example.com' }
-```
-
-### Marketing emails
-
+There are two pre-definded marketing emails. The first email informs the recipient about the tree recycling event and encourages sign-up. The second email is a last call email sent just prior to the event reminding the recipient that time is running out to sign up. Both the first and second emails are only sent to recipients that have not, at that time, signed up.
 
 You can send marketing emails through the Settings section, where two email templates (Marketing Email #1, Marketing Email #2), one followed by the other, are available. You can modify `/views/marketing_mailer/marketing_email_1.html.haml` and `/views/marketing_mailer/marketing_email_2.html.haml`, and their `.text.haml` versions.
 
 The batch email size determines the number of emails sent at once. It's crucial to set this number within your mail provider's daily sending limit; for example, Gmail has an estimated limit of 500 emails per day. When you send a batch, the system will send the next set of emails that haven't been sent yet, ensuring no duplicates. This information is visible in the reservation and reservation log once marketing emails have been sent.
 
 
-## Mapping
+## Setting up Routing
 
 Reservations are mapped into admin-defined routes. When entered, reservations will be checked for existence within Routes by either 1) a Route that is nearest to it (each Route has a base address), or 2) with a Route that has polygon defined for it. Multi-point polygons can be entered for each route.
 
@@ -319,6 +273,8 @@ For mailers, previews exist for the confirmation and reminder emails. To view in
 ```ruby
 http://localhost:3000/rails/mailers/
 ```
+
+> Viewing previews of emails requires emailing to be enabled in Settings and you need to have supporting reservations or prior reservations.
 
 ### Seed Data
 

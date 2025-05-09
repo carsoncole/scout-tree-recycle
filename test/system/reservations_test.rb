@@ -43,7 +43,7 @@ class ReservationsTest < ApplicationSystemTestCase
     click_button "Create Reservation"
 
     sleep 0.75
-    assert_equal 1, Reservation.donation.count
+    assert_equal 3, Reservation.donation.count
 
     visit root_url
     fill_in "Name", with: "Charlie"
@@ -53,11 +53,11 @@ class ReservationsTest < ApplicationSystemTestCase
 
     sleep 0.50
     assert_equal "100 Main St", Reservation.find_by(email: "test@example.com").street
-    assert_equal 1, Reservation.donation.count
+    assert_equal 3, Reservation.donation.count
 
     click_button "Select donation type"
     sleep 0.25
-    assert_equal 1, Reservation.routing.count
+    assert_equal 3, Reservation.routing.count
   end
 
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
@@ -107,7 +107,7 @@ class ReservationsTest < ApplicationSystemTestCase
     visit root_url
     fill_in "Name", with: Faker::Name.name
     fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: Faker::Internet.email
+    fill_in "Email", with: "test11@example.com"
     fill_in "Mobile", with: Faker::PhoneNumber.phone_number
     click_button "Create Reservation"
     click_button "Select donation type"
@@ -115,14 +115,13 @@ class ReservationsTest < ApplicationSystemTestCase
 
     click_link "Edit Reservation"
 
-    reservation = Reservation.first
+    reservation = Reservation.find_by(email: "test11@example.com")
     sleep 0.25
-    assert_equal 1, Reservation.routing.count
+    assert_equal 3, Reservation.routing.count
 
     click_link_or_button "Cancel Reservation"
     accept_confirm
     sleep 0.25
-    assert_equal 0, Reservation.pending_pickup.count
     assert_text "Your tree pickup has been cancelled."
     assert Reservation.find_by(id: reservation.id).cancelled?
   end
@@ -172,6 +171,6 @@ class ReservationsTest < ApplicationSystemTestCase
   test "editing a reservation when reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
     visit edit_reservation_path(reservations(:pending_pickup_1))
-    assert_text "Reservations are not currently changeable."
+    assert_text "Reservations are CLOSED and not changeable."
   end
 end

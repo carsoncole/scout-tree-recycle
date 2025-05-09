@@ -1,27 +1,19 @@
 require "test_helper"
 
 class MarketingMailerTest < ActionMailer::TestCase
-  # test "marketing_email_1" do
-  #   mail = MarketingMailer.marketing_email_1
-  #   assert_equal "Marketing email 1", mail.subject
-  #   assert_equal [ "to@example.org" ], mail.to
-  #   assert_equal [ "from@example.com" ], mail.from
-  #   assert_match "Hi", mail.body.encoded
-  # end
+  test "marketing_email_1" do
+    mail = MarketingMailer.with(prior_reservation_id: prior_reservations(:one).id).marketing_email_1
+    assert_equal "Tree recycling #{ Setting.instance.event_pickup.strftime("%B %-d") }. Register today.", mail.subject
+    assert_equal [ prior_reservations(:one).email ], mail.to
+    assert_equal [ Setting.instance.email_from ], mail.from
+    assert_match "Register for a tree pickup!", mail.body.encoded
+  end
 
-  # test "marketing_email_2" do
-  #   mail = MarketingMailer.marketing_email_2
-  #   assert_equal "Marketing email 2", mail.subject
-  #   assert_equal [ "to@example.org" ], mail.to
-  #   assert_equal [ "from@example.com" ], mail.from
-  #   assert_match "Hi", mail.body.encoded
-  # end
-
-  # test "unsubscribe" do
-  #   mail = MarketingMailer.unsubscribe
-  #   assert_equal "Unsubscribe", mail.subject
-  #   assert_equal [ "to@example.org" ], mail.to
-  #   assert_equal [ "from@example.com" ], mail.from
-  #   assert_match "Hi", mail.body.encoded
-  # end
+  test "marketing_email_2" do
+    mail = MarketingMailer.with(prior_reservation_id: prior_reservations(:one).id).marketing_email_2
+    assert_equal "Last call! Tree recycling #{ Setting.instance.event_pickup.strftime("%B %-d") }. Register today.", mail.subject
+    assert_equal [ prior_reservations(:one).email ], mail.to
+    assert_equal [ Setting.instance.email_from ], mail.from
+    assert_match "Reserve your Pickup Today", mail.body.encoded
+  end
 end

@@ -16,7 +16,7 @@ class ReservationsMailer < ApplicationMailer
     @reservation.update(confirmed_reservation_email_sent_at: Time.current)
   end
 
-  def new_reservation_email
+  def new_reservation_email1
     return if @reservation.confirmed_reservation_email_sent_at?
     @event_pickup = setting.event_pickup
     @setting = setting

@@ -136,3 +136,12 @@ PriorReservation.destroy_all
 100.times do
   PriorReservation.create(name: Faker::Name.name, email: Faker::Internet.email, street: Faker::Address.street_address, mobile: [Faker::PhoneNumber.cell_phone, nil].sample, marketing_1_email_sent_at: [ Time.current, nil ].sample)
 end
+
+# Sms
+Sms.destroy_all
+res_1 = Reservation.first
+res_2 = Reservation.last
+Sms.create(phone: res_1.mobile, body: Faker::Lorem.sentence, direction: 1, reservation: res_1)
+Sms.create(phone: res_1.mobile, body: Faker::Lorem.sentence, direction: 2, reservation: res_1)
+Sms.create(phone: res_2.mobile, body: Faker::Lorem.sentence, direction: 2, reservation: res_2)
+Sms.create(phone: res_2.mobile, body: Faker::Lorem.sentence, direction: 1, reservation: res_2)

@@ -23,7 +23,6 @@ Rails.application.routes.draw do
 
   # Admin pages
   namespace :admin do
-    get "prior_reservations/destroy"
     resource :session
     root to: "reservations#index"
     get "marketing/index"
@@ -44,6 +43,7 @@ Rails.application.routes.draw do
     resources :logs, only: [ :index, :show, :destroy ]
     resources :users, except: [ :show ]
     resources :prior_reservations, only: [ :destroy ]
+    resources :smses, only: [ :index ]
 
     # Operations
     post "post-event-cleanup", to: "operations#post_event_cleanup"

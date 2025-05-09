@@ -85,4 +85,6 @@ Rails.application.configure do
     tls: Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :tls),
     enable_starttls_auto: Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :enable_starttls_auto)
   }
+
+  config.active_job.queue_adapter = :async
 end

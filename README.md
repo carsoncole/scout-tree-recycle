@@ -107,7 +107,7 @@ $ bin/dev
 
 ```ruby
 $ rails console
-> User.create(email: test@example.com, password: password, role: "admin")
+> User.create(email: "test@example.com", password: "password", role: "admin")
 ```
 
 9. Go to ```localhost:3000/admin``` to access the admin site.
@@ -157,7 +157,6 @@ Copy the sample ```credentials.ymp.enc.sample```.
 With emailing configured, Tree Recycle will send automated emails confirming tree reservations, cancellations, and donation receipts. Two funnel-type marketing emails are also available to market to people who have made tree pickup reservations in the past.
 
 
-
 Settings for GMAIL:
 - address:              smtp.gmail.com
 - port:                 587
@@ -178,6 +177,7 @@ config.action_mailer.smtp_settings = {
   :enable_starttls_auto => true
 }
 ```
+> **Important GMAIL Note** Gmail is free, but there are limitations. If you are on a free account, the daily sending limit is ~500 emails. If you do hit a limit, they will temporarily shut your account. For the marketing emails, you can control the batch size of emails in Settings and it is recommended that you keep it low (<50) and send multiple times. Sending a massive block of emails may not only shut your account, but it also could get your emails flagged as SPAM, by receiving email servers. Caution is advised.
 
 ## AWS Mapping Service
 

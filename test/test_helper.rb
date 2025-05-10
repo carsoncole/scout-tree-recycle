@@ -9,12 +9,22 @@ module ActiveSupport
 
     fixtures :all
 
+    # sign_in for system tests
     def sign_in_as(user,fixture=false)
       visit new_admin_session_url
       fill_in "Email", with: user.email
       fill_in "Password", with: (fixture ? "password123456789" : user.password)
       click_button "Sign in"
       sleep 1
+    end
+
+    # sign_in for controller tests
+    def sign_in(user = users(:admin))
+      session = user.sessions.create!
+      Current.session = session
+      request = ActionDispatch::Request.new(Rails.application.env_config)
+      cookies = request.cookie_jar
+      cookies.signed[:session_id] = { value: session.id, httponly: true, same_site: :lax }
     end
   end
 end

@@ -10,9 +10,13 @@ one:
   direction: "outgoing"
   reservation_id: picked_up_1
   status: "sent"
+  created_at: 2025-01-01 12:00:00
+  updated_at: 2025-01-01 12:00:00
 two: 
   phone: 2064759823
   body: "Hello, this is a test message"
   direction: "incoming"
   reservation_id: picked_up_1
   status: "received"
+  created_at: 2025-01-01 12:00:00
+  updated_at: 2025-01-01 12:00:00

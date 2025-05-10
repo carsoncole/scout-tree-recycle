@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "sms/reply"
   resources :passwords, param: :token
   # Public pages
   root "public#index"
@@ -20,6 +21,9 @@ Rails.application.routes.draw do
       delete :destroy
     end
   end
+
+  # Incoming SMS
+    post 'messages/reply' => 'messages#reply'
 
   # Admin pages
   namespace :admin do
@@ -43,7 +47,13 @@ Rails.application.routes.draw do
     resources :logs, only: [ :index, :show, :destroy ]
     resources :users, except: [ :show ]
     resources :prior_reservations, only: [ :destroy ]
-    resources :smses, only: [ :index ]
+    resources :sms, only: [:index, :create] do
+      collection do
+        post :mark_viewed
+        delete :destroy
+      end
+    end
+    post "sms", to: "sms#create", as: :sms_index
 
     # Operations
     post "post-event-cleanup", to: "operations#post_event_cleanup"

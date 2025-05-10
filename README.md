@@ -97,7 +97,6 @@ $ rails console
 9. Go to ```localhost:3000/admin``` to access the admin site.
 
 
-
 ## Deployment
 
 The application can be deployed with Kamal (https://kamal-deploy.org) to any cloud-based or local server as long as SSH root access is available.
@@ -210,8 +209,35 @@ There is a job ```GeocodeReservationsJob`` that runs on a schedule set in ```rec
 
 ### SMS Messaging
 
-Twilio is used for SMS. Automatic messages for missing trees and general messaging with customers.
+[Twilio.com](https://twilio.com) is used for SMS:
+1. For reservations with a mobile number, if it is flagged ```Missing```, then a Missing Tree SMS will be sent. It will inform the recipient to put out their tree and to respond to the SMS by saying their tree has been put out. Once the response is received, the reservation's status can be updated to ```Pending Pickup```.
+2. General SMS enquiries can be received by the application and they can be replied to.
 
+> :warning: Getting SMS service from Twilio takes time to set up as they will do a background check on the organization, to fight against spam messaging.
+
+Add the following details from your Twilio account into the encrypted credentials file:
+
+```ruby
+$ EDITOR=vim rails credentials:edit
+```
+```ruby
+twilio:
+  production:
+    number: TWILLIO_NUMBER
+    account_sid: ACCOUNT_SID
+    auth_token: AUTH_TOKEN
+```
+
+In Twilio, you need to create a ```Messaging Service```, which defines the purpose behind what you plan on messaging. The use case should be "Notify my users".
+
+In Twilio, in the section ```Develop```, ```Phone Numbers```, ```Active Numbers```, select your number and update the ```Messaging Configuration```:
+
+```
+Configure with: Webhook
+A message comes in: Webhook
+URL: https://YOUR_SITE_URL/sms/reply
+HTTP: HTTP POST
+```
 
 ### Donations
 

@@ -314,6 +314,14 @@
                         <%= telephone_field_tag "setting[contact_phone]", setting.contact_phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
                       </div>
                     </div>
+                    <div>
+                      <%= label_tag "setting[contact_sms]", "Contact SMS", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <div>
+                        <%= telephone_field_tag "setting[contact_sms]", setting.contact_sms, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      </div>
+                    </div>
+
+            
                   </div>
                 </div>
               </div>

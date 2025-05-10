@@ -1,12 +1,12 @@
 class Sms < ApplicationRecord
   belongs_to :reservation, optional: true
-  has_many :reservations, foreign_key: "phone"
+  has_one :reservation, foreign_key: "mobile", primary_key: "phone"
 
   enum :direction, { outgoing: 1, incoming: 2 }, default: :outgoing
 
   validates :phone, presence: true
   validates :direction, presence: true
-  
+
   normalizes :phone, with: ->(phone) { Phonelib.parse(phone).full_e164.presence if phone.present? }
   
   after_create_commit :send_outgoing!, if: :outgoing?

@@ -68,7 +68,10 @@
                   Contact us  
                 <% end %>
                 at
-                <%= [setting.contact_email, setting.contact_phone].compact.join(" or ") %>
+                <%= [setting.contact_email, setting.contact_phone].compact.join(" or ") %>.
+                <% if setting.contact_sms.present? %>
+                  You can also text us at <%= setting.contact_sms %>.
+                <% end %>
                 
               </p>
             </div>

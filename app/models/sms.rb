@@ -26,28 +26,21 @@ class Sms < ApplicationRecord
   end
 
   def client
-    if Rails.env.test?
-      sid, auth_token = Rails.application.credentials.twilio.test.account_sid, Rails.application.credentials.twilio.test.auth_token
-    else
-      sid, auth_token = Rails.application.credentials.twilio.production.account_sid, Rails.application.credentials.twilio.production.auth_token
-    end
+    sid, auth_token = 
+    Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :account_sid), 
+    Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :auth_token)
 
     @client ||= Twilio::REST::Client.new sid, auth_token
   end
 
   def from_number
-    @from_number = if Rails.env.test?
-      Rails.application.credentials.twilio.test.number
-    else
-      Rails.application.credentials.twilio.production.number
-    end
+    @from_number = Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :number)
   end
 
   def send_outgoing!
     return unless Setting.instance.is_sms_enabled
     SendSmsJob.perform_later(self.id)
   end
-
 
   def formatted_phone
     parsed_phone = Phonelib.parse(phone)

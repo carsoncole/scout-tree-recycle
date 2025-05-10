@@ -57,8 +57,7 @@ class StripeCharge
           payment_status: @stripe_event&.status,
           last4: @stripe_event&.charges&.data[0]&.payment_method_details&.card_present&.last4,
           exp_month: @stripe_event&.charges&.data[0]&.payment_method_details&.card_present&.exp_month,
-          exp_year: @stripe_event&.charges&.data[0]&.payment_method_details&.card_present&.exp_year,
-          amount: amount
+          exp_year: @stripe_event&.charges&.data[0]&.payment_method_details&.card_present&.exp_year
           )    
       end
     end

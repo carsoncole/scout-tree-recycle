@@ -19,4 +19,4 @@ module Pickups
       end
     end
   end
-end 
+end

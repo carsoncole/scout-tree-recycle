@@ -11,7 +11,7 @@ class LogsMailerPreview < ActionMailer::Preview
       handled: false,
       severity: "error",
       is_viewed: true
-    )    
+    )
     LogsMailer.with(log_id: log.id).log_message_email
   end
 end

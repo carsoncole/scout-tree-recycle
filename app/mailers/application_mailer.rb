@@ -7,7 +7,7 @@ class ApplicationMailer < ActionMailer::Base
 
   def check_is_emailing_enabled
     unless Setting.instance.is_emailing_enabled?
-      return
+      nil
     end
   end
 end

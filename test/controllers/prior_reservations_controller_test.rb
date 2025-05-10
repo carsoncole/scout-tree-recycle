@@ -20,7 +20,7 @@ class PriorReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Your email has already been unsubscribed.", flash[:alert]
   end
 
-  test "unsubscribing prior reservation should destroy it" do 
+  test "unsubscribing prior reservation should destroy it" do
     assert_difference "PriorReservation.count", -1 do
       delete prior_reservation_url(prior_reservations(:one))
     end

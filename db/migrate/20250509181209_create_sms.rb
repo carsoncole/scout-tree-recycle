@@ -11,7 +11,7 @@ class CreateSms < ActiveRecord::Migration[8.0]
 
       t.timestamps
 
-      t.index ["phone"], name: "index_messages_on_phone" 
+      t.index [ "phone" ], name: "index_messages_on_phone"
     end
   end
 end

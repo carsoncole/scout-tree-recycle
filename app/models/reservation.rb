@@ -52,7 +52,7 @@ class Reservation < ApplicationRecord
   def suggested_address?
     nil
   end
-  
+
   def routed?
     route.present?
   end

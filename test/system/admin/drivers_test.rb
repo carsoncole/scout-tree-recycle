@@ -7,7 +7,7 @@ class Admin::DriversTest < ApplicationSystemTestCase
 
   test "visiting the index" do
     visit admin_drivers_url
-  
+
     assert_selector "h1", text: "Drivers"
   end
 end

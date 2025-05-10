@@ -1,7 +1,7 @@
 module Pickups
   class BaseController < ApplicationController
     before_action :authenticate_driver
-    layout 'pickups'
+    layout "pickups"
 
     private
 

@@ -72,7 +72,7 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 2, Reservation.cancelled.count # 1 cancelled and 1 cancelled_1
     assert_equal 2, Reservation.picked_up.count
     assert_equal "pending_pickup", Reservation.find_by(id: reservations(:address_verification_1).id).status
-    assert_equal 2, Reservation.pending_pickup.count 
+    assert_equal 2, Reservation.pending_pickup.count
   end
 
   test "invalid without email" do
@@ -243,4 +243,3 @@ class ReservationTest < ActiveSupport::TestCase
     assert reservation.pending_pickup?
   end
 end
-

@@ -8,7 +8,7 @@ class Sms < ApplicationRecord
   validates :direction, presence: true
 
   normalizes :phone, with: ->(phone) { Phonelib.parse(phone).full_e164.presence if phone.present? }
-  
+
   after_create_commit :send_outgoing!, if: :outgoing?
 
   def send_via_twilio!
@@ -19,15 +19,15 @@ class Sms < ApplicationRecord
         body: body
       )
 
-      update_column(:service_status, 'sent') # optional: mark status after send
+      update_column(:service_status, "sent") # optional: mark status after send
     rescue => e
       Rails.logger.error("Twilio send failed: #{e}")
-      update_column(:service_status, 'failed') # optional: mark failure
+      update_column(:service_status, "failed") # optional: mark failure
     end
   end
 
   def client
-    if Rails.env.test? 
+    if Rails.env.test?
       sid, auth_token = Rails.application.credentials.twilio.test.account_sid, Rails.application.credentials.twilio.test.auth_token
     else
       sid, auth_token = Rails.application.credentials.twilio.production.account_sid, Rails.application.credentials.twilio.production.auth_token
@@ -84,10 +84,9 @@ class Sms < ApplicationRecord
   #   rescue => exception
   #     if Rails.env.production?
   #       Rollbar.log('error', exception)
-  #     else 
+  #     else
   #       exception
   #     end
   #   end
   # end
-
-end    
+end

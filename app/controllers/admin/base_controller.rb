@@ -4,7 +4,7 @@ class Admin::BaseController < ApplicationController
   include Pagy::Backend
 
   # around_action :set_time_zone
-  
+
   private
 
   def set_time_zone(&block)

@@ -1,4 +1,4 @@
-# Seed Data for development use. 
+# Seed Data for development use.
 # Run with: rails db:seed
 
 require 'faker'
@@ -13,42 +13,42 @@ User.create(email: "user@example.com", password: "password1234", role: "user")
 
 # Drivers
 Driver.destroy_all
-drivers = [ 
-  "John Smith", "Mary Johnson", 
-  "Lisa Davis", "William Brown", 
-  "James Garcia", "Robert Miller", 
-  "Michael Davis", "David Rodriguez", 
+drivers = [
+  "John Smith", "Mary Johnson",
+  "Lisa Davis", "William Brown",
+  "James Garcia", "Robert Miller",
+  "Michael Davis", "David Rodriguez",
   "Richard Wilson", "Joseph Moore" ]
 drivers.each { |driver| Driver.find_or_create_by(name: driver, mobile: Faker::PhoneNumber.cell_phone) }
 
 # Zones
 Zone.destroy_all
-zones = [ 
-  'Zone 1', 
-  'Zone 2', 
-  'Zone 3', 
-  'Zone 4', 
-  'Zone 5' 
+zones = [
+  'Zone 1',
+  'Zone 2',
+  'Zone 3',
+  'Zone 4',
+  'Zone 5'
 ]
 zones.each { |zone| Zone.find_or_create_by(name: zone) }
 
 # Routes with zones
-routes_zones = [ 
-  ["Main Street", "Zone 1"], 
-  ["Second Street", "Zone 1"], 
-  ["Third Street", "Zone 1"], 
-  ["Fourth Street", "Zone 2"], 
-  ["Fifth Street", "Zone 2"],
-  ["Sixth Street", "Zone 3"],
-  ["Seventh Street", "Zone 3"],
-  ["Eighth Street", "Zone 4"],
-  ["Ninth Street", "Zone 4"],
-  ["Tenth Street", "Zone 4"],
-  ["Eleventh Street", "Zone 5"],
-  ["Twelfth Street", "Zone 5"],
-  ["Thirteenth Street", "Zone 5"],
-  ["Fourteenth Street", "Zone 5"],
-  ["Fifteenth Street", "Zone 5"]
+routes_zones = [
+  [ "Main Street", "Zone 1" ],
+  [ "Second Street", "Zone 1" ],
+  [ "Third Street", "Zone 1" ],
+  [ "Fourth Street", "Zone 2" ],
+  [ "Fifth Street", "Zone 2" ],
+  [ "Sixth Street", "Zone 3" ],
+  [ "Seventh Street", "Zone 3" ],
+  [ "Eighth Street", "Zone 4" ],
+  [ "Ninth Street", "Zone 4" ],
+  [ "Tenth Street", "Zone 4" ],
+  [ "Eleventh Street", "Zone 5" ],
+  [ "Twelfth Street", "Zone 5" ],
+  [ "Thirteenth Street", "Zone 5" ],
+  [ "Fourteenth Street", "Zone 5" ],
+  [ "Fifteenth Street", "Zone 5" ]
 ]
 
 Route.destroy_all
@@ -116,11 +116,11 @@ pickup_notes = [
 
 100.times do
   r = Reservation.new(
-    status: weighted_reservation_types.sample, 
-    street: Faker::Address.street_address, 
-    email: Faker::Internet.email, 
-    name: Faker::Name.name, 
-    mobile: [Faker::PhoneNumber.cell_phone, nil].sample,
+    status: weighted_reservation_types.sample,
+    street: Faker::Address.street_address,
+    email: Faker::Internet.email,
+    name: Faker::Name.name,
+    mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample,
     pickup_notes: pickup_notes.sample
   )
   if r.status == "pending_pickup"
@@ -134,7 +134,7 @@ end
 # Prior Reservations
 PriorReservation.destroy_all
 100.times do
-  PriorReservation.create(name: Faker::Name.name, email: Faker::Internet.email, street: Faker::Address.street_address, mobile: [Faker::PhoneNumber.cell_phone, nil].sample, marketing_1_email_sent_at: [ Time.current, nil ].sample)
+  PriorReservation.create(name: Faker::Name.name, email: Faker::Internet.email, street: Faker::Address.street_address, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample, marketing_1_email_sent_at: [ Time.current, nil ].sample)
 end
 
 # Sms

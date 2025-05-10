@@ -33,29 +33,29 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   # test "toggle settings" do
-    # Setting.instance.update(is_reservations_open: true, is_emailing_enabled: true, is_sms_enabled: true)
+  # Setting.instance.update(is_reservations_open: true, is_emailing_enabled: true, is_sms_enabled: true)
 
-    # # visit admin_settings_url
-    # # find('input[name="setting[is_reservations_open]"]', visible: :all).set(false)
-    # # assert_text 'Setting updated successfully', wait: 5
+  # # visit admin_settings_url
+  # # find('input[name="setting[is_reservations_open]"]', visible: :all).set(false)
+  # # assert_text 'Setting updated successfully', wait: 5
 
-    # # sleep 3
-    # visit admin_settings_url
-    # sleep 0.25
-    # # assert_not Setting.instance.is_reservations_open?
+  # # sleep 3
+  # visit admin_settings_url
+  # sleep 0.25
+  # # assert_not Setting.instance.is_reservations_open?
 
-    # find('#emailing-toggle').click
-    # sleep 0.25
-    # assert find("#emailing-toggle").value == "false"
+  # find('#emailing-toggle').click
+  # sleep 0.25
+  # assert find("#emailing-toggle").value == "false"
 
-    # find('#sms-toggle').click
-    # sleep 2
+  # find('#sms-toggle').click
+  # sleep 2
 
-    # assert_not Setting.instance.is_sms_enabled?
+  # assert_not Setting.instance.is_sms_enabled?
 
-    # find('#routing-toggle').click
-    # sleep 2
-    # assert_not Setting.instance.is_routing_enabled?
+  # find('#routing-toggle').click
+  # sleep 2
+  # assert_not Setting.instance.is_routing_enabled?
 
   # end
 

@@ -10,7 +10,7 @@ class Admin::SettingsController < Admin::BaseController
       else
         render :index, status: :unprocessable_entity
       end
-    else 
+    else
       redirect_to admin_settings_path, alert: "You are not authorized to update settings."
     end
   end
@@ -26,7 +26,7 @@ class Admin::SettingsController < Admin::BaseController
         render json: { success: false, errors: setting.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      render json: { success: false, errors: ["You are not authorized to update settings."] }, status: :unauthorized
+      render json: { success: false, errors: [ "You are not authorized to update settings." ] }, status: :unauthorized
     end
   end
 

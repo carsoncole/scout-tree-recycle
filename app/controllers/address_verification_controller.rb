@@ -1,7 +1,7 @@
 class AddressVerificationController < ApplicationController
   before_action :set_reservation
 
-  #TODO address verfication 
+  # TODO address verfication
   def address_verification
     @reservation.donation!
     redirect_to new_reservation_donation_url(@reservation)
@@ -16,7 +16,7 @@ class AddressVerificationController < ApplicationController
   end
 
   private
-  
+
   def set_reservation
     @reservation = Reservation.find(params[:id] ||= params[:reservation_id])
   end

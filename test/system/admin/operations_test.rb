@@ -5,7 +5,7 @@ class Admin::OperationsTest < ApplicationSystemTestCase
     sign_in_as(users(:admin), true)
     assert_equal 3, PriorReservation.count
     assert_equal 13, Reservation.count
-  
+
     visit admin_settings_url
     click_button "Migrate"
     accept_confirm "Are you sure you want to migrate reservations?"

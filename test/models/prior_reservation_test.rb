@@ -7,7 +7,7 @@ class PriorReservationTest < ActiveSupport::TestCase
 
   test "is invalid without email" do
     prior_reservation = prior_reservations(:one)
-    prior_reservation.email = nil 
+    prior_reservation.email = nil
     assert_not prior_reservation.valid?
   end
 

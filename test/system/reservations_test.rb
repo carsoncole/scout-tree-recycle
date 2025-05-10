@@ -28,7 +28,7 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_equal "donation", reservation.status
 
     click_button "Select donation type"
-    
+
     sleep 0.25
     assert_text "Reservation Confirmed"
     assert_equal "routing", reservation.reload.status

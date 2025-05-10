@@ -9,7 +9,7 @@ class UserTest < ActiveSupport::TestCase
     user = users(:admin)
     user.email = nil
     assert_not user.valid?
-  end 
+  end
 
   test "is invalid without role" do
     user = users(:admin)
@@ -40,7 +40,7 @@ class UserTest < ActiveSupport::TestCase
     user.email = "invalid"
     assert_not user.valid?
   end
-  
+
   test "is valid with valid email format" do
     user = users(:admin)
     user.email = "valid@example.com"
@@ -60,11 +60,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "user?" do
-    assert users(:user).user? 
+    assert users(:user).user?
     assert_not users(:admin).user?
   end
-  
-  
-  
-  
 end

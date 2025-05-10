@@ -24,8 +24,8 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
 
   test "status changes to routing when route is removed" do
     visit admin_reservations_path
-    within(page.find('tr', text: "mary.jones@example.com")) do
-      click_link 'Edit'
+    within(page.find("tr", text: "mary.jones@example.com")) do
+      click_link "Edit"
     end
     find("#reservation_route_id").select("Route 2")
     find("#reservation_route_id").select("Select a route")
@@ -37,8 +37,8 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
 
   test "status changes to pending pickup when route is added" do
     visit admin_reservations_path
-    within(page.find('tr', text: "icky.jones@example.com")) do
-      click_link 'Edit'
+    within(page.find("tr", text: "icky.jones@example.com")) do
+      click_link "Edit"
     end
     find("#reservation_route_id").select("Route 2")
     click_button "Update Reservation"
@@ -50,14 +50,14 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
   test "routing status when system routing is enabled and reservations are routed" do
     Setting.instance.update(is_routing_enabled: true)
     visit admin_reservations_path
-    within(page.find('tr', text: "icky.jones@example.com")) do
+    within(page.find("tr", text: "icky.jones@example.com")) do
       assert_text "Pending"
       click_link "Edit"
     end
     find("#reservation_route_id").select("Select a route")
     click_button "Update Reservation"
     visit admin_reservations_url
-    within(page.find('tr', text: "icky.jones@example.com")) do
+    within(page.find("tr", text: "icky.jones@example.com")) do
       assert_text "Pending"
     end
   end
@@ -65,7 +65,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
   test "routing status when system routing is disabled and pending pickup reservations are de-routed" do
     Setting.instance.update(is_routing_enabled: false)
     visit admin_reservations_path
-    within(page.find('tr', text: "mary.jones@example.com")) do
+    within(page.find("tr", text: "mary.jones@example.com")) do
       assert_text "Pending Pickup"
       click_link "Edit"
     end
@@ -73,34 +73,34 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     find("#reservation_route_id").select("Select a route")
     click_button "Update Reservation"
     visit admin_reservations_url
-    within(page.find('tr', text: "mary.jones@example.com")) do
+    within(page.find("tr", text: "mary.jones@example.com")) do
       assert_text "Manual"
     end
   end
-  
+
   test "routing status when system routing is disabled and reservations are not routed" do
     Setting.instance.update(is_routing_enabled: false)
     visit admin_reservations_path
-    within(page.find('tr', text: "icky.jones@example.com")) do
+    within(page.find("tr", text: "icky.jones@example.com")) do
       assert_text "Manual"
       click_link "Edit"
     end
     find("#reservation_route_id").select("Route 1")
     click_button "Update Reservation"
     visit admin_reservations_url
-    within(page.find('tr', text: "icky.jones@example.com")) do
+    within(page.find("tr", text: "icky.jones@example.com")) do
       assert_text Reservation.find_by(email: "icky.jones@example.com").route.name
     end
   end
 
   test "routing status when system routing is enabled and reservations are not routed" do
     visit admin_reservations_path
-    within(page.find('tr', text: "icky.jones@example.com")) do
+    within(page.find("tr", text: "icky.jones@example.com")) do
       assert_text "Pending"
     end
     Setting.instance.update(is_routing_enabled: false)
     visit admin_reservations_path
-    within(page.find('tr', text: "icky.jones@example.com")) do
+    within(page.find("tr", text: "icky.jones@example.com")) do
       assert_text "Manual"
     end
   end

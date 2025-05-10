@@ -48,13 +48,13 @@ class AboutsTest < ApplicationSystemTestCase
     assert_no_text "206-555-1212"
     assert_no_text "Contact us"
     assert_no_selector "h4", text: "Questions?"
-  
+
     setting.update(contact_email: "jill@example.com")
     visit about_url
 
     assert_text "Contact us at jill@example.com"
     assert_selector "h4", text: "Questions?"
-  
+
     setting.update(contact_name: "Jill Doe", contact_email: nil)
     visit about_url
     assert_no_text "Contact us"
@@ -115,5 +115,4 @@ class AboutsTest < ApplicationSystemTestCase
     visit about_url
     assert_link "Learn more", href: "https://example.com"
   end
-
-  end
+end

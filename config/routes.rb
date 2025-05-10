@@ -22,8 +22,8 @@ Rails.application.routes.draw do
     end
   end
 
-  # Incoming SMS
-    post 'sms/reply' => 'sms#reply'
+    # Incoming SMS
+    post "sms/reply" => "sms#reply"
 
   # Admin pages
   namespace :admin do
@@ -47,7 +47,7 @@ Rails.application.routes.draw do
     resources :logs, only: [ :index, :show, :destroy ]
     resources :users, except: [ :show ]
     resources :prior_reservations, only: [ :destroy ]
-    resources :sms, only: [:index, :create] do
+    resources :sms, only: [ :index, :create ] do
       collection do
         post :mark_viewed
         delete :destroy

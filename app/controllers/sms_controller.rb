@@ -9,7 +9,7 @@ class SmsController < ApplicationController
     m = Sms.create(
       phone: from_number,
       body: message_body,
-      direction: 'incoming'
+      direction: "incoming"
       )
   end
 end

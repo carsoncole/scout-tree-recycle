@@ -4,8 +4,8 @@ module ApplicationHelper
     @setting ||= Setting.instance
   end
 
-  def surround_text(text, prefix = '', suffix = '')
-    return '' if text.blank?
+  def surround_text(text, prefix = "", suffix = "")
+    return "" if text.blank?
 
     "#{prefix}#{text}#{suffix}"
   end

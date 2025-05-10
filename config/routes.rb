@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   end
 
   # Incoming SMS
-    post 'messages/reply' => 'messages#reply'
+    post 'sms/reply' => 'sms#reply'
 
   # Admin pages
   namespace :admin do

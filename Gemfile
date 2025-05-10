@@ -49,6 +49,7 @@ gem "pagy" # pagination
 gem "mission_control-jobs" # job processing monitoring at /admin/jobs
 gem "ferrum_pdf" # pdf generation
 gem "twilio-ruby" # sms sending
+gem "stripe" # payment processing
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

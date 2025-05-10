@@ -9,6 +9,7 @@ class Reservation < ApplicationRecord
   validates :email, uniqueness: true
 
   enum :status, { reservation_form: 0, address_verification: 1,  donation: 2, routing: 3, pending_pickup: 4, picked_up: 5, missing: 6, cancelled: 7 }, default: :reservation_form
+  enum :donation_type, { online_donation: 1, cash_or_check_donation: 2, no_donation: 3 }
 
   attribute :city, :string, default: -> { Setting.instance.default_city }
   attribute :state, :string, default: -> { Setting.instance.default_state }

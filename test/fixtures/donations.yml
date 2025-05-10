@@ -1,0 +1,8 @@
+one:
+  reservation: reservations(:pending_pickup_1)
+  amount: 100
+  status: complete
+  payment_status: paid
+  is_receipt_email_sent: true
+  customer_name: John Doe
+  email: john.doe@example.com

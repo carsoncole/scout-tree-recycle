@@ -12,7 +12,18 @@ Rails.application.routes.draw do
     patch "address_confirmation", to: "address_verification#address_confirmation", as: :address_confirmation
     get "confirmation", to: "reservations#confirmation", as: :confirmation
     resources :donations, only: [ :index, :new, :create ]
+    post 'cash-or-check' => 'donations#cash_or_check', as: 'cash_or_check'
+    post 'no-donation' => 'donations#no_donation', as: 'no_donation'
+    get 'donations/success' => 'donations#success', as: 'success'
+    get 'donations/cancel' => 'donations#cancel', as: 'cancel'
+    get 'confirmed' => 'reservations#confirmed', as: 'confirmed'
+
+
   end
+
+  # Donations
+  get '/donation' => 'donations#donation_without_reservation', as: 'donation_without_reservation'
+  get '/thank-you-for-your-donation' => 'donations#success', as: 'success'
 
   # Prior Reservations
   resources :prior_reservations, only: [] do
@@ -22,11 +33,17 @@ Rails.application.routes.draw do
     end
   end
 
-    # Incoming SMS
-    post "sms/reply" => "sms#reply"
+  # Incoming SMS
+  post "sms/reply" => "sms#reply"
+
+  # Incoming Stripe webhook
+  post 'stripe-webhook' => "donations#stripe_webhook"
 
   # Admin pages
   namespace :admin do
+    get "donations/index"
+    get "donations/show"
+    get "donations/destroy"
     resource :session
     root to: "reservations#index"
     get "marketing/index"
@@ -47,12 +64,13 @@ Rails.application.routes.draw do
     resources :logs, only: [ :index, :show, :destroy ]
     resources :users, except: [ :show ]
     resources :prior_reservations, only: [ :destroy ]
-    resources :sms, only: [ :index, :create ] do
+    resources :sms, only: [:index, :create] do
       collection do
         post :mark_viewed
         delete :destroy
       end
     end
+    resources :donations, only: [:index, :show, :destroy]
     post "sms", to: "sms#create", as: :sms_index
 
     # Operations

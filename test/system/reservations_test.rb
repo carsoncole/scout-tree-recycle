@@ -13,13 +13,7 @@ class ReservationsTest < ApplicationSystemTestCase
   end
 
   test "making a reservation and checking status" do
-    visit root_url
-    fill_in "Name", with: Faker::Name.name
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: "test@example.com"
-    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
-    click_button "Create Reservation"
-    assert_text "Make a Donation"
+    make_system_reservation("test@example.com")
 
     sleep 0.25
     reservation = Reservation.find_by(email: "test@example.com")
@@ -27,7 +21,7 @@ class ReservationsTest < ApplicationSystemTestCase
     sleep 0.25
     assert_equal "donation", reservation.status
 
-    click_button "Select donation type"
+    click_button "Donate at Pickup"
 
     sleep 0.25
     assert_text "Reservation Confirmed"
@@ -55,7 +49,7 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_equal "100 Main St", Reservation.find_by(email: "test@example.com").street
     assert_equal 3, Reservation.donation.count
 
-    click_button "Select donation type"
+    click_button "Donate at Pickup"
     sleep 0.25
     assert_equal 3, Reservation.routing.count
   end
@@ -65,12 +59,8 @@ class ReservationsTest < ApplicationSystemTestCase
     existing_non_pending_reservation = Reservation.find_by(email: "steve.jobs@example.com")
     assert_equal "reservation_form", existing_non_pending_reservation.status
 
-    visit root_url
-    fill_in "Name", with: "Faker::Name.name"
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: "steve.jobs@example.com"
-    click_button "Create Reservation"
-    click_button "Select donation type"
+    make_system_reservation("steve.jobs@example.com")
+    click_button "Donate at Pickup"
     assert_equal "donation", Reservation.find_by(email: "steve.jobs@example.com").status
     assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
   end
@@ -79,13 +69,10 @@ class ReservationsTest < ApplicationSystemTestCase
     existing_non_pending_reservation = Reservation.find_by(email: "john.doe@example.com")
     assert_equal "address_verification", existing_non_pending_reservation.status
 
-    visit root_url
-    fill_in "Name", with: "Faker::Name.name"
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: "john.doe@example.com"
-    click_button "Create Reservation"
-    click_button "Select donation type"
-    assert_equal "donation", Reservation.find_by(email: "john.doe@example.com").status
+    make_system_reservation("john.doe@example.com")
+    click_button "Donate at Pickup"
+    sleep 0.25
+    assert_equal "routing", Reservation.find_by(email: "john.doe@example.com").status
     assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
   end
 
@@ -93,24 +80,16 @@ class ReservationsTest < ApplicationSystemTestCase
     existing_non_pending_reservation = Reservation.find_by(email: "lisa.mills@example.com")
     assert_equal "donation", existing_non_pending_reservation.status
 
-    visit root_url
-    fill_in "Name", with: "Faker::Name.name"
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: "lisa.mills@example.com"
-    click_button "Create Reservation"
-    click_button "Select donation type"
-    assert_equal "donation", Reservation.find_by(email: "lisa.mills@example.com").status
+    make_system_reservation("lisa.mills@example.com")
+    click_button "Donate at Pickup"
+    sleep 0.25
+    assert_equal "routing", Reservation.find_by(email: "lisa.mills@example.com").status
     assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
   end
 
   test "cancelling a reservation" do
-    visit root_url
-    fill_in "Name", with: Faker::Name.name
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: "test11@example.com"
-    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
-    click_button "Create Reservation"
-    click_button "Select donation type"
+    make_system_reservation("test11@example.com")
+    click_button "Donate at Pickup"
     assert_text "Reservation Confirmed"
 
     click_link "Edit Reservation"
@@ -128,20 +107,12 @@ class ReservationsTest < ApplicationSystemTestCase
 
   test "cannot create reservation with duplicate email" do
     # Create first reservation
-    visit root_url
-    fill_in "Name", with: Faker::Name.name
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: "test@example.com"
-    click_button "Create Reservation"
-    click_button "Select donation type"
+    make_system_reservation("test@example.com")
+    click_button "Donate at Pickup"
     assert_text "Reservation Confirmed"
 
     # Try to create second reservation with same email
-    visit root_url
-    fill_in "Name", with: Faker::Name.name
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: "test@example.com"
-    click_button "Create Reservation"
+    make_system_reservation("test@example.com")
 
     # Should show error message
     assert_text "There appears to already be a reservation with that email"
@@ -149,13 +120,8 @@ class ReservationsTest < ApplicationSystemTestCase
   end
 
   test "editing a reservation" do
-    visit root_url
-    fill_in "Name", with: Faker::Name.name
-    fill_in "Street", with: Faker::Address.street_address
-    fill_in "Email", with: Faker::Internet.email
-    fill_in "Mobile", with: Faker::PhoneNumber.phone_number
-    click_button "Create Reservation"
-    click_button "Select donation type"
+    make_system_reservation
+    click_button "Donate at Pickup"
     assert_text "Reservation Confirmed"
 
     click_link "Edit Reservation"

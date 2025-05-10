@@ -139,9 +139,28 @@ end
 
 # Sms
 Sms.destroy_all
-res_1 = Reservation.first
-res_2 = Reservation.last
+res_1 = Reservation.where.not(mobile: nil).first
+res_2 = Reservation.where.not(mobile: nil).last
 Sms.create(phone: res_1.mobile, body: Faker::Lorem.sentence, direction: 1, reservation: res_1)
 Sms.create(phone: res_1.mobile, body: Faker::Lorem.sentence, direction: 2, reservation: res_1)
 Sms.create(phone: res_2.mobile, body: Faker::Lorem.sentence, direction: 2, reservation: res_2)
 Sms.create(phone: res_2.mobile, body: Faker::Lorem.sentence, direction: 1, reservation: res_2)
+
+# Donations
+Donation.destroy_all
+Reservation.all.each do |reservation|
+  Donation.create(
+    reservation: reservation, 
+    amount: Faker::Number.between(from: 1, to: 100), 
+    status: "complete",
+    payment_status: "paid",
+    is_receipt_email_sent: true,
+    customer_name: Faker::Name.name,
+    email: Faker::Internet.email,
+    stripe_payment_intent_id: "pi_" + Faker::Number.hexadecimal(digits: 16),
+    checkout_session_id: "cs_live_a" + Faker::Number.hexadecimal(digits: 16),
+    checkout_session_status: "complete",
+    )
+end
+
+

@@ -26,5 +26,15 @@ module ActiveSupport
       cookies = request.cookie_jar
       cookies.signed[:session_id] = { value: session.id, httponly: true, same_site: :lax }
     end
+
+    # making a reservation
+    def make_system_reservation(email = Faker::Internet.email)
+      visit root_url
+      fill_in "Name", with: Faker::Name.name
+      fill_in "Street", with: Faker::Address.street_address
+      fill_in "Email", with: email
+      fill_in "Mobile", with: Faker::PhoneNumber.phone_number
+      click_button "Create Reservation"
+    end
   end
 end

@@ -1,5 +1,4 @@
 class Sms < ApplicationRecord
-  belongs_to :reservation, optional: true
   has_one :reservation, foreign_key: "mobile", primary_key: "phone"
 
   enum :direction, { outgoing: 1, incoming: 2 }, default: :outgoing

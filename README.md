@@ -286,7 +286,7 @@ https://YOUR_SITE_URL/stripe-webhook
 STRIPE_DEVELOPMENT_PRICE_ITEM = 'price_1Lxwp5AY1LGWbDshKyepVUDL'
 STRIPE_PRODUCTION_PRICE_ITEM = 'price_1M8vYzAY1LGWbDshqoJcAiV9'
 ```
-> :question: You have to create a product and price in both Stripe ```Test mode``` as well as production. You will have different ids for each mode. The id from Test mode should be used in ```STRIPE_DEVELOPMENT_PRICE_ITEM```, and the id from production should be in ```STRIPE_PRODUCTION_PRICE_ITEM```.
+> :question: You have to create a product and price in both kStripe ```Test mode``` as well as production. You will have different ids for each mode. The id from Test mode should be used in ```STRIPE_DEVELOPMENT_PRICE_ITEM```, and the id from production should be in ```STRIPE_PRODUCTION_PRICE_ITEM```.
 
 
 9. Enable ```Test mode``` (top right) in your Stripe account, and on your tree recycle site, make a donation. Confirm that the transaction shows up in ```Transactions```.

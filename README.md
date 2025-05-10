@@ -247,15 +247,16 @@ HTTP: HTTP POST
 #### Configuration
 
 1. Open a Stripe account. You will need organization details, such as tax id etc.
-2. Configure your default donation amount. Go to ```Product catalog > Create product >
+2. Configure your default donation amount. Go to ```Product catalog > Create product > Add price```
 
-2. Configure your Strip donation page to include your organization information, default donation amount etc. You can also select what donation methods you would like to accept.
-    -  Configure payment methods in ```Settings > Payments > Payment methods```
+3. Configure your Strip donation page to include your organization information, default donation amount etc. You can also select what donation methods you would like to accept.
+    - Configure payment methods in ```Settings > Payments > Payment methods```
     - Configure the payment domain (what URL you will be collecting payments) in ```Settings > Payments > Payment Method Domains```
-    - Obtain your keys in ```Developers > API Keys```. You will need the ```Publishable key``` and ```Secret key```.
+
+4. Obtain your keys in ```Developers > API Keys```. You will need the ```Publishable key``` and ```Secret key```.
 
 
-3. Add the Stripe keys to the encrypted creditials file `config/credentials.yml.enc`:
+5. Add the Stripe keys to the encrypted creditials file `config/credentials.yml.enc`:
 
 ```ruby
 EDITOR=vim rails credentials:edit
@@ -271,26 +272,28 @@ stripe:
     secret_key: SECRET_KEY
 ```
 
-4. Configure Stripe webhook. In Stripe, ```Developers > Webhooks > Webhook endpoints > Endpoint URL```:
+6. Configure Stripe webhook. In Stripe, ```Developers > Webhooks > Webhook endpoints > Endpoint URL```:
 
-    https://YOUR_SITE_URL/stripe-webhook
+```
+https://YOUR_SITE_URL/stripe-webhook
+```
 
-5. Configure your default donation. In the Stripe Product Catalog, enter your product, ie. a donation, and product price. ```Product Catalog > Products > Create product "Tree Recycle Donation"``` and ```Product Catalog > Products > select Price (customer chooses), enter a present donation amount.```
+7. Configure your default donation. In the Stripe Product Catalog, enter your product, ie. a donation, and product price. ```Product Catalog > Products > Create product "Tree Recycle Donation"``` and ```Product Catalog > Products > select Price (customer chooses), enter a present donation amount.```
 
-6. Add the price id from the Stripe price page ```Product Catalog > Products > select your product "Tree Recycle Donation" > click on the price "Customer Chooses (USD)" > price id should be in the top right of page```, to the ```config/initializers/tree_recycle.rb```:
+8. Add the price id from the Stripe price page ```Product Catalog > Products > select your product "Tree Recycle Donation" > click on the price "Customer Chooses (USD)" > price id should be in the top right of page```, to the ```config/initializers/tree_recycle.rb```:
 
 ```ruby
 STRIPE_DEVELOPMENT_PRICE_ITEM = 'price_1Lxwp5AY1LGWbDshKyepVUDL'
 STRIPE_PRODUCTION_PRICE_ITEM = 'price_1M8vYzAY1LGWbDshqoJcAiV9'
 ```
-> :information: You have to create a product and price in both of the Stripe ```Test mode``` as well as production. You will have different ids for each mode. The id from Test mode should be used in ```STRIPE_DEVELOPMENT_PRICE_ITEM```, and the id from production should be in ```STRIPE_PRODUCTION_PRICE_ITEM```.
+> :question: You have to create a product and price in both of the Stripe ```Test mode``` as well as production. You will have different ids for each mode. The id from Test mode should be used in ```STRIPE_DEVELOPMENT_PRICE_ITEM```, and the id from production should be in ```STRIPE_PRODUCTION_PRICE_ITEM```.
 
 
-7. Enable ```Test mode``` (top right) in your Stripe account, and on your tree recycle site, make a donation. Confirm that the transaction shows up in ```Transactions```.
+9. Enable ```Test mode``` (top right) in your Stripe account, and on your tree recycle site, make a donation. Confirm that the transaction shows up in ```Transactions```.
 
-> :information: **TEST MODE**:  In Test mode, and on your tree recycle donation page, select any credit card, use the credit card number ```4242 4242 4242 4242```, and any expiration data and CVC. The charge will be accepted and should show up within your Stripe account under ```Transactions```. 
+> :question: **TEST MODE**:  In Test mode, and on your tree recycle donation page, select any credit card, use the credit card number ```4242 4242 4242 4242```, and any expiration data and CVC. The charge will be accepted and should show up within your Stripe account under ```Transactions```. 
 
-8. Disable ```Test mode```.
+10. Disable ```Test mode```.
 ---
 
 ## Marketing emails

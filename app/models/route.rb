@@ -7,6 +7,7 @@ class Route < ApplicationRecord
   has_many :driver_routes, dependent: :destroy
   has_many :drivers, through: :driver_routes
   belongs_to :zone, optional: true
+  has_many :points, dependent: :destroy
 
   validates :name, presence: true
   validates :name, length: { maximum: 40 }
@@ -23,9 +24,9 @@ class Route < ApplicationRecord
   #   Router.new(self).zone!
   # end
 
-  # def polygon?
-  #   points.any? && points.count > 3
-  # end
+  def polygon?
+    points.any? && points.count > 3
+  end
 
   # def contains?(lat, lon)
   #   return false unless polygon?

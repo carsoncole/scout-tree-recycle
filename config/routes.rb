@@ -51,7 +51,9 @@ Rails.application.routes.draw do
         patch :toggle
       end
     end
-    resources :routes
+    resources :routes do
+      resources :points, only: [:create, :destroy]
+    end
     resources :zones
     resources :users, except: [ :show ]
     resources :prior_reservations, only: [ :destroy ]

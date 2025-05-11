@@ -1,18 +1,23 @@
 # Seed Data for development use.
 # Run with: rails db:seed
-
 require 'faker'
 
 # Settings
-Setting.destroy_all
+Setting.delete_all
 
 # Users
 User.destroy_all
 User.create(email: "admin@example.com", password: "password1234", role: "admin")
 User.create(email: "user@example.com", password: "password1234", role: "user")
 
+# Clear existing zones, routes, and points
+DriverRoute.delete_all
+Driver.delete_all
+Point.delete_all
+Route.delete_all
+Zone.delete_all
+
 # Drivers
-Driver.destroy_all
 drivers = [
   "John Smith", "Mary Johnson",
   "Lisa Davis", "William Brown",
@@ -21,44 +26,43 @@ drivers = [
   "Richard Wilson", "Joseph Moore" ]
 drivers.each { |driver| Driver.find_or_create_by(name: driver, mobile: Faker::PhoneNumber.cell_phone) }
 
-# Zones
-Zone.destroy_all
-zones = [
-  'Zone 1',
-  'Zone 2',
-  'Zone 3',
-  'Zone 4',
-  'Zone 5'
-]
-zones.each { |zone| Zone.find_or_create_by(name: zone) }
 
-# Routes with zones
-routes_zones = [
-  [ "Main Street", "Zone 1" ],
-  [ "Second Street", "Zone 1" ],
-  [ "Third Street", "Zone 1" ],
-  [ "Fourth Street", "Zone 2" ],
-  [ "Fifth Street", "Zone 2" ],
-  [ "Sixth Street", "Zone 3" ],
-  [ "Seventh Street", "Zone 3" ],
-  [ "Eighth Street", "Zone 4" ],
-  [ "Ninth Street", "Zone 4" ],
-  [ "Tenth Street", "Zone 4" ],
-  [ "Eleventh Street", "Zone 5" ],
-  [ "Twelfth Street", "Zone 5" ],
-  [ "Thirteenth Street", "Zone 5" ],
-  [ "Fourteenth Street", "Zone 5" ],
-  [ "Fifteenth Street", "Zone 5" ]
-]
+# Load data into Zone table idempotently
+Datasets::SeedData::ZONES.each do |zone_attrs|
+  Zone.find_or_create_by!(name: zone_attrs[:name]) do |zone|
+    zone.street = zone_attrs[:street]
+    zone.city = zone_attrs[:city]
+    zone.state = zone_attrs[:state]
+    zone.country = zone_attrs[:country]
+    zone.latitude = zone_attrs[:latitude]
+    zone.longitude = zone_attrs[:longitude]
+  end
+end
 
-Route.destroy_all
-routes_zones.each do |route, zone|
-  zone = Zone.find_by(name: zone)
-  Route.find_or_create_by(name: route, zone: zone)
+# Load data into Route table idempotently
+Datasets::SeedData::ROUTES.each do |route_attrs|
+  zone = Zone.find_by!(name: route_attrs[:zone_name])
+  Route.find_or_create_by!(name: route_attrs[:name]) do |route|
+    route.street = route_attrs[:street]
+    route.city = route_attrs[:city]
+    route.state = route_attrs[:state]
+    route.country = route_attrs[:country]
+    route.latitude = route_attrs[:latitude]
+    route.longitude = route_attrs[:longitude]
+    route.zone_id = zone.id
+  end
+end
+
+# Load data into Point table idempotently
+Datasets::SeedData::POINTS.each do |point_attrs|
+  route = Route.find_by!(name: point_attrs[:route_name])
+  Point.find_or_create_by!(route_id: route.id, order: point_attrs[:order]) do |point|
+    point.latitude = point_attrs[:latitude]
+    point.longitude = point_attrs[:longitude]
+  end
 end
 
 # Driver routes
-DriverRoute.destroy_all
 Driver.all.each do |driver|
   Route.all.sample(3).each do |route|
     DriverRoute.find_or_create_by(driver: driver, route: route)
@@ -74,45 +78,6 @@ weighted_reservation_types = [
   "cancelled"
 ]
 
-pickup_notes = [
-  "Please call me when you arrive",
-  "Next to the mailbox",
-  "In the front of the house",
-  "In the back of the house",
-  "In the garage",
-  "In the shed",
-  "In the barn",
-  "In the field",
-  "In front of the apartment building",
-  "In the parking lot",
-  "In the driveway",
-  "In the alley, thank you!",
-  "In the street",
-  "In the park",
-  "Two trees and they will be in the backyard",
-  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil,
-  "By the front porch",
-  "Near the garden gnome",
-  "Next to the recycling bin",
-  "Beside the front gate",
-  "Under the big oak tree",
-  "Near the front steps",
-  "At the end of the driveway",
-  "Next to the garage door",
-  "Beside the mailbox",
-  "In front of the main entrance",
-  "Near the side door",
-  "By the lamp post",
-  "Next to the bird bath",
-  "Under the window",
-  "Beside the flower bed",
-  "Near the back gate",
-  "In the corner of the yard",
-  "Next to the fence",
-  "Beside the garden shed",
-  "Near the patio"
-
-]
 
 100.times do
   r = Reservation.new(
@@ -121,7 +86,7 @@ pickup_notes = [
     email: Faker::Internet.email,
     name: Faker::Name.name,
     mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample,
-    pickup_notes: pickup_notes.sample
+    pickup_notes: Datasets::SeedData::PICKUP_NOTES.sample
   )
   if r.status == "pending_pickup"
     r.latitude = Faker::Address.latitude

@@ -394,6 +394,10 @@ rails test
 rails test:system
 ```
 
+## Migrating from Tree-Recycle
+To migrate from Tree-Recycle, use pgAdmin 4 to access the tables you want to export. Query the table, then ```Save results to file (F8)```. 
+
+
 # License
 
 Tree Recycle is released under the [MIT License](https://opensource.org/licenses/MIT).

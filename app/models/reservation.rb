@@ -34,6 +34,8 @@ class Reservation < ApplicationRecord
   # reset geocoding data if address is changed
   before_save :reset_geocoding!, if: ->(obj) { obj.pending_pickup?  && (obj.will_save_change_to_street? || obj.will_save_change_to_city? || obj.will_save_change_to_state? || obj.will_save_change_to_zip?) }
 
+  before_save :extract_street_name
+
   # reset status if route changes made
   before_save :reset_status_to_routing_if_route_removed!, if: ->(obj) { obj.pending_pickup? && obj.route_id.blank? }
   before_save :reset_status_to_pending_pickup_if_route_added!, if: ->(obj) { obj.routing? && obj.route_id.present? }
@@ -118,5 +120,10 @@ class Reservation < ApplicationRecord
       PriorReservation.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
     end
     Reservation.destroy_all
+  end
+
+  def extract_street_name
+    # Extract everything after the initial number and optional space(s)
+    self.street_name = street.sub(/^\d+\s*/, '')
   end
 end

@@ -2,7 +2,27 @@ class Admin::ReservationsController < Admin::BaseController
   before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode ]
 
   def index
-    @reservations = Reservation.includes(:route).order(created_at: :desc)
+    @reservations = Reservation.includes(:route)
+    
+    # Apply sorting
+    sort_column = params[:sort]
+    sort_direction = params[:direction] == 'desc' ? :desc : :asc
+    
+    @reservations = case sort_column
+    when 'name'
+      @reservations.order(name: sort_direction)
+    when 'email'
+      @reservations.order(email: sort_direction)
+    when 'address'
+      @reservations.order(street_name: sort_direction)
+    when 'route'
+      @reservations.joins(:route).order('routes.name': sort_direction)
+    when 'status'
+      @reservations.order(status: sort_direction)
+    else
+      @reservations.order(created_at: :desc)
+    end
+
     @reservations = @reservations.where(status: params[:status]) if params[:status].present?
     @pagy, @reservations = pagy(@reservations)
     flash.now[:alert] = "Reservations are CLOSED." unless Reservation.open?

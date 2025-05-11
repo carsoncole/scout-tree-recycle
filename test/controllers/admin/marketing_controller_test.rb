@@ -11,7 +11,7 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     Setting.instance.update(is_emailing_enabled: false)
     sign_in
     get admin_marketing_index_url
-    assert_equal "Emailing is disabled. Enable emailing in Settings to send marketing emails.", flash[:alert]
+    assert_equal "Emailing is disabled. Enable email notifications in Settings to send marketing emails.", flash[:alert]
   end
 
   test "should send marketing email 1" do

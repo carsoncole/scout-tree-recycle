@@ -8,6 +8,7 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index with closed reservations" do
+    Setting.instance.update(is_reservations_open: false)
     sign_in
     get admin_reservations_url
     assert_equal "Reservations are CLOSED.", flash[:alert]

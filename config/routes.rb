@@ -53,6 +53,10 @@ Rails.application.routes.draw do
     end
     resources :routes do
       resources :points, only: [:create, :destroy]
+      member do
+        post :add_driver
+        delete :remove_driver
+      end
     end
     resources :zones
     resources :users, except: [ :show ]

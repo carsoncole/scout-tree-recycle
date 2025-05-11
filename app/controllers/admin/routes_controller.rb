@@ -1,5 +1,5 @@
 class Admin::RoutesController < Admin::BaseController
-  before_action :set_route, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_route, only: [ :show, :edit, :update, :destroy, :add_driver, :remove_driver ]
 
   def index
     @pagy, @routes = pagy(Route.includes(:drivers, :zone))
@@ -28,7 +28,7 @@ class Admin::RoutesController < Admin::BaseController
 
   def update
     if @route.update(route_params)
-      redirect_to admin_route_path(@route), notice: "Route was successfully updated."
+      redirect_to edit_admin_route_path(@route), notice: "Route was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,6 +37,18 @@ class Admin::RoutesController < Admin::BaseController
   def destroy
     @route.destroy
     redirect_to admin_routes_path, notice: "Route was successfully deleted."
+  end
+
+  def add_driver
+    driver = Driver.find(params[:driver_id])
+    @route.drivers << driver unless @route.drivers.include?(driver)
+    redirect_to edit_admin_route_path(@route), notice: "Driver was successfully added to the route."
+  end
+
+  def remove_driver
+    driver = Driver.find(params[:driver_id])
+    @route.drivers.delete(driver)
+    redirect_to edit_admin_route_path(@route), notice: "Driver was successfully removed from the route."
   end
 
   private

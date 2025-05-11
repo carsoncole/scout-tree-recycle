@@ -3,6 +3,9 @@ class DonationsController < ApplicationController
 
   before_action :set_reservation, only: %i[ index create new cash_or_check no_donation ]
 
+  def index
+  end
+
   def new
   end
 

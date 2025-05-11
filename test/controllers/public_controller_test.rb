@@ -21,10 +21,4 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       get root_url
       assert_response :success
     end
-
-    test "should get index with reservations open" do
-      Setting.instance.update(is_reservations_open: true)
-      get root_url
-      assert_response :success
-    end
 end

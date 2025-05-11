@@ -1,8 +1,10 @@
 require "test_helper"
 
 class Admin::PriorReservationsControllerTest < ActionDispatch::IntegrationTest
-  # test "should get destroy" do
-  #   get admin_prior_reservations_destroy_url
-  #   assert_response :success
-  # end
+  test "should get destroy" do
+    sign_in
+    delete admin_prior_reservation_url(prior_reservations(:one))
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Prior reservation was successfully deleted.", flash[:notice]
+  end  
 end

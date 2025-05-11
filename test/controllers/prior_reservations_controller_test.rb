@@ -27,4 +27,10 @@ class PriorReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
     assert_equal "You have been successfully unsubscribed from our mailing list.", flash[:notice]
   end
+
+  test "delete unsubscribing non-existent prior reservation should redirect to root" do
+    delete prior_reservation_url(999)
+    assert_redirected_to root_path
+    assert_equal "Unable to process your unsubscribe request. Please try again later.", flash[:alert]
+  end
 end

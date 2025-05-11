@@ -16,6 +16,12 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to reservation_address_verification_url(@reservation)
   end
 
+  test "should not create reservation if email is already taken" do
+    post reservations_url, params: { reservation: { name: "Icky Jones", email: "icky.jones@example.com", street: "123 Main St" } }
+    assert_redirected_to root_url
+    assert_equal "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received.", flash[:alert]
+  end
+
   test "should edit reservation" do
     @reservation = reservations(:pending_pickup_1)
     get edit_reservation_url(@reservation)

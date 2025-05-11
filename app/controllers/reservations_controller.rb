@@ -6,8 +6,6 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.new   
   end
 
-
-
   def create
     @reservation = Reservation.new(reservation_params)
 
@@ -17,19 +15,6 @@ class ReservationsController < ApplicationController
       @reservation.address_verification!
       redirect_to reservation_address_verification_url(@reservation)
     else     
-      # if @reservation.reservation_form?
-      #   redirect_to reservation_address_verification_url(@reservation)
-      # elsif @reservation.donation?
-      #   if helpers.setting.is_donations_enabled
-      #     redirect_to new_reservation_donation_url(@reservation)
-      #   else
-      #     @reservation.routing!
-      #     redirect_to reservation_donations_url(reservation_id: @reservation.id)
-      #   end
-      # else
-      #   @reservation.address_verification?
-      #   redirect_to reservation_address_verification_url(@reservation)
-      # end
       if @reservation.errors[:email].include? "has already been taken"
         redirect_to root_url, alert: "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received."
       else

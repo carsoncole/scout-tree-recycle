@@ -1,12 +1,9 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [ :show, :edit, :update, :destroy ]
-  before_action :require_admin_access, except: [ :index, :show ]
+  before_action :set_user, only: [ :edit, :update, :destroy ]
+  before_action :require_admin_access, except: [ :index ]
 
   def index
     @pagy, @users = pagy(User.all.order(created_at: :desc))
-  end
-
-  def show
   end
 
   def new
@@ -55,7 +52,7 @@ class Admin::UsersController < Admin::BaseController
 
   def require_admin_access
     unless Current.user.admin?
-      redirect_to admin_settings_path, alert: "You are not authorized to manage users."
+      redirect_to admin_users_path, alert: "You are not authorized to manage users."
     end
   end
 end

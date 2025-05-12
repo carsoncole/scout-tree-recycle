@@ -36,7 +36,7 @@ class Admin::ReservationsController < Admin::BaseController
 
   def update
     if @reservation.update(reservation_params)
-      redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
+      redirect_to edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -66,7 +66,7 @@ class Admin::ReservationsController < Admin::BaseController
   def reservation_params
     params.require(:reservation).permit(
       :name, :email, :mobile, :street, :city, :state, :country,
-      :route_id, :status, :pickup_notes, :latitude, :longitude, :is_routed
+      :route_id, :status, :pickup_notes, :latitude, :longitude, :is_manually_routed
     )
   end
 end

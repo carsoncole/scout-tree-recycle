@@ -78,6 +78,21 @@ weighted_reservation_types = [
   "cancelled"
 ]
 
+Reservation.create(
+  name: "Carson Cole",
+  email: "carson4@example.com",
+  status: "pending_pickup",
+  street: "1760 Susan Place NW",
+  city: "Bainbridge Island",
+  state: "WA",
+  zip: "98110",
+  latitude: 47.640116544273,
+  longitude: -122.527945480555,
+  route_id: Route.find_by(name: "High School").id,
+  was_automatically_routed: true,
+  was_automatically_geocoded: true
+)
+
 
 100.times do
   r = Reservation.new(
@@ -88,10 +103,17 @@ weighted_reservation_types = [
     mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample,
     pickup_notes: Datasets::SeedData::PICKUP_NOTES.sample
   )
+
+  route = if r.status == "pending_pickup"
+    Route.all.sample
+  end
+
+  r.is_manually_routed = false if r.route.nil?
+
   if r.status == "pending_pickup"
     r.latitude = Faker::Address.latitude
     r.longitude = Faker::Address.longitude
-    r.route =  Route.all.sample
+    r.route =  route
   end
   r.save
 end

@@ -2,9 +2,11 @@ require "test_helper"
 
 class Admin::DonationsControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
+    Setting.instance.update(is_donations_enabled: true)
     sign_in
     get admin_donations_url
     assert_response :success
+    sleep 0.2
     assert_not flash.present?
   end
 

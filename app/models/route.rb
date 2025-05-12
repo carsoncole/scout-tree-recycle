@@ -1,5 +1,5 @@
 class Route < ApplicationRecord
-  # include Geocodable
+  include Geocodable
 
   default_scope { order(name: :asc) }
 
@@ -28,11 +28,11 @@ class Route < ApplicationRecord
     points.any? && points.count > 3
   end
 
-  # def contains?(lat, lon)
-  #   return false unless polygon?
-  #   polygon_array = points.order(:order).map {|point| Geokit::LatLng.new(point.latitude, point.longitude)}
-  #   polygon = Geokit::Polygon.new(polygon_array)
-  #   point = Geokit::LatLng.new(lat, lon)
-  #   polygon.contains?(point)
-  # end
+  def contains?(lat, lon)
+    return false unless polygon?
+    polygon_array = points.order(:order).map {|point| Geokit::LatLng.new(point.latitude, point.longitude)}
+    polygon = Geokit::Polygon.new(polygon_array)
+    point = Geokit::LatLng.new(lat, lon)
+    polygon.contains?(point)
+  end
 end

@@ -146,6 +146,7 @@ GEM
     geocoder (1.8.5)
       base64 (>= 0.1.0)
       csv (>= 3.0.0)
+    geokit (1.14.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.7)
@@ -433,6 +434,7 @@ DEPENDENCIES
   faker
   ferrum_pdf
   geocoder
+  geokit
   importmap-rails
   jbuilder
   kamal

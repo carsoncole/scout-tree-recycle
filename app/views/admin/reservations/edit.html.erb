@@ -97,32 +97,75 @@
                     </div>
                   </div>
 
-                  <div>
-                    <%= f.label :latitude, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div>
-                      <%= f.number_field :latitude, step: :any, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                  <div class="col-span-2 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center space-x-2">
+                        <h3 class="text-lg font-medium text-yellow-800 dark:text-yellow-200">Coordinates</h3>
+                        <% if @reservation.was_automatically_geocoded? %>
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200" id="status-auto-geocoded">
+                            <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
+                              <circle cx="4" cy="4" r="3" />
+                            </svg>
+                            Auto Geocoded
+                          </span>
+                        <% elsif @reservation.is_manually_geocoded? %>
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200" id="status-manually-geocoded">
+                            <svg class="mr-1.5 h-2 w-2 text-yellow-400" fill="currentColor" viewBox="0 0 8 8">
+                              <circle cx="4" cy="4" r="3" />
+                            </svg>
+                            Manually Geocoded
+                          </span>
+                        <% end %>
+                      </div>
                     </div>
-                  </div>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <%= f.label :latitude, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                        <div>
+                          <%= f.number_field :latitude, step: :any, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                        </div>
+                      </div>
 
-                  <div>
-                    <%= f.label :longitude, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div>
-                      <%= f.number_field :longitude, step: :any, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                      <div>
+                        <%= f.label :longitude, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                        <div>
+                          <%= f.number_field :longitude, step: :any, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-
-                  <div>
-                    <%= f.label :is_routed, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div class="mt-2">
-                      <%= f.check_box :is_routed, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
-                    </div>
+                    <p class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                      <% if @reservation.is_manually_geocoded? %>
+                        These coordinates were manually set and will not be automatically updated. For automatic updates, clear the coordinates and save.
+                      <% else %>
+                        Coordinates automatically updated on address changes.
+                      <% end %>
+                    </p>
                   </div>
                 </div>
               </div>
 
               <!-- Route and Status -->
               <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Route and Status</h2>
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-2">
+                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Route and Status</h2>
+                    <% if @reservation.was_automatically_routed? %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200" id="status-auto-routed">
+                        <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
+                          <circle cx="4" cy="4" r="3" />
+                        </svg>
+                        Auto Routed
+                      </span>
+                    <% elsif @reservation.route_id.present? %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200" id="status-routing">
+                        <svg class="mr-1.5 h-2 w-2 text-yellow-400" fill="currentColor" viewBox="0 0 8 8">
+                          <circle cx="4" cy="4" r="3" />
+                        </svg>
+                        Manually Routed
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
                     <%= f.label :route_id, "Route", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
@@ -141,6 +184,16 @@
                           {},
                           class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
                     </div>
+                  </div>
+
+                  <div class="col-span-2 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p class="text-sm text-blue-700 dark:text-blue-300">
+                      <% if @reservation.is_manually_routed? %>
+                        To enable automatic routing, remove the existing route and save. Routes will then be automatically assigned based on address and coordinates.
+                      <% else %>
+                        Route will be automatically updated when address or coordinates change.
+                      <% end %>
+                    </p>
                   </div>
                 </div>
               </div>

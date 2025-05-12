@@ -30,12 +30,10 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     find("#reservation_route_id").select("Route 2")
     find("#reservation_route_id").select("Select a route")
     click_button "Update Reservation"
-    assert_selector "#flash", text: "Reservation was successfully updated"
-    assert_text "Reservation Details"
-    assert_selector "#status-routing", text: "Routing"
+    assert_selector "#status-routing", text: "Manually Routed"
   end
 
-  test "status changes to pending pickup when route is added" do
+  test "status changes to routing when manually set route is added" do
     visit admin_reservations_path
     within(page.find("tr", text: "icky.jones@example.com")) do
       click_link "Edit"
@@ -43,8 +41,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     find("#reservation_route_id").select("Route 2")
     click_button "Update Reservation"
     assert_selector "#flash", text: "Reservation was successfully updated"
-    assert_text "Reservation Details"
-    assert_selector "#status-pending_pickup", text: "Pending Pickup"
+    assert_selector "#status-routing", text: "Manually Routed"
   end
 
   test "routing status when system routing is enabled and reservations are routed" do

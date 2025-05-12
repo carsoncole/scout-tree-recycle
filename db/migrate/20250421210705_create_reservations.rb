@@ -14,16 +14,19 @@ class CreateReservations < ActiveRecord::Migration[8.0]
         t.string "zip"
         t.string "country", default: "United States"
         t.string "pickup_notes"
+        t.integer "donation_type"
         t.decimal "stripe_charge_amount"
         t.decimal "latitude"
         t.decimal "longitude"
-        t.boolean "was_geocoded", default: false
+        t.boolean "is_manually_geocoded", default: false
+        t.boolean "was_automatically_geocoded", default: false
+        t.boolean "is_manually_routed", default: false
+        t.boolean "was_automatically_routed", default: false
         t.bigint "route_id", null: true
         t.decimal "distance_to_route"
         t.integer "status"
         t.integer "heard_about_source"
         t.string "unit"
-        t.boolean "is_routed", default: true
         t.boolean "is_door_hanger"
         t.boolean "is_route_polygon", default: false
         t.datetime "confirmed_reservation_email_sent_at"

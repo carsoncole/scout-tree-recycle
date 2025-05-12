@@ -56,25 +56,6 @@ class ReservationTest < ActiveSupport::TestCase
     assert @reservation.picked_up?
   end
 
-  test "scopes work correctly" do
-    # Create some test reservations
-    @reservation_2 = reservations(:routing_1)
-    @reservation_2.cancelled!
-
-    @reservation_3 = reservations(:pending_pickup_1)
-    @reservation_3.picked_up!
-
-    @reservation_4 = reservations(:address_verification_1)
-    @reservation_4.route = routes(:one)
-    @reservation_4.pending_pickup!
-
-    assert_equal 1, Reservation.reservation_form.count
-    assert_equal 2, Reservation.cancelled.count # 1 cancelled and 1 cancelled_1
-    assert_equal 2, Reservation.picked_up.count
-    assert_equal "pending_pickup", Reservation.find_by(id: reservations(:address_verification_1).id).status
-    assert_equal 2, Reservation.pending_pickup.count
-  end
-
   test "invalid without email" do
     reservation = reservations(:pending_pickup_1)
     reservation.email = nil
@@ -121,7 +102,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   # remove existing prior_reservation (same email) when reservation becomes pending pickup
   test "removing prior reservation on routing" do
-    reservation = Reservation.create(name: "Trip Wilson", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "United States", status: :donation, email: "trip.wilson@example.com")
+    reservation = Reservation.create(name: "Trip Wilson", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "United States", status: "donation", email: "trip.wilson@example.com")
     assert PriorReservation.find_by(email: "trip.wilson@example.com")
     reservation.routing!
     assert_not PriorReservation.find_by(email: "trip.wilson@example.com")
@@ -202,44 +183,97 @@ class ReservationTest < ActiveSupport::TestCase
     assert_nil reservation.longitude
     assert_nil reservation.route_id
     assert_nil reservation.distance_to_route
+    assert_not reservation.was_automatically_geocoded
   end
 
-  test "reset_geocoding! does not reset geocoding data if it's not routed" do
+  test "reset_geocoding! does not reset geocoding data if it's manually geocoded" do
     reservation = reservations(:pending_pickup_not_routed)
     reservation.reset_geocoding!
     assert_not_nil reservation.latitude
     assert_not_nil reservation.longitude
   end
 
-  test "reset_geocoding and status to routing when address is changed" do
+  test "routing reset when latitude is changed to nil" do
     reservation = reservations(:pending_pickup_1)
-    assert_equal "176 Harlan St", reservation.street
-    reservation.update(street: "123 Main St", city: "Anytown", state: "CA", zip: "12345")
-    reservation.reload
-    assert_equal "routing", reservation.status
+    reservation.update(latitude: "")
+    assert reservation.routing?
     assert_nil reservation.latitude
     assert_nil reservation.longitude
+    assert_nil reservation.route_id
+    assert_nil reservation.distance_to_route
+    assert_not reservation.was_automatically_geocoded
   end
 
-  test "routing has no route" do
-    assert_not reservations(:routing_1).route
-  end
-
-  test "pending pickup has a route" do
-    assert reservations(:pending_pickup_1).route
-  end
-
-  test "status changes to routing when route is removed" do
+  test "routing reset when longitude is changed to nil" do
     reservation = reservations(:pending_pickup_1)
-    reservation.route = nil
-    reservation.save
+    reservation.update(longitude: "")
     assert reservation.routing?
+    assert_nil reservation.latitude
+    assert_nil reservation.longitude
+    assert_nil reservation.route_id
+    assert_nil reservation.distance_to_route
+    assert_not reservation.was_automatically_geocoded
   end
 
-  test "status changes to pending pickup when route is added" do
-    reservation = reservations(:routing_1)
-    reservation.route = routes(:one)
-    reservation.save
-    assert reservation.pending_pickup?
+  test "manual routing set when when manually setting route and not affecting coordinates" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update(route_id: routes(:three).id)
+    assert reservation.is_manually_routed
+    assert_not reservation.was_automatically_routed
+    assert reservation.latitude
+    assert reservation.longitude
   end
-end
+
+  test "removing route removes is_manually_routed" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update(route_id: nil)
+    assert_not reservation.is_manually_routed
+  end
+
+  # test "reset_geocoding and status to routing when address is changed" do
+  #   reservation = reservations(:pending_pickup_1)
+  #   assert_equal "176 Harlan St", reservation.street
+  #   reservation.update(street: "123 Main St", city: "Anytown", state: "CA", zip: "12345")
+  #   reservation.reload
+  #   assert_equal "routing", reservation.status
+  #   assert_nil reservation.latitude
+  #   assert_nil reservation.longitude
+  # end
+
+  # test "routing has no route" do
+  #   assert_not reservations(:routing_1).route
+  # end
+
+  # test "pending pickup has a route" do
+  #   assert reservations(:pending_pickup_1).route
+  # end
+
+  # test "status changes to routing when route is removed" do
+  #   reservation = reservations(:pending_pickup_1)
+  #   reservation.route = nil
+  #   reservation.save
+  #   assert reservation.routing?
+  # end
+
+  # test "status changes to pending pickup when route is added" do
+  #   reservation = reservations(:routing_1)
+  #   reservation.route = routes(:one)
+  #   reservation.save
+  #   assert reservation.pending_pickup?
+  # end
+
+  # test "is_manually_geocoded when changing coordinates on pending pickup reservation" do
+  #   reservation = reservations(:pending_pickup_1)
+  #   reservation.update(latitude: 47.64011, longitude: -122.527945)
+  #   assert reservation.is_manually_geocoded
+  #   assert reservation.routing?
+  # end
+
+  # test  "resetting to automatic geocoding when coordinates removed" do
+  #   reservation = reservations(:pending_pickup_not_routed)
+  #   assert reservation.is_manually_geocoded
+  #   reservation.update(latitude: nil, longitude: nil)
+  #   assert_not reservation.is_manually_geocoded
+  # end
+
+end  

@@ -107,16 +107,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_062637) do
     t.string "zip"
     t.string "country", default: "United States"
     t.string "pickup_notes"
+    t.integer "donation_type"
     t.decimal "stripe_charge_amount"
     t.decimal "latitude"
     t.decimal "longitude"
-    t.boolean "was_geocoded", default: false
+    t.boolean "is_manually_geocoded", default: false
+    t.boolean "was_automatically_geocoded", default: false
+    t.boolean "is_manually_routed", default: false
+    t.boolean "was_automatically_routed", default: false
     t.bigint "route_id"
     t.decimal "distance_to_route"
     t.integer "status"
     t.integer "heard_about_source"
     t.string "unit"
-    t.boolean "is_routed", default: true
     t.boolean "is_door_hanger"
     t.boolean "is_route_polygon", default: false
     t.datetime "confirmed_reservation_email_sent_at"
@@ -125,7 +128,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_062637) do
     t.datetime "pickup_reminder_email_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "donation_type"
     t.index ["created_at"], name: "index_reservations_on_created_at"
     t.index ["email"], name: "index_reservations_on_email"
     t.index ["mobile", "status"], name: "index_reservations_on_mobile_and_status"
@@ -177,6 +179,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_062637) do
     t.string "contact_name"
     t.string "contact_email"
     t.string "contact_phone"
+    t.string "contact_sms"
     t.string "time_zone", default: "Eastern Time (US & Canada)"
     t.text "about_event_description"
     t.text "on_day_of_pickup_instructions"
@@ -198,7 +201,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_062637) do
     t.text "driver_instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "contact_sms"
   end
 
   create_table "sms", force: :cascade do |t|

@@ -25,30 +25,35 @@ module Geocodable
       end
     end
 
+    # def geocoded? (this is a method in geocoder)
+
     def full_geocode!
       if self.class == Reservation
-        return unless self.is_routed?
+        return if self.is_manually_geocoded?
       end
-      self.latitude = nil
-      self.longitude = nil
-      self.house_number = nil
-      self.street_name = nil
-      self.route_id = nil if self.class == Reservation
+      # self.latitude = nil
+      # self.longitude = nil
+      # self.house_number = nil
+      # self.street_name = nil
+      # self.route_id = nil if self.class == Reservation
       if Geocoder.config.lookup == :nominatum
-        Rails.error.handle do
-          results = Geocoder.search(self.address)
-          self.latitude = results.as_json[0]["data"]["lat"]
-          self.longitude = results.as_json[0]["data"]["lon"]
-          self.house_number = results.as_json[0]["data"]["address"]["house_number"]
-          self.street_name = results.as_json[0]["data"]["address"]["road"]
-        end
-        geocode
+        # Rails.error.handle do
+        #   results = Geocoder.search(self.address)
+        #   self.latitude = results.as_json[0]["data"]["lat"]
+        #   self.longitude = results.as_json[0]["data"]["lon"]
+        #   self.house_number = results.as_json[0]["data"]["address"]["house_number"]
+        #   self.street_name = results.as_json[0]["data"]["address"]["road"]
+        # end
+        # geocode
+        # self.was_geocoded = true
       elsif Geocoder.config.lookup == :amazon_location_service
         # multiple results (seems like 2) can be return, the second being a coordinate of just the street, not number
         Rails.error.handle(context: { reservation_id: id, email: email }) do
           results = Geocoder.search(self.address)
           if results.count == 1
             geocode
+            # self.was_geocoded = true
+            self.update_columns(latitude: self.latitude, longitude: self.longitude, was_automatically_geocoded: true)
           elsif results.count == 2 && results.as_json[0]["place"]["address_number"].present?
             result = results.as_json[0]["place"]
 
@@ -56,9 +61,13 @@ module Geocodable
             self.longitude = result["geometry"]["point"][0]
             self.house_number = result["geometry"]["address_number"]
             self.street_name = result["street"]
+            self.was_automatically_geocoded = true
+            self.update_columns(latitude: self.latitude, longitude: self.longitude, was_automatically_geocoded: true)
           end
         end
       end
+      self.update_columns(was_automatically_geocoded: true)
+      self.was_automatically_geocoded
     end
   end
 end

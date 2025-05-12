@@ -29,7 +29,7 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
   test "should get update" do
     sign_in
     patch admin_reservation_url(reservations(:pending_pickup_1)), params: { reservation: { name: "New Name" } }
-    assert_redirected_to admin_reservation_url(reservations(:pending_pickup_1))
+    assert_redirected_to edit_admin_reservation_url(reservations(:pending_pickup_1))
     assert_equal "Reservation was successfully updated.", flash[:notice]
   end
 

@@ -14,6 +14,7 @@ class CreateSettings < ActiveRecord::Migration[8.0]
       t.string "contact_name"
       t.string "contact_email"
       t.string "contact_phone"
+      t.string "contact_sms"
       t.string "time_zone", default: "Eastern Time (US & Canada)"
       t.text "about_event_description"
       t.text "on_day_of_pickup_instructions"

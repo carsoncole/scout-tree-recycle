@@ -1,3 +1,5 @@
+#TODO: Integrate MININUM_DAYS_BETWEEN_MARKETING_MESSAGES
+
 class MarketingMailer < ApplicationMailer
   before_action :set_prior_reservation
 

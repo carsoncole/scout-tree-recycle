@@ -169,50 +169,46 @@ config.action_mailer.smtp_settings = {
 
 ### Routing
 
-Routing requries a mapping service to provide geocoding and geo-fencing for the assignment of pickups to routes.
+You can configure a mapping service to provide address => latitude and longitude address coordinates and handle geospatial queries to be able to determine whether an address is within a route. There are multiple services, and AWS Location Services is installed by default.
 
+#### Configuration
 
-For the Amazon Locations Service, you'll need an AWS account. Create a Place Index and give it a name, ie. 'tree_recycle', with the data provider 'Esri' with a single use.  You'll then need API credentials which you can obtain in your main profile under 'Security Credentials'.
+1. For the Amazon Locations Service, you'll need an AWS account. 
 
-Your API credentials should then be configured in your credentials file `config/credentials.yml.enc`.
+2. Create a Place Index and give it a name, ie. 'tree_recycle', with the data provider 'Esri' with a single use.  You'll then need API credentials which you can obtain in your main profile under 'Security Credentials'.
+
+3. Configure credentials in the Rails encrypted credentials file `config/credentials.yml.enc`.
 
 ```ruby
 lookups:
   amazon_location_service:
-    access_key_id: SOMEKEY
-    secret_access_key: aSecretAccessKey
+    access_key_id: ACCESSKEY
+    secret_access_key: SECRETACCESSKEY
 ```
 
-Update the geocoder config file with the mapping service in ``` config/intializers/geocoder.rb```.  When you create a Place Index, note the AWS region it was created in and update it accordingly in this config file.
+4. Update the geocoder config file ``` config/intializers/geocoder.rb```.  When you create a Place Index, note the AWS region it was created in and update it accordingly in this config file. The two items to be updated are `index_name` and `AWS region`. 
 
 ```ruby
 Geocoder.configure(
-  # Geocoding options
-  timeout: 10,                 # geocoding service timeout (secs)
-  # lookup: :nominatim,         # name of geocoding service (symbol)
-  lookup: :amazon_location_service,
   amazon_location_service: {
-    index_name: 'tree_recycle',
-    api_key: {
-      access_key_id: Rails.application.credentials.lookups.amazon_location_service.access_key_id,
-      secret_access_key: Rails.application.credentials.lookups.amazon_location_service.secret_access_key
-    }
-  }
+    index_name: 'tree_recycle'}
 
 Aws.config.update({region: 'us-west-2'})
 ```
 
-For an address to be routed, it is first geocoded. By default, geocoding occurs on schedule set in ```recurring.yml```. Only one attempt is made to automatically geocode an address, however any address changes will retrigger another geocoding attempt. You can disable geocoding entirely in Settings for a specific reservation. 
-
-There is a job ```GeocodeReservationsJob`` that runs on a schedule set in ```recurring.yml``.
-
-
 ### SMS Messaging
 
-[Twilio.com](https://twilio.com) is used for SMS:
+SMS messaging is can be configured, and it will provide important messaging to users whose tree can not be found. The message encourages the user to put their tree out or provide instructions and to respond by SMS. This dialogue can be managed entirely with the app.
 
-1. For reservations with a mobile number, if it is flagged ```Missing```, then a Missing Tree SMS will be sent. It will inform the recipient to put out their tree and to respond to the SMS by saying their tree has been put out. Once the response is received, the reservation's status can be updated to ```Pending Pickup```.
-2. General SMS enquiries can be received by the application and they can be replied to.
+[Twilio.com](https://twilio.com) is used for SMS. 
+
+#### Configuration
+
+1. Sign up with Twilio. You will need to provide your organization's details and the purpose of your messaging. The process can take time, as they will review your account before permitting any SMS's to be sent.
+
+2. For reservations with a mobile number, if it is flagged ```Missing```, then a Missing Tree SMS will be sent. It will inform the recipient to put out their tree and to respond to the SMS by saying their tree has been put out. Once the response is received, the reservation's status can be updated to ```Pending Pickup```.
+
+3. General SMS enquiries can be received by the application and they can be replied to.
 
 > :warning: Getting SMS service from Twilio takes time to set up as they will do a background check on the organization, to fight against spam messaging.
 
@@ -298,12 +294,28 @@ STRIPE_PRODUCTION_PRICE_ITEM = 'price_1M8vYzAY1LGWbDshqoJcAiV9'
 
 ## Marketing emails
 
-There are two pre-definded marketing emails. The first email informs the recipient about the tree recycling event and encourages sign-up. The second email is a last call email sent just prior to the event reminding the recipient that time is running out to sign up. Both the first and second emails are only sent to recipients that have not, at that time, signed up.
+### Marketings emails #1 and #2
+There are two pre-definded marketing emails. The first email informs the recipient about the tree recycling event and encourages sign-up. The second email is a last call email sent just prior to the event reminding the recipient that time is running out to sign up. Both the first and second emails are only sent to recipients that have not, at the time of sending the email, signed up.
 
-You can send marketing emails through the Settings section, where two email templates (Marketing Email #1, Marketing Email #2), one followed by the other, are available. You can modify `/views/marketing_mailer/marketing_email_1.html.haml` and `/views/marketing_mailer/marketing_email_2.html.haml`, and their `.text.haml` versions.
+### Configuration
+The application is already configured with defauls, but if you want to change them, they can be found in both the UI in `Settings`, or the initializer `tree_recycle.rb`.
 
-The batch email size determines the number of emails sent at once. It's crucial to set this number within your mail provider's daily sending limit; for example, Gmail has an estimated limit of 500 emails per day. When you send a batch, the system will send the next set of emails that haven't been sent yet, ensuring no duplicates. This information is visible in the reservation and reservation log once marketing emails have been sent.
+Most importantly, in `Settings`, there is an `Email batch quantity` (default: 100) which is the number of emails sent every time you press the button to send emails. This number is important as sending too many emails in one go can more likely flag your email as spam, as well as exceed daily sending limits of your email provider. The free version of Gmail has a daily limit of ~500 emails a day. When you exceed it, they will immediately deactivate your sending for some period of time (~ 24 hours).
 
+The information in the emails is all derived from your event and organization information that you configure in `Settings`. If you want modify the actual emails, they are `/views/marketing_mailer/marketing_email_1.html.erb` and `/views/marketing_mailer/marketing_email_2.html.erb`. There are also text `.text.erb` versions.
+
+### Sending emails
+You can send marketing emails through the `Marketing` section, where two emails (Marketing Email #1, Marketing Email #2), one followed by the other, are available. 
+
+The recipients of the marketing emails are listed in `Marketing`. The recipients will be past participants of your tree recycling events. If this is the first year you are running a recycling event, then there will be none listed.
+
+> :question: As soon as someone who is listed as a Prior Reservation in Marketing reserves a tree pickup, they will be removed from the Prior Reservations, and will not be a potential recipient of future marketing emails for the current year's event. At the end of the current event, the event reservations can be migrated in the `Settings > Operations` and all reservations will be merged into the `Prior Reservations` for future marketing.
+
+> :question: In `initializers/tree_recycle.rb` there is a setting (MINIMUM_MONTHS_BEFORE_PRIOR_RESERVATION_REMOVAL) for how long a Prior Reservation will remain since they last participated before being automatically removed. The default is 24 months.
+
+#### Unsubcribing
+
+Recipients of the marketing emails will be given the option to unsubscribe. When they do, their contact information will be immedietly deleted and no longer appear in the `Marketing` section.
 
 ## Setting up Routing
 
@@ -357,14 +369,10 @@ http://localhost:3000/rails/mailers/
 
 ### Seed Data
 
-You can load seed data:
+There is sample seed data that will populate the application enough to see how it works, and for testing.
 
     $ rails db:seed
 
-
-## Configuration
-
-Certain settings can be adjusted in the ```config/initializers/tree_recycle.rb```, but settings that are not in the initializer can be adjusted through the Admin settings page.
 
 ### Images
 

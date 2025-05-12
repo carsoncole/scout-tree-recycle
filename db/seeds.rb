@@ -94,10 +94,13 @@ Reservation.create(
 )
 
 
-100.times do
+
+streets = Datasets::SeedData::STREETS
+
+50.times do
   r = Reservation.new(
     status: weighted_reservation_types.sample,
-    street: Faker::Address.street_address,
+    street: streets.delete_at(rand(streets.length)),
     email: Faker::Internet.email,
     name: Faker::Name.name,
     mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample,

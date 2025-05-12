@@ -63,6 +63,7 @@ class ReservationsTest < ApplicationSystemTestCase
     click_button "Donate at Pickup"
     sleep 0.25
     assert_equal "routing", Reservation.find_by(email: "steve.jobs@example.com").status
+    assert_text "Reservation Confirmed"
     assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
   end
 

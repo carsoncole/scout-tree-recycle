@@ -6,9 +6,7 @@ reservation_form_1:
   country: United States
   email: steve.jobs@example.com
   mobile: 1234567890
-  pickup_notes: Tree will be leaning against the fence
   status: reservation_form
-  is_manually_routed: false
 
 address_verification_1:
   name: John Doe

@@ -172,4 +172,9 @@ class Reservation < ApplicationRecord
     # Extract everything after the initial number and optional space(s)
     self.street_name = street.sub(/^\d+\s*/, '')
   end
+
+  def status_lower_than?(other_status)
+    return false unless other_status.is_a?(String) && self.class.statuses.key?(other_status)
+    self.class.statuses[status] < self.class.statuses[other_status]
+  end
 end

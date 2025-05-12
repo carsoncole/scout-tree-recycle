@@ -6,7 +6,6 @@ class Admin::DonationsControllerTest < ActionDispatch::IntegrationTest
     sign_in
     get admin_donations_url
     assert_response :success
-    sleep 0.2
     assert_not flash.present?
   end
 

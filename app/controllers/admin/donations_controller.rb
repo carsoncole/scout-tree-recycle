@@ -1,7 +1,7 @@
 class Admin::DonationsController < Admin::BaseController
   def index
     @donations = Donation.includes(:reservation).order(created_at: :desc)
-    flash.now[:alert] = "Online Donations are disabled. Enable Online Donations in Settings to accept online payments." unless helpers.setting.is_donations_enabled?
+    flash[:alert] = "Online Donations are disabled. Enable Online Donations in Settings to accept online payments." unless helpers.setting.is_donations_enabled?
   end
 
   def show

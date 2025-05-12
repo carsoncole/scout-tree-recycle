@@ -98,13 +98,13 @@ class Reservation < ApplicationRecord
   end
 
   def routing_status
-    if route
+    if route # Successfully routed
       route.name
-    elsif Setting.instance.is_routing_enabled == false
+    elsif Setting.instance.is_routing_enabled == false # Routing is disabled so manual routing is required
       "Manual"
-    elsif Setting.instance.is_routing_enabled && is_manually_routed? && was_automatically_geocoded == false
+    elsif Setting.instance.is_routing_enabled && !is_manually_routed? && !was_automatically_routed && !was_automatically_geocoded # Geocoding or routing not attempted yet
       "Pending"
-    else
+    else # Manual routing is required
       "Manual"
     end
   end

@@ -1,5 +1,5 @@
 #TODO: Integrate MININUM_DAYS_BETWEEN_MARKETING_MESSAGES
-
+#OPTIMIZE updating marketing_1_email_sent_at and marketing_2_email_sent_at to be done ONLY if successful. Rescue?
 class MarketingMailer < ApplicationMailer
   before_action :set_prior_reservation
 

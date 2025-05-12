@@ -386,13 +386,6 @@ Trial seed data can be loaded. This will create the initial admin user (admin@ex
 rails db:seed
 ```
 
-
-
-## Additional Thoughts
-
-Tree Recycle can be the central engine for powering your fundraiser, but an important piece of advice in the event that the technology fails on the day of pickup, is to print out the Driver pickup sheets the night before. That way, while it may not be as convenient for the drivers, they will at least have a means for still getting the job done.
-
-
 # Tests
 
 To run tests: 
@@ -404,6 +397,13 @@ rails test:system
 
 ## Migrating from Tree-Recycle
 To migrate from Tree-Recycle, use pgAdmin 4 to access the tables you want to export. Query the table, then ```Save results to file (F8)```. 
+
+The data you should migrate (make sure you run the post-event data migration will remove any incomplete reservations, and it will move the status of all reservations to 'archived'):
+
+- Reservations. Fields: `email`, `name`, `street`, `phone`
+- Points. Fields: `route_id`, `latitude`, `longitude`, `order`
+- Routes. Fields `name`, `street`, `zone_id`, `city`, `state`, `country`, `latitude`, `longitude`
+- Zones. `name`, `street`, `city`, `state`, `country`, `latitude`, `longitude` 
 
 
 # License

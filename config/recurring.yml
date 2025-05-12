@@ -8,7 +8,7 @@
 #     command: "SoftDeletedRecord.due.delete_all"
 #     priority: 2
 #     schedule: at 5am every day
-production:
-  "Geocode Reservations":
-    class: GeocodeReservationsJob
-    schedule: every 10 minutes
+# production:
+#   "Geocode Reservations":
+#     class: GeocodeReservationsJob
+#     schedule: every 10 minutes

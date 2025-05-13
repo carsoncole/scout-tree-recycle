@@ -1,3 +1,4 @@
+#TODO Make sure that changing street, clearing route, clears coordinates, will reset was_automatically_geocoded/routedto false
 class Reservation < ApplicationRecord
   include Geocodable
 
@@ -33,13 +34,13 @@ class Reservation < ApplicationRecord
 
   # GEOCODING and ROUTING callbacks
   # Automatic geocoding enabled since lat/long changed to either blank
-  before_save :set_not_manually_geocoded!, if: ->(obj) {obj.persisted? && (obj.routing? || obj.pending_pickup?) && (obj.will_save_change_to_latitude? || obj.will_save_change_to_longitude?) && (obj.latitude.blank? || obj.longitude.blank?) }
+  before_save :reset_geocoding!, if: ->(obj) {obj.persisted? && (obj.will_save_change_to_latitude? || obj.will_save_change_to_longitude?) && (obj.latitude.blank? || obj.longitude.blank?) }
 
   # Manual geocoding enabled since lat/long changed (not blank)
-  before_save :set_is_manually_geocoded!, if: ->(obj) { obj.persisted? && (obj.routing? || obj.pending_pickup?) && (obj.will_save_change_to_latitude? || obj.will_save_change_to_longitude?) && obj.latitude.present? && obj.longitude.present? }
+  before_save :set_is_manually_geocoded!, if: ->(obj) { obj.persisted? && (obj.will_save_change_to_latitude? || obj.will_save_change_to_longitude?) && obj.latitude.present? && obj.longitude.present? }
 
   # Manual routing disabled since route removed
-  before_save :set_not_manually_routed!, if: ->(obj) { obj.persisted? && obj.will_save_change_to_route_id? && obj.route_id.blank? }
+  before_save :reset_routing!, if: ->(obj) { obj.persisted? && obj.will_save_change_to_route_id? && obj.route_id.blank? }
   
   # Manual routing enabled since route manually set
   before_save :set_is_manually_routed!, if: ->(obj) { obj.persisted? && obj.will_save_change_to_route_id? && obj.route_id.present? }
@@ -93,21 +94,7 @@ class Reservation < ApplicationRecord
     self.status = "pending_pickup" if route_id.present?
   end
 
-  def manual_routing_required?
-    routing_status == "Manual" ? true : false
-  end
 
-  def routing_status
-    if route # Successfully routed
-      route.name
-    elsif Setting.instance.is_routing_enabled == false # Routing is disabled so manual routing is required
-      "Manual"
-    elsif Setting.instance.is_routing_enabled && !is_manually_routed? && !was_automatically_routed && !was_automatically_geocoded # Geocoding or routing not attempted yet
-      "Pending"
-    else # Manual routing is required
-      "Manual"
-    end
-  end
 
   def send_confirmed_reservation_email!
     ReservationsMailer.with(reservation_id: id).new_reservation_email.deliver_later
@@ -125,27 +112,10 @@ class Reservation < ApplicationRecord
     Reservation.destroy_all
   end
 
-  def reset_routing!
-    # self.status = "routing"
-    # self.route_id = nil
-    # self.distance_to_route = nil
-    # self.was_geocoded = false
-    # self.route_id = nil
-    # update_columns(status: "routing", route_id: nil, distance_to_route: nil, was_automatically_geocoded: false, route_id: nil)
-  end
-
   def set_is_manually_geocoded!
     self.is_manually_geocoded = true
     self.was_automatically_geocoded = false
-    self.route_id = nil
-    self.status = "routing"
-  end
-
-  def set_not_manually_geocoded!
-    self.is_manually_geocoded = false
-    self.was_automatically_geocoded = false
-    reset_geocoding!
-    self.status = "routing"
+    reset_routing!
   end
 
   def set_is_manually_routed!
@@ -153,20 +123,21 @@ class Reservation < ApplicationRecord
     self.was_automatically_routed = false
   end
 
-  def set_not_manually_routed!
-    self.is_manually_routed = false
-    self.was_automatically_routed = false
-  end
-
   def reset_geocoding!
-    return if is_manually_geocoded?
     self.latitude = nil
     self.longitude = nil
     self.route_id = nil
     self.distance_to_route = nil
     self.was_automatically_geocoded = false
+    self.is_manually_geocoded = nil
+    reset_routing!
   end
 
+  def reset_routing!
+    self.route_id = nil
+    self.was_automatically_routed = false
+    self.is_manually_routed = nil
+  end
 
   def extract_street_name
     # Extract everything after the initial number and optional space(s)
@@ -177,4 +148,43 @@ class Reservation < ApplicationRecord
     return false unless other_status.is_a?(String) && self.class.statuses.key?(other_status)
     self.class.statuses[status] < self.class.statuses[other_status]
   end
+
+  def status_higher_than?(other_status)
+    return false unless other_status.is_a?(String) && self.class.statuses.key?(other_status)
+    self.class.statuses[status] > self.class.statuses[other_status]
+  end
+
+  def geocoding_failed?
+    (latitude.blank? || longitude.blank?) && was_automatically_geocoded?
+  end
+
+  # Returns true if the reservation is pending pickup and the route is blank
+  def routing_failed?
+    route.blank? && was_automatically_routed?
+  end
+
+  def manual_routing_required?
+    routing_status == "Manual" ? true : false
+  end
+
+  def routing_status
+    if route # Successfully routed
+      route.name
+    elsif status_lower_than?("routing") # Incomplete reservations
+      "Incomplete"
+    elsif routing_failed? || geocoding_failed?
+      "Manual"
+    elsif is_manually_routed? # Manual routing is required
+      "Manual"
+    elsif !Setting.instance.is_routing_enabled && routing? # Routing is disabled so manual routing is required
+      "Manual"
+    elsif Setting.instance.is_routing_enabled && routing?
+      "Pending"
+    elsif status_higher_than?("pending_pickup") && !route.present?
+      "Route Missing"
+    else
+      "Unknown"
+    end
+  end
+
 end

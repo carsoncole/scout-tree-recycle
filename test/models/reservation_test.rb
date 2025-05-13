@@ -139,7 +139,7 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "migrating reservations" do
-    assert_equal 13, Reservation.count
+    assert_equal 15, Reservation.count
     assert_equal 3, PriorReservation.count
 
     Reservation.migrate_reservations!
@@ -176,19 +176,30 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal "Bobby Jones", PriorReservation.find_by(email: "bob.jones@example.com").name
   end
 
-  test "reset_geocoding! resets geocoding data" do
+  test "reset_geocoding! resets geocoding data AND routing data" do
     reservation = reservations(:pending_pickup_1)
     reservation.reset_geocoding!
     assert_nil reservation.latitude
     assert_nil reservation.longitude
     assert_nil reservation.route_id
-    assert_nil reservation.distance_to_route
     assert_not reservation.was_automatically_geocoded
+    assert_not reservation.was_automatically_routed
+    assert_nil reservation.distance_to_route
+    assert_not reservation.is_manually_routed
+    assert_not reservation.is_manually_geocoded
   end
 
-  test "reset_geocoding! does not reset geocoding data if it's manually geocoded" do
+  test "reset_routing! resets routing data AND NOT geocoding data" do
     reservation = reservations(:pending_pickup_not_routed)
-    reservation.reset_geocoding!
+    reservation.latitude = 123
+    reservation.longitude = 456
+    reservation.was_automatically_geocoded = true
+    reservation.reset_routing!
+    assert_nil reservation.route_id
+    assert_not reservation.was_automatically_routed
+    assert_nil reservation.distance_to_route
+    assert_not reservation.is_manually_routed
+    assert reservation.was_automatically_geocoded
     assert_not_nil reservation.latitude
     assert_not_nil reservation.longitude
   end
@@ -229,6 +240,15 @@ class ReservationTest < ActiveSupport::TestCase
     reservation.update(route_id: nil)
     assert_not reservation.is_manually_routed
   end
+
+  test "status_higher_than? returns true if status is higher than the other status" do
+    assert reservations(:pending_pickup_1).status_higher_than?("routing")
+  end
+
+  test "status_lower_than? returns true if status is lower than the other status" do
+    assert reservations(:pending_pickup_1).status_lower_than?("picked_up")
+  end
+
 
   # test "reset_geocoding and status to routing when address is changed" do
   #   reservation = reservations(:pending_pickup_1)

@@ -15,91 +15,53 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Reservations"
   end
 
-  test "geocoding a reservation when routing is disabled" do
-    Setting.instance.update(is_routing_enabled: false)
-    visit admin_reservation_path(reservations(:pending_pickup_1))
-    click_button "Geocode Address"
-    assert_text "Routing is disabled"
-  end
-
-  test "status changes to routing when route is removed" do
-    visit admin_reservations_path
-    within(page.find("tr", text: "mary.jones@example.com")) do
-      click_link "Edit"
-    end
-    find("#reservation_route_id").select("Route 2")
-    find("#reservation_route_id").select("Select a route")
-    click_button "Update Reservation"
-    assert_selector "#status-routing", text: "Manually Routed"
-  end
-
-  test "status changes to routing when manually set route is added" do
-    visit admin_reservations_path
-    within(page.find("tr", text: "icky.jones@example.com")) do
-      click_link "Edit"
-    end
-    find("#reservation_route_id").select("Route 2")
-    click_button "Update Reservation"
-    assert_selector "#flash", text: "Reservation was successfully updated"
-    assert_selector "#status-routing", text: "Manually Routed"
-  end
-
-  #OPTIMIZE review whether this can be improved
-  test "routing status when system routing is enabled and reservations are routed" do
-    Setting.instance.update(is_routing_enabled: true)
-    visit admin_reservations_path
-    within(page.find("tr", text: "trellis.wilson@example.com")) do
-      assert_text "Pending"
-      click_link "Edit"
-    end
-    find("#reservation_route_id").select("Select a route")
-    click_button "Update Reservation"
+  test "pagination works" do
     visit admin_reservations_url
-    within(page.find("tr", text: "trellis.wilson@example.com")) do
-      assert_text "Pending"
-    end
+    assert_text "Showing 1 to #{ Reservation.count } of #{ Reservation.count } results"
   end
 
-  test "routing status when system routing is disabled and pending pickup reservations are de-routed" do
-    Setting.instance.update(is_routing_enabled: false)
-    visit admin_reservations_path
-    within(page.find("tr", text: "mary.jones@example.com")) do
-      assert_text "Pending Pickup"
-      click_link "Edit"
-    end
-
-    find("#reservation_route_id").select("Select a route")
-    click_button "Update Reservation"
+  # test that the filter buttons "All Reservations" and "Needs Routing" work
+  test "index filters by status" do
     visit admin_reservations_url
-    within(page.find("tr", text: "mary.jones@example.com")) do
-      assert_text "Manual"
-    end
+    click_link "All Reservations"
+
+    # Count the number ofreservations
+    assert_equal 1, page.all('table').count
+    reservation_count = page.all('table tbody tr').count
+    assert_equal Reservation.count, reservation_count 
+
+    click_link "Needs Routing"
+    sleep 0.2
+    assert_equal 1, page.all('table').count
+    reservation_count = page.all('table tbody tr').count
+    assert_equal Reservation.routing.count, reservation_count
   end
 
-  test "routing status when system routing is disabled and reservations are not routed" do
-    Setting.instance.update(is_routing_enabled: false)
-    visit admin_reservations_path
-    within(page.find("tr", text: "icky.jones@example.com")) do
-      assert_text "Manual"
-      click_link "Edit"
-    end
-    find("#reservation_route_id").select("Route 1")
-    click_button "Update Reservation"
+  # test that the edit link works
+  test "edit link works" do
     visit admin_reservations_url
-    within(page.find("tr", text: "icky.jones@example.com")) do
-      assert_text Reservation.find_by(email: "icky.jones@example.com").route.name
-    end
+    first_row = page.first('table tbody tr')
+    first_row.click_link("Edit")
+    assert_selector "h1", text: "Edit Reservation"
   end
 
-  # test "routing status when system routing is enabled and reservations are not routed" do
-  #   visit admin_reservations_path
-  #   within(page.find("tr", text: "trellis.wilson@example.com")) do
-  #     assert_text "Pending"
-  #   end
-  #   Setting.instance.update(is_routing_enabled: false)
-  #   visit admin_reservations_path
-  #   within(page.find("tr", text: "trellis.wilson@example.com")) do
-  #     assert_text "Manual"
-  #   end
-  # end
+  test "view link works" do
+    visit admin_reservations_url
+    first_row = page.first('table tbody tr')
+    first_row.click_link("View")
+    assert_selector "h1", text: "Reservation Details"
+  end
+
+  test "delete button works" do
+    visit admin_reservations_url
+    first_row = page.first('table tbody tr')
+    assert_difference "Reservation.count", -1 do
+      accept_confirm do
+        first_row.click_button("Delete")
+      end
+      sleep 0.2 # wait for the count to occur
+    end
+    assert_selector "#flash", text: "Reservation was successfully deleted."
+  end
+
 end

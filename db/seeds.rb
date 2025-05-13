@@ -75,7 +75,8 @@ Reservation.destroy_all
 weighted_reservation_types = [
   "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup",
   "routing", "routing", "routing", "routing", "routing", "routing",
-  "cancelled"
+  "donation", "reservation_form",
+  "cancelled", "missing"
 ]
 
 Reservation.create(
@@ -111,7 +112,9 @@ streets = Datasets::SeedData::STREETS
     Route.all.sample
   end
 
-  r.is_manually_routed = false if r.route.nil?
+  if r.routing? && [0,1,2,3].sample == 0
+    r.is_manually_routed = true
+  end
 
   if r.status == "pending_pickup"
     r.latitude = Faker::Address.latitude

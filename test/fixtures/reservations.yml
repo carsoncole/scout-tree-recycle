@@ -52,9 +52,7 @@ donation_1:
   country: United States
   email: lisa.mills@example.com
   mobile: 1234567890
-  pickup_notes: 
   status: donation
-  is_manually_routed: true
 
 donation_2:
   name: Sam Trellis
@@ -63,8 +61,7 @@ donation_2:
   state: WA
   country: United States
   email: sam.trellis@example.com
-  mobile: 1234567890
-  pickup_notes: 
+  mobile: 1234567890 
   status: donation
   is_manually_routed: true
 
@@ -76,9 +73,7 @@ routing_1:
   country: United States
   email: icky.jones@example.com
   mobile: 1234567890
-  pickup_notes: 
   status: routing
-  is_manually_routed: true
 
 routing_2:
   name: Trellis Wilson
@@ -89,6 +84,7 @@ routing_2:
   email: trellis.wilson@example.com
   mobile: 1234567890
   status: routing
+  is_manually_routed: true
 
 pending_pickup_1  :
   name: Mary Jones
@@ -98,9 +94,7 @@ pending_pickup_1  :
   country: United States
   email: mary.jones@example.com
   mobile: 2069230400
-  pickup_notes: 
   status: pending_pickup
-  is_manually_routed: true
   latitude: 31.1212
   longitude: 1212.1212
   route: one 
@@ -128,13 +122,25 @@ picked_up_1:
   state: WA
   country: United States
   email: bob.jones@example.com
-  mobile: 2064759823
-  pickup_notes: 
+  mobile: 2064759823 
+  status: picked_up
+  latitude: 31.1212
+  longitude: 1212.1212
+  route: one 
+
+picked_up_2:
+  name: Sammy Kopeke
+  street: 12 Winslow St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: Sammy.Kopeke@example.com
+  mobile: 2064759823 
   status: picked_up
   is_manually_routed: true
   latitude: 31.1212
   longitude: 1212.1212
-  route: one 
+  route: four
 
 missing_1:
   name: Bill Carson
@@ -144,7 +150,6 @@ missing_1:
   country: United States
   email: bill.carson@example.com
   mobile: 1234567890
-  pickup_notes: 
   status: missing
   is_manually_routed: true
   latitude: 31.1212
@@ -159,10 +164,17 @@ cancelled_1:
   country: United States
   email: bob.miurtha@example.com
   mobile: 1234567890
-  pickup_notes: 
   status: cancelled
-  is_manually_routed: true
+  route: two
 
-
+cancelled_2:
+  name: Billy Carter
+  street: 15 Winslow St
+  city: Bainbridge Island
+  state: WA
+  country: United States
+  email: billy_carter@example.com
+  mobile: 1234567890
+  status: cancelled
 
 

@@ -5,10 +5,10 @@ class RouteReservationsJob < ApplicationJob
     return unless Setting.instance.is_routing_enabled?
 
     Reservation.routing.where(latitude: nil).or(Reservation.routing.where(longitude: nil)).or(Reservation.routing.where(route_id: nil)).each do |reservation|
-      if !reservation.is_manually_geocoded? && !reservation.was_automatically_geocoded?
+      if !reservation.geocoding_failed?
         reservation.full_geocode!
       end
-      if !reservation.is_manually_routed? && reservation.geocoded? && !reservation.was_automatically_routed?
+      if !reservation.manual_routing_required?
         reservation.route!
       end
     end

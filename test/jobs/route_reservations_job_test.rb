@@ -1,8 +1,8 @@
 require "test_helper"
 
-class GeocodeReservationsJobTest < ActiveJob::TestCase
+class RouteReservationsJobTest < ActiveJob::TestCase
   test "automatically-flags for geocoding and routing is set to true" do
-    reservation = reservations(:routing_2)
+    reservation = reservations(:routing_1)
     assert_not reservation.was_automatically_geocoded
     perform_enqueued_jobs do 
       RouteReservationsJob.perform_later

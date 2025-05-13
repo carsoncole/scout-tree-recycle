@@ -109,7 +109,7 @@
               </thead>
               <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 <% @reservations.each do |reservation| %>
-                  <tr class="<%= 'bg-red-100 dark:bg-red-900/40' unless reservation.routed? %>">
+                  <tr class="<%=  reservation.routing_status == "Pending" ? 'bg-gray-100 dark:bg-gray-300/40' : reservation.routing_status == "Manual" ? 'bg-red-100 dark:bg-red-900/40' : nil %>">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <%= reservation.name %>
                     </td>

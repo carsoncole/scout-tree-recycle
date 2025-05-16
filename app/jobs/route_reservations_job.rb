@@ -4,11 +4,14 @@ class RouteReservationsJob < ApplicationJob
   def perform(*args)
     return unless Setting.instance.is_routing_enabled?
 
-    Reservation.routing.where(latitude: nil).or(Reservation.routing.where(longitude: nil)).or(Reservation.routing.where(route_id: nil)).each do |reservation|
-      if !reservation.geocoding_failed?
+    Reservation.routing_ready.each do |reservation|
+      # Geocoding
+      unless reservation.geocoding_failed? || reservation.is_manually_geocoded?
         reservation.full_geocode!
       end
-      if !reservation.manual_routing_required?
+
+      # Routing
+      unless reservation.routing_failed? || reservation.is_manually_routed?
         reservation.route!
       end
     end

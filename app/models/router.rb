@@ -11,13 +11,14 @@ class Router
     def route!
       return if location.is_manually_routed?
       return unless location.geocoded?
-
+      location.update_columns(was_automatically_routed: true)
       Route.all.each do |z|
         if z.polygon? && z.contains?(location.latitude, location.longitude)
           @route_id = z.id
           @status = "pending_pickup"
           # location.route_id = z.id
           # location.is_route_polygon = true
+          location.update_columns(route_id: @route_id, status: @status)
           break
         end
         # puts z.coordinates
@@ -29,7 +30,6 @@ class Router
         #   @route_id = z.id
         # end
       end
-      location.update_columns(route_id: @route_id, distance_to_route: @distance_to_route, was_automatically_routed: true, status: @status)
       location.route
     end
   

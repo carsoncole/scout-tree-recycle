@@ -8,6 +8,7 @@ class ReservationsMailer < ApplicationMailer
   end
 
   def new_reservation_email
+    return unless Setting.instance.is_emailing_enabled?
     return if @reservation.confirmed_reservation_email_sent_at?
     @event_pickup = setting.event_pickup
     @setting = setting
@@ -17,6 +18,7 @@ class ReservationsMailer < ApplicationMailer
   end
 
   def new_reservation_email1
+    return unless Setting.instance.is_emailing_enabled?
     return if @reservation.confirmed_reservation_email_sent_at?
     @event_pickup = setting.event_pickup
     @setting = setting

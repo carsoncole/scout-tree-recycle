@@ -5,10 +5,11 @@ class RouteReservationsJobTest < ActiveJob::TestCase
     reservation = reservations(:routing_1)
     assert_not reservation.was_automatically_geocoded
     perform_enqueued_jobs do 
-      RouteReservationsJob.perform_later
+      RouteReservationJob.perform_later(reservation.id)
     end
     assert reservation.reload.was_automatically_geocoded
-    assert reservation.reload.was_automatically_routed
+    assert reservation.geocoded?
+    assert reservation.was_automatically_routed
   end
 
   test "does not geocode when set to manually geocoded" do

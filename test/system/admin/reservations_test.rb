@@ -61,7 +61,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
       end
       sleep 0.2 # wait for the count to occur
     end
-    assert_selector "#flash", text: "Reservation was successfully deleted."
+    assert_selector ".flash", text: "Reservation was successfully deleted."
   end
 
 end

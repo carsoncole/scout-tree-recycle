@@ -16,7 +16,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_url
     assert_link "Pickups Portal", href: pickups_root_path
     click_on "Pickups Portal"
-    assert_selector "#flash", text: "The Pickups site is CLOSED."
+    assert_selector ".flash", text: "The Pickups site is CLOSED."
 
     Setting.instance.update(is_pickups_site_enabled: true, driver_secret_key: "1234567890")
     visit admin_settings_url
@@ -29,7 +29,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     Setting.instance.update(is_pickups_site_enabled: true, driver_secret_key: nil)
     visit admin_settings_url
     click_on "Pickups Portal"
-    assert_selector "#flash", text: "The Pickups site is CLOSED."
+    assert_selector ".flash", text: "The Pickups site is CLOSED."
   end
 
   # test "toggle settings" do

@@ -8,6 +8,7 @@ class MarketingMailer < ApplicationMailer
   end
 
   def marketing_email_1
+    return unless Setting.instance.is_emailing_enabled?
     return if @prior_reservation.marketing_1_email_sent_at?
     @setting = setting
     @email_footer = Setting.instance.organization_name
@@ -16,6 +17,7 @@ class MarketingMailer < ApplicationMailer
   end
 
   def marketing_email_2
+    return unless Setting.instance.is_emailing_enabled?
     return if @prior_reservation.marketing_2_email_sent_at?
     @setting = setting
     @email_footer = Setting.instance.organization_name

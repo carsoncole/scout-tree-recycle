@@ -113,7 +113,7 @@ streets = Datasets::SeedData::STREETS
   end
 
   if r.routing? && [0,1,2,3].sample == 0
-    r.is_manually_routed = true
+    r.was_automatically_geocoded = true
   end
 
   if r.status == "pending_pickup"

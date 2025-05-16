@@ -30,7 +30,7 @@ class Admin::ReservationsFlowTest < ApplicationSystemTestCase
     end
     find("#reservation_route_id").select("Route 2")
     click_button "Update Reservation"
-    assert_selector "#flash", text: "Reservation was successfully updated"
+    assert_selector ".flash", text: "Reservation was successfully updated"
     assert_selector "#status-routing", text: "Manually Routed"
   end
 

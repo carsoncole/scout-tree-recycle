@@ -21,6 +21,7 @@ class Admin::SettingsController < Admin::BaseController
       setting[params[:setting]] = params[:value]
 
       if setting.save
+        RouteReservationsJob.perform_later if setting.is_routing_enabled? && params[:setting] == "is_routing_enabled"
         render json: { success: true }
       else
         render json: { success: false, errors: setting.errors.full_messages }, status: :unprocessable_entity

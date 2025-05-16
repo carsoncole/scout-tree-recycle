@@ -1,4 +1,4 @@
-#FIXME pending status should not be showing on reservations < Routing
+
 class Admin::ReservationsController < Admin::BaseController
   before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode ]
 

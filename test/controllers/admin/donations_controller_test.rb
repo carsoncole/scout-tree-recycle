@@ -5,8 +5,9 @@ class Admin::DonationsControllerTest < ActionDispatch::IntegrationTest
     Setting.instance.update(is_donations_enabled: true)
     sign_in
     get admin_donations_url
+    get admin_donations_url # repeated as flash seems to be carried over from previous test
     assert_response :success
-    assert_not flash.present?
+    assert_empty flash
   end
 
   test "should get index with disabled donations" do

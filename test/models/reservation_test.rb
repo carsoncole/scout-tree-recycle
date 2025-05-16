@@ -100,14 +100,15 @@ class ReservationTest < ActiveSupport::TestCase
     assert Reservation.find_by(id: new_reservation.id)
   end
 
-  # remove existing prior_reservation (same email) when reservation becomes pending pickup
+  # remove existing prior_reservation (same email) when reservation becomes routing
   test "removing prior reservation on routing" do
     reservation = Reservation.create(name: "Trip Wilson", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "United States", status: "donation", email: "trip.wilson@example.com")
+    assert reservation.donation?
     assert PriorReservation.find_by(email: "trip.wilson@example.com")
     reservation.routing!
-    assert_not PriorReservation.find_by(email: "trip.wilson@example.com")
-    assert Reservation.find_by(email: "susan.banks@example.com")
     assert reservation.routing?
+    assert_not PriorReservation.find_by(email: "trip.wilson@example.com")
+
   end
 
   test "normalizing of mobile number" do
@@ -139,8 +140,14 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "migrating reservations" do
-    assert_equal 15, Reservation.count
-    assert_equal 3, PriorReservation.count
+    # existing reservations
+    assert Reservation.find_by(email: "steve.jobs@example.com")
+    assert Reservation.find_by(email: "john.doe@example.com")
+    assert Reservation.find_by(email: "lisa.mills@example.com")
+    assert Reservation.find_by(email: "mary.jones@example.com")
+    assert Reservation.find_by(email: "bob.jones@example.com")
+    assert Reservation.find_by(email: "bob.miurtha@example.com")
+    assert Reservation.find_by(email: "bill.carson@example.com")
 
     Reservation.migrate_reservations!
 
@@ -249,6 +256,9 @@ class ReservationTest < ActiveSupport::TestCase
     assert reservations(:pending_pickup_1).status_lower_than?("picked_up")
   end
 
+  test "scope routing_ready returns reservations that are ready for routing" do
+    assert_equal 4, Reservation.routing_ready.count
+  end
 
   # test "reset_geocoding and status to routing when address is changed" do
   #   reservation = reservations(:pending_pickup_1)

@@ -31,11 +31,9 @@ module Geocodable
       if self.class == Reservation
         return if self.is_manually_geocoded?
       end
-      # self.latitude = nil
-      # self.longitude = nil
-      # self.house_number = nil
-      # self.street_name = nil
-      # self.route_id = nil if self.class == Reservation
+
+      update_columns(was_automatically_geocoded: true)
+
       if Geocoder.config.lookup == :nominatum
         # Rails.error.handle do
         #   results = Geocoder.search(self.address)
@@ -48,25 +46,22 @@ module Geocodable
         # self.was_geocoded = true
       elsif Geocoder.config.lookup == :amazon_location_service
         # multiple results (seems like 2) can be return, the second being a coordinate of just the street, not number
-        Rails.error.handle(context: { reservation_id: id, email: email }) do
+        # Rails.error.handle(context: { reservation_id: id, email: email }) do
+        begin
           results = Geocoder.search(self.address)
           if results.count == 1
-            geocode
-            # self.was_geocoded = true
-            self.update_columns(latitude: self.latitude, longitude: self.longitude, was_automatically_geocoded: true)
+            geocode            
+            self.update_columns(latitude: self.latitude, longitude: self.longitude)
           elsif results.count == 2 && results.as_json[0]["place"]["address_number"].present?
             result = results.as_json[0]["place"]
-
             self.latitude = result["geometry"]["point"][1]
             self.longitude = result["geometry"]["point"][0]
             self.house_number = result["geometry"]["address_number"]
             self.street_name = result["street"]
-            self.was_automatically_geocoded = true
-            self.update_columns(latitude: self.latitude, longitude: self.longitude, was_automatically_geocoded: true)
+            self.update_columns(latitude: self.latitude, longitude: self.longitude)
           end
         end
       end
-      self.update_columns(was_automatically_geocoded: true)
       self.was_automatically_geocoded
     end
   end

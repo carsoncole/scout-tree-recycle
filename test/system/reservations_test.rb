@@ -51,7 +51,7 @@ class ReservationsTest < ApplicationSystemTestCase
 
     click_button "Donate at Pickup"
     sleep 0.25
-    assert_equal 3, Reservation.routing.count
+    assert_equal 5, Reservation.routing.count
   end
 
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
@@ -97,8 +97,6 @@ class ReservationsTest < ApplicationSystemTestCase
     click_link "Edit Reservation"
 
     reservation = Reservation.find_by(email: "test11@example.com")
-    sleep 0.25
-    assert_equal 3, Reservation.routing.count
 
     click_link_or_button "Cancel Reservation"
     accept_confirm

@@ -1,13 +1,12 @@
 class Router
-
     def initialize(obj)
       @obj = obj
     end
-  
+
     def location
       @obj
     end
-  
+
     def route!
       return if location.is_manually_routed?
       return unless location.geocoded?
@@ -32,7 +31,7 @@ class Router
       end
       location.route
     end
-  
+
     def zone!
       return unless location.is_zoned?
       location.zone_id = nil
@@ -47,6 +46,4 @@ class Router
         end
       end
     end
-  
-  end
-  
+end

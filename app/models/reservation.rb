@@ -1,4 +1,4 @@
-#TODO Make sure that changing street, clearing route, clears coordinates, will reset was_automatically_geocoded/routedto false
+# TODO Make sure that changing street, clearing route, clears coordinates, will reset was_automatically_geocoded/routedto false
 class Reservation < ApplicationRecord
   include Geocodable
 
@@ -22,7 +22,7 @@ class Reservation < ApplicationRecord
   scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }
   scope :not_active, -> { where.not(status: [ "routing", "pending_pickup" ]) }
   scope :pickup, -> { where(status: [ "pending_pickup", "missing" ]) }
-  scope :routing_ready, -> { 
+  scope :routing_ready, -> {
     routing.
     where(latitude: nil).
     or(Reservation.routing.where(longitude: nil)).
@@ -37,43 +37,41 @@ class Reservation < ApplicationRecord
   # destroy any same-email not pending reservations since they're not needed
   before_validation :destroy_not_active_reservations!, if: ->(obj) { obj.reservation_form? && !obj.persisted? }
 
-
   # GEOCODING and ROUTING callbacks
 
   # Reset geocoding if lat/long changed, and geocoding is not complete => reset geocoding
   before_save :reset_geocoding!, if: ->(obj) {
-    obj.persisted? && 
+    obj.persisted? &&
     (((
-      obj.will_save_change_to_latitude? || 
+      obj.will_save_change_to_latitude? ||
       obj.will_save_change_to_longitude?
-      ) && 
+      ) &&
       !obj.geocoded?
       ) ||
       obj.will_save_change_to_street?) }
 
   # Route removed => reset routing
-  before_save :reset_routing!, if: ->(obj) { 
-    obj.persisted? && 
+  before_save :reset_routing!, if: ->(obj) {
+    obj.persisted? &&
     obj.will_save_change_to_route_id? && obj.route_id.blank? }
 
   # Set manual geocoding, as manual lat/long en                                                                                                                                                 tered => manual geocoding
-  before_save :set_is_manually_geocoded!, if: ->(obj) { 
-    obj.persisted? && 
-    (obj.will_save_change_to_latitude? || obj.will_save_change_to_longitude?) && 
+  before_save :set_is_manually_geocoded!, if: ->(obj) {
+    obj.persisted? &&
+    (obj.will_save_change_to_latitude? || obj.will_save_change_to_longitude?) &&
     obj.geocoded? }
 
   # Route set => manual routing
-  before_save :set_is_manually_routed!, if: ->(obj) { 
-    obj.persisted? && 
+  before_save :set_is_manually_routed!, if: ->(obj) {
+    obj.persisted? &&
     obj.will_save_change_to_route_id? && obj.route_id.present? }
-
 
   # reset status if route changes made
   before_save :reset_status_to_routing_if_route_removed!, if: ->(obj) { obj.pending_pickup? && obj.route_id.blank? }
   before_save :reset_status_to_pending_pickup_if_route_added!, if: ->(obj) { obj.routing? && obj.route_id.present? }
 
   # emails on confirmation and cancellation
-  after_update :send_confirmed_reservation_email!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
+  after_update :send_confirmed_reservation_email!, if: ->(obj) { (obj.routing? || obj.pending_pickup?) && obj.saved_change_to_status? }
   after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? }
 
   # remove prior reservation if it exists
@@ -81,6 +79,7 @@ class Reservation < ApplicationRecord
 
   after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" &&  Setting.instance.is_routing_enabled? }
 
+  # class methods
   def self.open?
     Setting.instance.is_reservations_open?
   end
@@ -112,7 +111,6 @@ class Reservation < ApplicationRecord
   end
 
   def reset_status_to_routing_if_route_removed!
-    puts "reset status to routing if route removed  "* 10
     self.status = "routing" if route_id.blank?
   end
 
@@ -166,7 +164,7 @@ class Reservation < ApplicationRecord
 
   def extract_street_name
     # Extract everything after the initial number and optional space(s)
-    self.street_name = street.sub(/^\d+\s*/, '')
+    self.street_name = street.sub(/^\d+\s*/, "")
   end
 
   def status_lower_than?(other_status)
@@ -216,4 +214,6 @@ class Reservation < ApplicationRecord
     RouteReservationJob.perform_later(id)
   end
 
+
+  private
 end

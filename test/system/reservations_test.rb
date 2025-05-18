@@ -56,13 +56,13 @@ class ReservationsTest < ApplicationSystemTestCase
 
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
   test "making confirned reservation and destroying reservation with reservation_form status with same email" do
-    existing_non_pending_reservation = Reservation.find_by(email: "steve.jobs@example.com")
+    existing_non_pending_reservation = Reservation.find_by(email: "form.minimum@example.com")
     assert_equal "reservation_form", existing_non_pending_reservation.status
 
-    make_system_reservation("steve.jobs@example.com")
+    make_system_reservation("form.minimum@example.com")
     click_button "Donate at Pickup"
     sleep 0.25
-    assert_equal "routing", Reservation.find_by(email: "steve.jobs@example.com").status
+    assert_equal "routing", Reservation.find_by(email: "form.minimum@example.com").status
     assert_text "Reservation Confirmed"
     assert_nil Reservation.find_by(id: existing_non_pending_reservation.id)
   end
@@ -109,7 +109,7 @@ class ReservationsTest < ApplicationSystemTestCase
     # Create first reservation
     make_system_reservation("test@example.com")
     click_button "Donate at Pickup"
-    assert_text "Reservation Confirmed"
+    assert_selector "h1", text: "Reservation Confirmed"
 
     # Try to create second reservation with same email
     make_system_reservation("test@example.com")

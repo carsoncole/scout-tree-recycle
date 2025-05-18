@@ -112,7 +112,7 @@ streets = Datasets::SeedData::STREETS
     Route.all.sample
   end
 
-  if r.routing? && [0,1,2,3].sample == 0
+  if r.routing? && [ 0, 1, 2, 3 ].sample == 0
     r.was_automatically_geocoded = true
   end
 
@@ -143,8 +143,8 @@ Sms.create(phone: res_2.mobile, body: Faker::Lorem.sentence, direction: 1, reser
 Donation.destroy_all
 Reservation.all.each do |reservation|
   Donation.create(
-    reservation: reservation, 
-    amount: Faker::Number.between(from: 1, to: 100), 
+    reservation: reservation,
+    amount: Faker::Number.between(from: 1, to: 100),
     status: "complete",
     payment_status: "paid",
     is_receipt_email_sent: true,
@@ -155,5 +155,3 @@ Reservation.all.each do |reservation|
     checkout_session_status: "complete",
     )
 end
-
-

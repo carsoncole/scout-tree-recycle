@@ -7,7 +7,7 @@ class Admin::ReservationsRoutingStatusTest < ApplicationSystemTestCase
 
     test "route column for reservation_form reservations" do
       visit admin_reservations_url
-      within(page.find("tr", text: "steve.jobs@example.com")) do
+      within(page.find("tr", text: "form.minimum@example.com")) do
         assert_text "Incomplete"
       end
     end
@@ -29,7 +29,7 @@ class Admin::ReservationsRoutingStatusTest < ApplicationSystemTestCase
     test "route column for pending pickup reservations" do
       visit admin_reservations_url
       within(page.find("tr", text: "mary.jones@example.com")) do
-        assert_text "Route 1"
+        assert_text "Lower Manhattan"
       end
     end
 
@@ -61,5 +61,4 @@ class Admin::ReservationsRoutingStatusTest < ApplicationSystemTestCase
         assert_text "Route Missing"
       end
     end
-    
 end

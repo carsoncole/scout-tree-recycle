@@ -2,8 +2,8 @@
 class ReservationsController < ApplicationController
   before_action :set_reservation, only: %i[ update confirmation edit destroy ]
 
-  def index  
-    @reservation = Reservation.new   
+  def index
+    @reservation = Reservation.new
   end
 
   def create
@@ -14,7 +14,7 @@ class ReservationsController < ApplicationController
     elsif @reservation.save
       @reservation.address_verification!
       redirect_to reservation_address_verification_url(@reservation)
-    else     
+    else
       if @reservation.errors[:email].include? "has already been taken"
         redirect_to root_url, alert: "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received."
       else

@@ -14,4 +14,3 @@ class Admin::DonationsController < Admin::BaseController
     redirect_to admin_donations_path, notice: "Donation was successfully deleted."
   end
 end
-

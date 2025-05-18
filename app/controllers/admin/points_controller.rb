@@ -2,7 +2,7 @@
 class PointsController < Admin::BaseController
   # before_action :require_admin
   before_action :set_route
-  before_action :set_point, only: [:destroy]
+  before_action :set_point, only: [ :destroy ]
 
   def create
     @point = @route.points.build(point_params)

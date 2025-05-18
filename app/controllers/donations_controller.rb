@@ -12,13 +12,13 @@ class DonationsController < ApplicationController
   def create
     @reservation.online_donation!
     @session = Stripe::Checkout::Session.create({
-      line_items: [{
+      line_items: [ {
           price: Rails.env.production? ? STRIPE_PRODUCTION_PRICE_ITEM : STRIPE_DEVELOPMENT_PRICE_ITEM,
           quantity: 1
-      }],
-      mode: 'payment',
+      } ],
+      mode: "payment",
       client_reference_id: @reservation.id,
-      metadata: {reservation_id: @reservation.id},
+      metadata: { reservation_id: @reservation.id },
       customer_email: @reservation.email,
       success_url: reservation_success_url(@reservation),
       cancel_url: new_reservation_donation_url(@reservation)
@@ -28,13 +28,13 @@ class DonationsController < ApplicationController
 
   def donation_without_reservation
     @session = Stripe::Checkout::Session.create({
-      line_items: [{
+      line_items: [ {
           price: Rails.env.production? ? STRIPE_PRODUCTION_PRICE_ITEM : STRIPE_DEVELOPMENT_PRICE_ITEM,
           quantity: 1
-      }],
-      mode: 'payment',
-      success_url: success_url(driver: params[:driver] == 'true' ? true : false),
-      cancel_url: params[:driver] && params[:driver] == 'true' ? driver_root_url : root_url
+      } ],
+      mode: "payment",
+      success_url: success_url(driver: params[:driver] == "true" ? true : false),
+      cancel_url: params[:driver] && params[:driver] == "true" ? driver_root_url : root_url
     })
     redirect_to @session.url, allow_other_host: true
   end
@@ -62,7 +62,7 @@ class DonationsController < ApplicationController
       @reservation = Reservation.find(params[:id] ||= params[:reservation_id])
     end
     @driver = true if params[:driver] == true
-    flash[:notice] = 'Thank you! Your donation is greatly appreciated and goes a long way towards supporting Scouting on Bainbridge Island.'
+    flash[:notice] = "Thank you! Your donation is greatly appreciated and goes a long way towards supporting Scouting on Bainbridge Island."
   end
 
 

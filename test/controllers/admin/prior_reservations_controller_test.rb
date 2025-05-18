@@ -6,5 +6,5 @@ class Admin::PriorReservationsControllerTest < ActionDispatch::IntegrationTest
     delete admin_prior_reservation_url(prior_reservations(:one))
     assert_redirected_to admin_marketing_index_path
     assert_equal "Prior reservation was successfully deleted.", flash[:notice]
-  end  
+  end
 end

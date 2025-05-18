@@ -4,21 +4,21 @@ class Admin::ReservationsController < Admin::BaseController
 
   def index
     @reservations = Reservation.includes(:route)
-    
+
     # Apply sorting
     sort_column = params[:sort]
-    sort_direction = params[:direction] == 'desc' ? :desc : :asc
-    
+    sort_direction = params[:direction] == "desc" ? :desc : :asc
+
     @reservations = case sort_column
-    when 'name'
+    when "name"
       @reservations.order(name: sort_direction)
-    when 'email'
+    when "email"
       @reservations.order(email: sort_direction)
-    when 'address'
+    when "address"
       @reservations.order(street_name: sort_direction)
-    when 'route'
+    when "route"
       @reservations.joins(:route).order('routes.name': sort_direction)
-    when 'status'
+    when "status"
       @reservations.order(status: sort_direction)
     else
       @reservations.order(created_at: :desc)

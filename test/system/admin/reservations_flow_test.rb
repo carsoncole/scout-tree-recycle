@@ -37,7 +37,7 @@ class Admin::ReservationsFlowTest < ApplicationSystemTestCase
   test "routing status when routing is changed" do
     visit admin_reservations_path
     within(page.find("tr", text: "mary.jones@example.com")) do
-      assert_text "Route 1"
+      assert_text "Lower Manhattan"
       click_link "Edit"
     end
     find("#reservation_route_id").select("Select a route")
@@ -71,7 +71,7 @@ class Admin::ReservationsFlowTest < ApplicationSystemTestCase
       assert_text "Manual"
       click_link "Edit"
     end
-    find("#reservation_route_id").select("Route 1")
+    find("#reservation_route_id").select("Lower Manhattan")
     click_button "Update Reservation"
     visit admin_reservations_url
     within(page.find("tr", text: "icky.jones@example.com")) do

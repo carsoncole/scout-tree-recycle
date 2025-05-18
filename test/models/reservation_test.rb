@@ -2,43 +2,34 @@ require "test_helper"
 
 class ReservationTest < ActiveSupport::TestCase
   def setup
-    @reservation = reservations(:pending_pickup_1)
+    @reservation = reservations(:reservation_form_minimum)
   end
 
   test "valid reservation" do
     assert @reservation.valid?
   end
 
-  test "requires name" do
+  test "validates name" do
     @reservation.name = nil
     assert_not @reservation.valid?
     assert_includes @reservation.errors[:name], "can't be blank"
   end
 
-  test "requires street" do
+  test "validates street" do
     @reservation.street = nil
     assert_not @reservation.valid?
     assert_includes @reservation.errors[:street], "can't be blank"
   end
 
-  test "requires email" do
+  test "validates email" do
     @reservation.email = nil
     assert_not @reservation.valid?
     assert_includes @reservation.errors[:email], "can't be blank"
   end
 
-  test "mobile is optional" do
-    @reservation.mobile = nil
-    assert @reservation.valid?
-  end
-
-  test "notes are optional" do
-    @reservation.pickup_notes = nil
-    assert @reservation.valid?
-  end
-
-  test "city is set from settings" do
-    assert_equal "Bainbridge Island", @reservation.city
+  test "city and state is set from settings" do
+    assert_equal "New York", Setting.instance.default_city
+    assert_equal "New York", Setting.instance.default_state
   end
 
   test "short_address returns street and city" do
@@ -46,42 +37,13 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "can be cancelled" do
-    @reservation.save
     @reservation.cancelled!
     assert @reservation.cancelled?
   end
 
-  test "can be marked as picked up" do
+  test "can be picked up" do
     @reservation.picked_up!
     assert @reservation.picked_up?
-  end
-
-  test "invalid without email" do
-    reservation = reservations(:pending_pickup_1)
-    reservation.email = nil
-    assert_not reservation.valid?
-    assert_includes reservation.errors[:email], "can't be blank"
-  end
-
-  test "invalid without street" do
-    reservation = reservations(:pending_pickup_1)
-    reservation.street = nil
-    assert_not reservation.valid?
-    assert_includes reservation.errors[:street], "can't be blank"
-  end
-
-  test "invalid without city" do
-    reservation = reservations(:pending_pickup_1)
-    reservation.city = nil
-    assert_not reservation.valid?
-    assert_includes reservation.errors[:city], "can't be blank"
-  end
-
-  test "invalid without state" do
-    reservation = reservations(:pending_pickup_1)
-    reservation.state = nil
-    assert_not reservation.valid?
-    assert_includes reservation.errors[:state], "can't be blank"
   end
 
   test "invalid with duplicate email" do
@@ -91,13 +53,44 @@ class ReservationTest < ActiveSupport::TestCase
     assert_includes reservation.errors[:email], "has already been taken"
   end
 
-  test "before_validation :destroy_not_pending_reservations! removes not pending reservations" do
-    assert_equal reservations(:donation_1).id, Reservation.find_by(email: "lisa.mills@example.com").id
-    assert_equal "donation", Reservation.find_by(email: "lisa.mills@example.com").status
-    new_reservation = Reservation.create(email: "lisa.mills@example.com", name: "aa", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "United States")
+  test "detroying reservation_form with same email " do
+    reservation = reservations(:reservation_form_minimum)
+    email = reservation.email
+    assert reservation.reservation_form?
 
-    assert_not Reservation.find_by(id: reservations(:donation_1).id)
-    assert Reservation.find_by(id: new_reservation.id)
+    new_reservation_with_same_email = Reservation.create(email: email, status: "reservation_form", name: "J Smith", street: "123 Main")
+
+    assert_not Reservation.find_by(id: reservation.id)
+  end
+
+  test "detroying donation reservation with same email" do
+    reservation = reservations(:donation_1)
+    email = reservation.email
+    assert reservation.donation?
+
+    new_reservation_with_same_email = Reservation.create(email: email, status: "donation", name: "J Smith", street: "123 Main")
+
+    assert_not Reservation.find_by(id: new_reservation_with_same_email.id)
+  end
+
+  test "detroying cancelled reservation with same email" do
+    reservation = reservations(:cancelled_1)
+    email = reservation.email
+    assert reservation.cancelled?
+
+    new_reservation_with_same_email = Reservation.create(email: email, status: "cancelled", name: "J Smith", street: "123 Main")
+
+    assert_not Reservation.find_by(id: new_reservation_with_same_email.id)
+  end
+
+  test "destroying address verification reservation with same email" do
+    reservation = reservations(:address_verification_1)
+    email = reservation.email
+    assert reservation.address_verification?
+
+    new_reservation_with_same_email = Reservation.create(email: email, status: "address_verification", name: "J Smith", street: "123 Main")
+
+    assert_not Reservation.find_by(id: new_reservation_with_same_email.id)
   end
 
   # remove existing prior_reservation (same email) when reservation becomes routing
@@ -108,7 +101,6 @@ class ReservationTest < ActiveSupport::TestCase
     reservation.routing!
     assert reservation.routing?
     assert_not PriorReservation.find_by(email: "trip.wilson@example.com")
-
   end
 
   test "normalizing of mobile number" do
@@ -141,7 +133,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "migrating reservations" do
     # existing reservations
-    assert Reservation.find_by(email: "steve.jobs@example.com")
+    assert Reservation.find_by(email: "form.minimum@example.com")
     assert Reservation.find_by(email: "john.doe@example.com")
     assert Reservation.find_by(email: "lisa.mills@example.com")
     assert Reservation.find_by(email: "mary.jones@example.com")
@@ -152,7 +144,7 @@ class ReservationTest < ActiveSupport::TestCase
     Reservation.migrate_reservations!
 
     # should not be any reservations
-    assert_not Reservation.find_by(email: "steve.jobs@example.com")
+    assert_not Reservation.find_by(email: "form.minimum@example.com")
     assert_not Reservation.find_by(email: "john.doe@example.com")
     assert_not Reservation.find_by(email: "lisa.mills@example.com")
     assert_not Reservation.find_by(email: "mary.jones@example.com")
@@ -160,7 +152,7 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not Reservation.find_by(email: "bob.miurtha@example.com")
     assert_not Reservation.find_by(email: "bill.carson@example.com")
     # should be 5 prior reservations based on their status
-    assert_not PriorReservation.find_by(email: "steve.jobs@example.com") # reservation_form don't get migrated
+    assert_not PriorReservation.find_by(email: "form.minimum@example.com") # reservation_form don't get migrated
     assert_not PriorReservation.find_by(email: "john.doe@example.com") # address_verification don't get migrated
     assert_not PriorReservation.find_by(email: "lisa.mills@example.com") # ddonation don't get migrated
     assert PriorReservation.find_by(email: "mary.jones@example.com")
@@ -250,60 +242,52 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "status_higher_than? returns true if status is higher than the other status" do
     assert reservations(:pending_pickup_1).status_higher_than?("routing")
+    assert_not reservations(:pending_pickup_1).status_higher_than?("picked_up")
   end
 
   test "status_lower_than? returns true if status is lower than the other status" do
     assert reservations(:pending_pickup_1).status_lower_than?("picked_up")
+    assert_not reservations(:pending_pickup_1).status_lower_than?("routing")
   end
 
   test "scope routing_ready returns reservations that are ready for routing" do
     assert_equal 4, Reservation.routing_ready.count
   end
 
-  # test "reset_geocoding and status to routing when address is changed" do
-  #   reservation = reservations(:pending_pickup_1)
-  #   assert_equal "176 Harlan St", reservation.street
-  #   reservation.update(street: "123 Main St", city: "Anytown", state: "CA", zip: "12345")
-  #   reservation.reload
-  #   assert_equal "routing", reservation.status
-  #   assert_nil reservation.latitude
-  #   assert_nil reservation.longitude
-  # end
+  test "reset_geocoding and status to routing when address is changed" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update(street: "1 East 161st St")
+    reservation.reload
+    assert_equal "routing", reservation.status
+    assert_nil reservation.latitude
+    assert_nil reservation.longitude
+  end
 
-  # test "routing has no route" do
-  #   assert_not reservations(:routing_1).route
-  # end
+  test "status changes to routing when route is removed" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.route_id = nil
+    reservation.save
+    assert reservation.routing?
+  end
 
-  # test "pending pickup has a route" do
-  #   assert reservations(:pending_pickup_1).route
-  # end
+  test "status changes to pending pickup when route is added" do
+    reservation = reservations(:routing_1)
+    reservation.route = routes(:one)
+    reservation.save
+    assert reservation.pending_pickup?
+  end
 
-  # test "status changes to routing when route is removed" do
-  #   reservation = reservations(:pending_pickup_1)
-  #   reservation.route = nil
-  #   reservation.save
-  #   assert reservation.routing?
-  # end
+  test "is_manually_geocoded when changing coordinates on pending pickup reservation" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update(latitude: 47.64011, longitude: -122.527945)
+    assert reservation.is_manually_geocoded
+    assert reservation.routing?
+  end
 
-  # test "status changes to pending pickup when route is added" do
-  #   reservation = reservations(:routing_1)
-  #   reservation.route = routes(:one)
-  #   reservation.save
-  #   assert reservation.pending_pickup?
-  # end
-
-  # test "is_manually_geocoded when changing coordinates on pending pickup reservation" do
-  #   reservation = reservations(:pending_pickup_1)
-  #   reservation.update(latitude: 47.64011, longitude: -122.527945)
-  #   assert reservation.is_manually_geocoded
-  #   assert reservation.routing?
-  # end
-
-  # test  "resetting to automatic geocoding when coordinates removed" do
-  #   reservation = reservations(:pending_pickup_not_routed)
-  #   assert reservation.is_manually_geocoded
-  #   reservation.update(latitude: nil, longitude: nil)
-  #   assert_not reservation.is_manually_geocoded
-  # end
-
-end  
+  test "resetting to automatic geocoding when coordinates removed" do
+    reservation = reservations(:pending_pickup_not_routed)
+    assert reservation.is_manually_geocoded
+    reservation.update(latitude: nil, longitude: nil)
+    assert_not reservation.is_manually_geocoded
+  end
+end

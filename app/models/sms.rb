@@ -26,8 +26,8 @@ class Sms < ApplicationRecord
   end
 
   def client
-    sid, auth_token = 
-    Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :account_sid), 
+    sid, auth_token =
+    Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :account_sid),
     Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :auth_token)
 
     @client ||= Twilio::REST::Client.new sid, auth_token

@@ -27,8 +27,4 @@ class Admin::SmsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_sms_url
     assert_equal "Thread deleted successfully.", flash[:notice]
   end
-  
-  
-
-  
 end

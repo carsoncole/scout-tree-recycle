@@ -8,10 +8,10 @@ class Admin::OperationsTest < ApplicationSystemTestCase
     accept_confirm "Are you sure you want to migrate reservations?"
 
     visit admin_marketing_index_url
-    assert_equal 13, page.all('table tbody tr').count
+    assert_equal 13, page.all("table tbody tr").count
 
     visit admin_reservations_url
-    assert_equal 0, page.all('table tbody tr').count
+    assert_equal 0, page.all("table tbody tr").count
   end
 
   test "migration as a non-admin user" do

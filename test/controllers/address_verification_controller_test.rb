@@ -10,5 +10,5 @@ class AddressVerificationControllerTest < ActionDispatch::IntegrationTest
     Setting.instance.update(is_donations_enabled: false)
     get reservation_address_verification_url(reservations(:address_verification_1))
     assert_redirected_to reservation_donations_url(reservations(:address_verification_1))
-  end 
+  end
 end

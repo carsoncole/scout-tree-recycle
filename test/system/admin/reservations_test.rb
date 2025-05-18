@@ -26,35 +26,35 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     click_link "All Reservations"
 
     # Count the number ofreservations
-    assert_equal 1, page.all('table').count
-    reservation_count = page.all('table tbody tr').count
-    assert_equal Reservation.count, reservation_count 
+    assert_equal 1, page.all("table").count
+    reservation_count = page.all("table tbody tr").count
+    assert_equal Reservation.count, reservation_count
 
     click_link "Needs Routing"
     sleep 0.2
-    assert_equal 1, page.all('table').count
-    reservation_count = page.all('table tbody tr').count
+    assert_equal 1, page.all("table").count
+    reservation_count = page.all("table tbody tr").count
     assert_equal Reservation.routing.count, reservation_count
   end
 
   # test that the edit link works
   test "edit link works" do
     visit admin_reservations_url
-    first_row = page.first('table tbody tr')
+    first_row = page.first("table tbody tr")
     first_row.click_link("Edit")
     assert_selector "h1", text: "Edit Reservation"
   end
 
   test "view link works" do
     visit admin_reservations_url
-    first_row = page.first('table tbody tr')
+    first_row = page.first("table tbody tr")
     first_row.click_link("View")
     assert_selector "h1", text: "Reservation Details"
   end
 
   test "delete button works" do
     visit admin_reservations_url
-    first_row = page.first('table tbody tr')
+    first_row = page.first("table tbody tr")
     assert_difference "Reservation.count", -1 do
       accept_confirm do
         first_row.click_button("Delete")
@@ -63,5 +63,4 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     end
     assert_selector ".flash", text: "Reservation was successfully deleted."
   end
-
 end

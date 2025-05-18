@@ -17,10 +17,13 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_emails 1 do
       @reservation.routing!
     end
+
+    assert @reservation.reload.confirmed_reservation_email_sent_at.present?
   end
 
   test "confirmation email" do
     reservation = reservations(:pending_pickup_1)
+    reservation.update_column(:confirmed_reservation_email_sent_at, nil)
     email = ReservationsMailer.with(reservation_id: reservation.id).new_reservation_email
 
     assert_emails 1 do
@@ -30,6 +33,18 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal [ "tree-recycle@example.com" ], email.from
     assert_equal "Your tree pickup is confirmed", email.subject
     assert_match "Tree pick-up scheduled", email.body.encoded
+  end
+
+  test "sends cancellation reservation email once cancelled" do
+    assert_emails 0 do
+      @reservation = reservations(:routing_1)
+    end
+
+    assert_emails 1 do
+      @reservation.cancelled!
+    end
+
+    assert @reservation.reload.cancelled_reservation_email_sent_at.present?
   end
 
   test "cancelled reservation email" do
@@ -44,6 +59,19 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_match "Tree pick-up cancelled", email.body.encoded
   end
 
+  test "not sending more than one confirmation email" do
+    reservation = reservations(:address_verification_1)
+    assert_emails 1 do
+      perform_enqueued_jobs do
+        reservation.routing!
+      end
+    end
+    assert reservation.reload.confirmed_reservation_email_sent_at.present?
+    assert reservation.pending_pickup?
+    assert_emails 0 do
+      reservation.routing!
+    end
+  end
 
   test "confirmation email sent when status is changed to routing" do
     reservation = reservations(:donation_1)
@@ -67,6 +95,21 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal [ "tree-recycle@example.com" ], email.from
     assert_equal "Your tree pickup reservation has been cancelled", email.subject
     assert_match "Tree pick-up cancelled", email.body.encoded
+  end
+
+  test "not sending more than one cancellation email" do
+    reservation = reservations(:pending_pickup_1)
+    assert_emails 1 do
+      perform_enqueued_jobs do
+        reservation.cancelled!
+      end
+    end
+    assert reservation.reload.cancelled_reservation_email_sent_at.present?
+    assert reservation.cancelled?
+    assert_emails 0 do
+      reservation.pending_pickup!
+      reservation.cancelled!
+    end
   end
 
   test "mailers for all statuses" do

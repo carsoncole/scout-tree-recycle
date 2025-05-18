@@ -79,7 +79,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_users_url
     assert_equal "User was successfully deleted.", flash[:notice]
   end
-  
+
   test "user should not destroy user" do
     sign_in(users(:user))
     delete admin_user_url(users(:admin))

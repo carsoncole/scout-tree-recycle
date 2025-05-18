@@ -29,7 +29,7 @@ module Geocodable
 
     def full_geocode!
       if self.class == Reservation
-        return if self.is_manually_geocoded?
+        return false if self.is_manually_geocoded?
       end
 
       update_columns(was_automatically_geocoded: true)
@@ -50,7 +50,7 @@ module Geocodable
         begin
           results = Geocoder.search(self.address)
           if results.count == 1
-            geocode            
+            geocode
             self.update_columns(latitude: self.latitude, longitude: self.longitude)
           elsif results.count == 2 && results.as_json[0]["place"]["address_number"].present?
             result = results.as_json[0]["place"]
@@ -62,7 +62,7 @@ module Geocodable
           end
         end
       end
-      self.was_automatically_geocoded
+      self.geocoded?
     end
   end
 end

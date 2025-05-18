@@ -6,7 +6,7 @@ class Donation < ApplicationRecord
 
   enum :form, { online: 1, cash_or_check: 2 }, default: 1
 
-  scope :current_event, -> { where("created_at > ?", Date.today - 6.months)}
+  scope :current_event, -> { where("created_at > ?", Date.today - 6.months) }
 
   def send_receipt_email!
     return if self.is_receipt_email_sent?

@@ -15,6 +15,5 @@ class RouteReservationJob < ApplicationJob
     unless reservation.routing_failed? || reservation.is_manually_routed?
       reservation.route!
     end
-
   end
 end

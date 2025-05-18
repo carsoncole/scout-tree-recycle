@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  
   # Public pages
   root "public#index"
   get "about", to: "public#about"
@@ -12,19 +11,19 @@ Rails.application.routes.draw do
     get "address_verification", to: "address_verification#address_verification", as: :address_verification
     # patch "address_confirmation", to: "address_verification#address_confirmation", as: :address_confirmation
     get "confirmation", to: "reservations#confirmation", as: :confirmation
-    
+
     # Donations
     resources :donations, only: [ :index, :new, :create ]
-    post 'cash-or-check' => 'donations#cash_or_check', as: 'cash_or_check'
-    post 'no-donation' => 'donations#no_donation', as: 'no_donation'
-    get 'donations/success' => 'donations#success', as: 'success'
-    get 'donations/cancel' => 'donations#cancel', as: 'cancel'
-    get 'confirmed' => 'reservations#confirmed', as: 'confirmed'
+    post "cash-or-check" => "donations#cash_or_check", as: "cash_or_check"
+    post "no-donation" => "donations#no_donation", as: "no_donation"
+    get "donations/success" => "donations#success", as: "success"
+    get "donations/cancel" => "donations#cancel", as: "cancel"
+    get "confirmed" => "reservations#confirmed", as: "confirmed"
   end
 
   # Donations
-  get '/donation' => 'donations#donation_without_reservation', as: 'donation_without_reservation'
-  get '/thank-you-for-your-donation' => 'donations#success', as: 'success'
+  get "/donation" => "donations#donation_without_reservation", as: "donation_without_reservation"
+  get "/thank-you-for-your-donation" => "donations#success", as: "success"
 
   # Prior Reservations
   resources :prior_reservations, only: [] do
@@ -52,7 +51,7 @@ Rails.application.routes.draw do
       end
     end
     resources :routes do
-      resources :points, only: [:create, :destroy]
+      resources :points, only: [ :create, :destroy ]
       member do
         post :add_driver
         delete :remove_driver
@@ -61,10 +60,10 @@ Rails.application.routes.draw do
     resources :zones
     resources :users, except: [ :show ]
     resources :prior_reservations, only: [ :destroy ]
-    resources :donations, only: [:index, :show, :destroy]
+    resources :donations, only: [ :index, :show, :destroy ]
 
     # SMS
-    resources :sms, only: [:index, :create] do
+    resources :sms, only: [ :index, :create ] do
       collection do
         post :mark_viewed
         delete :destroy
@@ -98,7 +97,7 @@ Rails.application.routes.draw do
   # API for Stripe and Twilio webhooks
   namespace :api do
     # Incoming Stripe transaction confirmation
-    post 'stripe-webhook' => "donations#stripe_webhook"
+    post "stripe-webhook" => "donations#stripe_webhook"
     # Incoming SMS
     post "sms/reply" => "sms#reply"
   end

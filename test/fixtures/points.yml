@@ -4,3 +4,32 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
+one: 
+  latitude: 40.68920
+  longitude: -74.04454
+  order: 1
+  route: one
+
+two:
+  latitude: 40.68701
+  longitude: -73.90918
+  order: 2
+  route: one
+
+three:
+  latitude: 40.80145
+  longitude: -73.91127
+  order: 3
+  route: one
+
+four:
+  latitude: 40.83788
+  longitude: -74.05311
+  order: 4
+  route: one
+
+five:
+  latitude: 40.68920
+  longitude: -74.04454
+  order: 5
+  route: one

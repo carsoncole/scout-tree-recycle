@@ -1,97 +1,100 @@
-reservation_form_1:
-  name: Steve Jobs
-  street: 123 Main St
-  city: Bainbridge Island
-  state: WA
+reservation_form_minimum:
+  name: Form Minimum
+  street: 350 5th Ave
+  city: New York
+  state: NY
   country: United States
-  email: steve.jobs@example.com
-  mobile: 1234567890
+  email: form.minimum@example.com
+  status: reservation_form
+
+reservation_form_with_mobile:
+  name: Steve Jobs
+  street: 405 Lexington Ave
+  mobile: 712-345-3456
+  city: New York
+  state: NY
+  country: United States
+  email: steven.wonder@example.com
   status: reservation_form
 
 address_verification_1:
   name: John Doe
-  street: 123 Main St
-  city: Bainbridge Island
-  state: WA
+  street: 1 Bowling Green
+  city: New York
+  state: NY
   country: United States
   email: john.doe@example.com
-  mobile: 1234567890
-  pickup_notes: Tree will be leaning against the fence
   status: address_verification
-  is_manually_routed: true
 
-address_verification_2:
+address_verification_with_mobile:
   name: Jane Doe
-  street: 1 Main St
-  city: Bainbridge Island
-  state: WA
+  street: 30 Rockefeller Plaza
+  city: New York
+  state: NY
   country: United States
   email: jane.doe@example.com
-  mobile: 1234567890
-  pickup_notes: Tree will be in the back yard
+  mobile: 123-456-7890
   status: address_verification
-  is_manually_routed: true
 
-address_verification_3:
+address_verification_with_manual_routing:
   name: Lisa Doe
-  street: 17 South Main St
-  city: Bainbridge Island
-  state: WA
+  street: 100 Church St
+  city: New York
+  state: NY
   country: United States
   email: lisa.doe@example.com
   mobile: 1234567890
-  pickup_notes: By the mailbox 
   status: address_verification
+  latitude: 31.1212
+  longitude: 1212.1212
   is_manually_routed: true
 
 donation_1:
   name: Lisa Mills
-  street: 12 South Shore St
-  city: Bainbridge Island
-  state: WA
+  street: 1 Centre St
+  city: New York
+  state: NY
   country: United States
   email: lisa.mills@example.com
-  mobile: 1234567890
   status: donation
 
-donation_2:
+donation_with_mobile:
   name: Sam Trellis
-  street: 12 Commodore
-  city: Bainbridge Island
-  state: WA
+  street: 10 Columbus Circle
+  city: New York
+  state: NY
   country: United States
   email: sam.trellis@example.com
   mobile: 1234567890 
   status: donation
-  is_manually_routed: true
 
 routing_1:
   name: Icky Jones
-  street: 9415 Capstan Dr NE # real address
-  city: Bainbridge Island
-  state: WA
+  street: 200 Vesey St
+  city: New York
+  state: NY
   country: United States
   email: icky.jones@example.com
-  mobile: 1234567890
   status: routing
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 routing_2:
   name: Trellis Wilson
-  street: 1760 Susan Place NW # real address
-  city: Bainbridge Island
-  state: WA
+  street: 1 Astor Pl
+  city: New York
+  state: NY
   country: United States
   email: trellis.wilson@example.com
   mobile: 1234567890
   status: routing
   is_manually_routed: true
-
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 routing_routing_failed:
   name: Santa Claus
-  street: 176 Harlan St
-  city: Bainbridge Island
-  state: WA
+  street: 176 Bad St
+  city: New York
+  state: NY
   country: United States
   email: santa.claus@example.com
   status: routing
@@ -99,12 +102,13 @@ routing_routing_failed:
   latitude: 31.1212
   longitude: 1212.1212
   was_automatically_routed: true
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 routing_geocoding_manual:
   name: The Grinch
   street: 176 Harlan St
-  city: Bainbridge Island
-  state: WA
+  city: New York
+  state: NY
   country: United States
   email: the_grinch@example.com
   status: routing
@@ -112,12 +116,13 @@ routing_geocoding_manual:
   latitude: 31.1212
   longitude: 1212.1212
   is_manually_geocoded: true
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 pending_pickup_1  :
   name: Mary Jones
-  street: 176 Harlan St
-  city: Bainbridge Island
-  state: WA
+  street: 770 Broadway
+  city: New York
+  state: NY
   country: United States
   email: mary.jones@example.com
   mobile: 2069230400
@@ -125,12 +130,13 @@ pending_pickup_1  :
   latitude: 31.1212
   longitude: 1212.1212
   route: one 
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 pending_pickup_not_routed:
   name: Susan Banks
-  street: 189 Harlan St
-  city: Bainbridge Island
-  state: WA
+  street: 1 World Trade Center
+  city: New York
+  state: NY
   country: United States
   email: susan.banks@example.com
   mobile: 2069982344
@@ -141,12 +147,13 @@ pending_pickup_not_routed:
   latitude: 31.1212
   longitude: 1212.1212
   route: two 
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 picked_up_1:
   name: Bob Jones
   street: 12 Winslow St
-  city: Bainbridge Island
-  state: WA
+  city: New York
+  state: NY
   country: United States
   email: bob.jones@example.com
   mobile: 2064759823 
@@ -154,12 +161,13 @@ picked_up_1:
   latitude: 31.1212
   longitude: 1212.1212
   route: one 
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 picked_up_2:
   name: Sammy Kopeke
-  street: 12 Winslow St
-  city: Bainbridge Island
-  state: WA
+  street: 225 Liberty St
+  city: New York
+  state: NY
   country: United States
   email: Sammy.Kopeke@example.com
   mobile: 2064759823 
@@ -168,12 +176,13 @@ picked_up_2:
   latitude: 31.1212
   longitude: 1212.1212
   route: four
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 missing_1:
   name: Bill Carson
-  street: 1 ABC Ave
-  city: Bainbridge Island
-  state: WA
+  street: 1600 Broadway
+  city: New York
+  state: NY
   country: United States
   email: bill.carson@example.com
   mobile: 1234567890
@@ -182,26 +191,30 @@ missing_1:
   latitude: 31.1212
   longitude: 1212.1212
   route: one 
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 cancelled_1:
   name: Bob Miurtha
-  street: 15 Winslow St
-  city: Bainbridge Island
-  state: WA
+  street: 33 Hudson Yards
+  city: New York
+  state: NY
   country: United States
   email: bob.miurtha@example.com
   mobile: 1234567890
   status: cancelled
   route: two
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
+  cancelled_reservation_email_sent_at: 2025-05-17 12:00:00
 
 cancelled_2:
   name: Billy Carter
-  street: 15 Winslow St
-  city: Bainbridge Island
-  state: WA
+  street: 1251 Avenue of the Americas
+  city: New York
+  state: NY
   country: United States
   email: billy_carter@example.com
   mobile: 1234567890
   status: cancelled
-
+  confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
+  cancelled_reservation_email_sent_at: 2025-05-17 12:00:00
 

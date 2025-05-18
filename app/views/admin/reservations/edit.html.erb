@@ -208,7 +208,7 @@
                         <%= f.label :status, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
                         <div>
                           <%= f.select :status, 
-                              Reservation.statuses.keys.map { |s| [s.titleize, s] },
+                              Reservation.statuses.except(:reservation_form, :address_verification, :donation).keys.map { |s| [s.titleize, s] },
                               {},
                               class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-4 py-2.5 appearance-none bg-white dark:bg-gray-700" %>
                         </div>

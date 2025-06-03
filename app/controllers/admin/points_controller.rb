@@ -1,5 +1,5 @@
 
-class PointsController < Admin::BaseController
+class Admin::PointsController < Admin::BaseController
   # before_action :require_admin
   before_action :set_route
   before_action :set_point, only: [ :destroy ]

@@ -1,6 +1,13 @@
 class Admin::SettingsController < Admin::BaseController
+  allow_unauthenticated_access only: [:new, :create]
   def index
     @unviewed_logs_count = Log.where(is_viewed: false).count
+  end
+
+  def new
+  end
+
+  def create
   end
 
   def update

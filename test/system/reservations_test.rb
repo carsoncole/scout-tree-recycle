@@ -2,7 +2,7 @@ require "application_system_test_case"
 
 class ReservationsTest < ApplicationSystemTestCase
   setup do
-    Setting.instance.update(is_routing_enabled: true)
+    Setting.instance.update(is_routing_enabled: true, is_donations_enabled: true)
   end
 
   test "visiting root" do

@@ -45,7 +45,7 @@ Rails.application.routes.draw do
       end
     end
     resources :drivers, except: [ :show ]
-    resources :settings, only: [ :index, :update ] do
+    resources :settings, only: [ :index, :new, :create, :update ] do
       member do
         patch :toggle
       end

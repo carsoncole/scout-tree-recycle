@@ -16,6 +16,7 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
 
   test "should send marketing email 1" do
     sign_in
+    Setting.instance.update(is_emailing_enabled: true)
     post admin_send_marketing_email_1_url
     assert_redirected_to admin_marketing_index_url
     count_to_be_sent = PriorReservation.where(marketing_1_email_sent_at: nil).count
@@ -23,6 +24,7 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should send marketing email 2" do
+    Setting.instance.update(is_emailing_enabled: true)
     sign_in
     post admin_send_marketing_email_2_url
     assert_redirected_to admin_marketing_index_url

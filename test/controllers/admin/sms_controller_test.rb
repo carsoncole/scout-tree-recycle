@@ -16,6 +16,7 @@ class Admin::SmsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create SMS" do
     sign_in
+    Setting.instance.update(is_sms_enabled: true)
     post admin_sms_url, params: { sms: { phone: "1234567890", body: "Hello, world!" } }
     assert_redirected_to admin_sms_url
     assert_equal "Message sent successfully.", flash[:notice]

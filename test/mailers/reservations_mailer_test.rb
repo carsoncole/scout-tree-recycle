@@ -54,7 +54,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
       email.deliver_now
     end
     assert_equal [ reservation.email ], email.to
-    assert_equal [ "tree-recycle@example.com" ], email.from
+    assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup reservation has been cancelled", email.subject
     assert_match "Tree pick-up cancelled", email.body.encoded
   end
@@ -80,7 +80,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     end
     email = ActionMailer::Base.deliveries.last
     assert_equal [ reservation.email ], email.to
-    assert_equal [ "tree-recycle@example.com" ], email.from
+    assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup is confirmed", email.subject
     assert_match "Tree pick-up scheduled", email.body.encoded
   end
@@ -92,7 +92,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     end
     email = ActionMailer::Base.deliveries.last
     assert_equal [ reservation.email ], email.to
-    assert_equal [ "tree-recycle@example.com" ], email.from
+    assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup reservation has been cancelled", email.subject
     assert_match "Tree pick-up cancelled", email.body.encoded
   end

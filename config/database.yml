@@ -15,7 +15,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    host: 192.168.0.200
+    host: 192.168.0.104
     database: tree_recycle_production
     username: tree_recycle
     password: <%= Rails.application.credentials.dig(:production_db_password) %>

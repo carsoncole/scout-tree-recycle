@@ -22,6 +22,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
   end
 
   test "confirmation email" do
+    Setting.instance.update(is_emailing_enabled: true)
     reservation = reservations(:pending_pickup_1)
     reservation.update_column(:confirmed_reservation_email_sent_at, nil)
     email = ReservationsMailer.with(reservation_id: reservation.id).new_reservation_email
@@ -30,7 +31,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
       email.deliver_now
     end
     assert_equal [ reservation.email ], email.to
-    assert_equal [ "tree-recycle@example.com" ], email.from
+    assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup is confirmed", email.subject
     assert_match "Tree pick-up scheduled", email.body.encoded
   end
@@ -60,6 +61,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
   end
 
   test "not sending more than one confirmation email" do
+    Setting.instance.update(is_routing_enabled: true)
     reservation = reservations(:address_verification_1)
     assert_emails 1 do
       perform_enqueued_jobs do

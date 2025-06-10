@@ -8,7 +8,9 @@ module Setupable
   private
 
   def check_if_setup
-    if !Setting.first.present? && !request.path.include?("admin/settings")
+    return if request.path.include?("admin/settings")
+
+    if !Setting.first.present?
       redirect_to new_admin_setting_path
     end
   end 

@@ -1,13 +1,28 @@
 class Admin::SettingsController < Admin::BaseController
   allow_unauthenticated_access only: [:new, :create]
+
   def index
     @unviewed_logs_count = Log.where(is_viewed: false).count
   end
 
   def new
+    if Setting.first.present?
+      redirect_to admin_settings_path
+    else
+      @setting = Setting.new
+    end
   end
 
   def create
+    @setting = Setting.new(setting_params)
+    if @setting.save
+      unless User.exists?(role: "admin")
+        User.create!(email: "admin@example.com", password: "password", role: "admin")
+      end
+      redirect_to admin_settings_path, notice: "Settings saved. Admin user created with email admin@example.com and password 'password'."
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   def update

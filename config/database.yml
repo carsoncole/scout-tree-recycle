@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: posgresql2
+  host: 192.168.0.104
   username: tree_recycle
   password: <%= Rails.application.credentials.dig(:production_db_password) %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>exit
@@ -18,7 +18,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    host: posgresql2
+    host: 192.168.0.104
     database: tree_recycle_production
     username: tree_recycle
     password: <%= Rails.application.credentials.dig(:production_db_password) %>

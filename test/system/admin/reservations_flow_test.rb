@@ -43,7 +43,7 @@ class Admin::ReservationsFlowTest < ApplicationSystemTestCase
     find("#reservation_route_id").select("Select a route")
     click_button "Update Reservation"
     visit admin_reservations_url
-    within(page.find("tr", text: "icky.jones@example.com")) do
+    within(page.find("tr", text: "mary.jones@example.com")) do
       assert_text "Pending"
     end
   end

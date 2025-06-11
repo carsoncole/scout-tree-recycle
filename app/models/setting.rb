@@ -14,11 +14,11 @@ class Setting < ApplicationRecord
   attribute :reservations_closed_message, :string, default: "Stay tuned for when we open reservations again."
   attribute :time_zone, :string, default: "UTC"
 
-  validates :default_city, :default_state, presence: true
-  validates :event_pickup, :event_pickup_end, :event_sign_up_deadline, presence: true 
   validates :organization_name, presence: true
-  validates :site_title, presence: true
-  validates :home_page_header, presence: true
+  validates :default_city, :default_state, presence: true
+  validates :event_pickup_start, :event_pickup_end, :event_sign_up_deadline, presence: { message: "date and time can't be blank" }
+  validates :site_title, presence: true, if: -> (setting) { setting.organization_name.present? }
+  validates :home_page_header, presence: true, if: -> (setting) { setting.organization_name.present? }
   validates :about_event_description, presence: true
   validates :on_day_of_pickup_instructions, presence: true
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
@@ -27,8 +27,8 @@ class Setting < ApplicationRecord
 
   def set_defaults
     return unless self.organization_name.present?
-    self.site_title = self.organization_name + " Tree Recycle"
-    self.home_page_header = self.organization_name + " Tree Recycle"
+    self.site_title = self.organization_name.strip + " Tree Recycle"
+    self.home_page_header = self.organization_name.strip + " Tree Recycle"
   end
 
   def self.instance

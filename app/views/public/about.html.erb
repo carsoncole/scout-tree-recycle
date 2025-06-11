@@ -45,13 +45,13 @@
 
           <div>
             <h4 class="text-lg font-medium text-gray-900 dark:text-white">Date of pick-up</h4>
-            <p class="text-gray-700 dark:text-gray-300"><%= setting.event_pickup.strftime("%B %-d, %Y") %></p>
+            <p class="text-gray-700 dark:text-gray-300"><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></p>
           </div>
 
           <div>
             <h4 class="text-lg font-medium text-gray-900 dark:text-white">Your tree should be ready for pickup:</h4>
             <p class="text-gray-700 dark:text-gray-300">
-              <%= setting.event_pickup.strftime("%l:%M%P") %>
+              <%= setting.event_pickup_start.strftime("%l:%M%P") %>
               -
               <%= setting.event_pickup_end.strftime("%l:%M%P") %>
             </p>

@@ -84,7 +84,7 @@ class AboutsTest < ApplicationSystemTestCase
 
   test "should display day of pickup info" do
     setting = Setting.instance
-    setting.event_pickup = "2025-01-01 10:00:00"
+    setting.event_pickup_start = "2025-01-01 10:00:00"
     setting.save
 
     visit about_url
@@ -93,7 +93,7 @@ class AboutsTest < ApplicationSystemTestCase
 
   test "should display pickup time" do
     setting = Setting.instance
-    setting.event_pickup = "2025-01-01 10:00:00"
+    setting.event_pickup_start = "2025-01-01 10:00:00"
     setting.event_pickup_end = "2025-01-01 15:00:00"
     setting.save
 

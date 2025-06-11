@@ -63,7 +63,7 @@ class Admin::SettingsController < Admin::BaseController
       :organization_url,
       :site_description,
       :reservations_closed_message,
-      :event_pickup,
+      :event_pickup_start,
       :event_pickup_end,
       :event_sign_up_deadline,
       :default_city,

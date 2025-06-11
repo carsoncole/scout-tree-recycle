@@ -11,25 +11,39 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Settings"
   end
 
-  test "pickups portal is disabled if closed or key is not set" do
+  test "pickups portal is disabled when not enabled" do
     Setting.instance.update(is_pickups_site_enabled: false)
     visit admin_settings_url
-    assert_link "Pickups Portal", href: pickups_root_path
-    click_on "Pickups Portal"
-    assert_selector ".flash", text: "The Pickups site is CLOSED."
+    new_window = window_opened_by do  
+      click_on "Pickups Portal"
+    end
+    within_window new_window do
+      assert_selector ".flash", text: "The Pickups site is CLOSED."
+    end
+  end
 
+  test "pickups portal is enabled when enabled" do
+    Setting.instance.update(is_pickups_site_enabled: true)
+    visit admin_settings_url
+    new_window = window_opened_by do
+      click_on "Pickups Portal"
+    end
+    within_window new_window do
+      assert_no_text "The Pickups site is CLOSED."
+    end
+  end
+
+  test "pickups portal is accessible when driver secret key is set" do
     Setting.instance.update(is_pickups_site_enabled: true, driver_secret_key: "1234567890")
     visit admin_settings_url
-    assert_link "Pickups Portal", href: pickups_root_path
-    click_on "Pickups Portal"
-    fill_in "Driver Key", with: "1234567890"
-    click_on "Access Pickups"
-    assert_selector "h1", text: "Drivers"
-
-    Setting.instance.update(is_pickups_site_enabled: true, driver_secret_key: nil)
-    visit admin_settings_url
-    click_on "Pickups Portal"
-    assert_selector ".flash", text: "The Pickups site is CLOSED."
+    new_window = window_opened_by do
+      click_on "View Pickups Portal"
+    end
+    within_window new_window do
+      fill_in "Driver Key", with: "1234567890"
+      click_on "Access Pickups"
+      assert_selector "h1", text: "Drivers"
+    end
   end
 
   # test "toggle settings" do

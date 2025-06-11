@@ -29,7 +29,7 @@
               </p>
 
               <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; color: #4b5563; margin: 0 0 30px 0;">
-                Thank you for your tree pickup reservation. We're looking forward to helping you recycle your tree on <strong><%= @event_pickup.strftime("%B %-d, %Y") %></strong>.
+                Thank you for your tree pickup reservation. We're looking forward to helping you recycle your tree on <strong><%= @event_pickup_start.strftime("%B %-d, %Y") %></strong>.
               </p>
 
               <!-- Reservation Details Box -->
@@ -53,7 +53,7 @@
                         <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
                           <span style="font-family: Arial, sans-serif; font-size: 14px; color: #6b7280;">Pickup Date:</span>
                           <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
-                            <%= @event_pickup.strftime("%B %-d, %Y") %>
+                            <%= @event_pickup_start.strftime("%B %-d, %Y") %>
                           </span>
                         </td>
                       </tr>

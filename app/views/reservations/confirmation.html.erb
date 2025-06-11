@@ -38,7 +38,7 @@
                 <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
                   <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Pickup Date</dt>
                   <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= Setting.instance.event_pickup.strftime("%B %-d, %Y") %>
+                    <%= Setting.instance.event_pickup_start.strftime("%B %-d, %Y") %>
                   </dd>
                 </div>
 
@@ -79,7 +79,7 @@
                   <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg
-                  <span>Please have your tree ready by <%= setting.event_pickup.strftime("%l:%M%P") %> on pickup day, <%= setting.event_pickup.strftime("%A, %B %-e") %></span>
+                  <span>Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %> on pickup day, <%= setting.event_pickup_start.strftime("%A, %B %-e") %></span>
                 </li>
                 <li class="flex items-start">
                   <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

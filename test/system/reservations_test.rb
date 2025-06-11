@@ -9,7 +9,7 @@ class ReservationsTest < ApplicationSystemTestCase
     visit root_url
 
     assert_selector "h1", text: "Make a Reservation"
-    assert_text "Schedule your tree pickup for " + Setting.instance.event_pickup.strftime("%B %-d, %Y")
+    assert_text "Schedule your tree pickup for " + Setting.instance.event_pickup_start.strftime("%B %-d, %Y")
   end
 
   test "making a reservation and checking status" do

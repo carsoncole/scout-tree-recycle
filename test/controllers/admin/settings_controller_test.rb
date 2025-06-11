@@ -15,7 +15,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
   test "should create initial settings" do
     Setting.destroy_all
     get root_path
-    post admin_settings_path, params: { setting: { organization_name: "Troop 100", default_city: "Anytown", default_state: "CA", event_pickup: "2099-01-06 08:00:00", event_pickup_end: "2099-01-06 15:00:00", event_sign_up_deadline: "2099-01-05 11:59:00" } }
+    post admin_settings_path, params: { setting: { organization_name: "Troop 100", default_city: "Anytown", default_state: "CA", event_pickup_start: "2099-01-06 08:00:00", event_pickup_end: "2099-01-06 15:00:00", event_sign_up_deadline: "2099-01-05 11:59:00" } }
     assert_redirected_to admin_settings_path
   end
 

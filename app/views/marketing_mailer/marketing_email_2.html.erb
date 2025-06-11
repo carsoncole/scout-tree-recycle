@@ -19,7 +19,7 @@
             <% end %>
 
             <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
-              We hope this message finds you well. As the new year begins, we wanted to remind you that the tree pickup service provided by <%= @setting.organization_name %> is scheduled for <%= @setting.event_pickup.strftime('%A, %B %-d') %>.
+              We hope this message finds you well. As the new year begins, we wanted to remind you that the tree pickup service provided by <%= @setting.organization_name %> is scheduled for <%= @setting.event_pickup_start.strftime('%A, %B %-d') %>.
             </p>
 
             <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 30px; padding: 0;">
@@ -59,7 +59,7 @@
               </li>
               <li>
                 <span style="font-weight:800">Scheduled Pickup:</span>
-                Our dedicated scouts will be on standby to collect your tree on <%= @setting.event_pickup.strftime('%A, %B %-d') %>.
+                Our dedicated scouts will be on standby to collect your tree on <%= @setting.event_pickup_start.strftime('%A, %B %-d') %>.
               </li>
             </ol>
 

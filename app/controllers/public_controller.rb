@@ -25,7 +25,7 @@ class PublicController < ApplicationController
     @reservation = Reservation.new(reservation_params)
 
     if @reservation.save
-      redirect_to root_path, notice: "Thank you for your reservation! Your tree will be picked up on #{Setting.instance.event_pickup.strftime("%B %-d")}. We'll send you a confirmation email shortly."
+      redirect_to root_path, notice: "Thank you for your reservation! Your tree will be picked up on #{Setting.instance.event_pickup_start.strftime("%B %-d")}. We'll send you a confirmation email shortly."
     else
       render :index, status: :unprocessable_entity
     end

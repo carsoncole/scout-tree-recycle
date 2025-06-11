@@ -40,6 +40,7 @@
                     <div>
                       <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Reservations</h3>
                       <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations</p>
+                      <%= link_to "View Reservations Site", root_path, target: "_blank", class: "text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" %>
                     </div>
                     <div class="flex items-center">
                       <label class="relative inline-flex items-center cursor-pointer" id="reservations-toggle">
@@ -63,6 +64,7 @@
                     <div>
                       <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Pickups Portal</h3>
                       <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal at "/pickups" for tree pickup management</p>
+                      <%= link_to "View Pickups Portal", pickups_root_path, target: "_blank", class: "text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" %>
                     </div>
                     <div class="flex items-center">
                       <label class="relative inline-flex items-center cursor-pointer">
@@ -235,9 +237,9 @@
                 <div class="space-y-4">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <%= label_tag "setting[event_pickup]", "Event Pickup Date/Time", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                      <%= label_tag "setting[event_pickup_start]", "Event Pickup Date/Time", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
                       <div>
-                        <%= datetime_field_tag "setting[event_pickup]", setting.event_pickup&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                        <%= datetime_field_tag "setting[event_pickup_start]", setting.event_pickup_start&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
                       </div>
                     </div>
 

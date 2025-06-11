@@ -22,7 +22,7 @@ module Pickups
     end
 
     def valid_driver_key?
-      if Setting.instance.driver_secret_key.blank? || Setting.instance.is_pickups_site_enabled == false
+      if Setting.instance.is_pickups_site_enabled == false
         flash.now[:alert] = "The Pickups site is CLOSED."
         render :unauthorized, status: :unauthorized
       else

@@ -13,32 +13,53 @@
       </div>
     <% end %>
     <div>
-      <%= f.label :organization_name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.text_field :organization_name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+      <%= f.label :organization_name, "Organization Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+      <%= f.text_field :organization_name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:organization_name].any?}" %>
+      <% if @setting&.errors[:organization_name].any? %>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:organization_name].first %></p>
+      <% end %>
     </div>
     <div>
-      <%= f.label :city, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.text_field :default_city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+      <%= f.label :default_city, "Default City", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+      <%= f.text_field :default_city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:default_city].any?}" %>
+      <% if @setting&.errors[:default_city].any? %>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:default_city].first %></p>
+      <% end %>
     </div>
     <div>
-      <%= f.label :state, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.text_field :default_state, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+      <%= f.label :default_state, "Default State ('NY')", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+      <%= f.text_field :default_state, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:default_state].any?}" %>
+      <% if @setting&.errors[:default_state].any? %>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:default_state].first %></p>
+      <% end %>
     </div>
     <div>
-      <%= f.label :event_pickup, "Event Pickup Start", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.datetime_field :event_pickup, include_blank: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+      <%= f.label :event_pickup_start, "Event Pickup Start", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+      <%= f.datetime_field :event_pickup_start, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:event_pickup_start].any?}" %>
+      <% if @setting&.errors[:event_pickup_start].any? %>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:event_pickup_start].first %></p>
+      <% end %>
     </div>
     <div>
       <%= f.label :event_pickup_end, "Event Pickup End", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.datetime_field :event_pickup_end, include_blank: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+      <%= f.datetime_field :event_pickup_end, include_blank: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:event_pickup_end].any?}" %>
+      <% if @setting&.errors[:event_pickup_end].any? %>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:event_pickup_end].first %></p>
+      <% end %>
     </div>
     <div>
       <%= f.label :event_sign_up_deadline, "Sign Up Deadline", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.datetime_field :event_sign_up_deadline, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2",include_blank: true %>
+      <%= f.datetime_field :event_sign_up_deadline, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:event_sign_up_deadline].any?}" %>
+      <% if @setting&.errors[:event_sign_up_deadline].any? %>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:event_sign_up_deadline].first %></p>
+      <% end %>
     </div>
     <div class="lg:w-1/2">
       <%= f.label :time_zone, "Time Zone", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.select :time_zone, options_for_select(Setting::AVAILABLE_TIME_ZONES, Setting::AVAILABLE_TIME_ZONES.first), {}, { class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-5 py-2" } %>
+      <%= f.select :time_zone, options_for_select(Setting::AVAILABLE_TIME_ZONES, Setting::AVAILABLE_TIME_ZONES.first), {}, { class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-5 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:time_zone].any?}" } %>
+      <% if @setting&.errors[:time_zone].any? %>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:time_zone].first %></p>
+      <% end %>
     </div>
     <div class="flex justify-end">
       <%= f.submit "Save Settings", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>

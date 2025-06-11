@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_11_023426) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_11_165720) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -171,7 +171,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_023426) do
     t.text "site_description"
     t.string "organization_name"
     t.string "organization_url"
-    t.datetime "event_pickup"
+    t.datetime "event_pickup_start"
     t.datetime "event_pickup_end"
     t.datetime "event_sign_up_deadline"
     t.string "default_city"

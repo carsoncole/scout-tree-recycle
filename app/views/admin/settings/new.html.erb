@@ -2,40 +2,35 @@
   <h1 class="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">Initial Application Setup</h1>
   <p class="mb-6 text-center text-gray-600 dark:text-gray-300">Please configure the required settings to continue.</p>
   <%= form_with url: admin_settings_path, method: :post, model: @setting, local: true, class: "space-y-6" do |f| %>
-    <% if @setting && @setting.errors.any? %>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-        <strong class="font-bold">There were errors.</strong>
-      </div>
-    <% end %>
-    <div>
+    <div id="organization_name_section">
       <%= f.label :organization_name, "Organization Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
       <%= f.text_field :organization_name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:organization_name].any?}" %>
       <% if @setting&.errors[:organization_name].any? %>
         <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:organization_name].first %></p>
       <% end %>
     </div>
-    <div>
+    <div id="default_city_section">
       <%= f.label :default_city, "Default City", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
       <%= f.text_field :default_city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:default_city].any?}" %>
       <% if @setting&.errors[:default_city].any? %>
         <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:default_city].first %></p>
       <% end %>
     </div>
-    <div>
+    <div id="default_state_section">
       <%= f.label :default_state, "Default State", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
       <%= f.select :default_state, options_for_select(us_states), {}, { class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:default_state].any?}" } %>
       <% if @setting&.errors[:default_state].any? %>
         <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:default_state].first %></p>
       <% end %>
     </div>
-    <div>
+    <div id="event_pickup_start_section">
       <%= f.label :event_pickup_start, "Event Pickup Start", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
       <%= f.datetime_field :event_pickup_start, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:event_pickup_start].any?}" %>
       <% if @setting&.errors[:event_pickup_start].any? %>
         <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:event_pickup_start].first %></p>
       <% end %>
     </div>
-    <div>
+    <div id="event_pickup_end_section">
       <%= f.label :event_pickup_end, "Event Pickup End", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
       <%= f.datetime_field :event_pickup_end, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:event_pickup_end].any?}" %>
       <% if @setting&.errors[:event_pickup_end].any? %>

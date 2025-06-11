@@ -46,6 +46,25 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     end
   end
 
+  test "new settings page should show errors if settings are not valid" do
+    Setting.destroy_all
+    visit root_path
+    fill_in "Organization Name", with: ""
+    fill_in "Default City", with: ""
+    fill_in "Event Pickup Start", with: ""
+    click_on "Save Settings"
+    
+    within("#organization_name_section") do
+      assert_text "can't be blank"
+    end
+    within("#default_city_section") do
+      assert_text "can't be blank"
+    end
+    within("#event_pickup_start_section") do
+      assert_text "can't be blank"
+    end
+  end
+
   # test "toggle settings" do
   # Setting.instance.update(is_reservations_open: true, is_emailing_enabled: true, is_sms_enabled: true)
 

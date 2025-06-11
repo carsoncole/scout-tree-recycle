@@ -2,6 +2,7 @@ require "application_system_test_case"
 
 class Admin::ReservationsRoutingStatusTest < ApplicationSystemTestCase
     setup do
+        Setting.instance.update(is_routing_enabled: true)
         sign_in_as(users(:admin), true)
     end
 

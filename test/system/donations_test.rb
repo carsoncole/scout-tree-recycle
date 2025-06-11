@@ -1,6 +1,10 @@
 require "application_system_test_case"
 
 class DonationsTest < ApplicationSystemTestCase
+  setup do
+    Setting.instance.update(is_donations_enabled: true)
+  end
+
   test "new donation page with donations enabled" do
     make_system_reservation
     assert_selector "h1", text: "Support Our Scouts"

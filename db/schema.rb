@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_11_062637) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_11_023426) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -196,7 +196,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_062637) do
     t.string "meta_description"
     t.string "meta_image_filename"
     t.string "reservations_closed_message"
-    t.string "email_from"
     t.integer "email_batch_quantity", default: 100
     t.text "driver_instructions"
     t.datetime "created_at", null: false

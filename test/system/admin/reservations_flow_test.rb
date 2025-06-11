@@ -3,6 +3,7 @@ require "application_system_test_case"
 class Admin::ReservationsFlowTest < ApplicationSystemTestCase
   setup do
     sign_in_as(users(:admin), true)
+    Setting.instance.update(is_routing_enabled: true)
   end
 
   test "geocoding a reservation when routing is disabled" do

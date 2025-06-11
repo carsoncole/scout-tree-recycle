@@ -85,16 +85,7 @@ $ rails db:migrate
 $ bin/dev
 ```
 
-7. Go to ```http://localhost:3000``` and you should see the main reservation page.
-
-8. Create an admin user:
-
-```ruby
-$ rails console
-> User.create(email: "test@example.com", password: "password", role: "admin")
-```
-
-9. Go to ```localhost:3000/admin``` to access the admin site.
+7. Go to ```http://localhost:3000``` and you should see an initial settings page.
 
 
 ## Deployment
@@ -110,7 +101,7 @@ The application can be deployed with Kamal (https://kamal-deploy.org) to any clo
 ### Steps
 
 1. Configure ```config/deploy.yml```.
-2. Congifigure your DNS settings for your domain with an 'A' record that points to the IP address of your host.
+2. Configure your DNS settings for your domain with an 'A' record that points to the IP address of your host.
 2. Launch your host. This can be any dedicated server, or even your local machine. It must have SSH root access enabled.
 3. Create and configure ```.kamal/secrets```. You can use the sample file ```.kamal/secrets.sample```. Replace ```$KAMAL_REGISTRY_PASSWORD``` with your Docker access key. 
 4. With your configuration complete, you need to commit your code, which is what will be used in the Docker image creation.

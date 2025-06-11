@@ -80,7 +80,6 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     fill_in "Contact Phone", with: "Contact Phone"
     fill_in "Contact Email", with: "email@example.com"
     fill_in "Email Batch Quantity", with: "99"
-    fill_in "From Email Address", with: "EmailFrom@example.com"
     click_on "Save Settings"
 
     assert_text "Settings were successfully updated"
@@ -96,6 +95,5 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert find("#setting_contact_phone").value == "Contact Phone"
     assert find("#setting_contact_email").value == "email@example.com"
     assert find("#setting_email_batch_quantity").value == "99"
-    assert find("#setting_email_from").value == "EmailFrom@example.com"
   end
 end

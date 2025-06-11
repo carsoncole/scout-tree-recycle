@@ -1,5 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
   include ApplicationHelper
-  default from: Setting.instance&.email_from || "Anytown Tree Recycle <example@example.com>"
+  default from: EMAIL_FROM
   layout "mailer"
 end

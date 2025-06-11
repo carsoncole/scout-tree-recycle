@@ -135,8 +135,17 @@ Integrations provide additional features for Tree Recycle, including emails, aut
 
 With emailing configured, Tree Recycle will send automated emails confirming tree reservations, cancellations, and donation receipts. Two funnel-type marketing emails are also available to market to people who have made tree pickup reservations in the past.
 
+#### Configure the email sender address
 
-Settings for GMAIL:
+In the configuration file `tree_recycle.rb`, add the sender from email:
+
+```ruby
+EMAIL_FROM = "Anytown Tree Recycle <example@example.com>"
+```
+
+
+#### Gmail
+
 - address:              smtp.gmail.com
 - port:                 587
 - user_name:            username

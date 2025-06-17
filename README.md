@@ -4,7 +4,7 @@
 ![Example Image](public_screenshot.png)
 ![Example Image](confirmation2_screenshot.png)
 
-# Tree Recycle
+# Tree Recycle II
 
 Tree Recycle is a comprehensive web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area.
 
@@ -45,7 +45,7 @@ Tree Recycle is a comprehensive web application that supports the running of a C
   - User management
 
 - **Tree Pickups Site for Drivers**
-  - Dedicated site for drivers at "/pickups"
+  - Dedicated site for driver pickup management at "/pickups"
   - PDF pickup lists (backup in case online connectivity is down)
   - Map showing pickup locations and status
   - Drivers can update status of pickups and register missing trees
@@ -57,32 +57,32 @@ Tree Recycle is a comprehensive web application that supports the running of a C
 2. Install Rails:
 
 ```ruby
-$ gem install rails
+gem install rails
 ```
 
 3. Clone the repo:
 
 ```ruby
-$ git clone https://github.com/carsoncole/tree_recycle.gt
+$ git clone https://github.com/carsoncole/tree_recycle.git
 $ cd tree_recycle
 ```
 
 4. Install gems:
 
 ```ruby
-$ bundle install
+bundle install
 ```
 
 5. Migrate the database:
 
 ```ruby
-$ rails db:migrate
+rails db:migrate
 ```
 
 6. Start the web server:
 
 ```ruby
-$ bin/dev
+bin/dev
 ```
 
 7. Go to ```http://localhost:3000``` and you should see an initial settings page.
@@ -90,7 +90,7 @@ $ bin/dev
 
 ## Deployment
 
-The application can be deployed with Kamal (https://kamal-deploy.org) to any cloud-based or local server as long as SSH root access is available.
+The application can be deployed with [Kamal](https://kamal-deploy.org) to any cloud-based or local server with SSH root access.
 
 ### Prerequisites
 
@@ -109,7 +109,7 @@ The application can be deployed with Kamal (https://kamal-deploy.org) to any clo
 $ git add .
 $ git commit -a -m 'some message'
 ```
-4. Deploy:
+4. Setup remote server and deploy:
 
 ```ruby
 $ kamal setup
@@ -134,9 +134,7 @@ Use encrypted credentials to store application secrets. Remove the existing secr
 Copy the sample ```credentials.ymp.enc.sample```. 
 
 
-## Optional Integrations Installation
-
-Integrations provide additional features for Tree Recycle, including emails, automatic routing, SMS messaging, and donations.
+## Optional Integrations
 
 
 ### Email
@@ -308,6 +306,7 @@ STRIPE_PRODUCTION_PRICE_ITEM = 'price_1M8vYzAY1LGWbDshqoJcAiV9'
 10. Disable ```Test mode```.
 ---
 
+
 ## Marketing emails
 
 ### Marketings emails #1 and #2
@@ -394,25 +393,8 @@ There is sample seed data that will populate the application enough to see how i
 
 Default BSA Scouting images are used in emails and are stored in the `app/assets/images` directory. You can customize these images by replacing them with your own.
 
-## Seed Data
-
-Trial seed data can be loaded. This will create the initial admin user (admin@example.com, password: password), route, zone and reservation data. Use this data to only preview the apps functionality, not for production purposes.
-
-```ruby
-rails db:seed
-```
-
-# Tests
-
-To run tests: 
-
-```ruby
-rails test
-rails test:system
-```
 
 ## Migrating from Tree-Recycle
-To migrate from Tree-Recycle, use pgAdmin 4 to access the tables you want to export. Query the table, then ```Save results to file (F8)```. 
 
 The data you should migrate (make sure you run the post-event data migration will remove any incomplete reservations, and it will move the status of all reservations to 'archived'):
 
@@ -420,6 +402,56 @@ The data you should migrate (make sure you run the post-event data migration wil
 - Points. Fields: `route_id`, `latitude`, `longitude`, `order`
 - Routes. Fields `name`, `street`, `zone_id`, `city`, `state`, `country`, `latitude`, `longitude`
 - Zones. `name`, `street`, `city`, `state`, `country`, `latitude`, `longitude` 
+
+
+Migrating from [Tree Recycle I](https://github.com/carsoncole/tree-recycle.git) primarily transferring reservation data which can be used for marketing in future recycling events. These instructions are based on using PosgreSQL as the backend database.
+
+The following tables and their fields can be migrated:
+
+### Reservations
+
+```sql
+id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at
+```
+
+### Points
+
+```sql
+route_id, latitude, longitude, order, created_at, updated_at
+```
+
+### Routes
+
+```sql
+name, street, zone_id, city, state, country, latitude, longitude, created_at, updated_at
+```
+
+### Zones
+
+```sql
+name, street, city, state, country, latitude, longitude, created_at, updated_at
+```
+
+#### Example migration with  `reservations` table:
+
+1. Download and install the [pgAdmin](https://www.pgadmin.org) utility.
+2. Create connection to your Tree Recycle 1 database.
+3. Open the query tool and create this query:
+```sql
+SELECT SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at FROM reservations;
+```
+3. Select the `reservations` table, right-click and select `Import/Export Data`.
+4. Under `General`, select `Export`, name your export file, and select the download location. Under `Columns`, remove all of the table columns except for these:
+```sql
+id, name, email, phone, street, created_at, updated_at
+```
+5. Click OK.
+6. Create connection to your new Tree Recycle 2 database.
+6. Highlight the `prior_reservations` table and select `Import/Export data`.
+7. Under `General`, select `Import` and seleect your file. Under `Options`, enable `Header` and under NULL Strings, enter `NULL`.
+8. Click OK.
+9. To verify, right-click on the `prior_reservations` table, and select `View/Edit Data > All Rows`.
+
 
 
 # License

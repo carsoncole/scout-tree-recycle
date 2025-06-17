@@ -399,7 +399,7 @@ Default BSA Scouting images are used in emails and are stored in the `app/assets
 
 Migrating data from [Tree Recycle](https://github.com/carsoncole/tree-recycle.git) is beneficial for transferring reservation data which can be used for marketing in future recycling events, and for mapping data that defines your routes and zones. These instructions are based on using PosgreSQL as the backend database.
 
-The following tables and the respective SQL can be used for the exports:
+The following tables and their respective SQL can be used in the instructions below:
 
 ### Reservations
 
@@ -425,7 +425,7 @@ SELECT id, name, street, city, state, country, distance, latitude, longitude, zo
 SELECT id, name, street, city, state, country, latitude, longitude, created_at, updated_at from ZONES;
 ```
 
-#### Example migration with  `reservations` table:
+#### Example migration for  `reservations` data:
 
 1. Download and install the [pgAdmin](https://www.pgadmin.org) utility.
 2. Create connection to your Tree Recycle 1 database.

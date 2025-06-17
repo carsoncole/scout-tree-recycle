@@ -429,23 +429,16 @@ SELECT id, name, street, city, state, country, latitude, longitude, created_at, 
 
 1. Download and install the [pgAdmin](https://www.pgadmin.org) utility.
 2. Create connection to your Tree Recycle 1 database.
-3. Open the query tool and create this query:
+3. Open the Query Tool and run this query:
 ```sql
-SELECT SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at FROM reservations;
+SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at FROM RESERVATIONS;
 ```
-3. Select the `reservations` table, right-click and select `Import/Export Data`.
-4. Under `General`, select `Export`, name your export file, and select the download location. Under `Columns`, remove all of the table columns except for these:
-```sql
-id, name, email, phone, street, created_at, updated_at
-```
-5. Click OK.
-6. Create connection to your new Tree Recycle 2 database.
-6. Highlight the `prior_reservations` table and select `Import/Export data`.
-7. Under `General`, select `Import` and seleect your file. Under `Options`, enable `Header` and under NULL Strings, enter `NULL`.
+3. Click the download button and save the table as a CSV file.
+4. Create connection to your new Tree Recycle 2 database.
+5. Highlight the `prior_reservations` table and select `Import/Export data`.
+7. Under `General`, select `Import` and select your file. Under `Options`, enable `Header` and under NULL Strings, enter `NULL`.
 8. Click OK.
 9. To verify, right-click on the `prior_reservations` table, and select `View/Edit Data > All Rows`.
-
-
 
 # License
 

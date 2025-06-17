@@ -1,5 +1,4 @@
 class PublicController < ApplicationController
-  around_action :set_time_zone
 
   def index
     if params[:prior_reservation_id]
@@ -32,10 +31,6 @@ class PublicController < ApplicationController
   end
 
   private
-
-  def set_time_zone(&block)
-    Time.use_zone(Setting.instance.time_zone, &block)
-  end
 
   def reservation_params
     params.require(:reservation).permit(:name, :street, :city, :email, :mobile, :pickup_notes)

@@ -39,7 +39,7 @@
                   <div class="flex items-center justify-between">
                     <div>
                       <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Reservations</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations.</p>
                       <%= link_to "View Reservations Site", root_path, target: "_blank", class: "text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" %>
                     </div>
                     <div class="flex items-center">
@@ -63,7 +63,7 @@
                   <div class="flex items-center justify-between">
                     <div>
                       <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Pickups Portal</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal at "/pickups" for tree pickup management</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal at "/pickups" for tree pickup management.</p>
                       <%= link_to "View Pickups Portal", pickups_root_path, target: "_blank", class: "text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" %>
                     </div>
                     <div class="flex items-center">
@@ -84,8 +84,8 @@
                 <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                   <div class="flex items-center justify-between">
                     <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Email Notifications</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Send email notifications and marketing emails to users.</p>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Email</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Email notifications and marketing emails.</p>
                     </div>
                     <div class="flex items-center">
                       <label class="relative inline-flex items-center cursor-pointer" id="emailing-toggle">
@@ -105,8 +105,8 @@
                 <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                   <div class="flex items-center justify-between">
                     <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable SMS Notifications</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Send SMS notifications to users</p>
+                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable SMS</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">SMS messaging and missing tree notifications.</p>
                     </div>
                     <div class="flex items-center">
                       <label class="relative inline-flex items-center cursor-pointer" id="sms-toggle">
@@ -228,6 +228,13 @@
                       <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
                     </div>
                   </div>
+
+                  <div>
+                    <%= label_tag "setting[on_day_of_pickup_instructions]", "On Day of Pickup Instructions", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+                    <div>
+                      <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -271,22 +278,6 @@
                       </div>
                     </div>
 
-                    <div>
-                      <%= label_tag "setting[time_zone]", "Time Zone", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= select_tag "setting[time_zone]", 
-                            options_for_select(Setting::AVAILABLE_TIME_ZONES, setting.time_zone),
-                            class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Time zone for all event times and notifications</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <%= label_tag "setting[on_day_of_pickup_instructions]", "On Day of Pickup Instructions", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div>
-                      <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                    </div>
                   </div>
                 </div>
               </div>

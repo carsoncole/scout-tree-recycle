@@ -116,6 +116,14 @@ $ kamal setup
 $ kamal deploy
 ```
 
+## Configure Time Zone
+
+To configure the time zone for all times reflected in the application, modify `application.rb`. use 'rails time:zones:all' for a list of zones.
+
+```ruby
+config.time_zone = 'Pacific Time (US & Canada)'
+```
+
 ## Configure secrets
 
 Use encrypted credentials to store application secrets. Remove the existing secrets:
@@ -198,7 +206,7 @@ Aws.config.update({region: 'us-west-2'})
 
 ### SMS Messaging
 
-SMS messaging is can be configured, and it will provide important messaging to users whose tree can not be found. The message encourages the user to put their tree out or provide instructions and to respond by SMS. This dialogue can be managed entirely with the app.
+SMS messaging can be configured, and it will provide important messaging to users whose tree can not be found. The message encourages the user to put their tree out or provide instructions and to respond by SMS. This dialogue can be managed entirely with the app.
 
 [Twilio.com](https://twilio.com) is used for SMS. 
 
@@ -223,6 +231,11 @@ twilio:
     number: TWILLIO_NUMBER
     account_sid: ACCOUNT_SID
     auth_token: AUTH_TOKEN
+twilio:
+  development:
+    number: TWILLIO_NUMBER
+    account_sid: ACCOUNT_SID
+    auth_token: AUTH_TOKEN
 ```
 
 In Twilio, you need to create a ```Messaging Service```, which defines the purpose behind what you plan on messaging. The use case should be "Notify my users".
@@ -235,6 +248,9 @@ A message comes in: Webhook
 URL: https://YOUR_SITE_URL/sms/reply
 HTTP: HTTP POST
 ```
+
+Canned SMS reply responses can be modified in `tree_recycle.rb `. 
+
 
 ### Donations
 

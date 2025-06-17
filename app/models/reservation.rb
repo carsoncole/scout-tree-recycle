@@ -190,6 +190,10 @@ class Reservation < ApplicationRecord
     routing_status == "Manual" ? true : false
   end
 
+  def summary
+    "#{street}/#{status&.titleize}"
+  end
+
   def routing_status
     if route # Successfully routed
       route.name

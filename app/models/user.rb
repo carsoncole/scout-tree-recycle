@@ -10,8 +10,6 @@ class User < ApplicationRecord
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  validates :time_zone, inclusion: { in: Setting::AVAILABLE_TIME_ZONES }
-
   def admin?
     role == "admin"
   end

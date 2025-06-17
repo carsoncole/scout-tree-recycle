@@ -1,5 +1,5 @@
 class Sms < ApplicationRecord
-  has_one :reservation, foreign_key: "mobile", primary_key: "phone"
+  has_many :reservations, foreign_key: "mobile", primary_key: "phone"
 
   enum :direction, { outgoing: 1, incoming: 2 }, default: :outgoing
 
@@ -27,19 +27,23 @@ class Sms < ApplicationRecord
 
   def client
     sid, auth_token =
-    Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :account_sid),
-    Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :auth_token)
+    Rails.application.credentials.dig(:twilio, Rails.env.to_sym, :account_sid),
+    Rails.application.credentials.dig(:twilio, Rails.env.to_sym, :auth_token)
 
     @client ||= Twilio::REST::Client.new sid, auth_token
   end
 
   def from_number
-    @from_number = Rails.application.credentials.dig(Rails.env.to_sym, :twilio, :number)
+    @from_number = Rails.application.credentials.dig(:twilio, Rails.env.to_sym, :number)
   end
 
   def send_outgoing!
-    return unless Setting.instance.is_sms_enabled
-    SendSmsJob.perform_later(self.id)
+    if Setting.instance.is_sms_enabled
+      SendSmsJob.perform_later(self.id)
+    else
+      self.update_column(:service_status, "failed")
+      Rails.logger.info("SMS is disabled, skipping send")
+    end
   end
 
   def formatted_phone

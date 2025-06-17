@@ -66,6 +66,18 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "User was successfully updated.", flash[:notice]
   end
 
+  test "admin should update user password" do
+    sign_in
+    patch admin_user_url(users(:admin)), params: { user: { password: "newpassword", password_confirmation: "newpassword" } }
+    assert_redirected_to admin_users_url
+    assert_equal "User was successfully updated.", flash[:notice]
+    delete admin_session_url
+    get new_admin_session_url
+    assert_response :success
+    post admin_session_url, params: { email: users(:admin).email, password: "newpassword" }
+    assert_redirected_to admin_root_url
+  end
+
   test "user should not update user" do
     sign_in(users(:user))
     patch admin_user_url(users(:admin)), params: { user: { email: "test2@example.com" } }

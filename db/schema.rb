@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_11_165720) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_17_003529) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -180,7 +180,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_165720) do
     t.string "contact_email"
     t.string "contact_phone"
     t.string "contact_sms"
-    t.string "time_zone", default: "Eastern Time (US & Canada)"
     t.text "about_event_description"
     t.text "on_day_of_pickup_instructions"
     t.boolean "is_reservations_open", default: true
@@ -205,11 +204,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_165720) do
   create_table "sms", force: :cascade do |t|
     t.string "phone"
     t.string "body"
-    t.uuid "reservation_id"
     t.string "service_status"
     t.integer "direction"
     t.boolean "viewed", default: false
-    t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["phone"], name: "index_messages_on_phone"
@@ -219,7 +216,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_165720) do
     t.string "email", null: false
     t.string "password_digest", null: false
     t.string "role", default: "user", null: false
-    t.string "time_zone", default: "Eastern Time (US & Canada)"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true

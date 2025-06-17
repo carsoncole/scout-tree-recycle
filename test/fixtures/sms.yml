@@ -1,22 +1,24 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
 one: 
-  phone: 2064759823
+  phone: "+12064759823" 
   body: "Hello, this is a test message"
   direction: "outgoing"
-  reservation_id: picked_up_1
-  status: "sent"
   created_at: 2025-01-01 12:00:00
   updated_at: 2025-01-01 12:00:00
 two: 
-  phone: 2064759823
+  phone: "+12064759823" 
   body: "Hello, this is a test message"
   direction: "incoming"
-  reservation_id: picked_up_1
-  status: "received"
   created_at: 2025-01-01 12:00:00
   updated_at: 2025-01-01 12:00:00
+three:
+  phone: "+12069230400"
+  body: "Your tree is missing"
+  direction: "outgoing"
+  created_at: 2025-01-01 12:01:00
+  updated_at: 2025-01-01 12:01:00
+four:
+  phone: "+12069230400" 
+  body: "I put out my tree. Sorry about that"
+  direction: "incoming"
+  created_at: 2025-01-01 12:07:00
+  updated_at: 2025-01-01 12:07:00

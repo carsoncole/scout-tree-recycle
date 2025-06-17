@@ -23,12 +23,6 @@ class UserTest < ActiveSupport::TestCase
     assert_not user.valid?
   end
 
-  test "is invalid with invalid time zone" do
-    user = users(:admin)
-    user.time_zone = "invalid"
-    assert_not user.valid?
-  end
-
   test "is invalid with duplicate email" do
     user = users(:admin)
     user.email = users(:user).email

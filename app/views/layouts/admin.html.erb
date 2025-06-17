@@ -94,6 +94,11 @@
           <!-- Flash messages inside fixed header -->
           <%= render "shared/flash" %>
         </nav>
+
+        <!-- Flash messages in normal document flow -->
+        <div class="w-full" id="flash">
+          <%= render "shared/flash" %>
+        </div>
       <% end %>
 
       <!-- Main content -->

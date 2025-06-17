@@ -19,7 +19,6 @@ class Admin::UsersTest < ApplicationSystemTestCase
     fill_in "Password", with: "abCDefg123"
     fill_in "Password confirmation", with: "abCDefg123"
     select "Admin", from: "Role"
-    select "Eastern Time (US & Canada)", from: "Time zone"
     click_button "Create User"
 
     assert_text "User was successfully created."
@@ -33,13 +32,12 @@ class Admin::UsersTest < ApplicationSystemTestCase
     fill_in "Password", with: "abCDefg123"
     fill_in "Password confirmation", with: "abCDefg123"
     select "User", from: "Role"
-    select "UTC", from: "Time zone"
     click_button "Create User"
 
     assert_text "User was successfully created."
   end
 
-  test "should edit user" do
+  test "should edit users email" do
     user = users(:user)
     visit admin_users_url
     all(:link, "Edit").first.click
@@ -48,6 +46,24 @@ class Admin::UsersTest < ApplicationSystemTestCase
     click_button "Update User"
 
     assert_text "User was successfully updated."
+    assert_text "test2@example.com"
+  end
+
+  test "should edit users password" do
+    visit admin_users_url
+    all(:link, "Edit").first.click
+    fill_in "Email", with: "test191@example.com"
+    fill_in "Password", with: "newpassword"
+    fill_in "Password confirmation", with: "newpassword"
+    click_button "Update User"
+
+    assert_text "User was successfully updated."
+    click_link "Log out"
+
+    fill_in "Email", with: "test191@example.com"
+    fill_in "Password", with: "newpassword"
+    click_button "Sign in"
+    assert_selector "h1", text: "Reservations"
   end
 
   test "should delete user" do

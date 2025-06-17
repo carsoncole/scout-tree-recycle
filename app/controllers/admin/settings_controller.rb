@@ -82,8 +82,7 @@ class Admin::SettingsController < Admin::BaseController
       :contact_sms,
       :driver_secret_key,
       :description,
-      :email_batch_quantity,
-      :time_zone
+      :email_batch_quantity
     )
   end
 end

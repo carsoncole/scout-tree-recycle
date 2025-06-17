@@ -394,33 +394,39 @@ There is sample seed data that will populate the application enough to see how i
 Default BSA Scouting images are used in emails and are stored in the `app/assets/images` directory. You can customize these images by replacing them with your own.
 
 
-## Migrating from Tree Recycle => Tree Recycle 2
+## Migrating from Tree Recycle to Tree Recycle 2
 
 
 Migrating data from [Tree Recycle](https://github.com/carsoncole/tree-recycle.git) is beneficial for transferring reservation data which can be used for marketing in future recycling events, and for mapping data that defines your routes and zones. These instructions are based on using PosgreSQL as the backend database.
+
+Reservations data is migrated to the new `prior_reservations` table, which is exclusively used for marketing emails.
 
 The following tables and their respective SQL can be used in the instructions below:
 
 ### Reservations
 
+Migrating `reservations` to `prior_reservations`.
 ```sql
 SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at FROM RESERVATIONS;
 ```
 
 ### Points
 
+Migrating `points` to `points`.
 ```sql
 SELECT id, route_id, latitude, longitude, "order", created_at, updated_at from POINTS;
 ```
 
 ### Routes
 
+Migrating `routes` to `routes`.
 ```sql
 SELECT id, name, street, city, state, country, distance, latitude, longitude, zone_id, NULL as distance_to_zone, NULL as reservations_count, created_at, updated_at from ROUTES;
 ```
 
 ### Zones
 
+Migrating `zones` to `zones`.
 ```sql
 SELECT id, name, street, city, state, country, latitude, longitude, created_at, updated_at from ZONES;
 ```
@@ -446,5 +452,5 @@ Tree Recycle 2 is copyright 2025 by Carson Cole. It is free software, released u
 
 # About Tree Recycle
 
-Tree Recycle 2 is maintained by Carson Cole. Installation and hosting is available. Contact Carson for more information.
+Tree Recycle 2 is maintained by Carson Cole. Installation and hosting options are available. Contact Carson for more information.
 

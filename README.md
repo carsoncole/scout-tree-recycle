@@ -394,7 +394,7 @@ There is sample seed data that will populate the application enough to see how i
 Default BSA Scouting images are used in emails and are stored in the `app/assets/images` directory. You can customize these images by replacing them with your own.
 
 
-## Migrating from Tree-Recycle
+## Migrating from Tree Recycle => Tree Recycle 2
 
 
 Migrating data from [Tree Recycle](https://github.com/carsoncole/tree-recycle.git) is beneficial for transferring reservation data which can be used for marketing in future recycling events, and for mapping data that defines your routes and zones. These instructions are based on using PosgreSQL as the backend database.
@@ -442,7 +442,9 @@ SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_
 
 # License
 
-Tree Recycle is released under the [MIT License](https://opensource.org/licenses/MIT).
+Tree Recycle 2 is copyright 2025 by Carson Cole. It is free software, released under the [MIT License](https://opensource.org/licenses/MIT).
 
+# About Tree Recycle
 
+Tree Recycle 2 is maintained by Carson Cole. Installation and hosting is available. Contact Carson for more information.
 

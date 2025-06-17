@@ -49,7 +49,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
   test "should update settings and display flash message" do
     sign_in
     get admin_settings_path
-    patch admin_setting_path(Setting.first), params: { setting: { default_city: "New Town", default_state: "NY" }}
+    patch admin_setting_path(Setting.first), params: { setting: { default_city: "New Town", default_state: "NY" } }
     assert_redirected_to admin_settings_path
     assert_equal "Settings were successfully updated.", flash[:notice]
   end

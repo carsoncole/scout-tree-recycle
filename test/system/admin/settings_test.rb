@@ -14,7 +14,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   test "pickups portal is disabled when not enabled" do
     Setting.instance.update(is_pickups_site_enabled: false)
     visit admin_settings_url
-    new_window = window_opened_by do  
+    new_window = window_opened_by do
       click_on "Pickups Portal"
     end
     within_window new_window do
@@ -53,7 +53,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     fill_in "Default City", with: ""
     fill_in "Event Pickup Start", with: ""
     click_on "Save Settings"
-    
+
     within("#organization_name_section") do
       assert_text "can't be blank"
     end

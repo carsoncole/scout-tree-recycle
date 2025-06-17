@@ -36,7 +36,7 @@ class Admin::SmsController < Admin::BaseController
               @smses = Sms.where(phone: @phone).order(:created_at)
               flash.now[:notice] = "Message sent successfully."
               render turbo_stream: [
-                turbo_stream.replace("sms-thread-#{@phone.gsub(/[^0-9]/, '')}", 
+                turbo_stream.replace("sms-thread-#{@phone.gsub(/[^0-9]/, '')}",
                   partial: "admin/sms/thread", locals: { phone: @phone, smses: @smses, expanded: expanded, show_page: show_page }),
                 turbo_stream.update("flash", partial: "shared/flash")
               ]
@@ -55,10 +55,10 @@ class Admin::SmsController < Admin::BaseController
             if is_show_page
               @phone = @sms.phone
               @smses = Sms.where(phone: @phone).order(:created_at)
-              @error = @sms.errors.full_messages.join(', ')
+              @error = @sms.errors.full_messages.join(", ")
               flash.now[:alert] = "Failed to send message: #{@error}"
               render turbo_stream: [
-                turbo_stream.replace("sms-thread-#{@phone.gsub(/[^0-9]/, '')}", 
+                turbo_stream.replace("sms-thread-#{@phone.gsub(/[^0-9]/, '')}",
                   partial: "admin/sms/thread", locals: { phone: @phone, smses: @smses, error: @error, expanded: expanded, show_page: show_page }),
                 turbo_stream.update("flash", partial: "shared/flash")
               ]
@@ -84,7 +84,7 @@ class Admin::SmsController < Admin::BaseController
             @error = "SMS messaging is disabled. Enable SMS in Settings to send messages."
             flash.now[:alert] = @error
             render turbo_stream: [
-              turbo_stream.replace("sms-thread-#{@phone.gsub(/[^0-9]/, '')}", 
+              turbo_stream.replace("sms-thread-#{@phone.gsub(/[^0-9]/, '')}",
                 partial: "admin/sms/thread", locals: { phone: @phone, smses: @smses, error: @error, expanded: expanded, show_page: show_page }),
               turbo_stream.update("flash", partial: "shared/flash")
             ]

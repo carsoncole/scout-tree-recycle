@@ -69,7 +69,7 @@ Rails.application.routes.draw do
         delete :destroy
       end
     end
-    get 'sms/thread/:phone', to: 'sms#show', as: :sms_thread
+    get "sms/thread/:phone", to: "sms#show", as: :sms_thread
     post "sms", to: "sms#create", as: :sms_index
 
     # Logs

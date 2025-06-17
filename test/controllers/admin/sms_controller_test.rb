@@ -37,5 +37,4 @@ class Admin::SmsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, Sms.where(phone: "+12069230400", viewed: true).count
     assert_equal 0, Sms.where(phone: "+12069230400", viewed: false).count
   end
-
 end

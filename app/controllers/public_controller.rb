@@ -1,5 +1,4 @@
 class PublicController < ApplicationController
-
   def index
     if params[:prior_reservation_id]
       prior_reservation = PriorReservation.find_by(id: params[:prior_reservation_id])

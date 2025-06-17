@@ -396,40 +396,33 @@ Default BSA Scouting images are used in emails and are stored in the `app/assets
 
 ## Migrating from Tree-Recycle
 
-The data you should migrate (make sure you run the post-event data migration will remove any incomplete reservations, and it will move the status of all reservations to 'archived'):
 
-- Reservations. Fields: `email`, `name`, `street`, `phone`
-- Points. Fields: `route_id`, `latitude`, `longitude`, `order`
-- Routes. Fields `name`, `street`, `zone_id`, `city`, `state`, `country`, `latitude`, `longitude`
-- Zones. `name`, `street`, `city`, `state`, `country`, `latitude`, `longitude` 
+Migrating data from [Tree Recycle](https://github.com/carsoncole/tree-recycle.git) is beneficial for transferring reservation data which can be used for marketing in future recycling events, and for mapping data that defines your routes and zones. These instructions are based on using PosgreSQL as the backend database.
 
-
-Migrating from [Tree Recycle I](https://github.com/carsoncole/tree-recycle.git) primarily transferring reservation data which can be used for marketing in future recycling events. These instructions are based on using PosgreSQL as the backend database.
-
-The following tables and their fields can be migrated:
+The following tables and the respective SQL can be used for the exports:
 
 ### Reservations
 
 ```sql
-id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at
+SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at FROM RESERVATIONS;
 ```
 
 ### Points
 
 ```sql
-route_id, latitude, longitude, order, created_at, updated_at
+SELECT id, route_id, latitude, longitude, "order", created_at, updated_at from POINTS;
 ```
 
 ### Routes
 
 ```sql
-name, street, zone_id, city, state, country, latitude, longitude, created_at, updated_at
+SELECT id, name, street, city, state, country, distance, latitude, longitude, zone_id, NULL as distance_to_zone, NULL as reservations_count, created_at, updated_at from ROUTES;
 ```
 
 ### Zones
 
 ```sql
-name, street, city, state, country, latitude, longitude, created_at, updated_at
+SELECT id, name, street, city, state, country, latitude, longitude, created_at, updated_at from ZONES;
 ```
 
 #### Example migration with  `reservations` table:

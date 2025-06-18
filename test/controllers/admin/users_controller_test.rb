@@ -72,10 +72,10 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_users_url
     assert_equal "User was successfully updated.", flash[:notice]
     delete admin_session_url
-    get new_admin_session_url
-    assert_response :success
+    get admin_reservations_url
+    assert_redirected_to new_admin_session_url
     post admin_session_url, params: { email: users(:admin).email, password: "newpassword" }
-    assert_redirected_to admin_root_url
+    assert_redirected_to admin_reservations_url
   end
 
   test "user should not update user" do

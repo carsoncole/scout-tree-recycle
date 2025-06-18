@@ -394,10 +394,10 @@ There is sample seed data that will populate the application enough to see how i
 Default BSA Scouting images are used in emails and are stored in the `app/assets/images` directory. You can customize these images by replacing them with your own.
 
 
-## Migrating from Tree Recycle to Tree Recycle 2
+## Migrating data from Tree Recycle to Tree Recycle 2
 
 
-Migrating data from [Tree Recycle](https://github.com/carsoncole/tree-recycle.git) is beneficial for transferring reservation data which can be used for marketing in future recycling events, and for mapping data that defines your routes and zones. These instructions are based on using PosgreSQL as the backend database.
+Migrating data from [Tree Recycle](https://github.com/carsoncole/tree-recycle.git) is beneficial for transferring reservation data which can be used for marketing in future recycling events, and for mapping data that defines your routes and zones. Below are the different datasets which you can individually choose to migrate. These instructions are based on using PosgreSQL as the backend database.
 
 Reservations data is migrated to the new `prior_reservations` table, which is exclusively used for marketing emails.
 
@@ -412,14 +412,14 @@ SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_
 
 ### Points
 
-Migrating `points` to `points`.
+Migrating `points` to `points`. If migrating, this data is dependent on Routes data, which should be migrated also.
 ```sql
 SELECT id, route_id, latitude, longitude, "order", created_at, updated_at from POINTS;
 ```
 
 ### Routes
 
-Migrating `routes` to `routes`.
+Migrating `routes` to `routes`. If migrating, this data is dependent on Zones data, which should be migrated also.
 ```sql
 SELECT id, name, street, city, state, country, distance, latitude, longitude, zone_id, NULL as distance_to_zone, NULL as reservations_count, created_at, updated_at from ROUTES;
 ```
@@ -430,6 +430,17 @@ Migrating `zones` to `zones`.
 ```sql
 SELECT id, name, street, city, state, country, latitude, longitude, created_at, updated_at from ZONES;
 ```
+
+### Drivers and Driver Routes
+```sql
+Select id, name, phone as mobile, created_at, updated_at from drivers;
+```
+
+```sql
+Select id, driver_id, route_id, created_at, updated_at from driver_routes;
+```
+
+
 
 #### Example migration for  `reservations` data:
 

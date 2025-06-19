@@ -13,9 +13,12 @@ class Reservation < ApplicationRecord
   attribute :state, :string, default: -> { Setting.instance.default_state }
   attribute :country, :string, default: "United States"
 
+
+
   validates :name, :street, :email, :city, :state, :country, presence: true
   validates :email, uniqueness: true
   validates :status, inclusion: { in: statuses.keys }
+  validates :mobile, phone: { possible: true, allow_blank: true }
 
   scope :completed, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }

@@ -2,13 +2,13 @@ require "test_helper"
 
 class PriorReservationsControllerTest < ActionDispatch::IntegrationTest
   test "should get unsubscribe" do
-    get unsubscribe_prior_reservation_url(prior_reservations(:one))
+    get unsubscribe_prior_reservation_url(prior_reservations(:full))
     assert_response :success
   end
 
   test "should unsubscribe prior reservation" do
     assert_difference "PriorReservation.count", -1 do
-      delete prior_reservation_url(prior_reservations(:one))
+      delete prior_reservation_url(prior_reservations(:full))
     end
     assert_redirected_to root_path
     assert_equal "You have been successfully unsubscribed from our mailing list.", flash[:notice]
@@ -22,7 +22,7 @@ class PriorReservationsControllerTest < ActionDispatch::IntegrationTest
 
   test "unsubscribing prior reservation should destroy it" do
     assert_difference "PriorReservation.count", -1 do
-      delete prior_reservation_url(prior_reservations(:one))
+      delete prior_reservation_url(prior_reservations(:full))
     end
     assert_redirected_to root_path
     assert_equal "You have been successfully unsubscribed from our mailing list.", flash[:notice]

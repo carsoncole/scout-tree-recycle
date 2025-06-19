@@ -1,11 +1,14 @@
-one:
+full:
   name: Susan Banks
   email: trip.wilson@example.com
+  street: 123 Main St
+  mobile: +11234567890
 
-two:
+no_mobile:
   name: Trellis Travic
+  street: 123 Main St
   email: trellis.travic@example.com
 
-three:
+name_and_email:
   name: Bob Jones
   email: bob.jones@example.com

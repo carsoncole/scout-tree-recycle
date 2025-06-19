@@ -2,17 +2,14 @@ Tree Pickup Time!
 
 
 We are sending a friendly reminder that <%= @setting.organization_name %> is picking up trees on
-= succeed(".") do
-  = @setting.event_pickup_start.strftime('%A, %B %-d')
+<%= @setting.event_pickup_start.strftime('%A, %B %-d') + '.'%>
 
-If you would like us to pick up a tree again this year, please register at <%= root_url %>. Once registered we will send you a confirmation email and then pick up your tree on
-= succeed(".") do
-  = @setting.event_pickup_start.strftime('%A, %B %-d')
+If you would like us to pick up a tree again this year, please register at <%= root_url(prior_reservation_id: @prior_reservation.id) %>. Once registered we will send you a confirmation email and then pick up your tree on
+<%= @setting.event_pickup_start.strftime('%A, %B %-d') + '.' %>
 
 
 Thank You,
-= @setting.organization_name
+<%= @setting.organization_name %>
 
 
-To unsubscribe, please visit
-= reservation_unsubscribe_url(@prior_reservation)
+<%= render 'unsubscribe_links' %>

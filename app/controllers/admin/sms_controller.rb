@@ -1,8 +1,22 @@
 class Admin::SmsController < Admin::BaseController
   def index
-    @smses_by_phone = Sms.order(created_at: :desc)
-                         .group_by(&:phone)
-                         .transform_values { |messages| messages.sort_by(&:created_at) }
+    # Get all SMS messages ordered by creation time descending
+    all_smses = Sms.order(created_at: :desc)
+    
+    # Group by phone and sort conversations
+    @smses_by_phone = all_smses.group_by(&:phone).transform_values do |messages|
+      messages.sort_by(&:created_at)
+    end
+    
+    # Sort conversations: unviewed incoming first, then by most recent message
+    @smses_by_phone = @smses_by_phone.sort_by do |phone, messages|
+      has_unviewed_incoming = messages.any? { |msg| msg.incoming? && !msg.viewed? }
+      most_recent_time = messages.max_by(&:created_at).created_at
+      
+      # Sort by: 1) has unviewed incoming (true first), 2) most recent time (descending)
+      [has_unviewed_incoming ? 0 : 1, -most_recent_time.to_i]
+    end.to_h
+    
     flash.now[:alert] = "SMS messaging is disabled. Enable SMS in Settings to send messages." unless helpers.setting.is_sms_enabled?
   end
 

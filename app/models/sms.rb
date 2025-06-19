@@ -3,6 +3,10 @@ class Sms < ApplicationRecord
 
   enum :direction, { outgoing: 1, incoming: 2 }, default: :outgoing
 
+  scope :incoming, -> { where(direction: :incoming) }
+  scope :unviewed, -> { where(viewed: false) }
+  scope :viewed, -> { where(viewed: true) }
+
   validates :phone, presence: true
   validates :direction, presence: true
 

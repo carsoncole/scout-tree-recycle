@@ -27,8 +27,8 @@ class Admin::SmsTest < ApplicationSystemTestCase
   test "should send a new message" do
     visit admin_sms_url
 
-    fill_in "Phone", with: "1234567890"
-    fill_in "Body", with: "Test message"
+    fill_in "sms_phone", with: "1234567890"
+    fill_in "sms_body", with: "Test message"
     click_button "Send"
 
     assert_text "Message sent successfully."
@@ -58,5 +58,122 @@ class Admin::SmsTest < ApplicationSystemTestCase
     end
     assert_text "Conversation deleted successfully."
     assert_equal 0, Sms.where(phone: "+12069230400").count
+  end
+
+  test "should show unviewed incoming SMS badge in navigation" do
+    # Visit admin root to see the navigation
+    visit admin_root_path
+    # Check that the badge shows the correct count (2 unviewed incoming messages)
+    assert_selector "a[href='#{admin_sms_path}'] span", text: "2"
+    
+    # Visit SMS page and mark messages as viewed
+    visit admin_sms_path
+    first(".cursor-pointer").click
+
+    # Go back to admin root and check that badge is gone
+    visit admin_root_path
+    assert_no_selector "a[href='#{admin_sms_path}'] span"
+  end
+
+  test "should not show badge when no unviewed incoming messages" do
+    # Ensure no unviewed incoming messages exist
+    Sms.incoming.unviewed.destroy_all
+    
+    visit admin_root_path
+    
+    # Check that no badge is shown
+    assert_no_selector "a[href='#{admin_sms_path}'] span"
+  end
+
+  test "should list SMS conversations with unviewed incoming messages first, sorted by time descending" do
+    # Create conversations with different timestamps and unviewed status
+    # Conversation 1: Has unviewed incoming message (most recent)
+    
+    Sms.destroy_all
+    Sms.create!(
+      phone: "+15551234567",
+      body: "Unviewed incoming message 1",
+      direction: :incoming,
+      viewed: false,
+      created_at: 1.hour.ago
+    )
+    Sms.create!(
+      phone: "+15551234567", 
+      body: "Outgoing response 1",
+      direction: :outgoing,
+      created_at: 30.minutes.ago
+    )
+
+    # Conversation 2: Has unviewed incoming message (older)
+    Sms.create!(
+      phone: "+15551234568",
+      body: "Unviewed incoming message 2", 
+      direction: :incoming,
+      viewed: false,
+      created_at: 2.hours.ago
+    )
+
+    # Conversation 3: All messages viewed (should appear after unviewed)
+    Sms.create!(
+      phone: "+15551234569",
+      body: "Viewed incoming message",
+      direction: :incoming, 
+      viewed: true,
+      created_at: 3.hours.ago
+    )
+    Sms.create!(
+      phone: "+15551234569",
+      body: "Outgoing response 3",
+      direction: :outgoing,
+      viewed: true, 
+      created_at: 2.hours.ago
+    )
+
+    # Conversation 4: Only outgoing messages (should appear last)
+    Sms.create!(
+      phone: "+15551234570",
+      body: "Outgoing only message",
+      direction: :outgoing,
+      viewed: false,
+      created_at: 4.hours.ago
+    )
+
+    visit admin_sms_path
+
+    # Get all conversation elements
+    conversations = page.all(".space-y-4 > div")
+    
+    # Should have 4 conversations
+    assert_equal 4, conversations.length
+
+    # First conversation should be the most recent unviewed incoming (phone 1)
+    first_conversation = conversations[0]
+    assert first_conversation.has_content?("+15551234567")
+    assert first_conversation.has_selector?(".w-4.h-4.bg-blue-500") # unviewed indicator
+
+    # Second conversation should be the older unviewed incoming (phone 2) 
+    second_conversation = conversations[1]
+    assert second_conversation.has_content?("+15551234568")
+    assert second_conversation.has_selector?(".w-4.h-4.bg-blue-500") # unviewed indicator
+
+    # Third conversation should be the viewed conversation (phone 3)
+    third_conversation = conversations[2]
+    assert third_conversation.has_content?("+15551234569")
+    assert_not third_conversation.has_selector?(".w-4.h-4.bg-blue-500") # should not have unviewed indicator
+
+    # Fourth conversation should be outgoing only (phone 4)
+    fourth_conversation = conversations[3]
+    assert fourth_conversation.has_content?("+15551234570")
+    assert_not fourth_conversation.has_selector?(".w-4.h-4.bg-blue-500") # should not have unviewed indicator
+
+    # Verify timestamps are in descending order for conversations with unviewed messages
+    first_timestamp = first_conversation.find(".text-xs.text-gray-500").text
+    second_timestamp = second_conversation.find(".text-xs.text-gray-500").text
+    
+    # Parse timestamps to compare (simplified comparison)
+    first_time = Time.parse(first_timestamp)
+    second_time = Time.parse(second_timestamp)
+    
+    assert first_time >= second_time, "First conversation should be more recent than second"
   end
 end

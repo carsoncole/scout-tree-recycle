@@ -37,18 +37,11 @@
         <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:event_pickup_end].first %></p>
       <% end %>
     </div>
-    <div>
+    <div id="sign_up_deadline_section">
       <%= f.label :event_sign_up_deadline, "Sign Up Deadline", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
       <%= f.datetime_field :event_sign_up_deadline, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:event_sign_up_deadline].any?}" %>
       <% if @setting&.errors[:event_sign_up_deadline].any? %>
         <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:event_sign_up_deadline].first %></p>
-      <% end %>
-    </div>
-    <div class="lg:w-1/2">
-      <%= f.label :time_zone, "Time Zone", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-      <%= f.select :time_zone, options_for_select(Setting::AVAILABLE_TIME_ZONES, Setting::AVAILABLE_TIME_ZONES.first), {}, { class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-5 py-2 #{'border-red-500 dark:border-red-400' if @setting&.errors[:time_zone].any?}" } %>
-      <% if @setting&.errors[:time_zone].any? %>
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= @setting.errors[:time_zone].first %></p>
       <% end %>
     </div>
     <div class="flex justify-end">

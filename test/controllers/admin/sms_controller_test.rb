@@ -32,9 +32,9 @@ class Admin::SmsControllerTest < ActionDispatch::IntegrationTest
 
   test "should make conversation viewed once show page is visited" do
     sign_in
-    assert_equal 2, Sms.where(phone: "+12069230400", viewed: false).count
+    assert_equal 2, Sms.incoming.unviewed.where(phone: "+12069230400").count
     get admin_sms_thread_url(phone: "+12069230400")
-    assert_equal 2, Sms.where(phone: "+12069230400", viewed: true).count
-    assert_equal 0, Sms.where(phone: "+12069230400", viewed: false).count
+    assert_equal 2, Sms.incoming.viewed.where(phone: "+12069230400").count
+    assert_equal 0, Sms.incoming.unviewed.where(phone: "+12069230400").count
   end
 end

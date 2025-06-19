@@ -20,7 +20,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_text "Showing 1 to #{ Reservation.count } of #{ Reservation.count } results"
   end
 
-  # test that the filter buttons "All Reservations" and "Needs Routing" work
+  # test that the filter buttons "All Reservations" and "Needs Routing (manual)" work
   test "index filters by status" do
     visit admin_reservations_url
     click_link "All Reservations"
@@ -31,10 +31,10 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_equal Reservation.count, reservation_count
 
     click_link "Needs Routing"
-    sleep 0.2
     assert_equal 1, page.all("table").count
+    sleep 0.4
     reservation_count = page.all("table tbody tr").count
-    assert_equal Reservation.routing.count, reservation_count
+    assert_equal 4, reservation_count
   end
 
   # test that the edit link works

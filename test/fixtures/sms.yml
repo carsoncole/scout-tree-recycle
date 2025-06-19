@@ -1,24 +1,33 @@
 one: 
   phone: "+12064759823" 
   body: "Hello, this is a test message"
-  direction: "outgoing"
+  direction: 1
   created_at: 2025-01-01 12:00:00
   updated_at: 2025-01-01 12:00:00
 two: 
   phone: "+12064759823" 
   body: "Hello, this is a test message"
-  direction: "incoming"
+  direction: 2
+  viewed: true
   created_at: 2025-01-01 12:00:00
   updated_at: 2025-01-01 12:00:00
 three:
   phone: "+12069230400"
   body: "Your tree is missing"
-  direction: "outgoing"
+  direction: 1
   created_at: 2025-01-01 12:01:00
   updated_at: 2025-01-01 12:01:00
 four:
   phone: "+12069230400" 
   body: "I put out my tree. Sorry about that"
-  direction: "incoming"
+  direction: 2
+  viewed: false
   created_at: 2025-01-01 12:07:00
   updated_at: 2025-01-01 12:07:00
+five: 
+  phone: "+12069230400" 
+  body: "Hello, this is a test message"
+  direction: 2
+  viewed: false
+  created_at: 2025-01-01 12:10:00
+  updated_at: 2025-01-01 12:10:00

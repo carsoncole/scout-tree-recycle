@@ -15,6 +15,7 @@ class Admin::SettingsController < Admin::BaseController
 
   def create
     @setting = Setting.new(setting_params)
+    redirect_to admin_settings_path if Setting.first.present? # prevents multiple initial configurations
     if @setting.save
       unless User.exists?(role: "admin")
         User.create!(email: "admin@example.com", password: "password", role: "admin")

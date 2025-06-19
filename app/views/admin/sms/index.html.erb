@@ -22,12 +22,10 @@
         <div class="px-4 py-4 sm:p-4">
           <%= form_with(model: [:admin, Sms.new], class: "flex items-end space-x-4", data: { turbo: true }) do |f| %>
             <div class="w-48">
-              <%= f.label :phone, class: "block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1" %>
               <%= f.telephone_field :phone, class: "block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm", placeholder: "(555) 555-5555" %>
             </div>
 
             <div class="flex-1">
-              <%= f.label :body, class: "block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1" %>
               <%= f.text_field :body, class: "block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm", placeholder: "Type your message here..." %>
             </div>
 
@@ -51,12 +49,10 @@
             <%= link_to admin_sms_thread_path(phone), class: "flex-1 flex items-center space-x-3 cursor-pointer min-w-0" do %>
               <% if unviewed_count > 0 %>
                 <div class="w-4 h-4 bg-blue-500 rounded-full flex-shrink-0"></div>
-              <% else %>
-                <div class="w-3 h-3 flex-shrink-0"></div>
               <% end %>
               <div class="min-w-0 flex-1">
                 <div class="text-md font-medium text-gray-900 dark:text-white truncate">
-                  <div class="flex gap-4">
+                  <div class="flex gap-4 items-center">
                     <% smses.first.reservations.each do |reservation| %>
                       <div class="flex gap-2 items-center border border-gray-200 dark:border-gray-700 rounded-full py-1 px-2">
                         <%= reservation.name %>
@@ -80,11 +76,11 @@
                         </span>
                       </div>
                     <% end %>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                      <%= phone %>
+                    </span>
                   </div>
                 </div>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  <%= phone %>
-                </p>
               </div>
             <% end %>
             <div class="flex items-center space-x-2 flex-shrink-0">

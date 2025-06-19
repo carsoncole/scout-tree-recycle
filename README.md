@@ -391,7 +391,16 @@ There is sample seed data that will populate the application enough to see how i
 
 ### Images
 
-Default BSA Scouting images are used in emails and are stored in the `app/assets/images` directory. You can customize these images by replacing them with your own.
+Default Scouting America images are used in emails and are stored in the `app/assets/images/` directory and are named `image-[1-3].png`. You can customize these images by replacing them with your own.
+
+`image-1.png`
+Used in Marketing Email #1.
+
+`image-2.png`
+Used in Cancelled Reservation email.
+
+`image-3.png`
+Used in Marketing Email #2 and New Reservation email.
 
 
 ## Migrating data from Tree Recycle to Tree Recycle 2

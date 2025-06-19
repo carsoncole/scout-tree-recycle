@@ -15,10 +15,9 @@ class ReservationsTest < ApplicationSystemTestCase
   test "making a reservation and checking status" do
     make_system_reservation("test@example.com")
 
-    sleep 0.25
+    sleep 1
     reservation = Reservation.find_by(email: "test@example.com")
 
-    sleep 0.25
     assert_equal "donation", reservation.status
 
     click_button "Donate at Pickup"

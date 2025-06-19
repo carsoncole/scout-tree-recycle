@@ -125,12 +125,23 @@ pending_pickup_1  :
   state: NY
   country: United States
   email: mary.jones@example.com
-  mobile: +12069230400
+  mobile: '+12069230400'
   status: pending_pickup
   latitude: 31.1212
   longitude: 1212.1212
   route: one 
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
+
+pending_pickup_no_mobile:
+  name: Mack Gilbert
+  street: 770 Broadway
+  city: New York
+  state: NY
+  country: United States
+  email: mack.gilbert@example.com
+  latitude:  31.1212
+  longitude: 1212.1212
+  route: one 
 
 pending_pickup_not_routed:
   name: Susan Banks

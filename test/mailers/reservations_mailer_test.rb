@@ -151,4 +151,5 @@ class ReservationsMailerTest < ActionMailer::TestCase
       assert_equal ActionMailer::Base.deliveries.last.subject, "Your tree pickup reservation has been cancelled"
     end
   end
+
 end

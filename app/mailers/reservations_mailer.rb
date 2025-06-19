@@ -34,4 +34,14 @@ class ReservationsMailer < ApplicationMailer
     mail(to: @reservation.email, subject: "Your tree pickup reservation has been cancelled")
     @reservation.update(cancelled_reservation_email_sent_at: Time.current)
   end
+
+  def missing_tree_email
+    return unless setting.is_emailing_enabled
+    @setting = setting
+    subject = @reservation.missing_tree_email_sent_at.present? ? 
+      "Follow-up: We still cannot find your tree" : 
+      "We could not find your tree"
+    mail(to: @reservation.email, subject: subject)
+    @reservation.update(missing_tree_email_sent_at: Time.current)
+  end
 end

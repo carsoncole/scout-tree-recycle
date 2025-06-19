@@ -82,6 +82,10 @@ class Reservation < ApplicationRecord
 
   after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" &&  Setting.instance.is_routing_enabled? }
 
+  # missing tree reminder
+  after_commit :send_missing_sms!, if: ->(obj){ obj.missing? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
+  after_commit :send_missing_email!, if: ->(obj){ obj.missing? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
+
   # class methods
   def self.open?
     Setting.instance.is_reservations_open?
@@ -215,6 +219,30 @@ class Reservation < ApplicationRecord
     else
       "Unknown"
     end
+  end
+
+  def send_missing_sms!
+    return if self.mobile.blank?
+    if self.missing_tree_sms_sent_at.blank?
+      message = "Hi there! It's Bainbridge Tree Recycle. We're having trouble finding your tree for pickup. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this text ASAP if you would like us to  attempt a second pick-up of your tree today. Thanks!"
+      # message += "  To stop receiving messages, reply STOP. "
+    else
+      message = "Hello, it's Bainbridge Tree Recycle again. We're still having trouble finding your tree for pickup. Please double check that it's out and reply to this message confirming its location. Thanks!"
+      # message += "  To stop receiving messages, reply STOP. "
+    end
+
+    # Hi there! It's Bainbridge Tree Recycle. We're having trouble finding your tree for pickup. Our drivers are currently out collecting trees, and we want to make sure yours is on the list. Let us know by replying to this text ASAP. Thanks! Reply 'STOP' to opt out.
+    sms = Sms.create(
+      body: message,
+      phone: mobile,
+      direction: "outgoing"
+      )
+    self.update(missing_tree_sms_sent_at: Time.current)
+  end
+
+  def send_missing_email!(override=false)
+    return if self.mobile.present?
+    ReservationsMailer.with(reservation_id: self.id).missing_tree_email.deliver_later
   end
 
   def route_reservation!

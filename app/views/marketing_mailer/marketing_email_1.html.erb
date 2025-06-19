@@ -5,35 +5,60 @@
         <tr>
           <td style="text-align:left;padding: 0;border:0">
             <div style='text-align:center;margin-left: auto;margin-right:auto;margin-top: 16px;margin-bottom:0'>
-              <%= image_tag 'image-1.png', alt: 'tree', width: 200 %>
+              <%= image_tag 'image-1.png', alt: 'Tree Recycling Event', width: 300 %>
             </div>
 
-            <h1 style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; font-weight: 300; font-size: 40px; margin: 20px auto 70px auto;text-align: center;padding: 0;line-height: 1.5;">
-              Register for a tree pickup!
+            <h1 style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; font-weight: 300; font-size: 42px; margin: 30px auto 60px auto;text-align: center;padding: 0;line-height: 1.3; color: #2d3748;">
+              🌲 Support our Scouts! - Tree Recycling 🌲
             </h1>
 
             <% if @prior_reservation.name.present? && @prior_reservation.name.downcase != 'no name provided' %>
-              <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
-                Hello <%= @prior_reservation.name %>,
+              <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.6; font-weight:400; font-size: 18px; font-weight: normal; margin: 0 0 25px; padding: 0; color: #4a5568;">
+                Hi <%= @prior_reservation.name %>! 👋
               </p>
             <% end %>
 
-            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
-                It is that time again for Christmas tree recycling!
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.6; font-weight:400; font-size: 18px; font-weight: normal; margin: 0 0 25px; padding: 0; color: #4a5568;">
+              Great news! Our annual tree recycling event is back, and we'd love to have you join us again! 🎉
             </p>
 
-            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
-              We've picked up up your tree in the past, and if you would like us to pick up again this year, please let us know by registering at <%= root_url %>.
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.6; font-weight:400; font-size: 18px; font-weight: normal; margin: 0 0 25px; padding: 0; color: #4a5568;">
+              Since you've participated in our tree recycling program before, we wanted to give you a heads up that registration is now open for <%= @setting.event_pickup_start.strftime('%A, %B %-d') %>!
             </p>
 
-            <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 20px">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 30px; margin: 30px 0; text-align: center;">
+              <h2 style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; color: white; font-size: 24px; margin: 0 0 15px 0; font-weight: 500;">
+                Support <%= @setting.organization_name %>!
+              </h2>
+              <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; color: white; font-size: 16px; margin: 0; opacity: 0.9;">
+                Your participation helps fund our youth programs and environmental initiatives!
+              </p>
+            </div>
+
+            <div style="background-color: #f7fafc; border-radius: 8px; padding: 25px; margin: 30px 0;">
+              <h3 style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; color: #2d3748; font-size: 20px; margin: 0 0 15px 0; font-weight: 500;">
+                📅 Event Details
+              </h3>
+              <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; line-height: 1.6; font-size: 16px; color: #4a5568; margin: 0 0 10px 0;">
+                <strong>Date:</strong> <%= @setting.event_pickup_start.strftime('%A, %B %-d, %Y') %>
+              </p>
+              <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; line-height: 1.6; font-size: 16px; color: #4a5568; margin: 0;">
+                <strong>Pickup Starts:</strong> <%= @setting.event_pickup_start.strftime('%I:%M %p') %>
+              </p>
+            </div>
+
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.6; font-weight:400; font-size: 18px; font-weight: normal; margin: 0 0 25px; padding: 0; color: #4a5568;">
+              Your participation not only helps us recycle Christmas trees responsibly but also directly supports our youth organization. We suggest a donation of <%= number_to_currency(@setting.suggested_donation, precision: 0) %> when you register, which goes directly to funding summer camps and other outdoor activities! 🎯
+            </p>
+
+            <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 30px">
               <tr>
                 <td>
                   <table cellspacing="0" cellpadding="0">
                     <tr>
-                      <td style="border-radius: 2px" bgcolor="#ED2939" width="100%" style='text-align:center;'>
-                        <a href="<%= root_url(prior_reservation_id: @prior_reservation.id) %>" target="_blank" style="padding: 8px 12px; border: 1px solid #ED2939;border-radius: 2px;font-family: Helvetica, Arial, sans-serif;font-size: 14px; color: #ffffff !important;text-decoration: none;font-weight:bold;display: inline-block;">
-                          Register for a tree pickup
+                      <td style="border-radius: 8px" bgcolor="#48bb78" width="100%" style='text-align:center;'>
+                        <a href="<%= root_url(prior_reservation_id: @prior_reservation.id, name: @prior_reservation.name, street: @prior_reservation.street, email: @prior_reservation.email, mobile: @prior_reservation.mobile) %>" target="_blank" style="padding: 16px 24px; border: 1px solid #48bb78;border-radius: 8px;font-family: Helvetica, Arial, sans-serif;font-size: 16px; color: #ffffff !important;text-decoration: none;font-weight:bold;display: inline-block;">
+                          🌱 Reserve My Tree Pickup
                         </a>
                       </td>
                     </tr>
@@ -42,17 +67,16 @@
               </tr>
             </table>
 
-            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 40px; padding: 0;">
-              Once registered, we will send you a confirmation email and then pick up your tree on <%= @setting.event_pickup_start.strftime('%A, %B %-d') %>.
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.6; font-weight:400; font-size: 18px; font-weight: normal; margin: 0 0 40px; padding: 0; color: #4a5568;">
+              We can't wait to see you again this year! Your support makes a real difference in our community. 🌟
             </p>
 
-            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 60px; padding: 0;">
-              Thank You,<br>
-              <%= @setting.organization_name %>
+            <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.6; font-weight:400; font-size: 18px; font-weight: normal; margin: 0 0 60px; padding: 0; color: #4a5568;">
+              Thank you for your support! 🌲<br>
+              <strong><%= @setting.organization_name %></strong>
             </p>
 
             <%= render 'unsubscribe_links' %>
-            <%= render 'shared/mailer_footer' %>
           </td>
         </tr>
       </table>

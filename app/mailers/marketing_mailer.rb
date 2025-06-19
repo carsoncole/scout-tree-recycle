@@ -24,4 +24,5 @@ class MarketingMailer < ApplicationMailer
     mail(to: @prior_reservation.email, subject: "Last call! Tree recycling #{setting.event_pickup_start.strftime('%B %-d')}. Register today.")
     @prior_reservation.update(marketing_2_email_sent_at: Time.current)
   end
+
 end

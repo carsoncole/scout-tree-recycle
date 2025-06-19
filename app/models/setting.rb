@@ -13,6 +13,7 @@ class Setting < ApplicationRecord
   attribute :about_event_description, :string, default: "Tree Recycle is a community event where we collect trees and recycle them into mulch. This is our primary fundraiser for the year and all proceeds go to the Troop."
   attribute :reservations_closed_message, :string, default: "Stay tuned for when we open reservations again."
   attribute :time_zone, :string, default: "UTC"
+  attribute :suggested_donation, :integer, default: 25
 
   validates :organization_name, presence: true
   validates :default_city, :default_state, presence: true

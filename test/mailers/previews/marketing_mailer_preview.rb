@@ -13,4 +13,5 @@ class MarketingMailerPreview < ActionMailer::Preview
     prior_reservation.update(marketing_2_email_sent_at: nil)
     MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_2
   end
+
 end

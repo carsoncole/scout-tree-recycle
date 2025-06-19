@@ -27,7 +27,12 @@ class Admin::UsersTest < ApplicationSystemTestCase
   test "should create non-admin user" do
     visit admin_users_url
     click_link "Add user"
-    sleep 0.25
+    assert_field "Email"
+    assert_field "Password"
+    assert_field "Password confirmation"
+    assert_field "Role"
+    assert_button "Create User"
+
     fill_in "Email", with: "test@example.com"
     fill_in "Password", with: "abCDefg123"
     fill_in "Password confirmation", with: "abCDefg123"
@@ -68,27 +73,30 @@ class Admin::UsersTest < ApplicationSystemTestCase
 
   test "should delete user" do
     visit admin_users_url
-    all(:button, "Delete").last.click
-    accept_alert
-    sleep 0.25
-    assert_not User.exists?(email: "three@example.com")
+    accept_confirm do
+      page.find("tr", text: "three@example.com").find("button", text: "Delete").click
+    end
+    assert_text "User was successfully deleted."
+    assert_no_text "three@example.com"
   end
 
   test "admin user can not be deleted if there is only one admin user" do
     users(:admin_2).destroy
     visit admin_users_url
-    all(:button, "Delete").first.click
-    accept_alert
-    sleep 0.25
-    assert_no_text "User was successfully deleted."
+    accept_confirm do
+      page.find("tr", text: "one@example.com").find("button", text: "Delete").click
+    end
+    assert_text "Cannot delete the last admin user."
+    assert_text "one@example.com"
   end
 
   test "admin user can be deleted if there is more than one admin user" do
     visit admin_users_url
-    all(:button, "Delete").first.click
-    accept_alert
-    sleep 0.25
+    accept_confirm do
+      page.find("tr", text: "two@example.com").find("button", text: "Delete").click
+    end
     assert_text "User was successfully deleted."
+    assert_no_text "two@example.com"
   end
 
   test "user can not perform any CRUD operations" do

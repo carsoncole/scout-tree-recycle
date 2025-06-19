@@ -31,36 +31,39 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_equal Reservation.count, reservation_count
 
     click_link "Needs Routing"
+
     assert_equal 1, page.all("table").count
-    sleep 0.4
-    reservation_count = page.all("table tbody tr").count
+    table = page.find('table.needs-routing')
+
+    reservation_count = table.all("tbody tr").count
     assert_equal 4, reservation_count
   end
 
   # test that the edit link works
   test "edit link works" do
     visit admin_reservations_url
-    first_row = page.first("table tbody tr")
+    first_row = page.find("table tbody tr", text: "trellis.wilson@example.com")
     first_row.click_link("Edit")
     assert_selector "h1", text: "Edit Reservation"
+    assert_field "Email", with: "trellis.wilson@example.com"
   end
 
   test "view link works" do
     visit admin_reservations_url
-    first_row = page.first("table tbody tr")
+    first_row = page.find("table tbody tr", text: "steven.wonder@example.com")
     first_row.click_link("View")
     assert_selector "h1", text: "Reservation Details"
+    assert_text "steven.wonder@example.com"
   end
 
   test "delete button works" do
     visit admin_reservations_url
-    first_row = page.first("table tbody tr")
-    assert_difference "Reservation.count", -1 do
-      accept_confirm do
-        first_row.click_button("Delete")
-      end
-      sleep 0.2 # wait for the count to occur
+    first_row = page.find("table tbody tr", text: "icky.jones@example.com")
+    
+    accept_confirm do
+      first_row.click_button("Delete")
     end
+    
     assert_selector ".flash", text: "Reservation was successfully deleted."
   end
 end

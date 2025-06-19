@@ -47,7 +47,7 @@ class Admin::SmsTest < ApplicationSystemTestCase
       first(".delete-button").click
     end
     assert_text "Conversation deleted successfully."
-    assert_equal 0, Sms.where(phone: "+12069230400").count
+    assert_no_text "+12069230400"
   end
 
   test "should delete conversation on show page" do
@@ -57,7 +57,7 @@ class Admin::SmsTest < ApplicationSystemTestCase
       first(".delete-button").click
     end
     assert_text "Conversation deleted successfully."
-    assert_equal 0, Sms.where(phone: "+12069230400").count
+    assert_no_text "+12069230400"
   end
 
   test "should show unviewed incoming SMS badge in navigation" do

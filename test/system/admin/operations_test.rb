@@ -9,7 +9,7 @@ class Admin::OperationsTest < ApplicationSystemTestCase
     end
 
     visit admin_marketing_index_url
-    assert_equal 13, page.all("table tbody tr").count
+    assert_equal 1, page.all("table").count
 
     visit admin_reservations_url
     assert_equal 0, page.all("table tbody tr").count

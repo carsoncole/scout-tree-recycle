@@ -10,7 +10,7 @@ reservation_form_minimum:
 reservation_form_with_mobile:
   name: Steve Jobs
   street: 405 Lexington Ave
-  mobile: +17123453456
+  mobile: "+17123453456"
   city: New York
   state: NY
   country: United States
@@ -33,7 +33,7 @@ address_verification_with_mobile:
   state: NY
   country: United States
   email: jane.doe@example.com
-  mobile: +12064759823
+  mobile: "+12064759823"
   status: address_verification
 
 address_verification_with_manual_routing:
@@ -43,7 +43,7 @@ address_verification_with_manual_routing:
   state: NY
   country: United States
   email: lisa.doe@example.com
-  mobile: +12064759823
+  mobile: "+12064759821"
   status: address_verification
   latitude: 31.1212
   longitude: 1212.1212
@@ -65,7 +65,7 @@ donation_with_mobile:
   state: NY
   country: United States
   email: sam.trellis@example.com
-  mobile: +12064759823 
+  mobile: "+12064759823"
   status: donation
 
 routing_1:
@@ -85,7 +85,7 @@ routing_2:
   state: NY
   country: United States
   email: trellis.wilson@example.com
-  mobile: +12064759823
+  mobile: "+12064759823"
   status: routing
   is_manually_routed: true
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
@@ -118,18 +118,18 @@ routing_geocoding_manual:
   is_manually_geocoded: true
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
-pending_pickup_1  :
+pending_pickup_1:
   name: Mary Jones
   street: 770 Broadway
   city: New York
   state: NY
   country: United States
   email: mary.jones@example.com
-  mobile: '+12069230400'
+  mobile: "+12069230400"
   status: pending_pickup
   latitude: 31.1212
   longitude: 1212.1212
-  route: one 
+  route: one
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 pending_pickup_no_mobile:
@@ -139,9 +139,10 @@ pending_pickup_no_mobile:
   state: NY
   country: United States
   email: mack.gilbert@example.com
+  status: pending_pickup
   latitude:  31.1212
   longitude: 1212.1212
-  route: one 
+  route: one
 
 pending_pickup_not_routed:
   name: Susan Banks
@@ -150,14 +151,14 @@ pending_pickup_not_routed:
   state: NY
   country: United States
   email: susan.banks@example.com
-  mobile: +12069982344
+  mobile: "+12069982344"
   pickup_notes: Tree will be in the back yard
   status: pending_pickup
   is_manually_geocoded: true
   is_manually_routed: false
   latitude: 31.1212
   longitude: 1212.1212
-  route: two 
+  route: two
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 picked_up_1:
@@ -167,11 +168,11 @@ picked_up_1:
   state: NY
   country: United States
   email: bob.jones@example.com
-  mobile: +12064759823 
+  mobile: "+12064759823" 
   status: picked_up
   latitude: 31.1212
   longitude: 1212.1212
-  route: one 
+  route: one
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 picked_up_2:
@@ -181,7 +182,7 @@ picked_up_2:
   state: NY
   country: United States
   email: Sammy.Kopeke@example.com
-  mobile: +12064759823 
+  mobile: "+12064759823" 
   status: picked_up
   is_manually_routed: true
   latitude: 31.1212
@@ -196,12 +197,12 @@ missing_1:
   state: NY
   country: United States
   email: bill.carson@example.com
-  mobile: +12069230400
+  mobile: "+12069230404"
   status: missing
   is_manually_routed: true
   latitude: 31.1212
   longitude: 1212.1212
-  route: one 
+  route: one
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
 cancelled_1:
@@ -211,7 +212,7 @@ cancelled_1:
   state: NY
   country: United States
   email: bob.miurtha@example.com
-  mobile: +12069230400
+  mobile: "+12069230402"
   status: cancelled
   route: two
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
@@ -224,7 +225,7 @@ cancelled_2:
   state: NY
   country: United States
   email: billy_carter@example.com
-  mobile: +12069230400
+  mobile: "+12069230401"
   status: cancelled
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
   cancelled_reservation_email_sent_at: 2025-05-17 12:00:00

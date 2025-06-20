@@ -45,7 +45,7 @@
       <div class="space-y-4">
         <% @smses_by_phone.each do |phone, smses| %>
           <% unviewed_count = smses.count { |sms| !sms.viewed && sms.incoming? } %>
-          <div class="flex items-center justify-between shadow-xl sm:rounded-lg mb-8 bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded px-4 py-2 transition">
+          <div class="conversation flex items-center justify-between shadow-xl sm:rounded-lg mb-8 bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded px-4 py-2 transition">
             <%= link_to admin_sms_thread_path(phone), class: "flex-1 flex items-center space-x-3 cursor-pointer min-w-0" do %>
               <% if unviewed_count > 0 %>
                 <div class="w-4 h-4 bg-blue-500 rounded-full flex-shrink-0"></div>

@@ -52,9 +52,8 @@ class Admin::SmsTest < ApplicationSystemTestCase
 
   test "should delete conversation on show page" do
     visit admin_sms_url
-    first(".cursor-pointer").click
     accept_confirm do
-      first(".delete-button").click
+      page.find(".conversation", text: "2069230400").find(".delete-button").click
     end
     assert_text "Conversation deleted successfully."
     assert_no_text "+12069230400"

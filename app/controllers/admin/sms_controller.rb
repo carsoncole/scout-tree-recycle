@@ -1,21 +1,6 @@
 class Admin::SmsController < Admin::BaseController
   def index
-    # Get all SMS messages ordered by creation time descending
-    all_smses = Sms.order(created_at: :desc)
-    
-    # Group by phone and sort conversations
-    @smses_by_phone = all_smses.group_by(&:phone).transform_values do |messages|
-      messages.sort_by(&:created_at)
-    end
-    
-    # Sort conversations: unviewed incoming first, then by most recent message
-    @smses_by_phone = @smses_by_phone.sort_by do |phone, messages|
-      has_unviewed_incoming = messages.any? { |msg| msg.incoming? && !msg.viewed? }
-      most_recent_time = messages.max_by(&:created_at).created_at
-      
-      # Sort by: 1) has unviewed incoming (true first), 2) most recent time (descending)
-      [has_unviewed_incoming ? 0 : 1, -most_recent_time.to_i]
-    end.to_h
+    @smses_by_phone = Sms.grouped_by_phone_for_index
     
     flash.now[:alert] = "SMS messaging is disabled. Enable SMS in Settings to send messages." unless helpers.setting.is_sms_enabled?
   end
@@ -55,8 +40,9 @@ class Admin::SmsController < Admin::BaseController
                 turbo_stream.update("flash", partial: "shared/flash")
               ]
             else
-              # For index page, redirect to refresh the page
-              redirect_to admin_sms_index_path, notice: "Message sent successfully."
+              # For index page, just update the flash message since the broadcast will handle the conversation list
+              flash.now[:notice] = "Message sent successfully."
+              render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
             end
           }
           format.html {
@@ -77,8 +63,9 @@ class Admin::SmsController < Admin::BaseController
                 turbo_stream.update("flash", partial: "shared/flash")
               ]
             else
-              # For index page, redirect to refresh the page
-              redirect_to admin_sms_index_path, alert: "Failed to send message: #{@sms.errors.full_messages.join(', ')}"
+              # For index page, just update the flash message
+              flash.now[:alert] = "Failed to send message: #{@sms.errors.full_messages.join(', ')}"
+              render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
             end
           }
           format.html {
@@ -103,8 +90,9 @@ class Admin::SmsController < Admin::BaseController
               turbo_stream.update("flash", partial: "shared/flash")
             ]
           else
-            # For index page, redirect to refresh the page
-            redirect_to admin_sms_index_path, alert: "SMS messaging is disabled. Enable SMS in Settings to send messages."
+            # For index page, just update the flash message
+            flash.now[:alert] = "SMS messaging is disabled. Enable SMS in Settings to send messages."
+            render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
           end
         }
         format.html {

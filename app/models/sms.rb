@@ -13,6 +13,27 @@ class Sms < ApplicationRecord
   normalizes :phone, with: ->(phone) { Phonelib.parse(phone).full_e164.presence if phone.present? }
 
   after_create_commit :send_outgoing!, if: :outgoing?
+  
+  after_commit :broadcast_sms_update! #, on: [:create, :update]
+
+  def self.grouped_by_phone_for_index
+    # Get all SMS messages ordered by creation time descending
+    all_smses = order(created_at: :desc)
+    
+    # Group by phone and sort conversations
+    smses_by_phone = all_smses.group_by(&:phone).transform_values do |messages|
+      messages.sort_by(&:created_at)
+    end
+    
+    # Sort conversations: unviewed incoming first, then by most recent message
+    smses_by_phone.sort_by do |phone, messages|
+      has_unviewed_incoming = messages.any? { |msg| msg.incoming? && !msg.viewed? }
+      most_recent_time = messages.max_by(&:created_at).created_at
+      
+      # Sort by: 1) has unviewed incoming (true first), 2) most recent time (descending)
+      [has_unviewed_incoming ? 0 : 1, -most_recent_time.to_i]
+    end.to_h
+  end
 
   def send_via_twilio!
     begin
@@ -42,6 +63,7 @@ class Sms < ApplicationRecord
   end
 
   def send_outgoing!
+    Rails.logger.info "SMS send_outgoing! called for phone: #{phone}"
     if Setting.instance.is_sms_enabled
       SendSmsJob.perform_later(self.id)
     else
@@ -64,6 +86,35 @@ class Sms < ApplicationRecord
     formatted
   end
 
+  private
+
+  def broadcast_sms_update!
+    Rails.logger.info "Broadcasting SMS update for phone: #{phone}, id: #{id}"
+    
+    begin
+      # Broadcast to the SMS index page
+      broadcast_replace_to "smses",
+        target: "sms_conversations",
+        partial: "admin/sms/conversations",
+        locals: { smses_by_phone: Sms.grouped_by_phone_for_index }
+
+      # Broadcast to the specific thread if it exists
+      broadcast_replace_to "sms_thread_#{phone.gsub(/[^0-9]/, '')}",
+        target: "sms-thread-#{phone.gsub(/[^0-9]/, '')}",
+        partial: "admin/sms/thread",
+        locals: { 
+          phone: phone, 
+          smses: Sms.where(phone: phone).order(:created_at),
+          expanded: false,
+          show_page: false
+        }
+      
+      Rails.logger.info "SMS broadcast completed successfully"
+    rescue => e
+      Rails.logger.error "SMS broadcast failed: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+    end
+  end
 
   # def send_with_object(obj, message)
   #   begin

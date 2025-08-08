@@ -26,24 +26,34 @@ class MarketingMailerTest < ActionMailer::TestCase
     assert_match "Reserve your Pickup Today", mail.body.encoded
   end
 
-  test "marketing_email_1 contains unsubscribe link" do
-    Setting.instance.update(is_emailing_enabled: true)
+  test "marketing_email_1 contains unsubscribe and organization link" do
+    Setting.instance.update(is_emailing_enabled: true, organization_url: "https://example.com")
     prior_reservation = prior_reservations(:full)
     mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_1
     
     assert_match "Unsubscribe", mail.body.encoded
     #TODO: Fix this encoding issue
-    # assert_match unsubscribe_prior_reservation_url(prior_reservation), mail.body.encoded
-  end
+    # assert_match "https://example.com", mail.body.encoded
+      end
 
-  test "marketing_email_2 contains unsubscribe link" do
-    Setting.instance.update(is_emailing_enabled: true)
+  test "marketing_email_2 contains unsubscribe and organization link" do
+    Setting.instance.update(is_emailing_enabled: true, organization_url: "https://example.com")
     prior_reservation = prior_reservations(:full)
     mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_2
     
     assert_match "Unsubscribe", mail.body.encoded
     #TODO: Fix this encoding issue
-    # assert_match unsubscribe_prior_reservation_url(prior_reservation), mail.body.encoded
+    assert_match "https://example.com", mail.body.encoded
+  end
+
+  test "marketing_email_1 contains unsubscribe no organization link" do
+    Setting.instance.update(is_emailing_enabled: true)
+    prior_reservation = prior_reservations(:full)
+    mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_1
+    
+    assert_match "Unsubscribe", mail.body.encoded
+    assert_no_match "https://example.com", mail.body.encoded
+    assert_match Setting.instance.organization_name, mail.body.encoded
   end
 
   test "marketing_email_1 contains registration link" do

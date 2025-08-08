@@ -61,7 +61,7 @@ class AboutsTest < ApplicationSystemTestCase
     assert_no_selector "h4", text: "Questions?"
   end
 
-  test "should diplay on day of pickup info" do
+  test "should display on day of pickup info" do
     setting = Setting.instance
     setting.organization_name = "Troop 222"
     setting.on_day_of_pickup_instructions = "Some instructions"

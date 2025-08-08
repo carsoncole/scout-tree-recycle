@@ -1,7 +1,7 @@
-one:
-  name: MyString
-  mobile: MyString
+driver_one:
+  name: Jack Wallace
+  mobile: "+12063459876"
 
-two:
-  name: MyString
-  mobile: MyString
+driver_two:
+  name: John Doe
+  mobile: "+12063459877"

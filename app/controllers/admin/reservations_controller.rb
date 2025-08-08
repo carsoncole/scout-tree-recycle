@@ -1,4 +1,3 @@
-
 class Admin::ReservationsController < Admin::BaseController
   before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode ]
 
@@ -37,7 +36,14 @@ class Admin::ReservationsController < Admin::BaseController
 
   def update
     if @reservation.update(reservation_params)
-      redirect_to edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
+      respond_to do |format|
+        format.turbo_stream do
+          redirect_to admin_reservation_path(@reservation), notice: "Reservation status was successfully updated."
+        end
+        format.html do
+          redirect_to edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
+        end
+      end
     else
       render :edit, status: :unprocessable_entity
     end

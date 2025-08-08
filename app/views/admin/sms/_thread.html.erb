@@ -1,5 +1,6 @@
 <% expanded = true if defined?(show_page) && show_page %>
 <% expanded ||= false %>
+<%= turbo_stream_from "sms_thread_#{phone.gsub(/[^0-9]/, '')}" %>
 <turbo-frame id="sms-thread-<%= phone.gsub(/[^0-9]/, '') %>">
   <% unviewed_count = smses.count { |sms| !sms.viewed } %>
   <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg" data-controller="sms-thread" data-sms-thread-phone-value="<%= phone %>">

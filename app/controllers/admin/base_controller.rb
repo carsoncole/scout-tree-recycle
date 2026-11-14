@@ -1,7 +1,6 @@
 class Admin::BaseController < ApplicationController
   include Authentication
   layout "admin"
-  include Pagy::Backend
 
   # around_action :set_time_zone
 

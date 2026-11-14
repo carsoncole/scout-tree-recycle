@@ -15,13 +15,13 @@ class Admin::DriversControllerTest < ActionDispatch::IntegrationTest
 
   test "should get edit" do
     sign_in
-    get edit_admin_driver_url(drivers(:one))
+    get edit_admin_driver_url(drivers(:driver_one))
     assert_response :success
   end
 
   test "should get update" do
     sign_in
-    patch admin_driver_url(drivers(:one)), params: { driver: { name: "New Name" } }
+    patch admin_driver_url(drivers(:driver_one)), params: { driver: { name: "New Name" } }
     assert_redirected_to admin_drivers_url
     assert_equal "Driver was successfully updated.", flash[:notice]
   end
@@ -35,7 +35,7 @@ class Admin::DriversControllerTest < ActionDispatch::IntegrationTest
 
   test "should get destroy" do
     sign_in
-    delete admin_driver_url(drivers(:one))
+    delete admin_driver_url(drivers(:driver_one))
     assert_redirected_to admin_drivers_url
     assert_equal "Driver was successfully deleted.", flash[:notice]
   end

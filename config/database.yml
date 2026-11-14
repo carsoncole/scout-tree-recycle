@@ -4,7 +4,7 @@ default: &default
   host: 192.168.0.195
   username: tree_recycle
   password: <%= Rails.application.credentials.dig(:production_db_password) %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>exit
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 
 development:

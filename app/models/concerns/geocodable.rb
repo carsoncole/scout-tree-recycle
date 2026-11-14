@@ -32,6 +32,11 @@ module Geocodable
         return false if self.is_manually_geocoded?
       end
 
+      unless Setting.instance&.configure_location_service!
+        Rails.logger.warn("Location services are not configured")
+        return false
+      end
+
       update_columns(was_automatically_geocoded: true)
 
       if Geocoder.config.lookup == :nominatum

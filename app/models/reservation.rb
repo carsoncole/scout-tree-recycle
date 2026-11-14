@@ -11,7 +11,7 @@ class Reservation < ApplicationRecord
 
   attribute :city, :string, default: -> { Setting.instance.default_city }
   attribute :state, :string, default: -> { Setting.instance.default_state }
-  attribute :country, :string, default: "United States"
+  attribute :country, :string, default: -> { Setting.instance&.default_country.presence || "United States" }
 
 
 

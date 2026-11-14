@@ -1,5 +1,8 @@
 class DonationsController < ApplicationController
+  include StripeConfigurable
+
   before_action :set_reservation, only: %i[ index create new cash_or_check no_donation ]
+  before_action :ensure_stripe_configured, only: %i[ create donation_without_reservation ]
 
   def index
   end
@@ -11,7 +14,7 @@ class DonationsController < ApplicationController
     @reservation.online_donation!
     @session = Stripe::Checkout::Session.create({
       line_items: [ {
-          price: Rails.env.production? ? STRIPE_PRODUCTION_PRICE_ITEM : STRIPE_DEVELOPMENT_PRICE_ITEM,
+          price: Setting.instance.stripe_price_id,
           quantity: 1
       } ],
       mode: "payment",
@@ -27,7 +30,7 @@ class DonationsController < ApplicationController
   def donation_without_reservation
     @session = Stripe::Checkout::Session.create({
       line_items: [ {
-          price: Rails.env.production? ? STRIPE_PRODUCTION_PRICE_ITEM : STRIPE_DEVELOPMENT_PRICE_ITEM,
+          price: Setting.instance.stripe_price_id,
           quantity: 1
       } ],
       mode: "payment",
@@ -57,6 +60,12 @@ class DonationsController < ApplicationController
 
 
   private
+
+  def ensure_stripe_configured
+    return if Setting.instance&.stripe_configured?
+
+    redirect_to root_path, alert: "Online donations are not configured yet."
+  end
 
   def set_reservation
     @reservation = Reservation.find(params[:reservation_id] || params[:id])

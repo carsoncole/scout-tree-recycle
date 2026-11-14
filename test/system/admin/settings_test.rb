@@ -11,6 +11,31 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Settings"
   end
 
+  test "settings sidebar links to each section" do
+    visit admin_settings_url
+
+    within "nav.admin-settings-nav" do
+      assert_link "Feature Toggles", href: "#feature-toggles"
+      assert_link "Organization", href: "#organization"
+      assert_link "The Event", href: "#event-settings"
+      assert_link "Site Content", href: "#site-content"
+      assert_link "Pickups Portal", href: "#tree-pickups"
+      assert_link "SMS", href: "#sms"
+      assert_link "Email", href: "#email"
+      assert_link "Donations", href: "#donations"
+      assert_link "Location Services", href: "#location-services"
+      assert_link "Operations", href: "#operations"
+      assert_link "User Management", href: "#user-management"
+    end
+
+    %w[feature-toggles organization event-settings site-content tree-pickups sms email donations location-services operations user-management].each do |id|
+      assert_selector "section##{id}"
+    end
+
+    titles = all("section.admin-panel h2.admin-panel-title").map(&:text)
+    assert_equal [ "Feature Toggles", "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "User Management" ], titles
+  end
+
   test "pickups portal is disabled when not enabled" do
     Setting.instance.update(is_pickups_site_enabled: false)
 
@@ -27,11 +52,11 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_no_text "The Pickups site is CLOSED."
   end
 
-  test "pickups portal is accessible when driver secret key is set" do
+  test "pickups portal is accessible when driver password is set" do
     Setting.instance.update(is_pickups_site_enabled: true, driver_secret_key: "1234567890")
 
     visit pickups_root_url
-    fill_in "Driver Key", with: "1234567890"
+    fill_in "Password", with: "1234567890"
     click_on "Access Pickups"
 
     assert_selector "h1", text: "Drivers"
@@ -86,23 +111,99 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   test "feature toggle saves immediately" do
     visit admin_settings_url
 
-    initial = Setting.instance.reload.is_emailing_enabled
-    find("#emailing-toggle").click
+    initial = Setting.instance.reload.is_routing_enabled
+    find("#routing-toggle").click
 
     assert_text "Saved"
-    assert_equal !initial, Setting.instance.reload.is_emailing_enabled
+    assert_equal !initial, Setting.instance.reload.is_routing_enabled
   end
 
-  test "pickups portal settings live in the Tree Pickups panel" do
+  test "reservations toggle lives in The Event panel" do
     visit admin_settings_url
 
-    within "section.admin-panel", text: "Tree Pickups" do
-      assert_selector "#pickups-toggle"
-      assert_field "Secret Key"
-      assert_button "Save Portal Settings"
+    within "section.admin-panel", text: "The Event" do
+      assert_selector "#reservations-toggle"
+      assert_field "Reservations Closed Message"
+      assert_text "Displayed on the public home page in place of the reservation form when Enable Reservations is off."
     end
 
-    within "section.admin-panel", text: "Feature toggles" do
+    within "section#feature-toggles" do
+      assert_no_selector "#reservations-toggle"
+    end
+  end
+
+  test "reservations toggle saves immediately" do
+    visit admin_settings_url
+
+    initial = Setting.instance.reload.is_reservations_open
+
+    within "section.admin-panel", text: "The Event" do
+      find("#reservations-toggle").click
+      assert_text "Saved"
+    end
+
+    assert_equal !initial, Setting.instance.reload.is_reservations_open
+  end
+
+  test "organization settings live in the Organization panel" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "Organization" do
+      assert_field "Organization Name"
+      assert_field "Organization URL"
+      assert_field "Site URL"
+      assert_field "Time Zone"
+      assert_field "Default Country"
+      assert_button "Save Organization Settings"
+    end
+
+    within "section.admin-panel", text: "The Event" do
+      assert_no_field "Organization Name"
+      assert_no_field "Organization URL"
+    end
+  end
+
+  test "organization panel saves its settings" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "Organization" do
+      fill_in "Organization Name", with: "Troop 200"
+      fill_in "Organization URL", with: "https://troop200.example.com"
+      fill_in "Site URL", with: "https://trees.example.com"
+      select "UTC", from: "Time Zone"
+      fill_in "Default Country", with: "Canada"
+      click_on "Save Organization Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    setting = Setting.instance.reload
+    assert_equal "Troop 200", setting.organization_name
+    assert_equal "https://troop200.example.com", setting.organization_url
+    assert_equal "https://trees.example.com", setting.site_url
+    assert_equal "UTC", setting.time_zone
+    assert_equal "Canada", setting.default_country
+  end
+
+  test "event contacts describe that fields are optional" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "The Event" do
+      assert_text "All fields are optional. Any information provided here will be displayed on the public site so customers can reach the event organizers."
+    end
+  end
+
+  test "pickups portal settings live in the Pickups Portal panel" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "Pickups Portal" do
+      assert_selector "#pickups-toggle"
+      assert_field "Password"
+      assert_button "Save Portal Settings"
+      assert_no_text "Turn the driver portal on or off."
+    end
+
+    within "section#feature-toggles" do
       assert_no_selector "#pickups-toggle"
     end
   end
@@ -112,12 +213,195 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     initial = Setting.instance.reload.is_pickups_site_enabled
 
-    within "section.admin-panel", text: "Tree Pickups" do
+    within "section.admin-panel", text: "Pickups Portal" do
       find("#pickups-toggle").click
       assert_text "Saved"
     end
 
     assert_equal !initial, Setting.instance.reload.is_pickups_site_enabled
+  end
+
+  test "sms settings live in the SMS panel" do
+    visit admin_settings_url
+
+    within "section#sms" do
+      assert_selector "#sms-toggle"
+      assert_field "Account SID"
+      assert_field "Auth Token"
+      assert_field "From Number"
+      assert_field "Webhook URL", with: api_v1_sms_reply_url
+      assert_button "Save SMS Settings"
+    end
+
+    within "section#feature-toggles" do
+      assert_no_selector "#sms-toggle"
+    end
+  end
+
+  test "sms panel saves credentials" do
+    visit admin_settings_url
+
+    within "section#sms" do
+      fill_in "Account SID", with: "AC123456"
+      fill_in "Auth Token", with: "token-123"
+      fill_in "From Number", with: "+15555550123"
+      click_on "Save SMS Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    setting = Setting.instance.reload
+    assert_equal "AC123456", setting.twilio_account_sid
+    assert_equal "token-123", setting.twilio_auth_token
+    assert_equal "+15555550123", setting.twilio_from_number
+  end
+
+  test "sms toggle saves immediately" do
+    visit admin_settings_url
+
+    initial = Setting.instance.reload.is_sms_enabled
+
+    within "section#sms" do
+      find("#sms-toggle").click
+      assert_text "Saved"
+    end
+
+    assert_equal !initial, Setting.instance.reload.is_sms_enabled
+  end
+
+  test "email settings live in the Email panel" do
+    visit admin_settings_url
+
+    within "section#email" do
+      assert_selector "#emailing-toggle"
+      assert_field "From Address"
+      assert_field "SMTP Address"
+      assert_field "Port"
+      assert_field "Username"
+      assert_field "Password"
+      assert_field "Authentication"
+      assert_field "Encryption"
+      assert_button "Save Email Settings"
+    end
+
+    within "section#feature-toggles" do
+      assert_no_selector "#emailing-toggle"
+    end
+  end
+
+  test "email panel saves settings" do
+    visit admin_settings_url
+
+    within "section#email" do
+      fill_in "From Address", with: "Troop 100 <troop100@example.com>"
+      fill_in "SMTP Address", with: "smtp.example.com"
+      fill_in "Port", with: "587"
+      fill_in "Username", with: "smtp-user"
+      fill_in "Password", with: "smtp-password"
+      select "Plain", from: "Authentication"
+      select "STARTTLS (recommended)", from: "Encryption"
+      click_on "Save Email Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    setting = Setting.instance.reload
+    assert_equal "Troop 100 <troop100@example.com>", setting.email_from_address
+    assert_equal "smtp.example.com", setting.smtp_address
+    assert_equal 587, setting.smtp_port
+    assert_equal "smtp-user", setting.smtp_user_name
+    assert_equal "smtp-password", setting.smtp_password
+    assert_equal "plain", setting.smtp_authentication
+  end
+
+  test "email toggle saves immediately" do
+    visit admin_settings_url
+
+    initial = Setting.instance.reload.is_emailing_enabled
+
+    within "section#email" do
+      find("#emailing-toggle").click
+      assert_text "Saved"
+    end
+
+    assert_equal !initial, Setting.instance.reload.is_emailing_enabled
+  end
+
+  test "donations settings live in the Donations panel" do
+    visit admin_settings_url
+
+    within "section#donations" do
+      assert_selector "#donations-toggle"
+      assert_field "Secret Key"
+      assert_field "Price ID"
+      assert_field "Webhook URL", with: api_v1_stripe_webhook_url
+      assert_button "Save Donations Settings"
+    end
+
+    within "section#feature-toggles" do
+      assert_no_selector "#donations-toggle"
+    end
+  end
+
+  test "donations panel saves settings" do
+    visit admin_settings_url
+
+    within "section#donations" do
+      fill_in "Secret Key", with: "sk_test_123"
+      fill_in "Price ID", with: "price_123"
+      click_on "Save Donations Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    setting = Setting.instance.reload
+    assert_equal "sk_test_123", setting.stripe_secret_key
+    assert_equal "price_123", setting.stripe_price_id
+  end
+
+  test "donations toggle saves immediately" do
+    visit admin_settings_url
+
+    initial = Setting.instance.reload.is_donations_enabled
+
+    within "section#donations" do
+      find("#donations-toggle").click
+      assert_text "Saved"
+    end
+
+    assert_equal !initial, Setting.instance.reload.is_donations_enabled
+  end
+
+  test "location services settings live in the Location Services panel" do
+    visit admin_settings_url
+
+    within "section#location-services" do
+      assert_field "Access Key ID"
+      assert_field "Secret Access Key"
+      assert_field "Region"
+      assert_field "Place Index Name"
+      assert_button "Save Location Services Settings"
+    end
+  end
+
+  test "location services panel saves settings" do
+    visit admin_settings_url
+
+    within "section#location-services" do
+      fill_in "Access Key ID", with: "AKIATEST"
+      fill_in "Secret Access Key", with: "secret-test"
+      fill_in "Region", with: "us-east-1"
+      fill_in "Place Index Name", with: "test-index"
+      click_on "Save Location Services Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    setting = Setting.instance.reload
+    assert_equal "AKIATEST", setting.aws_access_key_id
+    assert_equal "secret-test", setting.aws_secret_access_key
+    assert_equal "us-east-1", setting.aws_region
+    assert_equal "test-index", setting.aws_location_index_name
   end
 
   test "page links" do
@@ -127,23 +411,53 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_link "Manage Users", href: admin_users_path
   end
 
-  test "update settings" do
+  test "site content settings live in the Site Content panel" do
     visit admin_settings_url
-    fill_in "Header/Tab Title", with: "Home Page Header"
-    fill_in "About", with: "About Event Description"
-    fill_in "Reservations Closed Message", with: "Reservations Closed Message"
-    fill_in "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
-    fill_in "Contact Name", with: "Contact Name"
-    fill_in "Contact Phone", with: "Contact Phone"
-    fill_in "Contact Email", with: "email@example.com"
-    fill_in "Email Batch Quantity", with: "99"
-    click_on "Save Settings"
+
+    within "section.admin-panel", text: "Site Content" do
+      assert_field "Header/Tab Title"
+      assert_field "About"
+      assert_field "On Day of Pickup Instructions"
+      assert_button "Save Site Content"
+    end
+
+    within "section.admin-panel", text: "The Event" do
+      assert_no_field "Header/Tab Title"
+      assert_no_field "About"
+      assert_no_field "On Day of Pickup Instructions"
+    end
+  end
+
+  test "site content panel saves its settings" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "Site Content" do
+      fill_in "Header/Tab Title", with: "Home Page Header"
+      fill_in "About", with: "About Event Description"
+      fill_in "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
+      click_on "Save Site Content"
+    end
 
     assert_text "Settings were successfully updated"
     assert_field "Header/Tab Title", with: "Home Page Header"
     assert_field "About", with: "About Event Description"
-    assert_field "Reservations Closed Message", with: "Reservations Closed Message"
     assert_field "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
+  end
+
+  test "update event settings" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "The Event" do
+      fill_in "Reservations Closed Message", with: "Reservations Closed Message"
+      fill_in "Contact Name", with: "Contact Name"
+      fill_in "Contact Phone", with: "Contact Phone"
+      fill_in "Contact Email", with: "email@example.com"
+      fill_in "Email Batch Quantity", with: "99"
+      click_on "Save Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+    assert_field "Reservations Closed Message", with: "Reservations Closed Message"
     assert_field "Contact Name", with: "Contact Name"
     assert_field "Contact Phone", with: "Contact Phone"
     assert_field "Contact Email", with: "email@example.com"

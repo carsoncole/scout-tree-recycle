@@ -998,6 +998,75 @@
   margin-bottom: 1.25rem;
 }
 
+.admin-settings-layout {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.admin-settings-nav {
+  padding: 1rem;
+  border: 1px solid var(--site-line);
+  border-radius: var(--site-radius);
+  background: var(--site-surface);
+}
+
+.admin-settings-nav-list {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0 0 0.15rem;
+  overflow-x: auto;
+  list-style: none;
+}
+
+.admin-settings-nav-link {
+  display: block;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--site-radius-pill);
+  background: var(--site-cool);
+  color: var(--site-ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--site-transition), color var(--site-transition);
+}
+
+.admin-settings-nav-link:hover,
+.admin-settings-nav-link:focus-visible {
+  background: var(--site-sage-soft);
+  color: var(--site-ink);
+}
+
+.admin-settings-layout section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+@media (min-width: 900px) {
+  .admin-settings-layout {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .admin-settings-nav {
+    position: sticky;
+    top: 5.5rem;
+  }
+
+  .admin-settings-nav-list {
+    flex-direction: column;
+    gap: 0.15rem;
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .admin-settings-nav-link {
+    border-radius: var(--site-radius);
+    background: transparent;
+  }
+}
+
 .admin-panel {
   overflow: hidden;
   border: 1px solid var(--site-line);
@@ -1136,7 +1205,7 @@
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--site-line-strong);
   border-radius: 8px;
-  background: #fffdf8;
+  background-color: #fffdf8;
   color: var(--site-ink);
   font: inherit;
   font-size: 0.9rem;
@@ -1153,7 +1222,12 @@
 }
 
 .admin-select {
-  appearance: auto;
+  appearance: none;
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%235d625a' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.7rem;
 }
 
 .admin-input::placeholder,
@@ -1172,14 +1246,14 @@
 .admin-textarea:focus {
   outline: none;
   border-color: var(--site-sage);
-  background: #fffef9;
+  background-color: #fffef9;
   box-shadow: 0 0 0 3px rgba(81, 107, 88, 0.16);
 }
 
 .admin-input:disabled,
 .admin-select:disabled,
 .admin-textarea:disabled {
-  background: var(--site-stone);
+  background-color: var(--site-stone);
   color: var(--site-muted);
   cursor: not-allowed;
 }

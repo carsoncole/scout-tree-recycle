@@ -7,25 +7,25 @@ class Pickups::DriversTest < ApplicationSystemTestCase
 
   test "visiting the root" do
     visit pickups_root_url
-    fill_in "driver_secret_key", with: "secret"
+    fill_in "Password", with: "secret"
     click_on "Access Pickups"
 
     assert_selector "nav", text: "Tree Pickups"
     assert_selector "h1", text: "Drivers"
   end
 
-  test "visiting the root with invalid secret key" do
+  test "visiting the root with invalid password" do
     visit pickups_root_url
-    fill_in "driver_secret_key", with: "invalid"
+    fill_in "Password", with: "invalid"
     click_on "Access Pickups"
-    assert_selector ".flash", text: "Invalid driver key"
+    assert_selector ".flash", text: "Invalid driver password"
   end
 
   test "visiting the root with closed pickups site" do
     Setting.instance.update(is_pickups_site_enabled: false)
     visit pickups_root_url
     assert_selector ".flash", text: "The Pickups site is CLOSED."
-    fill_in "driver_secret_key", with: "secret"
+    fill_in "Password", with: "secret"
     click_on "Access Pickups"
     assert_selector ".flash", text: "The Pickups site is CLOSED."
   end

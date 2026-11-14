@@ -118,13 +118,13 @@ $ kamal setup
 $ kamal deploy
 ```
 
-## Configure Time Zone
+## Configure Site and Time Zone
 
-To configure the time zone for all times reflected in the application, modify `application.rb`. use 'rails time:zones:all' for a list of zones.
+Open `/admin/settings` and use the **Organization** panel under **Site** to set:
 
-```ruby
-config.time_zone = 'Pacific Time (US & Canada)'
-```
+- **Site URL** — used for links in emails such as password resets and unsubscribe links.
+- **Time Zone** — all event and message times are shown in this zone.
+- **Default Country** — the default country for new reservations.
 
 ## Configure secrets
 
@@ -143,36 +143,28 @@ Copy the sample ```credentials.ymp.enc.sample```.
 
 With emailing configured, Tree Recycle will send automated emails confirming tree reservations, cancellations, and donation receipts. Two funnel-type marketing emails are also available to market to people who have made tree pickup reservations in the past.
 
-#### Configure the email sender address
+#### Configure email in the admin settings
 
-In the configuration file `tree_recycle.rb`, add the sender from email:
+Open `/admin/settings` and use the **Email** section:
 
-```ruby
-EMAIL_FROM = "Anytown Tree Recycle <example@example.com>"
-```
+- **From Address** — the sender name and address recipients see, for example `Anytown Tree Recycle <example@example.com>`.
+- **SMTP Address**, **Port**, **Username**, **Password**, **Authentication**, and **Encryption** (STARTTLS, TLS, or None) — the outgoing mail server details from your email provider.
+- Turn on **Enable Email**.
+
+These values are stored in the application database, so no changes to the encrypted credentials file are required.
 
 
 #### Gmail
+
+Use these SMTP settings:
 
 - address:              smtp.gmail.com
 - port:                 587
 - user_name:            username
 - password:             password
 - authentication:       plain
-- enable_starttls_auto: true
+- encryption:           starttls
 
-Use encrypted credentials to store the settings. The follow should be your ```development.rb``` and ```production.rb``` environment files.
-
-``` ruby
-config.action_mailer.smtp_settings = {
-  :address              => Rails.application.credentials.mailer.development.address,
-  :port                 => Rails.application.credentials.mailer.development.port,
-  :user_name            => Rails.application.credentials.mailer.development.user_name,
-  :password             => Rails.application.credentials.mailer.development.password,
-  :authentication       => plain,
-  :enable_starttls_auto => true
-}
-```
 > :warning: **Important GMAIL Note** Gmail is free, but there are limitations. If you are on a free account, the daily sending limit is ~500 emails. If you do hit a limit, they will temporarily shut your account. For the marketing emails, you can control the batch size of emails in Settings and it is recommended that you keep it low (<50) and send multiple times. Sending a massive block of emails may not only shut your account, but it also could get your emails flagged as SPAM, by receiving email servers. Caution is advised.
 
 ### Routing
@@ -185,24 +177,15 @@ You can configure a mapping service to provide address => latitude and longitude
 
 2. Create a Place Index and give it a name, ie. 'tree_recycle', with the data provider 'Esri' with a single use.  You'll then need API credentials which you can obtain in your main profile under 'Security Credentials'.
 
-3. Configure credentials in the Rails encrypted credentials file `config/credentials.yml.enc`.
+3. Open `/admin/settings` and use the **Location Services** section:
 
-```ruby
-lookups:
-  amazon_location_service:
-    access_key_id: ACCESSKEY
-    secret_access_key: SECRETACCESSKEY
-```
+   - **Access Key ID** and **Secret Access Key** from your AWS security credentials.
+   - **Region** — the region where the place index was created.
+   - **Place Index Name** — the name of your place index, for example `tree_recycle`.
 
-4. Update the geocoder config file ``` config/intializers/geocoder.rb```.  When you create a Place Index, note the AWS region it was created in and update it accordingly in this config file. The two items to be updated are `index_name` and `AWS region`. 
+   These values are stored in the application database, so no changes to the encrypted credentials file are required.
 
-```ruby
-Geocoder.configure(
-  amazon_location_service: {
-    index_name: 'tree_recycle'}
-
-Aws.config.update({region: 'us-west-2'})
-```
+4. Enable **Automatic Routing** under **Feature Toggles** in `/admin/settings`.
 
 ### SMS Messaging
 
@@ -220,23 +203,13 @@ SMS messaging can be configured, and it will provide important messaging to user
 
 > :warning: Getting SMS service from Twilio takes time to set up as they will do a background check on the organization, to fight against spam messaging.
 
-Add the following details from your Twilio account into the encrypted credentials file:
+Configure SMS in the admin interface at `/admin/settings` under **SMS**:
 
-```ruby
-$ EDITOR=vim rails credentials:edit
-```
-```ruby
-twilio:
-  production:
-    number: TWILLIO_NUMBER
-    account_sid: ACCOUNT_SID
-    auth_token: AUTH_TOKEN
-twilio:
-  development:
-    number: TWILLIO_NUMBER
-    account_sid: ACCOUNT_SID
-    auth_token: AUTH_TOKEN
-```
+1. Find your **Account SID** and **Auth Token** in the Twilio console and enter them under **SMS**.
+2. Enter the Twilio **From Number** messages should be sent from, in E.164 format (for example `+15555550123`).
+3. Enable the **Enable SMS** toggle.
+
+These credentials are stored in the application database, so no changes to the encrypted credentials file are required.
 
 In Twilio, you need to create a ```Messaging Service```, which defines the purpose behind what you plan on messaging. The use case should be "Notify my users".
 
@@ -245,9 +218,11 @@ In Twilio, in the section ```Develop```, ```Phone Numbers```, ```Active Numbers`
 ```
 Configure with: Webhook
 A message comes in: Webhook
-URL: https://YOUR_SITE_URL/sms/reply
+URL: https://YOUR_SITE_URL/api/v1/sms/reply
 HTTP: HTTP POST
 ```
+
+The SMS section of the settings page displays the exact webhook URL to use.
 
 Canned SMS reply responses can be modified in `tree_recycle.rb `. 
 
@@ -265,40 +240,28 @@ Canned SMS reply responses can be modified in `tree_recycle.rb `.
     - Configure payment methods in ```Settings > Payments > Payment methods```
     - Configure the payment domain (what URL you will be collecting payments) in ```Settings > Payments > Payment Method Domains```
 
-4. Obtain your keys in ```Developers > API Keys```. You will need the ```Publishable key``` and ```Secret key```.
+4. Obtain your **Secret key** in ```Developers > API Keys```. The publishable key is not used by this application.
 
+5. Open `/admin/settings` and use the **Donations** section:
 
-5. Add the Stripe keys to the encrypted creditials file `config/credentials.yml.enc`:
+   - Enter the Stripe **Secret Key**.
+   - Enter the **Price ID** for your donation price.
+   - Turn on **Enable Online Donations**.
 
-```ruby
-EDITOR=vim rails credentials:edit
-```
+   These values are stored in the application database, so no changes to the encrypted credentials file are required.
 
-```
-stripe:
-  development:
-    publishable_key: PUBLISHABLE_KEY
-    secret_key: SECRET_KEY
-  production:
-    publishable_key: PRODUCTION_KEY
-    secret_key: SECRET_KEY
-```
-
-6. Configure Stripe webhook. In Stripe, ```Developers > Webhooks > Webhook endpoints > Endpoint URL```:
+6. Configure the Stripe webhook. In Stripe, ```Developers > Webhooks > Webhook endpoints > Endpoint URL```:
 
 ```
-https://YOUR_SITE_URL/stripe-webhook
+https://YOUR_SITE_URL/api/v1/stripe-webhook
 ```
+
+The Donations section of the settings page displays the exact webhook URL to use.
 
 7. Configure your default donation. In the Stripe Product Catalog, enter your product, ie. a donation, and product price. ```Product Catalog > Products > Create product "Tree Recycle Donation"``` and ```Product Catalog > Products > select Price (customer chooses), enter a present donation amount.```
 
-8. Add the price id from the Stripe price page ```Product Catalog > Products > select your product "Tree Recycle Donation" > click on the price "Customer Chooses (USD)" > price id should be in the top right of page```, to the ```config/initializers/tree_recycle.rb```:
-
-```ruby
-STRIPE_DEVELOPMENT_PRICE_ITEM = 'price_1Lxwp5AY1LGWbDshKyepVUDL'
-STRIPE_PRODUCTION_PRICE_ITEM = 'price_1M8vYzAY1LGWbDshqoJcAiV9'
-```
-> :question: You have to create a product and price in both Stripe ```Test mode``` as well as production. You will have different ids for each mode. The id from Test mode should be used in ```STRIPE_DEVELOPMENT_PRICE_ITEM```, and the id from production should be in ```STRIPE_PRODUCTION_PRICE_ITEM```.
+8. Copy the price id from the Stripe price page ```Product Catalog > Products > select your product "Tree Recycle Donation" > click on the price "Customer Chooses (USD)" > price id should be in the top right of page``` into the **Price ID** field under **Donations** in `/admin/settings`.
+> :question: Stripe test mode and production have different price IDs. Enter the ID for the mode the site is currently using.
 
 
 9. Enable ```Test mode``` (top right) in your Stripe account, and on your tree recycle site, make a donation. Confirm that the transaction shows up in ```Transactions```.
@@ -355,7 +318,7 @@ Zones are made up of Routes and are used for organizational purposes so that Zon
 
 ## Secrets
 
-Application secrets are stored in Rails application secrets in a credential file `/credentials.yml.enc`. The secrets include passwords and keys to access email providers, Twilio and more. You will add your own secrets to this file, which will be encrypted, and then deployed within your codebase to be used in Production on Heroku.
+Application secrets are stored in Rails application secrets in a credential file `/credentials.yml.enc`. The secrets include passwords and keys to access email providers and more. Twilio/SMS credentials are configured in the admin settings rather than this file. You will add your own secrets to this file, which will be encrypted, and then deployed within your codebase to be used in Production on Heroku.
 
 Delete any existing `config/credentials.yml.enc` file. Initialize your own secrets file:
 

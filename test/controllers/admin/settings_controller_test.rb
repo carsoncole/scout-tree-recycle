@@ -54,6 +54,104 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Settings were successfully updated.", flash[:notice]
   end
 
+  test "should update sms credentials" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        twilio_account_sid: "AC123",
+        twilio_auth_token: "token-123",
+        twilio_from_number: "+15555550123"
+      }
+    }
+
+    assert_redirected_to admin_settings_path
+    setting = Setting.first.reload
+    assert_equal "AC123", setting.twilio_account_sid
+    assert_equal "token-123", setting.twilio_auth_token
+    assert_equal "+15555550123", setting.twilio_from_number
+  end
+
+  test "should update site and organization settings" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        site_url: "https://example.org",
+        time_zone: "UTC",
+        default_country: "Canada"
+      }
+    }
+
+    assert_redirected_to admin_settings_path
+    setting = Setting.first.reload
+    assert_equal "https://example.org", setting.site_url
+    assert_equal "UTC", setting.time_zone
+    assert_equal "Canada", setting.default_country
+  end
+
+  test "should update stripe settings" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        stripe_secret_key: "sk_test_123",
+        stripe_price_id: "price_123"
+      }
+    }
+
+    assert_redirected_to admin_settings_path
+    setting = Setting.first.reload
+    assert_equal "sk_test_123", setting.stripe_secret_key
+    assert_equal "price_123", setting.stripe_price_id
+  end
+
+  test "should update location service settings" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        aws_access_key_id: "AKIATEST",
+        aws_secret_access_key: "secret",
+        aws_region: "us-east-1",
+        aws_location_index_name: "test-index"
+      }
+    }
+
+    assert_redirected_to admin_settings_path
+    setting = Setting.first.reload
+    assert_equal "AKIATEST", setting.aws_access_key_id
+    assert_equal "secret", setting.aws_secret_access_key
+    assert_equal "us-east-1", setting.aws_region
+    assert_equal "test-index", setting.aws_location_index_name
+  end
+
+  test "should update email settings" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        email_from_address: "sender@example.com",
+        smtp_address: "smtp.example.com",
+        smtp_port: 587,
+        smtp_user_name: "smtp-user",
+        smtp_password: "smtp-password",
+        smtp_authentication: "plain",
+        smtp_encryption: "starttls"
+      }
+    }
+
+    assert_redirected_to admin_settings_path
+    setting = Setting.first.reload
+    assert_equal "sender@example.com", setting.email_from_address
+    assert_equal "smtp.example.com", setting.smtp_address
+    assert_equal 587, setting.smtp_port
+    assert_equal "smtp-user", setting.smtp_user_name
+    assert_equal "smtp-password", setting.smtp_password
+    assert_equal "plain", setting.smtp_authentication
+    assert_equal "starttls", setting.smtp_encryption
+  end
+
   test "should toggle an allowed setting" do
     sign_in
 

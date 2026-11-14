@@ -62,12 +62,17 @@ class ReservationsMailerTest < ActionMailer::TestCase
 
   test "not sending more than one confirmation email" do
     Setting.instance.update(is_routing_enabled: true)
+    configure_location_service!
     reservation = reservations(:address_verification_1)
-    assert_emails 1 do
-      perform_enqueued_jobs do
-        reservation.routing!
+
+    with_stubbed_geocoding do
+      assert_emails 1 do
+        perform_enqueued_jobs do
+          reservation.routing!
+        end
       end
     end
+
     assert reservation.reload.confirmed_reservation_email_sent_at.present?
     assert reservation.pending_pickup?
     assert_emails 0 do
@@ -151,5 +156,4 @@ class ReservationsMailerTest < ActionMailer::TestCase
       assert_equal ActionMailer::Base.deliveries.last.subject, "Your tree pickup reservation has been cancelled"
     end
   end
-
 end

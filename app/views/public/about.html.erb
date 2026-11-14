@@ -32,13 +32,25 @@
       <h4>Your tree should be ready for pickup:</h4>
       <p><%= setting.event_pickup_start.strftime("%l:%M%P") %> - <%= setting.event_pickup_end.strftime("%l:%M%P") %></p>
 
-      <% if setting.contact_email.present? || setting.contact_phone.present? %>
+      <% contact_name = setting.contact_name.presence %>
+      <% contact_methods = [setting.contact_email.presence, setting.contact_phone.presence].compact %>
+      <% contact_sms = setting.contact_sms.presence %>
+
+      <% if contact_name || contact_methods.any? || contact_sms %>
         <h4>Questions?</h4>
         <p>
-          <% contact_name = setting.contact_name.present? ? setting.contact_name : "us" %>
-          Contact <%= contact_name %> at <%= [setting.contact_email, setting.contact_phone].compact.join(" or ") %>.
-          <% if setting.contact_sms.present? %>
-            You can also text us at <%= setting.contact_sms %>.
+          <% if contact_methods.any? %>
+            Contact <%= contact_name || "us" %> at <%= contact_methods.join(" or ") %>.
+          <% elsif contact_name %>
+            Contact <%= contact_name %>.
+          <% end %>
+
+          <% if contact_sms %>
+            <% if contact_name || contact_methods.any? %>
+              You can also text us at <%= contact_sms %>.
+            <% else %>
+              Text us at <%= contact_sms %>.
+            <% end %>
           <% end %>
         </p>
       <% end %>

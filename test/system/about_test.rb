@@ -9,10 +9,12 @@ class AboutsTest < ApplicationSystemTestCase
 
   test "should display contact info" do
     setting = Setting.instance
-    setting.contact_name = "John Doe"
-    setting.contact_email = "john@example.com"
-    setting.contact_phone = "206-555-1212"
-    setting.save
+    setting.update(
+      contact_name: "John Doe",
+      contact_email: "john@example.com",
+      contact_phone: "206-555-1212",
+      contact_sms: "206-555-3434"
+    )
 
     visit about_url
 
@@ -20,32 +22,26 @@ class AboutsTest < ApplicationSystemTestCase
     assert_text "john@example.com"
     assert_text "206-555-1212"
     assert_text "Contact John Doe at john@example.com or 206-555-1212"
+    assert_text "You can also text us at 206-555-3434"
     assert_selector "h4", text: "Questions?"
 
-    setting.update(contact_name: nil)
+    setting.update(contact_name: nil, contact_sms: nil)
     visit about_url
 
     assert_no_text "John Doe"
-    assert_text "john@example.com"
-    assert_text "206-555-1212"
     assert_text "Contact us at john@example.com or 206-555-1212"
     assert_selector "h4", text: "Questions?"
 
     setting.update(contact_email: nil)
     visit about_url
 
-    assert_no_text "John Doe"
     assert_no_text "john@example.com"
-    assert_text "206-555-1212"
     assert_text "Contact us at 206-555-1212"
     assert_selector "h4", text: "Questions?"
 
     setting.update(contact_phone: nil)
     visit about_url
 
-    assert_no_text "John Doe"
-    assert_no_text "john@example.com"
-    assert_no_text "206-555-1212"
     assert_no_text "Contact us"
     assert_no_selector "h4", text: "Questions?"
 
@@ -55,10 +51,17 @@ class AboutsTest < ApplicationSystemTestCase
     assert_text "Contact us at jill@example.com"
     assert_selector "h4", text: "Questions?"
 
-    setting.update(contact_name: "Jill Doe", contact_email: nil)
+    setting.update(contact_email: nil, contact_sms: "206-555-3434")
     visit about_url
-    assert_no_text "Contact us"
-    assert_no_selector "h4", text: "Questions?"
+
+    assert_text "Text us at 206-555-3434"
+    assert_selector "h4", text: "Questions?"
+
+    setting.update(contact_sms: nil, contact_name: "Jill Doe")
+    visit about_url
+
+    assert_text "Contact Jill Doe"
+    assert_selector "h4", text: "Questions?"
   end
 
   test "should display on day of pickup info" do

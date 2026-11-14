@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_19_213915) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_000005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -165,7 +165,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_213915) do
   end
 
   create_table "settings", force: :cascade do |t|
-    t.string "site_title"
     t.string "home_page_header"
     t.text "site_description"
     t.string "organization_name"
@@ -199,6 +198,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_213915) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "suggested_donation", default: 25
+    t.string "twilio_account_sid"
+    t.string "twilio_auth_token"
+    t.string "twilio_from_number"
+    t.string "email_from_address"
+    t.string "smtp_address"
+    t.integer "smtp_port"
+    t.string "smtp_user_name"
+    t.string "smtp_password"
+    t.string "smtp_authentication", default: "plain"
+    t.string "smtp_encryption", default: "starttls"
+    t.string "site_url"
+    t.string "time_zone", default: "Pacific Time (US & Canada)"
+    t.string "default_country", default: "United States"
+    t.string "stripe_secret_key"
+    t.string "stripe_price_id"
+    t.string "aws_access_key_id"
+    t.string "aws_secret_access_key"
+    t.string "aws_region", default: "us-west-2"
+    t.string "aws_location_index_name", default: "tree_recycle"
   end
 
   create_table "sms", force: :cascade do |t|

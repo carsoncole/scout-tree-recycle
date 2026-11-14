@@ -44,5 +44,29 @@ module ActiveSupport
       fill_in "Mobile", with: Faker::PhoneNumber.phone_number
       click_button "Create Reservation"
     end
+
+    # Stubs the external geocoding lookup so tests do not depend on AWS.
+    def with_stubbed_geocoding(latitude: 40.7128, longitude: -74.0060)
+      result = Struct.new(:latitude, :longitude) do
+        def coordinates
+          [ latitude, longitude ]
+        end
+      end.new(latitude, longitude)
+
+      original = Geocoder.method(:search)
+      Geocoder.define_singleton_method(:search) { |*_args, **_kwargs| [ result ] }
+      yield
+    ensure
+      Geocoder.define_singleton_method(:search, original) if original
+    end
+
+    def configure_location_service!
+      Setting.instance.update(
+        aws_access_key_id: "AKIATEST",
+        aws_secret_access_key: "secret",
+        aws_region: "us-west-2",
+        aws_location_index_name: "tree_recycle"
+      )
+    end
   end
 end

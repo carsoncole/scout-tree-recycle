@@ -1,6 +1,8 @@
 module Api
   module V1
     class DonationsController < ActionController::API
+      include StripeConfigurable
+
       def stripe_webhook
         event = Stripe::Event.retrieve(params[:id])
         StripeCharge.new(event).process

@@ -91,13 +91,6 @@ Rails.application.configure do
 
   config.action_mailer.perform_deliveries = true
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address:              Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :address),
-    port:                 Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :port),
-    user_name:            Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :user_name),
-    password:             Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :password),
-    authentication:       Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :authentication),
-    tls:                  Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :tls),
-    enable_starttls_auto: Rails.application.credentials.dig(:mailer, Rails.env.to_sym, :enable_starttls_auto)
-  }
+  # SMTP credentials are configured in admin settings and applied at runtime
+  # by ApplicationMailer.
 end

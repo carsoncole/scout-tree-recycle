@@ -12,7 +12,7 @@ module Pickups
             cookies.permanent[:driver_secret_key] = params[:driver_secret_key]
             redirect_to pickups_root_path
           else
-            flash.now[:alert] = "Invalid driver key"
+            flash.now[:alert] = "Invalid driver password"
             render :unauthorized, status: :unauthorized
           end
         else

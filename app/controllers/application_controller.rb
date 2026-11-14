@@ -4,4 +4,14 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   include Setupable
   include Pagy::Method
+
+  around_action :use_setting_time_zone
+
+  private
+
+  def use_setting_time_zone(&block)
+    zone_name = Setting.instance&.time_zone
+    zone = ActiveSupport::TimeZone[zone_name] if zone_name.present?
+    zone ? Time.use_zone(zone, &block) : block.call
+  end
 end

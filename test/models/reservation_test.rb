@@ -27,9 +27,15 @@ class ReservationTest < ActiveSupport::TestCase
     assert_includes @reservation.errors[:email], "can't be blank"
   end
 
-  test "city and state is set from settings" do
-    assert_equal "New York", Setting.instance.default_city
-    assert_equal "New York", Setting.instance.default_state
+  test "city, state, and country are set from settings" do
+    reservation = Reservation.new
+
+    assert_equal "New York", reservation.city
+    assert_equal "New York", reservation.state
+    assert_equal "United States", reservation.country
+
+    Setting.instance.update(default_country: "Canada")
+    assert_equal "Canada", Reservation.new.country
   end
 
   test "short_address returns street and city" do

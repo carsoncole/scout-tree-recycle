@@ -2,14 +2,14 @@
   <div class="admin-page-header admin-page-header--stacked">
     <p class="admin-eyebrow">Driver portal</p>
     <h1 class="admin-page-title">Driver Access Required</h1>
-    <p class="admin-page-description">Enter your driver key to view pickup information.</p>
+    <p class="admin-page-description">Enter your driver password to view pickup information.</p>
   </div>
 
   <section class="admin-panel">
     <div class="admin-panel-body">
       <%= form_tag pickups_root_path, method: :get, class: "admin-form" do %>
         <div class="admin-field">
-          <%= label_tag :driver_secret_key, "Driver Key", class: "admin-label" %>
+          <%= label_tag :driver_secret_key, "Password", class: "admin-label" %>
           <%= text_field_tag :driver_secret_key, nil, class: "admin-input", autocomplete: "off" %>
         </div>
 

@@ -20,4 +20,13 @@ class DonationsControllerTest < ActionDispatch::IntegrationTest
     post reservation_no_donation_url(reservations(:donation_1))
     assert_redirected_to reservation_confirmation_url(reservations(:donation_1))
   end
+
+  test "should redirect online donations when stripe is not configured" do
+    Setting.instance.update(stripe_secret_key: nil, stripe_price_id: nil)
+
+    post reservation_donations_url(reservations(:donation_1))
+
+    assert_redirected_to root_url
+    assert_equal "Online donations are not configured yet.", flash[:alert]
+  end
 end

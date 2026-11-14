@@ -1,11 +1,8 @@
 class Admin::ZonesController < Admin::BaseController
-  before_action :set_zone, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_zone, only: [ :edit, :update, :destroy ]
 
   def index
-    @pagy, @zones = pagy(Zone.all)
-  end
-
-  def show
+    @pagy, @zones = pagy(Zone.ordered)
   end
 
   def new

@@ -2,8 +2,8 @@ class Admin::RoutesController < Admin::BaseController
   before_action :set_route, only: [ :show, :edit, :update, :destroy, :add_driver, :remove_driver ]
 
   def index
-    @pagy, @routes = pagy(Route.includes(:drivers, :zone))
-    flash.now[:alert] = "Routing is disabled. Enable routing in Settings to automatically route pickups." unless helpers.setting.is_routing_enabled?
+    @pagy, @routes = pagy(Route.includes(:drivers, :zone).ordered)
+    flash.now[:alert] = "Routing is disabled. Enable routing in Settings to automatically route pickups." unless Setting.instance.is_routing_enabled?
   end
 
   def show

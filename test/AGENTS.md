@@ -22,32 +22,40 @@ Every feature should be covered by at least:
 ## Fixtures
 
 - Define shared data in `test/fixtures/*.yml`
-- Reference associations by fixture label (e.g. `user: one`)
+- Reference associations by fixture label (e.g. `user: admin`)
 - Prefer fixtures over ad-hoc `create!` for baseline records
 - Do not leave tests depending on unseeded empty tables when fixtures can provide data
 
 ## Authentication in tests
 
-Use `sign_in_as(user)` / `sign_out` from `test/test_helpers/session_test_helper.rb` in integration and controller tests:
+Controller and integration tests use `sign_in` from `test/test_helper.rb`:
 
 ```ruby
-sign_in_as users(:one)
-get companies_url
+sign_in users(:admin)
+get admin_reservations_url
 assert_response :success
+```
+
+System tests use the Capybara-based `sign_in_as` helper:
+
+```ruby
+sign_in_as users(:admin)
+visit admin_reservations_url
 ```
 
 ## Conventions
 
 - One test file per class, mirroring app structure
-- Name tests with clear intent: `test "should create company"` (or `def test_should_create_company`)
+- Name tests with clear intent: `test "should create reservation"` (or `def test_should_create_reservation`)
 - Assert response codes, redirects, flash, and meaningful DB changes — not private method internals
 - System tests inherit from `ApplicationSystemTestCase`
 
 ## Running tests
 
 ```bash
-bin/rails test                  # full suite
+bin/rails test                  # model, controller, job, and mailer tests
 bin/rails test test/models      # models only
 bin/rails test test/controllers
-bin/rails test test/system
+bin/rails test:system           # browser/system tests
+bin/rails test:all              # everything, including system tests
 ```

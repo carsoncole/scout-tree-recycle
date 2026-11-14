@@ -48,7 +48,7 @@
         <div class="sm:col-span-6">
           <%= form.label :route_ids, "Routes", class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
           <div class="mt-2">
-            <%= form.collection_check_boxes :route_ids, Route.all, :id, :name do |b| %>
+            <%= form.collection_check_boxes :route_ids, Route.ordered, :id, :name do |b| %>
               <div class="flex items-center mb-2">
                 <%= b.check_box class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded" %>
                 <%= b.label class: "ml-2 block text-sm text-gray-900 dark:text-white" %>

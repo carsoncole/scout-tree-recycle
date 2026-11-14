@@ -1,6 +1,4 @@
 class DonationsController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   before_action :set_reservation, only: %i[ index create new cash_or_check no_donation ]
 
   def index
@@ -49,29 +47,18 @@ class DonationsController < ApplicationController
     redirect_to reservation_confirmation_url(@reservation)
   end
 
-  def stripe_webhook
-    event = Stripe::Event.retrieve(params[:id])
-    StripeCharge.new(event).process
-    render nothing: true, status: 201
-  rescue Stripe::APIConnectionError, Stripe::StripeError
-    render nothing: true, status: 400
-  end
-
   def success
     if params[:reservation_id] || params[:id]
-      @reservation = Reservation.find(params[:id] ||= params[:reservation_id])
+      @reservation = Reservation.find(params[:reservation_id] || params[:id])
     end
-    @driver = true if params[:driver] == true
+    @driver = params[:driver] == "true"
     flash[:notice] = "Thank you! Your donation is greatly appreciated and goes a long way towards supporting Scouting on Bainbridge Island."
   end
 
 
   private
 
-  def donation_params
-    params.require(:donation).permit(:amount)
-  end
   def set_reservation
-    @reservation = Reservation.find(params[:id] ||= params[:reservation_id])
+    @reservation = Reservation.find(params[:reservation_id] || params[:id])
   end
 end

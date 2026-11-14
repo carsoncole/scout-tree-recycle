@@ -1,7 +1,0 @@
-<% if flash[:notice] %>
-  <%= turbo_stream.update "flash", partial: "shared/flash" %>
-<% end %>
-
-<% if flash[:alert] %>
-  <%= turbo_stream.update "flash", partial: "shared/flash" %>
-<% end %> 

@@ -1,8 +1,6 @@
 class Route < ApplicationRecord
   include Geocodable
 
-  default_scope { order(name: :asc) }
-
   has_many :reservations, dependent: :nullify
   has_many :driver_routes, dependent: :destroy
   has_many :drivers, through: :driver_routes
@@ -12,6 +10,7 @@ class Route < ApplicationRecord
   validates :name, presence: true
   validates :name, length: { maximum: 40 }
 
+  scope :ordered, -> { order(:name) }
   scope :unzoned, -> { where(zone_id: nil) }
 
   attribute :is_zoned, :boolean, default: true
@@ -25,7 +24,7 @@ class Route < ApplicationRecord
   # end
 
   def polygon?
-    points.any? && points.count > 3
+    points.count > 3
   end
 
   def contains?(lat, lon)

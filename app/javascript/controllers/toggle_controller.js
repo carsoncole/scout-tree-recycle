@@ -29,7 +29,7 @@ export default class extends Controller {
       existingErrorIndicator.remove()
     }
 
-    fetch(`/admin/settings/1/toggle`, {
+    fetch(this.element.dataset.toggleUrl, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

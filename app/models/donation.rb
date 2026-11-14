@@ -2,14 +2,7 @@ class Donation < ApplicationRecord
   belongs_to :reservation, optional: true
   validates :form, presence: true
 
-  # after_update :send_receipt_email!, if: -> (obj){ obj.amount.positive? && obj.email.present? && !obj.saved_change_to_is_receipt_email_sent? }
-
   enum :form, { online: 1, cash_or_check: 2 }, default: 1
 
-  scope :current_event, -> { where("created_at > ?", Date.today - 6.months) }
-
-  def send_receipt_email!
-    return if self.is_receipt_email_sent?
-    DonationsMailer.with(donation: self).receipt_email.deliver_later
-  end
+  scope :current_event, -> { where("created_at > ?", 6.months.ago) }
 end

@@ -17,17 +17,6 @@ class ReservationsMailer < ApplicationMailer
     @reservation.update(confirmed_reservation_email_sent_at: Time.current)
   end
 
-  def new_reservation_email1
-    return unless Setting.instance.is_emailing_enabled?
-    return if @reservation.confirmed_reservation_email_sent_at?
-    @event_pickup_start = setting.event_pickup_start
-    @setting = setting
-    @email_footer = Setting.instance.organization_name
-    mail(to: @reservation.email, subject: "Your tree pickup is confirmed")
-    @reservation.update(confirmed_reservation_email_sent_at: Time.current)
-  end
-
-
   def cancelled_reservation_email
     return if @reservation.cancelled_reservation_email_sent_at?
     @event_pickup_start = setting.event_pickup_start
@@ -38,8 +27,8 @@ class ReservationsMailer < ApplicationMailer
   def missing_tree_email
     return unless setting.is_emailing_enabled
     @setting = setting
-    subject = @reservation.missing_tree_email_sent_at.present? ? 
-      "Follow-up: We still cannot find your tree" : 
+    subject = @reservation.missing_tree_email_sent_at.present? ?
+      "Follow-up: We still cannot find your tree" :
       "We could not find your tree"
     mail(to: @reservation.email, subject: subject)
     @reservation.update(missing_tree_email_sent_at: Time.current)

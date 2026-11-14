@@ -2,7 +2,9 @@ class User < ApplicationRecord
   has_secure_password
   has_many :sessions, dependent: :destroy
 
-  attribute :time_zone, :string, default: "UTC"
+  generates_token_for :password_reset, expires_in: 15.minutes do
+    password_salt&.last(10)
+  end
 
   validates :role, presence: true, inclusion: { in: %w[admin user] }
 

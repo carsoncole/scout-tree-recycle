@@ -1,12 +1,21 @@
 class Admin::SettingsController < Admin::BaseController
   allow_unauthenticated_access only: [ :new, :create ]
 
+  TOGGLEABLE_SETTINGS = %w[
+    is_reservations_open
+    is_emailing_enabled
+    is_sms_enabled
+    is_pickups_site_enabled
+    is_routing_enabled
+    is_donations_enabled
+  ].freeze
+
   def index
     @unviewed_logs_count = Log.where(is_viewed: false).count
   end
 
   def new
-    if Setting.first.present?
+    if Setting.exists?
       redirect_to admin_settings_path
     else
       @setting = Setting.new
@@ -14,13 +23,18 @@ class Admin::SettingsController < Admin::BaseController
   end
 
   def create
+    return redirect_to admin_settings_path, alert: "Settings already exist." if Setting.exists?
+
     @setting = Setting.new(setting_params)
-    redirect_to admin_settings_path if Setting.first.present? # prevents multiple initial configurations
+
     if @setting.save
+      notice = "Settings saved."
       unless User.exists?(role: "admin")
-        User.create!(email: "admin@example.com", password: "password", role: "admin")
+        admin_password = SecureRandom.base58(24)
+        User.create!(email: "admin@example.com", password: admin_password, role: "admin")
+        notice += " Admin user created with email admin@example.com and password: #{admin_password}"
       end
-      redirect_to admin_settings_path, notice: "Settings saved. Admin user created with email admin@example.com and password 'password'."
+      redirect_to admin_settings_path, notice: notice
     else
       render :new, status: :unprocessable_entity
     end
@@ -28,7 +42,7 @@ class Admin::SettingsController < Admin::BaseController
 
   def update
     if Current.user.admin?
-      if helpers.setting.update(setting_params)
+      if Setting.instance.update(setting_params)
         redirect_to admin_settings_path, notice: "Settings were successfully updated."
       else
         render :index, status: :unprocessable_entity
@@ -39,18 +53,22 @@ class Admin::SettingsController < Admin::BaseController
   end
 
   def toggle
-    if Current.user.admin?
-      setting = helpers.setting
-      setting[params[:setting]] = params[:value]
+    unless Current.user.admin?
+      return render json: { success: false, errors: [ "You are not authorized to update settings." ] }, status: :unauthorized
+    end
 
-      if setting.save
-        RouteReservationsJob.perform_later if setting.is_routing_enabled? && params[:setting] == "is_routing_enabled"
-        render json: { success: true }
-      else
-        render json: { success: false, errors: setting.errors.full_messages }, status: :unprocessable_entity
-      end
+    unless TOGGLEABLE_SETTINGS.include?(params[:setting])
+      return render json: { success: false, errors: [ "Invalid setting." ] }, status: :unprocessable_entity
+    end
+
+    setting = Setting.instance
+    setting[params[:setting]] = params[:value]
+
+    if setting.save
+      RouteReservationsJob.perform_later if setting.is_routing_enabled? && params[:setting] == "is_routing_enabled"
+      render json: { success: true }
     else
-      render json: { success: false, errors: [ "You are not authorized to update settings." ] }, status: :unauthorized
+      render json: { success: false, errors: setting.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

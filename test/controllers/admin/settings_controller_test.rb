@@ -53,4 +53,22 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_settings_path
     assert_equal "Settings were successfully updated.", flash[:notice]
   end
+
+  test "should toggle an allowed setting" do
+    sign_in
+
+    patch toggle_admin_setting_path(Setting.first), params: { setting: "is_sms_enabled", value: true }, as: :json
+
+    assert_response :success
+    assert Setting.first.reload.is_sms_enabled?
+  end
+
+  test "should reject an unknown toggle setting" do
+    sign_in
+
+    patch toggle_admin_setting_path(Setting.first), params: { setting: "organization_name", value: "Hacked" }, as: :json
+
+    assert_response :unprocessable_entity
+    assert_equal "Troop 100", Setting.first.reload.organization_name
+  end
 end

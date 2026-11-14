@@ -38,7 +38,7 @@ class Admin::ReservationsController < Admin::BaseController
     if @reservation.update(reservation_params)
       respond_to do |format|
         format.turbo_stream do
-          redirect_to admin_reservation_path(@reservation), notice: "Reservation status was successfully updated."
+          redirect_to edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
         end
         format.html do
           redirect_to edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
@@ -55,7 +55,7 @@ class Admin::ReservationsController < Admin::BaseController
   end
 
   def geocode
-    if helpers.setting.is_routing_enabled
+    if Setting.instance.is_routing_enabled
       @reservation.full_geocode!
       @reservation.save
       redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully geocoded."

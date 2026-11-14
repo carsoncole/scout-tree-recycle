@@ -4,12 +4,10 @@ Rails.application.routes.draw do
   get "about", to: "public#about"
   get "privacy", to: "public#privacy"
 
-  get "sms/reply"
-  resources :passwords, param: :token
+  resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
 
   resources :reservations, only: [ :create, :update, :edit, :destroy ] do
     get "address_verification", to: "address_verification#address_verification", as: :address_verification
-    # patch "address_confirmation", to: "address_verification#address_confirmation", as: :address_confirmation
     get "confirmation", to: "reservations#confirmation", as: :confirmation
 
     # Donations
@@ -17,8 +15,6 @@ Rails.application.routes.draw do
     post "cash-or-check" => "donations#cash_or_check", as: "cash_or_check"
     post "no-donation" => "donations#no_donation", as: "no_donation"
     get "donations/success" => "donations#success", as: "success"
-    get "donations/cancel" => "donations#cancel", as: "cancel"
-    get "confirmed" => "reservations#confirmed", as: "confirmed"
   end
 
   # Donations
@@ -33,12 +29,10 @@ Rails.application.routes.draw do
     end
   end
 
-
-
   # Admin pages
   namespace :admin do
     root to: "reservations#index"
-    resource :session
+    resource :session, only: [ :new, :create, :destroy ]
     resources :reservations, except: [ :new, :create ] do
       member do
         post :geocode
@@ -57,7 +51,7 @@ Rails.application.routes.draw do
         delete :remove_driver
       end
     end
-    resources :zones
+    resources :zones, except: [ :show ]
     resources :users, except: [ :show ]
     resources :prior_reservations, only: [ :destroy ]
     resources :donations, only: [ :index, :show, :destroy ]
@@ -70,7 +64,6 @@ Rails.application.routes.draw do
       end
     end
     get "sms/thread/:phone", to: "sms#show", as: :sms_thread
-    post "sms", to: "sms#create", as: :sms_index
 
     # Logs
     delete "logs", to: "logs#destroy_all", as: :destroy_all_logs
@@ -97,10 +90,16 @@ Rails.application.routes.draw do
 
   # API for Stripe and Twilio webhooks
   namespace :api do
-    # Incoming Stripe transaction confirmation
-    post "stripe-webhook" => "donations#stripe_webhook"
-    # Incoming SMS
-    post "sms/reply" => "sms#reply"
+    namespace :v1 do
+      # Incoming Stripe transaction confirmation
+      post "stripe-webhook", to: "donations#stripe_webhook"
+      # Incoming SMS
+      post "sms/reply", to: "sms#reply"
+    end
+
+    # Deprecated aliases kept while external webhook URLs migrate to /api/v1.
+    post "stripe-webhook", to: "v1/donations#stripe_webhook"
+    post "sms/reply", to: "v1/sms#reply"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

@@ -7,12 +7,6 @@ class ReservationsMailerPreview < ActionMailer::Preview
     ReservationsMailer.with(reservation_id: reservation.id).new_reservation_email
   end
 
-  def send_new_reservation_email1
-    reservation = Reservation.first
-    reservation.update(confirmed_reservation_email_sent_at: nil)
-    ReservationsMailer.with(reservation_id: reservation.id).new_reservation_email1
-  end
-
   def send_cancelled_reservation_email
     reservation = Reservation.last
     reservation.update(cancelled_reservation_email_sent_at: nil)
@@ -20,13 +14,13 @@ class ReservationsMailerPreview < ActionMailer::Preview
   end
 
   def send_missing_tree_email
-    reservation = Reservation.find_by(status: 'missing') || Reservation.first
+    reservation = Reservation.find_by(status: "missing") || Reservation.first
     reservation.update(missing_tree_email_sent_at: nil)
     ReservationsMailer.with(reservation_id: reservation.id).missing_tree_email
   end
 
   def send_missing_tree_follow_up_email
-    reservation = Reservation.find_by(status: 'missing') || Reservation.first
+    reservation = Reservation.find_by(status: "missing") || Reservation.first
     reservation.update(missing_tree_email_sent_at: 1.day.ago)
     ReservationsMailer.with(reservation_id: reservation.id).missing_tree_email
   end

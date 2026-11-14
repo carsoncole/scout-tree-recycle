@@ -4,9 +4,11 @@
 ![Example Image](public_screenshot.png)
 ![Example Image](confirmation2_screenshot.png)
 
-# Tree Recycle II
+# Tree Recycle
 
 Tree Recycle is a comprehensive web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area.
+
+* This version replaces an earlier version of Tree Recycle.
 
 ## Features
 

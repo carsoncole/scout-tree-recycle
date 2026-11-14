@@ -27,7 +27,7 @@
       <!-- New Message Form -->
       <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
         <div class="px-4 py-4 sm:p-4">
-          <%= form_with(model: [:admin, Sms.new], class: "flex items-end space-x-4", data: { turbo: true }) do |f| %>
+          <%= form_with url: admin_sms_path, scope: :sms, class: "flex items-end space-x-4", data: { turbo: true } do |f| %>
             <div class="w-48">
               <%= f.telephone_field :phone, class: "block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm", placeholder: "(555) 555-5555" %>
             </div>

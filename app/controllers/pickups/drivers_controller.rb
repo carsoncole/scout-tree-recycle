@@ -1,5 +1,11 @@
 module Pickups
   class DriversController < BaseController
+    skip_before_action :authenticate_driver, only: :unauthorized
+
+    def unauthorized
+      render "pickups/base/unauthorized", status: :unauthorized
+    end
+
     def index
       @drivers = Driver.includes(routes: { reservations: :route }).all
     end

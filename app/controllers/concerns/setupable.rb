@@ -8,10 +8,8 @@ module Setupable
   private
 
   def check_if_setup
-    return if request.path.include?("admin/settings")
-    # reset_session # this ensures that any logged in user is cleared
-    if !Setting.first.present?
-      redirect_to new_admin_setting_path
-    end
+    return if request.path.start_with?("/admin/settings")
+
+    redirect_to new_admin_setting_path unless Setting.exists?
   end
 end

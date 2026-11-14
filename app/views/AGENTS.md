@@ -4,9 +4,9 @@
 
 - Follow standard Ruby on Rails approach. RESTful routes.
 
-## URL conventions
+## Routes and URLs
 
-URL path segments use **hyphens**, never underscores (`/security-movers`, `/tax-lots`, `/securities/sync-fmp-quotes`). This is the Rails convention and applies to every public segment: resource paths, custom collection/member actions, and standalone routes.
-
-- Keep controllers, models, actions, helpers, and route helper names underscored (`SecurityMoversController`, `security_movers_path`) — only the **path** is hyphenated.
-- For resources with multi-word names, set `path:` in `config/routes.rb`:
+- Prefer Rails-standard, RESTful resource paths using underscores.
+- Keep controllers, actions, and route helper names underscored, e.g. `Admin::ReservationsController` and `admin_reservations_path`.
+- If a hyphenated public path is required, keep the helper name underscored and set `path:` in `config/routes.rb`.
+- Follow the conventions already used in `config/routes.rb`; do not introduce a new URL style without a deliberate migration.

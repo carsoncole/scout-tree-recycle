@@ -2,10 +2,6 @@
 class ReservationsController < ApplicationController
   before_action :set_reservation, only: %i[ update confirmation edit destroy ]
 
-  def index
-    @reservation = Reservation.new
-  end
-
   def create
     @reservation = Reservation.new(reservation_params)
 

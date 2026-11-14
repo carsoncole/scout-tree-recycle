@@ -1,7 +1,6 @@
 class StripeCharge
     def initialize(event)
       @stripe_event = event.data.object
-      puts @stripe_event.inspect
     end
 
     def process

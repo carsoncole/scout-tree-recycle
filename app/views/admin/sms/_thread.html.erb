@@ -84,7 +84,7 @@
             </div>
           </div>
 
-          <%= form_with(model: [:admin, Sms.new], class: "space-y-4", data: { turbo_frame: "sms-thread-#{phone.gsub(/[^0-9]/, '')}" }) do |f| %>
+          <%= form_with url: admin_sms_path, scope: :sms, class: "space-y-4", data: { turbo_frame: "sms-thread-#{phone.gsub(/[^0-9]/, '')}" } do |f| %>
             <%= f.hidden_field :phone, value: phone %>
             <div>
               <%= f.label :body, "Reply", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>

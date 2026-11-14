@@ -1,8 +1,8 @@
 class Admin::SmsController < Admin::BaseController
   def index
     @smses_by_phone = Sms.grouped_by_phone_for_index
-    
-    flash.now[:alert] = "SMS messaging is disabled. Enable SMS in Settings to send messages." unless helpers.setting.is_sms_enabled?
+
+    flash.now[:alert] = "SMS messaging is disabled. Enable SMS in Settings to send messages." unless Setting.instance.is_sms_enabled?
   end
 
   def mark_viewed
@@ -14,11 +14,11 @@ class Admin::SmsController < Admin::BaseController
   def destroy
     phone = params[:phone]
     Sms.where(phone: phone).destroy_all
-    redirect_to admin_sms_index_path, notice: "Conversation deleted successfully."
+    redirect_to admin_sms_path, notice: "Conversation deleted successfully."
   end
 
   def create
-    if helpers.setting.is_sms_enabled?
+    if Setting.instance.is_sms_enabled?
       @sms = Sms.new(sms_params)
       @sms.direction = :outgoing
 
@@ -46,7 +46,7 @@ class Admin::SmsController < Admin::BaseController
             end
           }
           format.html {
-            redirect_to admin_sms_index_path, notice: "Message sent successfully."
+            redirect_to admin_sms_path, notice: "Message sent successfully."
           }
         end
       else
@@ -69,7 +69,7 @@ class Admin::SmsController < Admin::BaseController
             end
           }
           format.html {
-            redirect_to admin_sms_index_path, alert: "Failed to send message: #{@sms.errors.full_messages.join(', ')}"
+            redirect_to admin_sms_path, alert: "Failed to send message: #{@sms.errors.full_messages.join(', ')}"
           }
         end
       end
@@ -96,7 +96,7 @@ class Admin::SmsController < Admin::BaseController
           end
         }
         format.html {
-          redirect_to admin_sms_index_path, alert: "SMS messaging is disabled. Enable SMS in Settings to send messages."
+          redirect_to admin_sms_path, alert: "SMS messaging is disabled. Enable SMS in Settings to send messages."
         }
       end
     end

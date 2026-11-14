@@ -80,15 +80,15 @@ class Reservation < ApplicationRecord
   # remove prior reservation if it exists
   after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
 
-  after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" &&  Setting.instance.is_routing_enabled? }
+  after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" && Setting.instance&.is_routing_enabled? }
 
   # missing tree reminder
-  after_commit :send_missing_sms!, if: ->(obj){ obj.missing? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
-  after_commit :send_missing_email!, if: ->(obj){ obj.missing? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
+  after_commit :send_missing_sms!, if: ->(obj) { obj.missing? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
+  after_commit :send_missing_email!, if: ->(obj) { obj.missing? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
 
   # class methods
   def self.open?
-    Setting.instance.is_reservations_open?
+    Setting.instance&.is_reservations_open? || false
   end
 
   def verify_address!
@@ -210,9 +210,9 @@ class Reservation < ApplicationRecord
       "Manual"
     elsif is_manually_routed? # Manual routing is required
       "Manual"
-    elsif !Setting.instance.is_routing_enabled && routing? # Routing is disabled so manual routing is required
+    elsif !Setting.instance&.is_routing_enabled && routing? # Routing is disabled so manual routing is required
       "Manual"
-    elsif Setting.instance.is_routing_enabled && routing?
+    elsif Setting.instance&.is_routing_enabled && routing?
       "Pending"
     elsif status_higher_than?("pending_pickup") && !route.present?
       "Route Missing"
@@ -240,7 +240,7 @@ class Reservation < ApplicationRecord
     self.update(missing_tree_sms_sent_at: Time.current)
   end
 
-  def send_missing_email!(override=false)
+  def send_missing_email!(override = false)
     return if self.mobile.present?
     ReservationsMailer.with(reservation_id: self.id).missing_tree_email.deliver_later
   end

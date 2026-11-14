@@ -40,32 +40,32 @@ class ReservationsTest < ApplicationSystemTestCase
     fill_in "Street", with: "100 Main St"
     fill_in "Email", with: "test@example.com"
     click_button "Create Reservation"
-    page.find(".donation-options").click_button "Donate at Pickup"
+    complete_donation
     assert_text "Reservation Confirmed"
   end
 
   # test ensures that existing non-pending_pickup reservations are destroyed if they have the same email as a new Reservation
   test "making confirmed reservation and destroying reservation with reservation_form status with same email" do
     make_system_reservation("form.minimum@example.com") # existing minimum reservation
-    page.find(".donation-options").click_button "Donate at Pickup"
+    complete_donation
     assert_text "Reservation Confirmed"
   end
 
   test "making confirned reservation and destroying reservation with address_verification status with same email" do
     make_system_reservation("john.doe@example.com") # existing address verification reservation
-    page.find(".donation-options").click_button "Donate at Pickup"
+    complete_donation
     assert_text "Reservation Confirmed"
   end
 
   test "making confirned reservation and destroying reservation with donation status with same email" do
     make_system_reservation("lisa.mills@example.com") # existing donation reservation
-    page.find(".donation-options").click_button "Donate at Pickup"
+    complete_donation
     assert_text "Reservation Confirmed"
   end
 
   test "cancelling a reservation" do
     make_system_reservation("test11@example.com")
-    page.find(".donation-options").click_button "Donate at Pickup"
+    complete_donation
     assert_text "Reservation Confirmed"
 
     click_link "Edit Reservation"
@@ -77,7 +77,7 @@ class ReservationsTest < ApplicationSystemTestCase
   test "cannot create reservation with duplicate email" do
     # Create first reservation
     make_system_reservation("test@example.com")
-    page.find(".donation-options").click_button "Donate at Pickup"
+    complete_donation
     assert_selector "h1", text: "Reservation Confirmed"
     assert_text "test@example.com"
 
@@ -90,7 +90,7 @@ class ReservationsTest < ApplicationSystemTestCase
 
   test "editing a reservation" do
     make_system_reservation
-    page.find(".donation-options").click_button "Donate at Pickup"
+    complete_donation
     assert_text "Reservation Confirmed"
 
     click_link "Edit Reservation"

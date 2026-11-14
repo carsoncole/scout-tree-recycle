@@ -1,44 +1,13 @@
 <% flash.each do |type, message| %>
-  <% if message.present? %>
-    <div class="w-full flash">
-      <div class="<%= case type
-                      when 'notice'
-                        'bg-green-50 dark:bg-green-900 border-green-400 dark:border-green-500'
-                      when 'alert'
-                        'bg-yellow-50 dark:bg-yellow-900 border-yellow-400 dark:border-yellow-500'
-                      when 'error'
-                        'bg-red-50 dark:bg-red-900 border-red-400 dark:border-red-500'
-                      end %> border-l-4 p-4 px-4 sm:px-6 lg:px-8">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <% if type == 'notice' %>
-              <svg class="h-5 w-5 text-green-400 dark:text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-            <% elsif type == 'alert' %>
-              <svg class="h-5 w-5 text-yellow-400 dark:text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-              </svg>
-            <% else %>
-              <svg class="h-5 w-5 text-red-400 dark:text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-              </svg>
-            <% end %>
-          </div>
-          <div class="ml-3 flash-message">
-            <p class="text-sm <%= case type
-                                when 'notice'
-                                  'text-green-700 dark:text-green-200'
-                                when 'alert'
-                                  'text-yellow-700 dark:text-yellow-200'
-                                when 'error'
-                                  'text-red-700 dark:text-red-200'
-                                end %>">
-              <%= message %>
-            </p>
-          </div>
-        </div>
-      </div>
+  <% next if message.blank? %>
+
+  <div class="flash" data-controller="dismissible">
+    <div class="site-notice site-notice--<%= type %>" role="<%= type.to_s == "notice" ? "status" : "alert" %>">
+      <p class="site-notice-text"><%= message %></p>
+      <button type="button"
+              class="site-notice-dismiss"
+              aria-label="Dismiss message"
+              data-action="dismissible#dismiss">&times;</button>
     </div>
-  <% end %>
-<% end %> 
+  </div>
+<% end %>

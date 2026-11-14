@@ -80,7 +80,6 @@ class Admin::SettingsController < Admin::BaseController
       :home_page_header,
       :organization_name,
       :organization_url,
-      :site_description,
       :reservations_closed_message,
       :event_pickup_start,
       :event_pickup_end,

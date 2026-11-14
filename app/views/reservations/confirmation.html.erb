@@ -1,101 +1,81 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mb-6">
-          <svg class="w-8 h-8 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
+<% content_for :title, "Reservation Confirmed | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :description, "Your tree pickup reservation is confirmed." %>
+
+<section class="site-page">
+  <div class="site-container site-container--narrow">
+    <div class="site-confirmation-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="m8.5 12.3 2.3 2.3 4.8-5"></path>
+      </svg>
+    </div>
+
+    <%= render "shared/page_header",
+               eyebrow: "You’re all set",
+               title: "Reservation Confirmed",
+               description: "Thank you, #{@reservation.name}. We’ll take it from here." %>
+
+    <section class="site-section" aria-labelledby="reservation-details">
+      <h2 id="reservation-details" class="site-subtitle">Reservation details</h2>
+
+      <dl class="site-details">
+        <div class="site-detail">
+          <dt class="site-detail-label">Name</dt>
+          <dd class="site-detail-value"><%= @reservation.name %></dd>
         </div>
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Reservation Confirmed
-        </h1>
-        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
-          Thank you for your reservation, <%= @reservation.name %>!
-        </p>
-      </div>
 
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg border-2 border-green-500">
-        <div class="px-6 py-8 sm:p-8">
-          <div class="space-y-6">
-            <div>
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Reservation Details</h2>
+        <div class="site-detail">
+          <dt class="site-detail-label">Address</dt>
+          <dd class="site-detail-value">
+            <%= @reservation.street.titleize %><br>
+            <%= @reservation.city %>
+          </dd>
+        </div>
 
-              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Name</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.name %></dd>
-                </div>
+        <div class="site-detail">
+          <dt class="site-detail-label">Pickup date</dt>
+          <dd class="site-detail-value"><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></dd>
+        </div>
 
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Address</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= @reservation.street.titleize %><br>
-                    <%= @reservation.city %>
-                  </dd>
-                </div>
+        <div class="site-detail">
+          <dt class="site-detail-label">Email</dt>
+          <dd class="site-detail-value"><%= @reservation.email %></dd>
+        </div>
 
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Pickup Date</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= Setting.instance.event_pickup_start.strftime("%B %-d, %Y") %>
-                  </dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.email %></dd>
-                </div>
-
-                <% if @reservation.pickup_notes.present? %>
-                  <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Notes</dt>
-                    <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.pickup_notes %></dd>
-                  </div>
-                <% end %>
-
-                <% if @reservation.mobile.present? %>
-                  <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Mobile</dt>
-                    <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                      <%= Phonelib.parse(@reservation.mobile).national %>
-                      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">We will only message this number if we cannot find your tree</p>
-                    </dd>
-                  </div>
-                <% end %>
-              </dl>
-            </div>
-
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Next Steps</h3>
-              <ul class="space-y-4 text-gray-600 dark:text-gray-400">
-                <li class="flex items-start">
-                  <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  <span>You will receive a confirmation email shortly</span>
-                </li>
-                <li class="flex items-start">
-                  <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg
-                  <span>Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %> on pickup day, <%= setting.event_pickup_start.strftime("%A, %B %-e") %></span>
-                </li>
-                <li class="flex items-start">
-                  <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  <span>Remove all decorations and tinsel from your tree</span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="mt-8 flex justify-center">
-              <%= link_to "Edit Reservation", edit_reservation_path(@reservation), class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
-            </div>
+        <% if @reservation.mobile.present? %>
+          <div class="site-detail">
+            <dt class="site-detail-label">Mobile</dt>
+            <dd class="site-detail-value">
+              <%= Phonelib.parse(@reservation.mobile).national %>
+              <span class="site-detail-note">We’ll only message this number if we can’t find your tree.</span>
+            </dd>
           </div>
-        </div>
-      </div>
+        <% end %>
+
+        <% if @reservation.pickup_notes.present? %>
+          <div class="site-detail">
+            <dt class="site-detail-label">Notes</dt>
+            <dd class="site-detail-value"><%= @reservation.pickup_notes %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </section>
+
+    <section class="site-section" aria-labelledby="before-pickup">
+      <h2 id="before-pickup" class="site-subtitle">Before pickup</h2>
+      <ol class="site-steps">
+        <li class="site-step">You’ll receive a confirmation email shortly.</li>
+        <li class="site-step">
+          Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %>
+          on <%= setting.event_pickup_start.strftime("%A, %B %-e") %>.
+        </li>
+        <li class="site-step">Remove all decorations and tinsel from your tree.</li>
+      </ol>
+    </section>
+
+    <div class="site-actions">
+      <%= link_to "Edit Reservation", edit_reservation_path(@reservation), class: "site-button site-button--secondary" %>
+      <%= link_to "Back to home", root_path, class: "site-button site-button--quiet" %>
     </div>
   </div>
-</div>
+</section>

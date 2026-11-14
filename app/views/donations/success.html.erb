@@ -1,6 +1,14 @@
-<div class="mt-5 mb-5">
+<% content_for :title, "Thank You | #{setting&.home_page_header || "Tree Recycle"}" %>
 
-  <div class="important-message info">
-      A receipt for your donation will be emailed to you.
+<section class="site-page">
+  <div class="site-container site-container--narrow">
+    <%= render "shared/page_header",
+               eyebrow: "With appreciation",
+               title: "Thank you",
+               description: "Your support helps make this community tree pickup possible." %>
+
+    <div class="site-actions">
+      <%= link_to "Back to home", root_path, class: "site-button site-button--quiet" %>
+    </div>
   </div>
-</div>
+</section>

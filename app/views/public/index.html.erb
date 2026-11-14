@@ -1,38 +1,31 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mb-6">
-          <svg class="w-8 h-8 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-          </svg>
-        </div>
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Make a Reservation
-        </h1>
-        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
-          Schedule your tree pickup for <%= Setting.instance.event_pickup_start.strftime("%B %-d, %Y") %>
-        </p>
+<% content_for :title, "Make a Reservation | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :description, "Schedule a Christmas tree pickup for #{setting.event_pickup_start.strftime("%B %-d, %Y")}." %>
+
+<section class="site-hero" id="reserve">
+  <div class="site-container site-container--narrow">
+    <%= render "shared/page_header",
+               eyebrow: "Holiday tree pickup",
+               title: "Make a Reservation",
+               description: "Schedule your tree pickup for #{setting.event_pickup_start.strftime("%B %-d, %Y")}." %>
+
+    <% if setting.is_reservations_open %>
+      <div class="site-form-panel">
+        <%= render "reservations/form" %>
       </div>
 
-      <div class="max-w-2xl mx-auto">
-        <% if setting.is_reservations_open %>
-          <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg border-2 border-green-500">
-            <div class="px-6 py-8 sm:p-8">
-              <%= render "reservations/form" %>
-            </div>
-          </div>
-        <% else %>
-          <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg border-2 border-red-500">
-            <div class="px-6 py-8 sm:p-8">
-              <div class="text-center">
-                <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Reservations Closed</h3>
-                <p class="text-lg text-gray-600 dark:text-gray-400"><%= setting.reservations_closed_message %></p>
-              </div>
-            </div>
-          </div>
-        <% end %>
+      <section class="site-section" aria-labelledby="pickup-steps">
+        <h2 id="pickup-steps" class="site-subtitle">How pickup works</h2>
+        <ol class="site-steps site-steps--three">
+          <li class="site-step">Reserve a pickup time for your tree.</li>
+          <li class="site-step">We confirm the details by email.</li>
+          <li class="site-step">Leave your tree where we can find it.</li>
+        </ol>
+      </section>
+    <% else %>
+      <div class="site-empty">
+        <h2 class="site-subtitle">Reservations are closed</h2>
+        <p><%= setting.reservations_closed_message %></p>
       </div>
-    </div>
+    <% end %>
   </div>
-</div>
+</section>

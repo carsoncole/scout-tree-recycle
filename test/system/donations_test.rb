@@ -26,13 +26,13 @@ class DonationsTest < ApplicationSystemTestCase
 
   test "donating at pickup" do
     make_system_reservation
-    click_button "Donate at Pickup"
+    complete_donation
     assert_selector "h1", text: "Reservation Confirmed"
   end
 
   test "continue without donation" do
     make_system_reservation
-    click_button "Continue without donation"
+    complete_donation("Continue without donation")
     assert_selector "h1", text: "Reservation Confirmed"
   end
 

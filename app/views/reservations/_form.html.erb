@@ -1,82 +1,80 @@
-<%= form_for @reservation, class: "space-y-8" do |f| %>
-  <% if @reservation.errors.any? %>
-    <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
-      <div class="flex">
-        <div class="ml-3">
-          <h3 class="text-sm font-bold text-red-800 dark:text-red-200">
-            <%= pluralize(@reservation.errors.count, "error") %> prohibited this reservation from being saved:
-          </h3>
-          <div class="mt-2 text-sm text-red-700 dark:text-red-300">
-            <ul class="list-disc pl-5 space-y-1">
-              <% @reservation.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-    <br />
-  <% end %>
+<%= form_with model: @reservation, class: "site-form" do |f| %>
+  <%= render "shared/form_errors", object: @reservation %>
 
-  <div class="space-y-6 px-4 sm:px-6">
-    <div>
-      <%= f.label :name, "Name *", class: "block text-sm font-bold text-gray-700 dark:text-gray-300" %>
-      <div class="mt-2">
-        <%= f.text_field :name, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
-      </div>
+  <div class="site-field">
+    <%= f.label :name, class: "site-label" do %>
+      Name <span class="site-required">*</span>
+    <% end %>
+    <%= f.text_field :name,
+                     required: true,
+                     autocomplete: "name",
+                     class: "site-input" %>
+  </div>
+
+  <div class="site-field-row site-field-row--street">
+    <div class="site-field">
+      <%= f.label :street, class: "site-label" do %>
+        Street address <span class="site-required">*</span>
+      <% end %>
+      <%= f.text_field :street,
+                       required: true,
+                       autocomplete: "street-address",
+                       class: "site-input",
+                       placeholder: "Street and number" %>
     </div>
 
-    <div>
-      <%= f.label :street, "Street Address *", class: "block text-sm font-bold text-gray-700 dark:text-gray-300" %>
-      <div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <div class="sm:col-span-2">
-          <%= f.text_field :street, required: true, value: @reservation.street, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
-        </div>
-        <div class="sm:col-span-2">
-          <%= f.text_field :city, value: @reservation.city, disabled: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed" %>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div>
-        <%= f.label :email, "Email *", class: "block text-sm font-bold text-gray-700 dark:text-gray-300" %>
-        <div class="mt-2">
-          <%= f.email_field :email, required: true, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
-        </div>
-      </div>
-
-      <div>
-        <%= f.label :mobile, "Mobile (Recommended)", class: "block text-sm font-bold text-gray-700 dark:text-gray-300" %>
-        <div class="mt-2">
-          <%= f.telephone_field :mobile, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
-          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">We'll use this to contact you if we can't find your tree.</p>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <%= f.label :pickup_notes, "Notes", class: "block text-sm font-bold text-gray-700 dark:text-gray-300" %>
-      <div class="mt-2">
-        <%= f.text_area :pickup_notes, rows: 2, placeholder: "If its not out front, where will your tree be?", class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white sm:text-sm py-2.5 px-3" %>
-      </div>
+    <div class="site-field">
+      <%= f.label :city, "City", class: "site-label" %>
+      <%= f.text_field :city,
+                       value: @reservation.city,
+                       disabled: true,
+                       autocomplete: "address-level2",
+                       class: "site-input" %>
     </div>
   </div>
 
-  <div class="pt-6 px-4 sm:px-6">
-    <%= f.submit class: "w-full inline-flex justify-center items-center rounded-md border border-transparent bg-green-600 py-4 px-6 text-lg font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200" %>
+  <div class="site-field-row site-field-row--two">
+    <div class="site-field">
+      <%= f.label :email, class: "site-label" do %>
+        Email <span class="site-required">*</span>
+      <% end %>
+      <%= f.email_field :email,
+                        required: true,
+                        autocomplete: "email",
+                        class: "site-input" %>
+    </div>
+
+    <div class="site-field">
+      <%= f.label :mobile, "Mobile (Recommended)", class: "site-label" %>
+      <%= f.telephone_field :mobile,
+                            autocomplete: "tel",
+                            class: "site-input",
+                            aria: { describedby: "mobile-hint" } %>
+      <p id="mobile-hint" class="site-hint">Optional, but helpful if we can’t find your tree.</p>
+    </div>
   </div>
+
+  <div class="site-field">
+    <%= f.label :pickup_notes, "Notes", class: "site-label" %>
+    <%= f.text_area :pickup_notes,
+                    rows: 3,
+                    placeholder: "If your tree won’t be out front, where should we look?",
+                    class: "site-textarea" %>
+  </div>
+
+  <%= f.submit @reservation.persisted? ? "Update Reservation" : "Create Reservation",
+               class: "site-button site-button--full" %>
 <% end %>
 
-<% if @reservation.persisted? && @reservation.routing? || @reservation.pending_pickup? %>
-  <div class="mt-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-    <%= button_to "Cancel Reservation", reservation_path(@reservation),
-        method: :delete,
-        data: {
-          turbo_confirm: "Are you sure you want to cancel your reservation? This action cannot be undone.",
-          turbo_method: :delete
-        },
-        class: "w-full inline-flex justify-center items-center rounded-md border border-transparent bg-red-600 py-4 px-6 text-lg font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200" %>
+<% if @reservation.persisted? && (@reservation.routing? || @reservation.pending_pickup?) %>
+  <div class="site-section">
+    <%= button_to "Cancel Reservation",
+                  reservation_path(@reservation),
+                  method: :delete,
+                  data: {
+                    turbo_confirm: "Are you sure you want to cancel your reservation? This action cannot be undone.",
+                    turbo_method: :delete
+                  },
+                  class: "site-button site-button--quiet site-button--full" %>
   </div>
 <% end %>

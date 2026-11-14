@@ -1,0 +1,11 @@
+<header class="site-page-header">
+  <% if local_assigns[:eyebrow].present? %>
+    <p class="site-eyebrow"><%= eyebrow %></p>
+  <% end %>
+
+  <h1 class="site-title"><%= title %></h1>
+
+  <% if local_assigns[:description].present? %>
+    <p class="site-lede"><%= description %></p>
+  <% end %>
+</header>

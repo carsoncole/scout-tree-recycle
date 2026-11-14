@@ -29,6 +29,12 @@ module ActiveSupport
       cookies.signed[:session_id] = { value: session.id, httponly: true, same_site: :lax }
     end
 
+    # Completes the donation step and waits for the confirmation page to load.
+    def complete_donation(option = "Donate at Pickup")
+      click_button option
+      assert_current_path %r{\A/reservations/[^/]+/confirmation\z}
+    end
+
     # making a reservation
     def make_system_reservation(email = Faker::Internet.email)
       visit root_url

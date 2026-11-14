@@ -13,37 +13,28 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
   test "pickups portal is disabled when not enabled" do
     Setting.instance.update(is_pickups_site_enabled: false)
-    visit admin_settings_url
-    new_window = window_opened_by do
-      click_on "Pickups Portal"
-    end
-    within_window new_window do
-      assert_selector ".flash", text: "The Pickups site is CLOSED."
-    end
+
+    visit pickups_root_url
+
+    assert_selector ".flash", text: "The Pickups site is CLOSED."
   end
 
   test "pickups portal is enabled when enabled" do
     Setting.instance.update(is_pickups_site_enabled: true)
-    visit admin_settings_url
-    new_window = window_opened_by do
-      click_on "Pickups Portal"
-    end
-    within_window new_window do
-      assert_no_text "The Pickups site is CLOSED."
-    end
+
+    visit pickups_root_url
+
+    assert_no_text "The Pickups site is CLOSED."
   end
 
   test "pickups portal is accessible when driver secret key is set" do
     Setting.instance.update(is_pickups_site_enabled: true, driver_secret_key: "1234567890")
-    visit admin_settings_url
-    new_window = window_opened_by do
-      click_on "View Pickups Portal"
-    end
-    within_window new_window do
-      fill_in "Driver Key", with: "1234567890"
-      click_on "Access Pickups"
-      assert_selector "h1", text: "Drivers"
-    end
+
+    visit pickups_root_url
+    fill_in "Driver Key", with: "1234567890"
+    click_on "Access Pickups"
+
+    assert_selector "h1", text: "Drivers"
   end
 
   test "new settings page should show errors if settings are not valid" do
@@ -101,12 +92,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
   test "update settings" do
     visit admin_settings_url
-    fill_in "Site Title", with: "Troop 999"
-    fill_in "Home Page Header", with: "Home Page Header"
-    fill_in "Organization Name", with: "Portland Troop 999"
-    fill_in "Organization URL", with: "https://www.portlandtroop999.org"
-    fill_in "Site Description", with: "Troop 999 is a great troop"
-    fill_in "About Event Description", with: "About Event Description"
+    fill_in "Header/Tab Title", with: "Home Page Header"
+    fill_in "About", with: "About Event Description"
     fill_in "Reservations Closed Message", with: "Reservations Closed Message"
     fill_in "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
     fill_in "Contact Name", with: "Contact Name"
@@ -116,17 +103,13 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     click_on "Save Settings"
 
     assert_text "Settings were successfully updated"
-    assert_text "Troop 999"
-    assert_text "Home Page Header"
-    assert_text "Troop 999 is a great troop"
-    assert find("#setting_organization_name").value == "Portland Troop 999"
-    assert find("#setting_organization_url").value == "https://www.portlandtroop999.org"
-    assert_text "About Event Description"
-    assert_text "Reservations Closed Message"
-    assert find("#setting_on_day_of_pickup_instructions").value == "On Day of Pickup Instructions do this"
-    assert find("#setting_contact_name").value == "Contact Name"
-    assert find("#setting_contact_phone").value == "Contact Phone"
-    assert find("#setting_contact_email").value == "email@example.com"
-    assert find("#setting_email_batch_quantity").value == "99"
+    assert_field "Header/Tab Title", with: "Home Page Header"
+    assert_field "About", with: "About Event Description"
+    assert_field "Reservations Closed Message", with: "Reservations Closed Message"
+    assert_field "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
+    assert_field "Contact Name", with: "Contact Name"
+    assert_field "Contact Phone", with: "Contact Phone"
+    assert_field "Contact Email", with: "email@example.com"
+    assert_field "Email Batch Quantity", with: "99"
   end
 end

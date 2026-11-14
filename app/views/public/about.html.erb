@@ -1,84 +1,47 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="mb-8">
-        <a href="/" class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Back to Home
-        </a>
+<% content_for :title, "About | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :description, setting.about_event_description %>
+
+<section class="site-page">
+  <div class="site-container site-container--narrow">
+    <%= link_to root_path, class: "site-back-link" do %>
+      <span aria-hidden="true">←</span> Back to Home
+    <% end %>
+
+    <%= render "shared/page_header",
+               eyebrow: "Our neighborhood fundraiser",
+               title: "About",
+               description: setting.about_event_description %>
+
+    <div class="site-prose">
+      <h2><%= setting.organization_name %></h2>
+
+      <% if setting.organization_url.present? %>
+        <p>
+          <%= link_to "Learn more", setting.organization_url, target: "_blank", rel: "noopener", class: "site-link" %>
+        </p>
+      <% end %>
+
+      <div class="site-callout">
+        <h3>On day of pickup instructions</h3>
+        <p><%= setting.on_day_of_pickup_instructions %></p>
       </div>
-      <div class="prose dark:prose-invert max-w-none">
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl mb-20">
-          About
-        </h1>
 
-        <%= image_tag "about.jpg", class: "lg:w-1/2 w-full h-auto" %>
+      <h4>Date of pick-up</h4>
+      <p><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></p>
 
-        <div class="mt-8 space-y-7">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white"><%= setting.organization_name %></h2>
+      <h4>Your tree should be ready for pickup:</h4>
+      <p><%= setting.event_pickup_start.strftime("%l:%M%P") %> - <%= setting.event_pickup_end.strftime("%l:%M%P") %></p>
 
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-3">
-              <%= setting.about_event_description %>
-            </p>
-
-            <% if setting.organization_url.present? %>
-              <p class="text-lg text-gray-700 dark:text-gray-300">
-                <%= link_to setting.organization_url, target: "_blank", class: "inline-flex items-center" do %>
-                  Learn more
-                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                  </svg>
-                <% end %>
-              </p>
-            <% end %>
-          </div>
-
-          <div class="bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-200 dark:border-yellow-700 rounded-lg p-6">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">On day of pickup instructions</h3>
-            <p class="text-lg text-gray-700 dark:text-gray-300">
-              <%= setting.on_day_of_pickup_instructions %>
-            </p>
-          </div>
-
-          <div>
-            <h4 class="text-lg font-medium text-gray-900 dark:text-white">Date of pick-up</h4>
-            <p class="text-gray-700 dark:text-gray-300"><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></p>
-          </div>
-
-          <div>
-            <h4 class="text-lg font-medium text-gray-900 dark:text-white">Your tree should be ready for pickup:</h4>
-            <p class="text-gray-700 dark:text-gray-300">
-              <%= setting.event_pickup_start.strftime("%l:%M%P") %>
-              -
-              <%= setting.event_pickup_end.strftime("%l:%M%P") %>
-            </p>
-          </div>
-
-          <% if setting.contact_email.present? || setting.contact_phone.present? %> 
-            <div>
-              <h4 class="text-lg font-medium text-gray-900 dark:text-white">Questions?</h4>
-              <p class="text-gray-700 dark:text-gray-300">
-                  
-                <% if setting.contact_name.present? %>
-                  Contact <%= setting.contact_name %>
-                <% else %>
-                  Contact us  
-                <% end %>
-                at
-                <%= [setting.contact_email, setting.contact_phone].compact.join(" or ") %>.
-                <% if setting.contact_sms.present? %>
-                  You can also text us at <%= setting.contact_sms %>.
-                <% end %>
-                
-              </p>
-            </div>
+      <% if setting.contact_email.present? || setting.contact_phone.present? %>
+        <h4>Questions?</h4>
+        <p>
+          <% contact_name = setting.contact_name.present? ? setting.contact_name : "us" %>
+          Contact <%= contact_name %> at <%= [setting.contact_email, setting.contact_phone].compact.join(" or ") %>.
+          <% if setting.contact_sms.present? %>
+            You can also text us at <%= setting.contact_sms %>.
           <% end %>
-        </div>
-
-      </div>
+        </p>
+      <% end %>
     </div>
   </div>
-</div>
+</section>

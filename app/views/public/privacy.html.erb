@@ -1,74 +1,43 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="mb-8">
-        <a href="/" class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Back to Home
-        </a>
-      </div>
-      <div class="prose dark:prose-invert max-w-none">
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl mb-12">
-          Privacy Policy
-        </h1>
+<% content_for :title, "Privacy Policy | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :description, "How Tree Recycle handles your information." %>
 
-        <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg p-8">
-          <div class="space-y-8">
-            <div>
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Commitment to Privacy</h2>
-              <p class="text-lg text-gray-700 dark:text-gray-300">
-                We are committed to protecting your privacy and handling your data with transparency and care. Here's how we handle your information:
-              </p>
-            </div>
+<section class="site-page">
+  <div class="site-container site-container--narrow">
+    <%= link_to root_path, class: "site-back-link" do %>
+      <span aria-hidden="true">←</span> Back to Home
+    <% end %>
 
-            <div class="space-y-6">
-              <div class="flex items-start">
-                <div class="flex-shrink-0">
-                  <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">Data Usage</h3>
-                  <p class="mt-1 text-gray-700 dark:text-gray-300">
-                    Your personal data will only be used for the purposes of our tree recycling fundraiser. This includes processing your reservation and coordinating the pickup of your tree.
-                  </p>
-                </div>
-              </div>
+    <%= render "shared/page_header",
+               eyebrow: "Your information",
+               title: "Privacy Policy" %>
 
-              <div class="flex items-start">
-                <div class="flex-shrink-0">
-                  <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">Email Notifications</h3>
-                  <p class="mt-1 text-gray-700 dark:text-gray-300">
-                    We may send you email notifications about subsequent tree recycling events. These emails will help you stay informed about future opportunities to participate in our fundraiser.
-                  </p>
-                </div>
-              </div>
+    <div class="site-prose">
+      <h2>Our Commitment to Privacy</h2>
+      <p>
+        We are committed to protecting your privacy and handling your data with
+        transparency and care. Here’s how we handle your information:
+      </p>
 
-              <div class="flex items-start">
-                <div class="flex-shrink-0">
-                  <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">Your Control</h3>
-                  <p class="mt-1 text-gray-700 dark:text-gray-300">
-                    You can unsubscribe from our marketing emails at any time. If you choose to unsubscribe, we will completely remove your data from our system. Each marketing email includes an unsubscribe link for your convenience.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h3>Data Usage</h3>
+      <p>
+        Your personal data will only be used for the purposes of our tree
+        recycling fundraiser. This includes processing your reservation and
+        coordinating the pickup of your tree.
+      </p>
+
+      <h3>Email Notifications</h3>
+      <p>
+        We may send you email notifications about subsequent tree recycling
+        events. These emails will help you stay informed about future
+        opportunities to participate in our fundraiser.
+      </p>
+
+      <h3>Your Control</h3>
+      <p>
+        You can unsubscribe from our marketing emails at any time. If you choose
+        to unsubscribe, we will completely remove your data from our system.
+        Each marketing email includes an unsubscribe link for your convenience.
+      </p>
     </div>
   </div>
-</div> 
+</section>

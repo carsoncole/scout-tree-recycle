@@ -185,7 +185,7 @@ You can configure a mapping service to provide address => latitude and longitude
 
    These values are stored in the application database, so no changes to the encrypted credentials file are required.
 
-4. Enable **Automatic Routing** under **Feature Toggles** in `/admin/settings`.
+4. Enable **Automatic Routing** under **Location Services** in `/admin/settings`.
 
 ### SMS Messaging
 

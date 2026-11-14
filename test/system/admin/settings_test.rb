@@ -15,7 +15,6 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_url
 
     within "nav.admin-settings-nav" do
-      assert_link "Feature Toggles", href: "#feature-toggles"
       assert_link "Organization", href: "#organization"
       assert_link "The Event", href: "#event-settings"
       assert_link "Site Content", href: "#site-content"
@@ -28,12 +27,12 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "User Management", href: "#user-management"
     end
 
-    %w[feature-toggles organization event-settings site-content tree-pickups sms email donations location-services operations user-management].each do |id|
+    %w[organization event-settings site-content tree-pickups sms email donations location-services operations user-management].each do |id|
       assert_selector "section##{id}"
     end
 
     titles = all("section.admin-panel h2.admin-panel-title").map(&:text)
-    assert_equal [ "Feature Toggles", "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "User Management" ], titles
+    assert_equal [ "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "User Management" ], titles
   end
 
   test "pickups portal is disabled when not enabled" do
@@ -108,13 +107,16 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
   # end
 
-  test "feature toggle saves immediately" do
+  test "routing toggle saves immediately" do
     visit admin_settings_url
 
     initial = Setting.instance.reload.is_routing_enabled
-    find("#routing-toggle").click
 
-    assert_text "Saved"
+    within "section#location-services" do
+      find("#routing-toggle").click
+      assert_text "Saved"
+    end
+
     assert_equal !initial, Setting.instance.reload.is_routing_enabled
   end
 
@@ -127,9 +129,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Displayed on the public home page in place of the reservation form when Enable Reservations is off."
     end
 
-    within "section#feature-toggles" do
-      assert_no_selector "#reservations-toggle"
-    end
+    assert_selector "#reservations-toggle", count: 1
   end
 
   test "reservations toggle saves immediately" do
@@ -203,9 +203,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_no_text "Turn the driver portal on or off."
     end
 
-    within "section#feature-toggles" do
-      assert_no_selector "#pickups-toggle"
-    end
+    assert_selector "#pickups-toggle", count: 1
   end
 
   test "pickups portal toggle saves immediately" do
@@ -233,9 +231,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_button "Save SMS Settings"
     end
 
-    within "section#feature-toggles" do
-      assert_no_selector "#sms-toggle"
-    end
+    assert_selector "#sms-toggle", count: 1
   end
 
   test "sms panel saves credentials" do
@@ -284,9 +280,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_button "Save Email Settings"
     end
 
-    within "section#feature-toggles" do
-      assert_no_selector "#emailing-toggle"
-    end
+    assert_selector "#emailing-toggle", count: 1
   end
 
   test "email panel saves settings" do
@@ -338,9 +332,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_button "Save Donations Settings"
     end
 
-    within "section#feature-toggles" do
-      assert_no_selector "#donations-toggle"
-    end
+    assert_selector "#donations-toggle", count: 1
   end
 
   test "donations panel saves settings" do
@@ -376,11 +368,13 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_url
 
     within "section#location-services" do
+      assert_selector "#routing-toggle"
       assert_field "Access Key ID"
       assert_field "Secret Access Key"
       assert_field "Region"
       assert_field "Place Index Name"
       assert_button "Save Location Services Settings"
+      assert_text "If Location Services is not configured, reservations will need to be manually assigned to routes."
     end
   end
 

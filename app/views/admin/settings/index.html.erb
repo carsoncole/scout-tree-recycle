@@ -5,7 +5,6 @@
 <div class="admin-settings-layout">
   <nav class="admin-settings-nav" aria-label="Settings sections">
     <ul class="admin-settings-nav-list">
-      <li><%= link_to "Feature Toggles", "#feature-toggles", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "The Event", "#event-settings", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Organization", "#organization", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Site Content", "#site-content", class: "admin-settings-nav-link" %></li>
@@ -20,43 +19,6 @@
   </nav>
 
   <div class="admin-stack">
-    <section class="admin-panel" id="feature-toggles" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
-      <div class="admin-panel-header">
-        <div>
-          <h2 class="admin-panel-title">Feature Toggles</h2>
-          <p class="admin-panel-description">Turn parts of the application on or off. Changes save immediately.</p>
-        </div>
-        <%= link_to admin_logs_path, class: "admin-button admin-button--secondary admin-button--small" do %>
-          System Logs
-          <% if @unviewed_logs_count.to_i.positive? %>
-            <span class="admin-nav-badge"><%= @unviewed_logs_count %></span>
-          <% end %>
-        <% end %>
-      </div>
-
-      <div class="admin-panel-body">
-        <div class="admin-toggle-list">
-          <div class="admin-toggle-row" data-toggle-row>
-            <div class="admin-toggle-copy" data-toggle-copy>
-              <h3 class="admin-toggle-title">Enable Automatic Routing</h3>
-              <p class="admin-hint">When disabled, pickups must be routed manually.</p>
-            </div>
-            <div class="admin-toggle-control" data-toggle-control>
-              <label class="admin-switch" id="routing-toggle" aria-label="Enable automatic routing">
-                <%= check_box_tag "setting[is_routing_enabled]", "1", setting.is_routing_enabled,
-                    class: "admin-switch-input",
-                    data: {
-                      toggle_target: "toggle",
-                      setting: "is_routing_enabled"
-                    } %>
-                <span class="admin-switch-track" aria-hidden="true"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <section class="admin-panel" id="event-settings" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
       <div class="admin-panel-header">
         <div>
@@ -542,7 +504,7 @@
       </div>
     </section>
 
-    <section class="admin-panel" id="location-services">
+    <section class="admin-panel" id="location-services" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
       <div class="admin-panel-header">
         <div>
           <h2 class="admin-panel-title">Location Services</h2>
@@ -553,7 +515,30 @@
       <div class="admin-panel-body">
         <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
           <div class="admin-form-section admin-form-section--flush">
-            <p class="admin-section-description">Find these values in your AWS account. They are stored in the application database. Routing must also be enabled under Feature Toggles.</p>
+            <div class="admin-toggle-list">
+              <div class="admin-toggle-row" data-toggle-row>
+                <div class="admin-toggle-copy" data-toggle-copy>
+                  <h3 class="admin-toggle-title">Enable Automatic Routing</h3>
+                  <p class="admin-hint">When disabled, pickups must be routed manually.</p>
+                </div>
+                <div class="admin-toggle-control" data-toggle-control>
+                  <label class="admin-switch" id="routing-toggle" aria-label="Enable automatic routing">
+                    <%= check_box_tag "setting[is_routing_enabled]", "1", setting.is_routing_enabled,
+                        class: "admin-switch-input",
+                        data: {
+                          testid: "routing-toggle",
+                          toggle_target: "toggle",
+                          setting: "is_routing_enabled"
+                        } %>
+                    <span class="admin-switch-track" aria-hidden="true"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-form-section">
+            <p class="admin-section-description">Find these values in your AWS account. They are stored in the application database. If Location Services is not configured, reservations will need to be manually assigned to routes.</p>
 
             <div class="admin-field-grid admin-field-grid--two">
               <div class="admin-field">
@@ -589,6 +574,12 @@
           <h2 class="admin-panel-title">Operations</h2>
           <p class="admin-panel-description">End-of-season data cleanup.</p>
         </div>
+        <%= link_to admin_logs_path, class: "admin-button admin-button--secondary admin-button--small" do %>
+          System Logs
+          <% if @unviewed_logs_count.to_i.positive? %>
+            <span class="admin-nav-badge"><%= @unviewed_logs_count %></span>
+          <% end %>
+        <% end %>
       </div>
 
       <div class="admin-panel-body">

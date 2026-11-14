@@ -18,6 +18,25 @@
   --site-sage-soft: #e6ece4;
   --site-stone: #ece9e1;
   --site-cool: #eef0eb;
+  --site-input-bg: #fffdf8;
+  --site-input-focus-bg: #fffef9;
+  --site-placeholder: #959a91;
+  --site-error-border: #a2544a;
+  --site-error-text: #8a443c;
+  --site-error-bg: #f6e9e6;
+  --site-error-bg-strong: #f2e2df;
+  --site-warning: #b08a3e;
+  --site-warning-bg: #f7f1e4;
+  --site-warning-row: #f8f2e5;
+  --site-danger-row: #f7eae7;
+  --site-table-hover: #f8f7f1;
+  --site-positive-bg: #e4ece4;
+  --site-positive-text: #3f5a47;
+  --site-info-bg: #e5ebee;
+  --site-info-text: #3d5566;
+  --site-warning-badge-bg: #f3ecdc;
+  --site-warning-badge-text: #7a5f2e;
+  --site-confirmation-border: #cfd8cf;
   --site-radius: 12px;
   --site-radius-pill: 999px;
   --site-font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -28,7 +47,7 @@
   margin: 0;
   background: var(--site-bg);
   color: var(--site-ink);
-  color-scheme: light;
+  color-scheme: light dark;
   font-family: var(--site-font);
   font-size: 17px;
   line-height: 1.65;
@@ -251,7 +270,7 @@
 
 .site-input::placeholder,
 .site-textarea::placeholder {
-  color: #959a91;
+  color: var(--site-placeholder);
 }
 
 .site-input:hover:not(:disabled),
@@ -263,7 +282,7 @@
 .site-textarea:focus {
   outline: none;
   border-color: var(--site-sage);
-  background: #fffdf8;
+  background: var(--site-input-bg);
   box-shadow: 0 0 0 3px rgba(81, 107, 88, 0.18);
 }
 
@@ -634,7 +653,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 1.75rem;
-  border: 1px solid #cfd8cf;
+  border: 1px solid var(--site-confirmation-border);
   border-radius: 50%;
   color: var(--site-sage-dark);
   background: var(--site-sage-soft);
@@ -754,7 +773,7 @@
   margin: 0;
   background: var(--site-bg);
   color: var(--site-ink);
-  color-scheme: light;
+  color-scheme: light dark;
   font-family: var(--site-font);
   font-size: 16px;
   line-height: 1.55;
@@ -1004,6 +1023,17 @@
   align-items: start;
 }
 
+.admin-settings-status {
+  margin-bottom: 1.5rem;
+}
+
+.admin-setup-missing-list {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
 .admin-settings-nav {
   padding: 1rem;
   border: 1px solid var(--site-line);
@@ -1210,7 +1240,7 @@
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--site-line-strong);
   border-radius: 8px;
-  background-color: #fffdf8;
+  background-color: var(--site-input-bg);
   color: var(--site-ink);
   font: inherit;
   font-size: 0.9rem;
@@ -1237,7 +1267,7 @@
 
 .admin-input::placeholder,
 .admin-textarea::placeholder {
-  color: #959a91;
+  color: var(--site-placeholder);
 }
 
 .admin-input:hover:not(:disabled),
@@ -1251,7 +1281,7 @@
 .admin-textarea:focus {
   outline: none;
   border-color: var(--site-sage);
-  background-color: #fffef9;
+  background-color: var(--site-input-focus-bg);
   box-shadow: 0 0 0 3px rgba(81, 107, 88, 0.16);
 }
 
@@ -1265,7 +1295,7 @@
 
 .admin-input--error,
 .admin-select--error {
-  border-color: #a2544a;
+  border-color: var(--site-error-border);
 }
 
 .admin-field-grid {
@@ -1302,7 +1332,7 @@
 
 .admin-error-text {
   margin: 0;
-  color: #8a443c;
+  color: var(--site-error-text);
   font-size: 0.83rem;
 }
 
@@ -1363,7 +1393,7 @@
 }
 
 .admin-button--danger {
-  background: #8a443c;
+  background: var(--site-error-text);
   color: #fffdf8;
 }
 
@@ -1439,7 +1469,7 @@
 }
 
 .admin-link--danger {
-  color: #8a443c;
+  color: var(--site-error-text);
 }
 
 .admin-link--danger:hover {
@@ -1500,15 +1530,15 @@
 }
 
 .admin-table tbody tr:hover {
-  background: #f8f7f1;
+  background: var(--site-table-hover);
 }
 
 .admin-table tr.is-warning {
-  background: #f8f2e5;
+  background: var(--site-warning-row);
 }
 
 .admin-table tr.is-danger {
-  background: #f7eae7;
+  background: var(--site-danger-row);
 }
 
 .admin-table-actions {
@@ -1538,23 +1568,23 @@
 }
 
 .admin-badge--positive {
-  background: #e4ece4;
-  color: #3f5a47;
+  background: var(--site-positive-bg);
+  color: var(--site-positive-text);
 }
 
 .admin-badge--info {
-  background: #e5ebee;
-  color: #3d5566;
+  background: var(--site-info-bg);
+  color: var(--site-info-text);
 }
 
 .admin-badge--warning {
-  background: #f3ecdc;
-  color: #7a5f2e;
+  background: var(--site-warning-badge-bg);
+  color: var(--site-warning-badge-text);
 }
 
 .admin-badge--danger {
-  background: #f2e2df;
-  color: #8a443c;
+  background: var(--site-error-bg-strong);
+  color: var(--site-error-text);
 }
 
 .admin-badge--neutral {
@@ -1589,13 +1619,13 @@
 }
 
 .admin-notice--warning {
-  border-left-color: #b08a3e;
-  background: #f7f1e4;
+  border-left-color: var(--site-warning);
+  background: var(--site-warning-bg);
 }
 
 .admin-notice--danger {
-  border-left-color: #a2544a;
-  background: #f6e9e6;
+  border-left-color: var(--site-error-border);
+  background: var(--site-error-bg);
 }
 
 .admin-toggle-list {
@@ -2266,5 +2296,50 @@
 
   a[href]::after {
     content: "";
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --site-bg: #171915;
+    --site-surface: #22241e;
+    --site-ink: #e7e5dc;
+    --site-ink-soft: #b0aea4;
+    --site-muted: #8a8980;
+    --site-line: #33352e;
+    --site-line-strong: #44463f;
+    --site-sage: #8fb39a;
+    --site-sage-dark: #a8c9b2;
+    --site-sage-soft: #2a342d;
+    --site-stone: #2a2c26;
+    --site-cool: #24261f;
+    --site-input-bg: #2a2c26;
+    --site-input-focus-bg: #2f312b;
+    --site-placeholder: #8a8980;
+    --site-error-border: #d17a70;
+    --site-error-text: #e0958d;
+    --site-error-bg: #3a2826;
+    --site-error-bg-strong: #4a302d;
+    --site-warning: #d6b06a;
+    --site-warning-bg: #3a3324;
+    --site-warning-row: #332f24;
+    --site-danger-row: #3a2826;
+    --site-table-hover: #2f312b;
+    --site-positive-bg: #2a342d;
+    --site-positive-text: #9fc2a8;
+    --site-info-bg: #2a3036;
+    --site-info-text: #a3b8c9;
+    --site-warning-badge-bg: #3a3324;
+    --site-warning-badge-text: #d6b06a;
+    --site-confirmation-border: #44463f;
+  }
+
+  .site-body,
+  .admin-body {
+    color-scheme: dark;
+  }
+
+  .admin-table tbody tr:hover {
+    background: var(--site-table-hover);
   }
 }

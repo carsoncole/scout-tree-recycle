@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for(:title) || "Tree Recycle Admin" %></title>
+    <title><%= content_for(:title) || "#{Setting.instance&.home_page_header.presence || "Tree Recycle"} Admin" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#f4f3ed">
+    <meta name="theme-color" content="#171915" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
@@ -27,7 +28,7 @@
       <header class="admin-header">
         <div class="admin-header-inner">
           <div class="admin-brand">
-            <%= link_to "Tree Recycle", admin_root_path, class: "admin-brand-link" %>
+            <%= link_to (Setting.instance&.organization_name.presence || Setting.instance&.home_page_header.presence || "Tree Recycle"), admin_root_path, class: "admin-brand-link" %>
             <span class="admin-brand-meta">Admin</span>
           </div>
 

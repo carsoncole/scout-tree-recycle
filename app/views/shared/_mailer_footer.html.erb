@@ -5,7 +5,7 @@
     <%= @email_footer %>
   <% end %>
   <% if @prior_reservation.present? %>
-    <span class="text-gray-500">|</span>
+    <span class="text-gray-500 dark:text-gray-400">|</span>
     <%= link_to "Unsubscribe", unsubscribe_prior_reservation_url(@prior_reservation), style: "text-decoration-line: none;" %>
   <% end %>
 </div>

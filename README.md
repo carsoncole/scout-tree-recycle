@@ -1,441 +1,54 @@
-:construction: Still being updated
-
-
-![Example Image](public_screenshot.png)
-![Example Image](confirmation2_screenshot.png)
-
 # Tree Recycle
 
-Tree Recycle is a comprehensive web application that supports the running of a Christmas tree recycling fundraiser. Streamlining the tree pickup reservation and donation process and the logistics of tree pickup across a broad area.
+Tree Recycle is a Rails application for running a Christmas tree recycling fundraiser: public tree-pickup reservations and donations, an admin back office, and a driver pickups portal.
 
-* This version replaces an earlier version of Tree Recycle.
+## Stack
 
-## Features
+- Ruby 3.4 / Rails 8.1
+- PostgreSQL
+- Hotwire (Turbo + Stimulus), Tailwind CSS
+- Solid Queue, Solid Cache, Solid Cable
+- Minitest
+- Optional integrations: Stripe (donations), Twilio (SMS), AWS Location Service (geocoding/routing), SMTP (email)
 
-- **Reservation Management**
-  - Public website for tree pickup reservations
-  - Address verification and geocoding
-  - Automatic or manual routing system
-  - Status tracking (pending, picked up, missing, cancelled)
+## Structure
 
-- **Routing System**
-  - Automatic routing with geocoding
-  - Manual routing option
-  - Route assignment to drivers
-  - Zone-based organization
-
-- **Donation Processing**
-  - Online donation acceptance
-  - Stripe integration
-  - Receipt generation
-  - Donation tracking
-
-- **Communication**
-  - Email notifications for:
-    - Reservation confirmations
-    - Pickup reminders
-    - Missing tree alerts
-    - Donation receipts
-  - SMS notifications for missing trees
-  - Marketing emails to previous customers
-
-- **Admin Features**
-  - Dashboard for reservation management
-  - Route assignment interface
-  - Settings configuration
-  - Marketing campaign management
-  - User management
-
-- **Tree Pickups Site for Drivers**
-  - Dedicated site for driver pickup management at "/pickups"
-  - PDF pickup lists (backup in case online connectivity is down)
-  - Map showing pickup locations and status
-  - Drivers can update status of pickups and register missing trees
+- **Public site** (`/`) — reservation form with address verification, donation flow, about/privacy pages.
+- **Admin** (`/admin`) — reservations, routes, drivers, zones, users, donations, SMS conversations, logs, marketing emails, settings, and background jobs (`/admin/jobs`).
+- **Pickups portal** (`/pickups`) — driver login via a shared secret key; pickup lists, status updates, and PDF export.
+- **API** (`/api/v1`) — Stripe and Twilio webhooks.
 
 ## Getting started
 
-1. Install Ruby and PostgreSQL on your local computer.
+Prerequisites: Ruby 3.4, PostgreSQL, and Bundler.
 
-2. Install Rails:
-
-```ruby
-gem install rails
+```sh
+git clone https://github.com/carsoncole/tree_recycle.git
+cd tree_recycle
+bin/setup
 ```
 
-3. Clone the repo:
+`bin/setup` installs gems, prepares the database, and starts the dev server. Visit `http://localhost:3000`.
 
-```ruby
-$ git clone https://github.com/carsoncole/tree_recycle.git
-$ cd tree_recycle
-```
+On first run with no settings, create them at `/admin/settings/new`; an admin user is created and its password is shown. Optional seed data: `bin/rails db:seed`.
 
-4. Install gems:
+Database connection settings live in `config/database.yml`.
 
-```ruby
-bundle install
-```
+## Configuration
 
-5. Migrate the database:
-
-```ruby
-rails db:migrate
-```
-
-6. Start the web server:
-
-```ruby
-bin/dev
-```
-
-7. Go to ```http://localhost:3000``` and you should see an initial settings page.
-
+Most configuration is done in `/admin/settings` (organization, email, routing, SMS, donations, pickups). Secrets use Rails encrypted credentials (`bin/rails credentials:edit`). Optional integrations are configured through the settings UI.
 
 ## Deployment
 
-The application can be deployed with [Kamal](https://kamal-deploy.org) to any cloud-based or local server with SSH root access.
+Deploy as a Docker container with Kamal: configure `config/deploy.yml` and `.kamal/secrets`, then run `kamal setup` and `kamal deploy`.
 
-### Prerequisites
+## Testing
 
-- Docker Compose (installed locally)
-- Docker account
-- A host for the application with SSH root access enabled
-
-### Steps
-
-1. Configure ```config/deploy.yml```.
-2. Configure your DNS settings for your domain with an 'A' record that points to the IP address of your host.
-2. Launch your host. This can be any dedicated server, or even your local machine. It must have SSH root access enabled.
-3. Create and configure ```.kamal/secrets```. You can use the sample file ```.kamal/secrets.sample```. Replace ```$KAMAL_REGISTRY_PASSWORD``` with your Docker access key. 
-4. With your configuration complete, you need to commit your code, which is what will be used in the Docker image creation.
-```ruby
-$ git add .
-$ git commit -a -m 'some message'
-```
-4. Setup remote server and deploy:
-
-```ruby
-$ kamal setup
-$ kamal deploy
+```sh
+bin/rails test
+bin/rails test:system
 ```
 
-## Configure Site and Time Zone
+## License
 
-Open `/admin/settings` and use the **Organization** panel under **Site** to set:
-
-- **Site URL** — used for links in emails such as password resets and unsubscribe links.
-- **Time Zone** — all event and message times are shown in this zone.
-- **Default Country** — the default country for new reservations.
-
-## Configure secrets
-
-Use encrypted credentials to store application secrets. Remove the existing secrets:
-
-    $ rm config/credentials.yml.enc
-    $ EDITOR=vim rails credentials:edit
-
-Copy the sample ```credentials.ymp.enc.sample```. 
-
-
-## Optional Integrations
-
-
-### Email
-
-With emailing configured, Tree Recycle will send automated emails confirming tree reservations, cancellations, and donation receipts. Two funnel-type marketing emails are also available to market to people who have made tree pickup reservations in the past.
-
-#### Configure email in the admin settings
-
-Open `/admin/settings` and use the **Email** section:
-
-- **From Address** — the sender name and address recipients see, for example `Anytown Tree Recycle <example@example.com>`.
-- **SMTP Address**, **Port**, **Username**, **Password**, **Authentication**, and **Encryption** (STARTTLS, TLS, or None) — the outgoing mail server details from your email provider.
-- Turn on **Enable Email**.
-
-These values are stored in the application database, so no changes to the encrypted credentials file are required.
-
-
-#### Gmail
-
-Use these SMTP settings:
-
-- address:              smtp.gmail.com
-- port:                 587
-- user_name:            username
-- password:             password
-- authentication:       plain
-- encryption:           starttls
-
-> :warning: **Important GMAIL Note** Gmail is free, but there are limitations. If you are on a free account, the daily sending limit is ~500 emails. If you do hit a limit, they will temporarily shut your account. For the marketing emails, you can control the batch size of emails in Settings and it is recommended that you keep it low (<50) and send multiple times. Sending a massive block of emails may not only shut your account, but it also could get your emails flagged as SPAM, by receiving email servers. Caution is advised.
-
-### Routing
-
-You can configure a mapping service to provide address => latitude and longitude address coordinates and handle geospatial queries to be able to determine whether an address is within a route. There are multiple services, and AWS Location Services is installed by default.
-
-#### Configuration
-
-1. For the Amazon Locations Service, you'll need an AWS account. 
-
-2. Create a Place Index and give it a name, ie. 'tree_recycle', with the data provider 'Esri' with a single use.  You'll then need API credentials which you can obtain in your main profile under 'Security Credentials'.
-
-3. Open `/admin/settings` and use the **Location Services** section:
-
-   - **Access Key ID** and **Secret Access Key** from your AWS security credentials.
-   - **Region** — the region where the place index was created.
-   - **Place Index Name** — the name of your place index, for example `tree_recycle`.
-
-   These values are stored in the application database, so no changes to the encrypted credentials file are required.
-
-4. Enable **Automatic Routing** under **Location Services** in `/admin/settings`.
-
-### SMS Messaging
-
-SMS messaging can be configured, and it will provide important messaging to users whose tree can not be found. The message encourages the user to put their tree out or provide instructions and to respond by SMS. This dialogue can be managed entirely with the app.
-
-[Twilio.com](https://twilio.com) is used for SMS. 
-
-#### Configuration
-
-1. Sign up with Twilio. You will need to provide your organization's details and the purpose of your messaging. The process can take time, as they will review your account before permitting any SMS's to be sent.
-
-2. For reservations with a mobile number, if it is flagged ```Missing```, then a Missing Tree SMS will be sent. It will inform the recipient to put out their tree and to respond to the SMS by saying their tree has been put out. Once the response is received, the reservation's status can be updated to ```Pending Pickup```.
-
-3. General SMS enquiries can be received by the application and they can be replied to.
-
-> :warning: Getting SMS service from Twilio takes time to set up as they will do a background check on the organization, to fight against spam messaging.
-
-Configure SMS in the admin interface at `/admin/settings` under **SMS**:
-
-1. Find your **Account SID** and **Auth Token** in the Twilio console and enter them under **SMS**.
-2. Enter the Twilio **From Number** messages should be sent from, in E.164 format (for example `+15555550123`).
-3. Enable the **Enable SMS** toggle.
-
-These credentials are stored in the application database, so no changes to the encrypted credentials file are required.
-
-In Twilio, you need to create a ```Messaging Service```, which defines the purpose behind what you plan on messaging. The use case should be "Notify my users".
-
-In Twilio, in the section ```Develop```, ```Phone Numbers```, ```Active Numbers```, select your number and update the ```Messaging Configuration```:
-
-```
-Configure with: Webhook
-A message comes in: Webhook
-URL: https://YOUR_SITE_URL/api/v1/sms/reply
-HTTP: HTTP POST
-```
-
-The SMS section of the settings page displays the exact webhook URL to use.
-
-Canned SMS reply responses can be modified in `tree_recycle.rb `. 
-
-
-### Donations
-
-[Stripe](https://stripe.com) is used for taking donations.
-
-#### Configuration
-
-1. Open a Stripe account. You will need organization details, such as tax id etc.
-2. Configure your default donation amount. Go to ```Product catalog > Create product > Add price```
-
-3. Configure your Strip donation page to include your organization information, default donation amount etc. You can also select what donation methods you would like to accept.
-    - Configure payment methods in ```Settings > Payments > Payment methods```
-    - Configure the payment domain (what URL you will be collecting payments) in ```Settings > Payments > Payment Method Domains```
-
-4. Obtain your **Secret key** in ```Developers > API Keys```. The publishable key is not used by this application.
-
-5. Open `/admin/settings` and use the **Donations** section:
-
-   - Enter the Stripe **Secret Key**.
-   - Enter the **Price ID** for your donation price.
-   - Turn on **Enable Online Donations**.
-
-   These values are stored in the application database, so no changes to the encrypted credentials file are required.
-
-6. Configure the Stripe webhook. In Stripe, ```Developers > Webhooks > Webhook endpoints > Endpoint URL```:
-
-```
-https://YOUR_SITE_URL/api/v1/stripe-webhook
-```
-
-The Donations section of the settings page displays the exact webhook URL to use.
-
-7. Configure your default donation. In the Stripe Product Catalog, enter your product, ie. a donation, and product price. ```Product Catalog > Products > Create product "Tree Recycle Donation"``` and ```Product Catalog > Products > select Price (customer chooses), enter a present donation amount.```
-
-8. Copy the price id from the Stripe price page ```Product Catalog > Products > select your product "Tree Recycle Donation" > click on the price "Customer Chooses (USD)" > price id should be in the top right of page``` into the **Price ID** field under **Donations** in `/admin/settings`.
-> :question: Stripe test mode and production have different price IDs. Enter the ID for the mode the site is currently using.
-
-
-9. Enable ```Test mode``` (top right) in your Stripe account, and on your tree recycle site, make a donation. Confirm that the transaction shows up in ```Transactions```.
-
-> :question: **TEST MODE**:  In Test mode, and on your tree recycle donation page, select any credit card, use the credit card number ```4242 4242 4242 4242```, and any expiration data and CVC. The charge will be accepted and should show up within your Stripe account under ```Transactions```. 
-
-10. Disable ```Test mode```.
----
-
-
-## Marketing emails
-
-### Marketings emails #1 and #2
-There are two pre-definded marketing emails. The first email informs the recipient about the tree recycling event and encourages sign-up. The second email is a last call email sent just prior to the event reminding the recipient that time is running out to sign up. Both the first and second emails are only sent to recipients that have not, at the time of sending the email, signed up.
-
-### Configuration
-The application is already configured with defauls, but if you want to change them, they can be found in both the UI in `Settings`, or the initializer `tree_recycle.rb`.
-
-Most importantly, in `Settings`, there is an `Email batch quantity` (default: 100) which is the number of emails sent every time you press the button to send emails. This number is important as sending too many emails in one go can more likely flag your email as spam, as well as exceed daily sending limits of your email provider. The free version of Gmail has a daily limit of ~500 emails a day. When you exceed it, they will immediately deactivate your sending for some period of time (~ 24 hours).
-
-The information in the emails is all derived from your event and organization information that you configure in `Settings`. If you want modify the actual emails, they are `/views/marketing_mailer/marketing_email_1.html.erb` and `/views/marketing_mailer/marketing_email_2.html.erb`. There are also text `.text.erb` versions.
-
-### Sending emails
-You can send marketing emails through the `Marketing` section, where two emails (Marketing Email #1, Marketing Email #2), one followed by the other, are available. 
-
-The recipients of the marketing emails are listed in `Marketing`. The recipients will be past participants of your tree recycling events. If this is the first year you are running a recycling event, then there will be none listed.
-
-> :question: As soon as someone who is listed as a Prior Reservation in Marketing reserves a tree pickup, they will be removed from the Prior Reservations, and will not be a potential recipient of future marketing emails for the current year's event. At the end of the current event, the event reservations can be migrated in the `Settings > Operations` and all reservations will be merged into the `Prior Reservations` for future marketing.
-
-> :question: In `initializers/tree_recycle.rb` there is a setting (MINIMUM_MONTHS_BEFORE_PRIOR_RESERVATION_REMOVAL) for how long a Prior Reservation will remain since they last participated before being automatically removed. The default is 24 months.
-
-#### Unsubcribing
-
-Recipients of the marketing emails will be given the option to unsubscribe. When they do, their contact information will be immedietly deleted and no longer appear in the `Marketing` section.
-
-## Setting up Routing
-
-Reservations are mapped into admin-defined routes. When entered, reservations will be checked for existence within Routes by either 1) a Route that is nearest to it (each Route has a base address), or 2) with a Route that has polygon defined for it. Multi-point polygons can be entered for each route.
-
-### Routes
-
-Routes need to be defined by first, a base address, and optionally, a polygon made up of 3 or more coordinates (entered counter-clockwise). Polygons can be defined to contain specific roads and addresses, and generally polygons should abut, not overlay, other Route polygons.
-
-Routes should essentially be an area that could contain a manageable group of tree pickups. A pickup driver could be assigned to one or more Routes.
-
-Maps of all pickups within a route are available in `Routes` in the adminstration section of the application. Clicking on each pickup on the map will show if its been picked up and has a link to directions to the pick-up.
-
-![Screenshot](app/assets/images/map.png)
-
-### Zones
-
-Zones are made up of Routes and are used for organizational purposes so that Zone leaders can be defined to oversee groups of Routes.
-
-
-## Secrets
-
-Application secrets are stored in Rails application secrets in a credential file `/credentials.yml.enc`. The secrets include passwords and keys to access email providers and more. Twilio/SMS credentials are configured in the admin settings rather than this file. You will add your own secrets to this file, which will be encrypted, and then deployed within your codebase to be used in Production on Heroku.
-
-Delete any existing `config/credentials.yml.enc` file. Initialize your own secrets file:
-
-```ruby
-$ EDITOR=vim rails credentials:edit
-```
-
-This will create your initial credentials file and open it in an editor. Copy the contents of `/config/credentials_sample.yml` as your initial template and edit it accordingly.
-
-Docker and deployment secrets are stored in /.kamal/secrets. This file is in the .gitignore as it holds the Docker registry password.  You will need this file in your local environment to be able to deploy with Kamal. There is a sample secrets file /.kamal/sample_secrets.
-
-
-## Tests
-
-Run tests and system tests:
-
-    $ rails test
-    $ rails system:test
-
-
-For mailers, previews exist for the confirmation and reminder emails. To view in `development`:
-
-```ruby
-http://localhost:3000/rails/mailers/
-```
-
-> Viewing previews of emails requires emailing to be enabled in Settings and you need to have supporting reservations or prior reservations.
-
-### Seed Data
-
-There is sample seed data that will populate the application enough to see how it works, and for testing.
-
-    $ rails db:seed
-
-
-### Images
-
-Default Scouting America images are used in emails and are stored in the `app/assets/images/` directory and are named `image-[1-3].png`. You can customize these images by replacing them with your own.
-
-`image-1.png`
-Used in Marketing Email #1.
-
-`image-2.png`
-Used in Cancelled Reservation email.
-
-`image-3.png`
-Used in Marketing Email #2 and New Reservation email.
-
-
-## Migrating data from Tree Recycle to Tree Recycle 2
-
-
-Migrating data from [Tree Recycle](https://github.com/carsoncole/tree-recycle.git) is beneficial for transferring reservation data which can be used for marketing in future recycling events, and for mapping data that defines your routes and zones. Below are the different datasets which you can individually choose to migrate. These instructions are based on using PosgreSQL as the backend database.
-
-Reservations data is migrated to the new `prior_reservations` table, which is exclusively used for marketing emails.
-
-The following tables and their respective SQL can be used in the instructions below:
-
-### Reservations
-
-Migrating `reservations` to `prior_reservations`.
-```sql
-SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at FROM RESERVATIONS;
-```
-
-### Points
-
-Migrating `points` to `points`. If migrating, this data is dependent on Routes data, which should be migrated also.
-```sql
-SELECT id, route_id, latitude, longitude, "order", created_at, updated_at from POINTS;
-```
-
-### Routes
-
-Migrating `routes` to `routes`. If migrating, this data is dependent on Zones data, which should be migrated also.
-```sql
-SELECT id, name, street, city, state, country, distance, latitude, longitude, zone_id, NULL as distance_to_zone, NULL as reservations_count, created_at, updated_at from ROUTES;
-```
-
-### Zones
-
-Migrating `zones` to `zones`.
-```sql
-SELECT id, name, street, city, state, country, latitude, longitude, created_at, updated_at from ZONES;
-```
-
-### Drivers and Driver Routes
-```sql
-Select id, name, phone as mobile, created_at, updated_at from drivers;
-```
-
-```sql
-Select id, driver_id, route_id, created_at, updated_at from driver_routes;
-```
-
-
-
-#### Example migration for  `reservations` data:
-
-1. Download and install the [pgAdmin](https://www.pgadmin.org) utility.
-2. Create connection to your Tree Recycle 1 database.
-3. Open the Query Tool and run this query:
-```sql
-SELECT id, name, street, email, phone as mobile, NULL AS marketing_email_1_sent_at, NULL AS marketing_email_2_sent_at, created_at, updated_at FROM RESERVATIONS;
-```
-3. Click the download button and save the table as a CSV file.
-4. Create connection to your new Tree Recycle 2 database.
-5. Highlight the `prior_reservations` table and select `Import/Export data`.
-7. Under `General`, select `Import` and select your file. Under `Options`, enable `Header` and under NULL Strings, enter `NULL`.
-8. Click OK.
-9. To verify, right-click on the `prior_reservations` table, and select `View/Edit Data > All Rows`.
-
-# License
-
-Tree Recycle 2 is copyright 2025 by Carson Cole. It is free software, released under the [MIT License](https://opensource.org/licenses/MIT).
-
-# About Tree Recycle
-
-Tree Recycle 2 is maintained by Carson Cole. Installation and hosting options are available. Contact Carson for more information.
-
+MIT — see [LICENSE](LICENSE).

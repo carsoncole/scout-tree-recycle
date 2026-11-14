@@ -168,8 +168,7 @@
         <% {
           "Confirmation email" => @reservation.confirmed_reservation_email_sent_at,
           "Cancellation email" => @reservation.cancelled_reservation_email_sent_at,
-          "Missing tree email" => @reservation.missing_tree_email_sent_at,
-          "Pickup reminder email" => @reservation.pickup_reminder_email_sent_at
+          "Missing tree email" => @reservation.missing_tree_email_sent_at
         }.each do |label, sent_at| %>
           <div class="admin-detail">
             <dt class="admin-detail-label"><%= label %></dt>

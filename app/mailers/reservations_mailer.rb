@@ -10,7 +10,8 @@ class ReservationsMailer < ApplicationMailer
   def new_reservation_email
     return unless Setting.instance.is_emailing_enabled?
     return if @reservation.confirmed_reservation_email_sent_at?
-    @event_pickup_start = setting.event_pickup_start
+    @event_pickup_start = setting.event_pickup_start.in_time_zone(setting.time_zone)
+    @event_pickup_end = setting.event_pickup_end.in_time_zone(setting.time_zone)
     @setting = setting
     @email_footer = Setting.instance.organization_name
     mail(to: @reservation.email, subject: "Your tree pickup is confirmed")
@@ -19,7 +20,10 @@ class ReservationsMailer < ApplicationMailer
 
   def cancelled_reservation_email
     return if @reservation.cancelled_reservation_email_sent_at?
-    @event_pickup_start = setting.event_pickup_start
+    @event_pickup_start = setting.event_pickup_start.in_time_zone(setting.time_zone)
+    @event_pickup_end = setting.event_pickup_end.in_time_zone(setting.time_zone)
+    @setting = setting
+    @email_footer = Setting.instance.organization_name
     mail(to: @reservation.email, subject: "Your tree pickup reservation has been cancelled")
     @reservation.update(cancelled_reservation_email_sent_at: Time.current)
   end

@@ -14,7 +14,7 @@ class MarketingMailerTest < ActionMailer::TestCase
     assert_equal "Tree recycling #{ Setting.instance.event_pickup_start.strftime("%B %-d") }. Register today.", mail.subject
     assert_equal [ prior_reservations(:full).email ], mail.to
     assert_equal [ "example@example.com" ], mail.from
-    assert_match "Support our Scouts! - Tree Recycling", mail.body.encoded
+    assert_match "Support #{Setting.instance.organization_name}! - Tree Recycling", mail.body.encoded
   end
 
   test "marketing_email_2" do

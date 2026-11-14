@@ -1,4 +1,4 @@
-🌲 Support our Scouts! - Tree Recycling 🌲
+🌲 Support <%= @setting.organization_name %>! - Tree Recycling 🌲
 
 <% if @prior_reservation.name.present? && @prior_reservation.name.downcase != 'no name provided' %>
 Hi <%= @prior_reservation.name %>! 👋
@@ -15,7 +15,7 @@ Your participation helps fund our youth programs and environmental initiatives!
 Date: <%= @setting.event_pickup_start.strftime('%A, %B %-d, %Y') %>
 Pickup Starts: <%= @setting.event_pickup_start.strftime('%I:%M %p') %>
 
-Your participation not only helps us recycle Christmas trees responsibly but also directly supports our youth organization. We suggest a donation of <%= number_to_currency(@setting.suggested_donation, precision: 0) %> when you register, which goes directly to funding summer camps and other outdoor activities! 🎯
+Your participation not only helps us recycle Christmas trees responsibly but also directly supports <%= @setting.organization_name %>. We suggest a donation of <%= number_to_currency(@setting.suggested_donation, precision: 0) %> when you register, which goes directly to funding summer camps and other outdoor activities! 🎯
 
 🌱 Reserve My Tree Pickup: <%= root_url(prior_reservation_id: @prior_reservation.id, name: @prior_reservation.name, street: @prior_reservation.street, email: @prior_reservation.email, mobile: @prior_reservation.mobile) %>
 

@@ -34,6 +34,13 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup is confirmed", email.subject
     assert_match "Tree pick-up scheduled", email.body.encoded
+    assert_match Setting.instance.organization_name, email.body.encoded
+    assert_match "3:00pm", email.body.encoded
+    assert_match "$#{Setting.instance.suggested_donation}", email.body.encoded
+    assert_match "/reservations/#{reservation.id}/edit", email.body.encoded
+    assert_match "/reservations/#{reservation.id}/donations/new", email.body.encoded
+    assert_no_match "FIX", email.body.encoded
+    assert_no_match "8am", email.body.encoded
   end
 
   test "sends cancellation reservation email once cancelled" do
@@ -58,6 +65,8 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup reservation has been cancelled", email.subject
     assert_match "Tree pick-up cancelled", email.body.encoded
+    assert_match Setting.instance.organization_name, email.body.encoded
+    assert_no_match "Bainbridge", email.body.encoded
   end
 
   test "not sending more than one confirmation email" do

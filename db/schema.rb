@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_000008) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_000009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -123,7 +123,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_000008) do
     t.datetime "confirmed_reservation_email_sent_at"
     t.datetime "cancelled_reservation_email_sent_at"
     t.datetime "missing_tree_email_sent_at"
-    t.datetime "pickup_reminder_email_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "missing_tree_sms_sent_at"
@@ -166,7 +165,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_000008) do
 
   create_table "settings", force: :cascade do |t|
     t.string "home_page_header"
-    t.text "site_description"
     t.string "organization_name"
     t.string "organization_url"
     t.datetime "event_pickup_start"
@@ -187,14 +185,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_000008) do
     t.boolean "is_routing_enabled", default: false
     t.boolean "is_donations_enabled", default: false
     t.string "driver_secret_key"
-    t.string "facebook_page_id"
-    t.string "meta_site_name"
-    t.string "meta_title"
-    t.string "meta_description"
-    t.string "meta_image_filename"
     t.string "reservations_closed_message"
     t.integer "email_batch_quantity", default: 100
-    t.text "driver_instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "suggested_donation", default: 25

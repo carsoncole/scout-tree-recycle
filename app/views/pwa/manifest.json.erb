@@ -1,5 +1,5 @@
 {
-  "name": "TreeRecycle",
+  "name": <%= (Setting.instance&.home_page_header.presence || "TreeRecycle").to_json %>,
   "icons": [
     {
       "src": "/icon.png",
@@ -16,7 +16,7 @@
   "start_url": "/",
   "display": "standalone",
   "scope": "/",
-  "description": "Christmas tree pickup reservations for the Tree Recycle fundraiser.",
+  "description": <%= (Setting.instance&.about_event_description.presence || "Christmas tree pickup reservations for the Tree Recycle fundraiser.").to_json %>,
   "theme_color": "#516b58",
   "background_color": "#f4f3ed"
 }

@@ -13,7 +13,7 @@ class SmsMissingTreeTest < ActiveSupport::TestCase
     sms = Sms.last
     assert_equal "outgoing", sms.direction
     assert_equal reservation.mobile, sms.phone
-    assert_equal "Hi there! It's Bainbridge Tree Recycle. We're having trouble finding your tree for pickup. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this text ASAP if you would like us to  attempt a second pick-up of your tree today. Thanks!", sms.body
+    assert_equal Reservation::DEFAULT_MISSING_TREE_SMS, sms.body
   end
 
   test "sends missing tree sms a second time" do
@@ -24,7 +24,41 @@ class SmsMissingTreeTest < ActiveSupport::TestCase
     end
     sms = Sms.last
     assert_equal "outgoing", sms.direction
-    assert_equal "Hello, it's Bainbridge Tree Recycle again. We're still having trouble finding your tree for pickup. Please double check that it's out and reply to this message confirming its location. Thanks!", sms.body
+    assert_equal Reservation::DEFAULT_MISSING_TREE_SMS_FOLLOW_UP, sms.body
+  end
+
+  test "uses configured missing tree sms messages" do
+    Setting.instance.update(
+      is_sms_enabled: true,
+      missing_tree_sms_message: "Custom first message",
+      missing_tree_sms_follow_up_message: "Custom follow-up message"
+    )
+    reservation = reservations(:pending_pickup_1)
+
+    reservation.update(missing_tree_sms_sent_at: nil)
+    reservation.send_missing_sms!
+    assert_equal "Custom first message", Sms.last.body
+
+    reservation.update(missing_tree_sms_sent_at: 1.day.ago)
+    reservation.send_missing_sms!
+    assert_equal "Custom follow-up message", Sms.last.body
+  end
+
+  test "falls back to default messages when configured messages are blank" do
+    Setting.instance.update(
+      is_sms_enabled: true,
+      missing_tree_sms_message: "",
+      missing_tree_sms_follow_up_message: ""
+    )
+    reservation = reservations(:pending_pickup_1)
+
+    reservation.update(missing_tree_sms_sent_at: nil)
+    reservation.send_missing_sms!
+    assert_equal Reservation::DEFAULT_MISSING_TREE_SMS, Sms.last.body
+
+    reservation.update(missing_tree_sms_sent_at: 1.day.ago)
+    reservation.send_missing_sms!
+    assert_equal Reservation::DEFAULT_MISSING_TREE_SMS_FOLLOW_UP, Sms.last.body
   end
 
   test "not sending missing tree sms if mobile is not present" do

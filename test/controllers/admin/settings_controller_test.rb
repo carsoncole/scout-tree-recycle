@@ -62,7 +62,9 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
         twilio_account_sid: "AC123",
         twilio_auth_token: "token-123",
         twilio_from_number: "+15555550123",
-        sms_quick_responses: "Thanks!\nOn our way."
+        sms_quick_responses: "Thanks!\nOn our way.",
+        missing_tree_sms_message: "First custom",
+        missing_tree_sms_follow_up_message: "Follow-up custom"
       }
     }
 
@@ -72,6 +74,8 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "token-123", setting.twilio_auth_token
     assert_equal "+15555550123", setting.twilio_from_number
     assert_equal [ "Thanks!", "On our way." ], setting.sms_quick_response_list
+    assert_equal "First custom", setting.missing_tree_sms_message
+    assert_equal "Follow-up custom", setting.missing_tree_sms_follow_up_message
   end
 
   test "should update site and organization settings" do

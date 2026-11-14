@@ -103,6 +103,8 @@ class Admin::SettingsController < Admin::BaseController
       :twilio_auth_token,
       :twilio_from_number,
       :sms_quick_responses,
+      :missing_tree_sms_message,
+      :missing_tree_sms_follow_up_message,
       :email_from_address,
       :marketing_email_cooldown_days,
       :prior_reservation_retention_months,

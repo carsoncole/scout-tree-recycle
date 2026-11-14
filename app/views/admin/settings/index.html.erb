@@ -350,6 +350,35 @@
           </div>
 
           <div class="admin-form-section">
+            <h3 class="admin-section-title">Missing Tree Messages</h3>
+            <p class="admin-section-description">Sent automatically when a reservation is marked missing. Leave a message blank to use the default shown in the field.</p>
+
+            <div class="admin-toolbar admin-field--spaced">
+              <div>
+                <%= label_tag "setting[missing_tree_sms_message]", "First Message", class: "admin-label" %>
+                <p class="admin-hint">Sent the first time a tree is marked missing.</p>
+              </div>
+
+              <div class="admin-field admin-field--medium admin-toolbar-field">
+                <%= text_area_tag "setting[missing_tree_sms_message]", setting.missing_tree_sms_message, rows: 4, class: "admin-textarea", placeholder: Reservation::DEFAULT_MISSING_TREE_SMS %>
+                <p class="admin-hint">Leave blank to use the default message.</p>
+              </div>
+            </div>
+
+            <div class="admin-toolbar admin-field--spaced">
+              <div>
+                <%= label_tag "setting[missing_tree_sms_follow_up_message]", "Follow-up Message", class: "admin-label" %>
+                <p class="admin-hint">Sent if the tree is marked missing again.</p>
+              </div>
+
+              <div class="admin-field admin-field--medium admin-toolbar-field">
+                <%= text_area_tag "setting[missing_tree_sms_follow_up_message]", setting.missing_tree_sms_follow_up_message, rows: 4, class: "admin-textarea", placeholder: Reservation::DEFAULT_MISSING_TREE_SMS_FOLLOW_UP %>
+                <p class="admin-hint">Leave blank to use the default message.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-form-section">
             <div class="admin-toolbar">
               <div>
                 <%= label_tag :sms_webhook_url, "Webhook URL", class: "admin-section-title" %>

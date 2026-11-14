@@ -230,6 +230,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "Auth Token"
       assert_field "From Number"
       assert_field "Quick Responses"
+      assert_field "First Message"
+      assert_field "Follow-up Message"
       assert_field "Webhook URL", with: api_v1_sms_reply_url
       assert_button "Save SMS Settings"
     end
@@ -245,6 +247,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Auth Token", with: "token-123"
       fill_in "From Number", with: "+15555550123"
       fill_in "Quick Responses", with: "Thanks!\nOn our way."
+      fill_in "First Message", with: "First custom message"
+      fill_in "Follow-up Message", with: "Follow-up custom message"
       click_on "Save SMS Settings"
     end
 
@@ -255,6 +259,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "token-123", setting.twilio_auth_token
     assert_equal "+15555550123", setting.twilio_from_number
     assert_equal [ "Thanks!", "On our way." ], setting.sms_quick_response_list
+    assert_equal "First custom message", setting.missing_tree_sms_message
+    assert_equal "Follow-up custom message", setting.missing_tree_sms_follow_up_message
   end
 
   test "sms toggle saves immediately" do

@@ -2,6 +2,9 @@
 class Reservation < ApplicationRecord
   include Geocodable
 
+  DEFAULT_MISSING_TREE_SMS = "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
+  DEFAULT_MISSING_TREE_SMS_FOLLOW_UP = "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
+
   belongs_to :route, optional: true, counter_cache: true
   has_one :zone, through: :route
   has_many :donations, dependent: :nullify
@@ -223,15 +226,13 @@ class Reservation < ApplicationRecord
 
   def send_missing_sms!
     return if self.mobile.blank?
-    if self.missing_tree_sms_sent_at.blank?
-      message = "Hi there! It's Bainbridge Tree Recycle. We're having trouble finding your tree for pickup. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this text ASAP if you would like us to  attempt a second pick-up of your tree today. Thanks!"
-      # message += "  To stop receiving messages, reply STOP. "
+    setting = Setting.instance
+    message = if self.missing_tree_sms_sent_at.blank?
+      setting&.missing_tree_sms_message.presence || DEFAULT_MISSING_TREE_SMS
     else
-      message = "Hello, it's Bainbridge Tree Recycle again. We're still having trouble finding your tree for pickup. Please double check that it's out and reply to this message confirming its location. Thanks!"
-      # message += "  To stop receiving messages, reply STOP. "
+      setting&.missing_tree_sms_follow_up_message.presence || DEFAULT_MISSING_TREE_SMS_FOLLOW_UP
     end
 
-    # Hi there! It's Bainbridge Tree Recycle. We're having trouble finding your tree for pickup. Our drivers are currently out collecting trees, and we want to make sure yours is on the list. Let us know by replying to this text ASAP. Thanks! Reply 'STOP' to opt out.
     sms = Sms.create(
       body: message,
       phone: mobile,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_000007) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_000008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -220,6 +220,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_000007) do
     t.integer "marketing_email_cooldown_days", default: 7
     t.integer "prior_reservation_retention_months", default: 24
     t.text "sms_quick_responses", default: "Thank you! I'll let the Scouts know.\nThanks for the update. I'll have them swing by again to pick up the tree.\nWe are only picking up today, however I can see if we could swing by tomorrow.\nThank you for your support! We appreciate it."
+    t.text "missing_tree_sms_message", default: "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
+    t.text "missing_tree_sms_follow_up_message", default: "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
   end
 
   create_table "sms", force: :cascade do |t|

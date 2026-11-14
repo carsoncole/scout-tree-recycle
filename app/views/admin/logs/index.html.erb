@@ -1,91 +1,58 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 mb-6">
-          <svg class="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          </svg>
-        </div>
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-          System Logs
-        </h1>
-        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
-          View system activity and events
-        </p>
-      </div>
+<%= render "admin/shared/page_header",
+           title: "System Logs",
+           description: "View application activity and error reports." do %>
+  <%= button_to "Delete All Logs", admin_destroy_all_logs_path,
+      method: :delete,
+      data: {
+        turbo_confirm: "Are you sure you want to delete all logs? This action cannot be undone.",
+        turbo_method: :delete
+      },
+      class: "admin-button admin-button--danger" %>
+<% end %>
 
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="flex justify-end mb-6">
-            <%= button_to "Delete All Logs", admin_destroy_all_logs_path, 
-                method: :delete,
-                data: { 
-                  turbo_confirm: "Are you sure you want to delete all logs? This action cannot be undone.",
-                  turbo_method: :delete
-                },
-                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="table-fixed min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead class="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Timestamp</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Severity</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Message</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Error Type</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Environment</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Context</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                <% @logs.each do |log| %>
-                  <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      <%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                        <%= case log.severity
-                            when 'error' then 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-                            when 'warning' then 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
-                            when 'info' then 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-                            else 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
-                            end %>">
-                        <%= log.severity&.titleize %>
-                      </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      <%= link_to log&.message&.truncate(100), admin_log_path(log), class: "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" %>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      <%= log.error_type %>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      <%= log.environment %>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                      <pre class="whitespace-pre-wrap"><%= JSON.pretty_generate(log.context) if log.context.present? %></pre>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                        <%= log.handled ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' %>">
-                        <%= log.handled ? 'Handled' : 'Unhandled' %>
-                      </span>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mt-4">
-            <%# <%= render 'admin/shared/pagination', pagy: @pagy %> %>
-          </div>
-        </div>
-      </div>
-    </div>
+<section class="admin-panel">
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th scope="col">Timestamp</th>
+          <th scope="col">Severity</th>
+          <th scope="col">Message</th>
+          <th scope="col">Error type</th>
+          <th scope="col">Environment</th>
+          <th scope="col">Context</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @logs.each do |log| %>
+          <tr>
+            <td><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+            <td>
+              <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
+            </td>
+            <td>
+              <%= link_to log.message&.truncate(100), admin_log_path(log), class: "admin-link" %>
+            </td>
+            <td><%= log.error_type %></td>
+            <td><%= log.environment %></td>
+            <td>
+              <% if log.context.present? %>
+                <pre class="admin-code"><%= JSON.pretty_generate(log.context) %></pre>
+              <% end %>
+            </td>
+            <td>
+              <span class="<%= admin_handled_badge(log.handled) %>">
+                <%= log.handled ? "Handled" : "Unhandled" %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
-</div>
+
+  <% if @logs.empty? %>
+    <p class="admin-empty">No log entries have been recorded.</p>
+  <% end %>
+</section>

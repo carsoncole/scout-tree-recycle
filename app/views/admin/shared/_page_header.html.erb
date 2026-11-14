@@ -1,0 +1,17 @@
+<div class="admin-page-header">
+  <div>
+    <% if local_assigns[:eyebrow].present? %>
+      <p class="admin-eyebrow"><%= eyebrow %></p>
+    <% end %>
+
+    <h1 class="admin-page-title"><%= title %></h1>
+
+    <% if local_assigns[:description].present? %>
+      <p class="admin-page-description"><%= description %></p>
+    <% end %>
+  </div>
+
+  <% if block_given? %>
+    <div class="admin-page-actions"><%= yield %></div>
+  <% end %>
+</div>

@@ -1,343 +1,253 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 mb-6">
-          <svg class="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-        </div>
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Reservation Details
-        </h1>
-        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
-          View and manage reservation #<%= @reservation.id %>
+<%= render "admin/shared/page_header",
+           title: "Reservation Details",
+           description: "View and manage reservation ##{@reservation.id}." do %>
+  <%= link_to "Edit", edit_admin_reservation_path(@reservation), class: "admin-button" %>
+  <%= link_to "Back to list", admin_reservations_path, class: "admin-button admin-button--secondary" %>
+<% end %>
+
+<div class="admin-stack">
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Status</h2>
+        <p class="admin-panel-description">
+          Created <%= time_ago_in_words(@reservation.created_at) %> ago
         </p>
-        <div class="mt-4">
-          <%= link_to "Edit", edit_admin_reservation_path(@reservation), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-        </div>
       </div>
+      <span class="<%= admin_reservation_status_badge(@reservation.status) %>" id="status-<%= @reservation.status %>">
+        <%= @reservation.status.titleize %>
+      </span>
+    </div>
 
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="space-y-6">
-            <!-- Status Section -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Status</h2>
-              <div class="flex items-center space-x-4 mb-4">
-                <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
-                  <%= case @reservation.status
-                      when 'pending_pickup'
-                        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                      when 'picked_up'
-                        'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-                      when 'cancelled'
-                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-                      when 'missing'
-                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
-                      else
-                        'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
-                      end %>" id="status-<%= @reservation.status %>">
-                  <%= @reservation&.status&.titleize %>
-                </span>
-                <span class="text-sm text-gray-500 dark:text-gray-400">
-                  Created <%= time_ago_in_words(@reservation.created_at) %> ago
-                </span>
-              </div>
-              
-              <!-- Status Update Form -->
-              <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Update Status</dt>
-                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                  <%= form_with model: [:admin, @reservation], local: false, class: "flex items-center space-x-3", data: { controller: "form" } do |form| %>
-                    <%= form.select :status, 
-                        options_for_select([
-                          ['Routing', 'routing'],
-                          ['Pending Pickup', 'pending_pickup'],
-                          ['Picked Up', 'picked_up'],
-                          ['Missing', 'missing'],
-                          ['Cancelled', 'cancelled']
-                        ], @reservation.status),
-                        {},
-                        { 
-                          class: "block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
-                          data: { 
-                            action: "change->form#submit"
-                          }
-                        } %>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">
-                      Status will update automatically when changed
-                    </div>
-                  <% end %>
-                </dd>
-              </div>
-            </div>
-
-            <!-- Route Information -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Route Information</h2>
-              <% if @reservation.geocoding_failed? %>
-                <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <div class="flex">
-                    <div class="flex-shrink-0">
-                      <svg class="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div class="ml-3">
-                      <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Auto Geocoding Failed</h3>
-                      <div class="mt-2 text-sm text-red-700 dark:text-red-300">
-                        <p>The system was unable to automatically geocode this address. Please verify the address is correct and try geocoding again.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-              <% if @reservation.routing_failed? %>
-                <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <div class="flex">
-                    <div class="flex-shrink-0">
-                      <svg class="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div class="ml-3">
-                      <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Auto Routing Failed</h3>
-                      <div class="mt-2 text-sm text-red-700 dark:text-red-300">
-                        <p>The system was unable to automatically route this reservation. Please verify the coordinates are correct and try routing again.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Assigned Route</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= @reservation.route&.name || 'Unassigned' %>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Contact Information -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Contact Information</h2>
-              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Name</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.name %></dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= mail_to @reservation.email, @reservation.email, class: "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" %>
-                  </dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Mobile</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= @reservation.mobile.present? ? Phonelib.parse(@reservation.mobile).national : "N/A" %>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Address Information -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Address Information</h2>
-                <div class="flex space-x-3">
-                  <%= button_to "Geocode Address", geocode_admin_reservation_path(@reservation), 
-                      method: :post,
-                      class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
-                </div>
-              </div>
-              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Street</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.street %></dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">City</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.city %></dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">State</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.state %></dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Country</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.country %></dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Latitude</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.latitude || 'Not available' %></dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Longitude</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2"><%= @reservation.longitude || 'Not available' %></dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Additional Information -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Additional Information</h2>
-              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Notes</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= @reservation.pickup_notes.present? ? @reservation.pickup_notes : "No notes provided" %>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Email History -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Email History</h2>
-              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Confirmation Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <% if @reservation.confirmed_reservation_email_sent_at.present? %>
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        Sent <%= @reservation.confirmed_reservation_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                      </span>
-                    <% else %>
-                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
-                    <% end %>
-                  </dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Cancellation Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <% if @reservation.cancelled_reservation_email_sent_at.present? %>
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        Sent <%= @reservation.cancelled_reservation_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                      </span>
-                    <% else %>
-                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
-                    <% end %>
-                  </dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Missing Tree Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <% if @reservation.missing_tree_email_sent_at.present? %>
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        Sent <%= @reservation.missing_tree_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                      </span>
-                    <% else %>
-                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
-                    <% end %>
-                  </dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Pickup Reminder Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <% if @reservation.pickup_reminder_email_sent_at.present? %>
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        Sent <%= @reservation.pickup_reminder_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                      </span>
-                    <% else %>
-                      <span class="text-gray-500 dark:text-gray-400">Not sent</span>
-                    <% end %>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Missing Tree Notifications -->
-            <% if @reservation.missing_tree_sms_sent_at.present? || @reservation.missing_tree_email_sent_at.present? %>
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Missing Tree Notifications</h2>
-                <div class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                  <div class="flex">
-                    <div class="flex-shrink-0">
-                      <svg class="h-5 w-5 text-yellow-400 dark:text-yellow-300" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div class="ml-3">
-                      <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Missing Tree Notifications Sent</h3>
-                      <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
-                        <p>This reservation was marked as missing and notifications have been sent to the customer.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <% if @reservation.missing_tree_sms_sent_at.present? %>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">SMS Notification</dt>
-                      <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                          Sent <%= @reservation.missing_tree_sms_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                        </span>
-                      </dd>
-                    </div>
-                  <% end %>
-
-                  <% if @reservation.missing_tree_email_sent_at.present? %>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email Notification</dt>
-                      <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                          Sent <%= @reservation.missing_tree_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                        </span>
-                      </dd>
-                    </div>
-                  <% end %>
-                </dl>
-              </div>
-            <% end %>
-
-            <!-- Timestamps -->
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Timestamps</h2>
-              <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Created At</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= @reservation.created_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                  </dd>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Updated At</dt>
-                  <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                    <%= @reservation.updated_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex justify-end space-x-4">
-              <%= link_to "Back to List", admin_reservations_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-              <%= button_to "Delete Reservation", admin_reservation_path(@reservation), 
-                  method: :delete,
-                  data: { 
-                    turbo_confirm: "Are you sure you want to delete this reservation? This action cannot be undone.",
-                    turbo_method: :delete
-                  },
-                  class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
-            </div>
-          </div>
+    <div class="admin-panel-body">
+      <%= form_with model: [:admin, @reservation], local: false, class: "admin-field-grid admin-field-grid--two",
+                    data: { controller: "form" } do |form| %>
+        <div class="admin-field">
+          <%= form.label :status, "Update status", class: "admin-label" %>
+          <%= form.select :status,
+              options_for_select([
+                [ "Routing", "routing" ],
+                [ "Pending Pickup", "pending_pickup" ],
+                [ "Picked Up", "picked_up" ],
+                [ "Missing", "missing" ],
+                [ "Cancelled", "cancelled" ]
+              ], @reservation.status),
+              {},
+              class: "admin-select",
+              data: { action: "change->form#submit" } %>
         </div>
+        <p class="admin-hint">Status updates automatically when changed.</p>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Route information</h2>
+        <p class="admin-panel-description">Routing and geocoding results for this address.</p>
       </div>
     </div>
-  </div>
+
+    <div class="admin-panel-body admin-stack admin-stack--tight">
+      <% if @reservation.geocoding_failed? %>
+        <div class="admin-notice admin-notice--danger" role="status">
+          <div>
+            <p class="admin-notice-title">Auto geocoding failed</p>
+            <p>The system was unable to geocode this address. Verify the address and try again.</p>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @reservation.routing_failed? %>
+        <div class="admin-notice admin-notice--danger" role="status">
+          <div>
+            <p class="admin-notice-title">Auto routing failed</p>
+            <p>The system was unable to route this reservation. Verify the coordinates and try again.</p>
+          </div>
+        </div>
+      <% end %>
+
+      <dl class="admin-detail-list">
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Assigned route</dt>
+          <dd class="admin-detail-value"><%= @reservation.route&.name || "Unassigned" %></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Contact information</h2>
+    </div>
+    <div class="admin-panel-body">
+      <dl class="admin-detail-list">
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Name</dt>
+          <dd class="admin-detail-value"><%= @reservation.name %></dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Email</dt>
+          <dd class="admin-detail-value">
+            <%= mail_to @reservation.email, @reservation.email, class: "admin-link" %>
+          </dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Mobile</dt>
+          <dd class="admin-detail-value">
+            <%= @reservation.mobile.present? ? Phonelib.parse(@reservation.mobile).national : "Not provided" %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Address information</h2>
+        <p class="admin-panel-description">Coordinates are used for routing and driver maps.</p>
+      </div>
+      <%= button_to "Geocode Address", geocode_admin_reservation_path(@reservation),
+          method: :post,
+          class: "admin-button admin-button--secondary admin-button--small" %>
+    </div>
+    <div class="admin-panel-body">
+      <dl class="admin-detail-list">
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Street</dt>
+          <dd class="admin-detail-value"><%= @reservation.street %></dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">City</dt>
+          <dd class="admin-detail-value"><%= @reservation.city %></dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">State</dt>
+          <dd class="admin-detail-value"><%= @reservation.state %></dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Country</dt>
+          <dd class="admin-detail-value"><%= @reservation.country %></dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Latitude</dt>
+          <dd class="admin-detail-value"><%= @reservation.latitude || "Not available" %></dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Longitude</dt>
+          <dd class="admin-detail-value"><%= @reservation.longitude || "Not available" %></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Additional information</h2>
+    </div>
+    <div class="admin-panel-body">
+      <dl class="admin-detail-list">
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Pickup notes</dt>
+          <dd class="admin-detail-value">
+            <%= @reservation.pickup_notes.presence || "No notes provided" %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Email history</h2>
+    </div>
+    <div class="admin-panel-body">
+      <dl class="admin-detail-list">
+        <% {
+          "Confirmation email" => @reservation.confirmed_reservation_email_sent_at,
+          "Cancellation email" => @reservation.cancelled_reservation_email_sent_at,
+          "Missing tree email" => @reservation.missing_tree_email_sent_at,
+          "Pickup reminder email" => @reservation.pickup_reminder_email_sent_at
+        }.each do |label, sent_at| %>
+          <div class="admin-detail">
+            <dt class="admin-detail-label"><%= label %></dt>
+            <dd class="admin-detail-value">
+              <% if sent_at.present? %>
+                <span class="admin-badge admin-badge--positive">
+                  Sent <%= sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                </span>
+              <% else %>
+                <span class="admin-badge admin-badge--neutral">Not sent</span>
+              <% end %>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </section>
+
+  <% if @reservation.missing_tree_sms_sent_at.present? || @reservation.missing_tree_email_sent_at.present? %>
+    <section class="admin-panel">
+      <div class="admin-panel-header">
+        <div>
+          <h2 class="admin-panel-title">Missing tree notifications</h2>
+          <p class="admin-panel-description">This reservation was marked as missing and the customer was notified.</p>
+        </div>
+        <span class="admin-badge admin-badge--warning">Customer notified</span>
+      </div>
+      <div class="admin-panel-body">
+        <dl class="admin-detail-list">
+          <% if @reservation.missing_tree_sms_sent_at.present? %>
+            <div class="admin-detail">
+              <dt class="admin-detail-label">SMS notification</dt>
+              <dd class="admin-detail-value">
+                <span class="admin-badge admin-badge--info">
+                  Sent <%= @reservation.missing_tree_sms_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                </span>
+              </dd>
+            </div>
+          <% end %>
+          <% if @reservation.missing_tree_email_sent_at.present? %>
+            <div class="admin-detail">
+              <dt class="admin-detail-label">Email notification</dt>
+              <dd class="admin-detail-value">
+                <span class="admin-badge admin-badge--positive">
+                  Sent <%= @reservation.missing_tree_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                </span>
+              </dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    </section>
+  <% end %>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <h2 class="admin-panel-title">Timestamps</h2>
+    </div>
+    <div class="admin-panel-body">
+      <dl class="admin-detail-list">
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Created at</dt>
+          <dd class="admin-detail-value"><%= @reservation.created_at.strftime("%B %-d, %Y at %-l:%M %p") %></dd>
+        </div>
+        <div class="admin-detail">
+          <dt class="admin-detail-label">Updated at</dt>
+          <dd class="admin-detail-value"><%= @reservation.updated_at.strftime("%B %-d, %Y at %-l:%M %p") %></dd>
+        </div>
+      </dl>
+    </div>
+    <div class="admin-panel-footer">
+      <%= button_to "Delete Reservation", admin_reservation_path(@reservation),
+          method: :delete,
+          data: {
+            turbo_confirm: "Are you sure you want to delete this reservation? This action cannot be undone.",
+            turbo_method: :delete
+          },
+          class: "admin-button admin-button--danger" %>
+    </div>
+  </section>
 </div>

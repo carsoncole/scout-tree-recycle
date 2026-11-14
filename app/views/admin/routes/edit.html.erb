@@ -1,21 +1,7 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 mb-4">
-          <svg class="w-6 h-6 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-          </svg>
-        </div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
-          Edit Route
-        </h1>
-        <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">
-          Update route information
-        </p>
-      </div>
+<%= render "admin/shared/page_header",
+           title: "Edit Route",
+           description: "Update the route, its area points, and assigned drivers." %>
 
-      <%= render 'form', route: @route %>
-    </div>
-  </div>
-</div> 
+<div class="admin-container--medium admin-container--flush">
+  <%= render "form", route: @route %>
+</div>

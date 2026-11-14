@@ -83,6 +83,43 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
   # end
 
+  test "feature toggle saves immediately" do
+    visit admin_settings_url
+
+    initial = Setting.instance.reload.is_emailing_enabled
+    find("#emailing-toggle").click
+
+    assert_text "Saved"
+    assert_equal !initial, Setting.instance.reload.is_emailing_enabled
+  end
+
+  test "pickups portal settings live in the Tree Pickups panel" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "Tree Pickups" do
+      assert_selector "#pickups-toggle"
+      assert_field "Secret Key"
+      assert_button "Save Portal Settings"
+    end
+
+    within "section.admin-panel", text: "Feature toggles" do
+      assert_no_selector "#pickups-toggle"
+    end
+  end
+
+  test "pickups portal toggle saves immediately" do
+    visit admin_settings_url
+
+    initial = Setting.instance.reload.is_pickups_site_enabled
+
+    within "section.admin-panel", text: "Tree Pickups" do
+      find("#pickups-toggle").click
+      assert_text "Saved"
+    end
+
+    assert_equal !initial, Setting.instance.reload.is_pickups_site_enabled
+  end
+
   test "page links" do
     visit admin_settings_url
     assert_link "System Logs", href: admin_logs_path

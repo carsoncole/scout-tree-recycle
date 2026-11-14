@@ -4,90 +4,59 @@ export default class extends Controller {
   static targets = ["toggle"]
 
   connect() {
-    this.toggleTargets.forEach(toggle => {
-      toggle.addEventListener("change", this.handleToggle.bind(this))
+    this.toggleTargets.forEach((toggle) => {
+      toggle.addEventListener("change", this.handleToggle)
     })
   }
 
-  handleToggle(event) {
+  disconnect() {
+    this.toggleTargets.forEach((toggle) => {
+      toggle.removeEventListener("change", this.handleToggle)
+    })
+  }
+
+  handleToggle = (event) => {
     const toggle = event.target
+    const row = toggle.closest("[data-toggle-row]") || this.element
+    const control = row.querySelector("[data-toggle-control]") || toggle.parentElement
+    const copy = row.querySelector("[data-toggle-copy]") || row
     const setting = toggle.dataset.setting
     const value = toggle.checked
-    const toggleContainer = toggle.closest('.flex.items-center.justify-between')
-    const toggleParent = toggle.closest('.flex.items-center')
-    const toggleLabel = toggleParent.querySelector('label')
 
-    // Remove any existing success indicators
-    const existingIndicator = toggleContainer.querySelector('.success-indicator')
-    if (existingIndicator) {
-      existingIndicator.remove()
-    }
+    row.querySelectorAll(".admin-toggle-feedback").forEach((element) => element.remove())
 
-    // Remove any existing error indicators
-    const existingErrorIndicator = toggleContainer.querySelector('.error-indicator')
-    if (existingErrorIndicator) {
-      existingErrorIndicator.remove()
-    }
+    const headers = { "Content-Type": "application/json" }
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+    if (csrfToken) headers["X-CSRF-Token"] = csrfToken
 
     fetch(this.element.dataset.toggleUrl, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
-      },
+      headers: headers,
       body: JSON.stringify({ setting: setting, value: value })
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // Create success indicator
-        const successIndicator = document.createElement('div')
-        successIndicator.className = 'success-indicator mr-2'
-        successIndicator.innerHTML = `
-          <svg class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-          </svg>
-        `
-        // Insert before the toggle label
-        toggleParent.insertBefore(successIndicator, toggleLabel)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const indicator = document.createElement("span")
+          indicator.className = "admin-toggle-feedback admin-badge admin-badge--positive"
+          indicator.textContent = "Saved"
+          control.insertBefore(indicator, control.firstChild)
 
-        // Remove success indicator after 2 seconds
-        setTimeout(() => {
-          successIndicator.remove()
-        }, 2000)
-      } else {
-        // Revert the toggle
+          setTimeout(() => indicator.remove(), 2000)
+        } else {
+          toggle.checked = !value
+
+          const message = document.createElement("p")
+          message.className = "admin-toggle-feedback admin-error-text"
+          message.textContent = data.errors?.[0] || "An error occurred"
+          copy.appendChild(message)
+
+          setTimeout(() => message.remove(), 3000)
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error)
         toggle.checked = !value
-
-        // Create error indicator
-        const errorIndicator = document.createElement('div')
-        errorIndicator.className = 'error-indicator mr-2'
-        errorIndicator.innerHTML = `
-          <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-          </svg>
-        `
-        // Insert before the toggle label
-        toggleParent.insertBefore(errorIndicator, toggleLabel)
-
-        // Show error message
-        const errorMessage = document.createElement('div')
-        errorMessage.className = 'text-red-500 text-sm mr-4 whitespace-nowrap'
-        errorMessage.textContent = data.errors?.[0] || 'An error occurred'
-        // Insert before the toggle parent div
-        toggleContainer.insertBefore(errorMessage, toggleParent)
-
-        // Remove error indicator and message after 3 seconds
-        setTimeout(() => {
-          errorIndicator.remove()
-          errorMessage.remove()
-        }, 3000)
-      }
-    })
-    .catch(error => {
-      console.error("Error:", error)
-      // Revert the toggle
-      toggle.checked = !value
-    })
+      })
   }
-} 
+}

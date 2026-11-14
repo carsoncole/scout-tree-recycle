@@ -1,11 +1,7 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-  <div class="md:flex md:items-center md:justify-between">
-    <div class="flex-1 min-w-0">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">Edit Driver</h2>
-    </div>
-  </div>
+<%= render "admin/shared/page_header",
+           title: "Edit Driver",
+           description: "Update contact details and route assignments." %>
 
-  <div class="mt-8">
-    <%= render 'form', driver: @driver %>
-  </div>
+<div class="admin-container--narrow admin-container--flush">
+  <%= render "form", driver: @driver %>
 </div>

@@ -1,60 +1,38 @@
-<%= form_with(model: [:admin, zone], class: "space-y-8 divide-y divide-gray-200 dark:divide-gray-700") do |f| %>
-  <% if zone.errors.any? %>
-    <div class="rounded-md bg-red-50 dark:bg-red-900 p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
-            <%= pluralize(zone.errors.count, "error") %> prohibited this zone from being saved:
-          </h3>
-          <div class="mt-2 text-sm text-red-700 dark:text-red-300">
-            <ul role="list" class="list-disc space-y-1 pl-5">
-              <% zone.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        </div>
+<%= form_with(model: [:admin, zone], class: "admin-stack") do |f| %>
+  <%= render "shared/form_errors", object: zone %>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Zone information</h2>
+        <p class="admin-panel-description">Name the zone and attach any unzoned routes.</p>
       </div>
     </div>
-  <% end %>
 
-  <div class="space-y-8 divide-y divide-gray-200 dark:divide-gray-700">
-    <div class="pt-8">
-      <div>
-        <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">Zone Information</h3>
-        <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">Enter the zone details below.</p>
-      </div>
-
-      <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-        <div class="sm:col-span-6">
-          <%= f.label :name, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
-          <div class="mt-2">
-            <%= f.text_field :name, class: "block w-full rounded-md border-0 py-2 px-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 sm:text-sm sm:leading-6" %>
-          </div>
+    <div class="admin-panel-body">
+      <div class="admin-form">
+        <div class="admin-field">
+          <%= f.label :name, class: "admin-label" %>
+          <%= f.text_field :name, class: "admin-input" %>
         </div>
 
-        <div class="sm:col-span-6">
-          <%= f.label :route_ids, "Routes", class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" %>
-          <div class="mt-2">
+        <fieldset class="admin-field">
+          <legend class="admin-label">Routes</legend>
+          <div class="admin-stack admin-stack--tight">
             <%= f.collection_check_boxes :route_ids, Route.unzoned, :id, :name do |b| %>
-              <div class="flex items-center mb-2">
-                <%= b.check_box class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded" %>
-                <%= b.label class: "ml-2 block text-sm text-gray-900 dark:text-white" %>
-              </div>
+              <label class="admin-check-row">
+                <%= b.check_box class: "admin-checkbox" %>
+                <span><%= b.text %></span>
+              </label>
             <% end %>
           </div>
-        </div>
+        </fieldset>
       </div>
     </div>
-  </div>
 
-  <div class="mt-6 flex items-center justify-end gap-x-6">
-    <%= link_to "Cancel", admin_zones_path, class: "text-sm font-semibold leading-6 text-gray-900 dark:text-white" %>
-    <%= f.submit class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
-  </div>
-<% end %> 
+    <div class="admin-panel-footer">
+      <%= link_to "Cancel", admin_zones_path, class: "admin-button admin-button--secondary" %>
+      <%= f.submit class: "admin-button" %>
+    </div>
+  </section>
+<% end %>

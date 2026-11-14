@@ -1,435 +1,335 @@
-<div class="w-full bg-gray-50 dark:bg-gray-900">
-  <div class="min-h-screen">
-    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 mb-6">
-          <svg class="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-          </svg>
-        </div>
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Settings
-        </h1>
-        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
-          Manage application settings
-        </p>
+<%= render "admin/shared/page_header",
+           title: "Settings",
+           description: "Manage event details, feature toggles, and portal access." %>
+
+<div class="admin-stack">
+  <section class="admin-panel" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Feature toggles</h2>
+        <p class="admin-panel-description">Turn parts of the application on or off. Changes save immediately.</p>
       </div>
+      <%= link_to admin_logs_path, class: "admin-button admin-button--secondary admin-button--small" do %>
+        System Logs
+        <% if @unviewed_logs_count.to_i.positive? %>
+          <span class="admin-nav-badge"><%= @unviewed_logs_count %></span>
+        <% end %>
+      <% end %>
+    </div>
 
-      <!-- Feature Toggles Section -->
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="space-y-6">
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
-              <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Feature Toggles</h2>
-                <div class="flex items-center space-x-4">
-                  <%= link_to admin_logs_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
-                    <span>System Logs</span>
-                    <% if @unviewed_logs_count.to_i > 0 %>
-                      <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                        <%= @unviewed_logs_count %>
-                      </span>
-                    <% end %>
-                  <% end %>
-                </div>
-              </div>
-              <div class="space-y-4">
-                <!-- Reservations Toggle -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Reservations</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Allow users to make tree pickup reservations.</p>
-                      <%= link_to "View Reservations Site", root_path, target: "_blank", class: "text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" %>
-                    </div>
-                    <div class="flex items-center">
-                      <label class="relative inline-flex items-center cursor-pointer" id="reservations-toggle">
-                        <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open,
-                            class: "sr-only peer",
-                            data: {
-                              testid: "reservations-toggle",
-                              toggle_target: "toggle",
-                              target: "toggle",
-                              setting: "is_reservations_open"
-                            } %>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Pickups Portal Toggle -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Pickups Portal</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable the Pickups portal at "/pickups" for tree pickup management.</p>
-                      <%= link_to "View Pickups Portal", pickups_root_path, target: "_blank", class: "text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" %>
-                    </div>
-                    <div class="flex items-center">
-                      <label class="relative inline-flex items-center cursor-pointer">
-                        <%= check_box_tag "setting[is_pickups_site_enabled]", "1", setting.is_pickups_site_enabled,
-                            class: "sr-only peer",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_pickups_site_enabled"
-                            } %>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Email Toggle -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Email</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Email notifications and marketing emails.</p>
-                    </div>
-                    <div class="flex items-center">
-                      <label class="relative inline-flex items-center cursor-pointer" id="emailing-toggle">
-                        <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
-                            class: "sr-only peer",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_emailing_enabled"
-                            } %>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- SMS Toggle -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable SMS</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">SMS messaging and missing tree notifications.</p>
-                    </div>
-                    <div class="flex items-center">
-                      <label class="relative inline-flex items-center cursor-pointer" id="sms-toggle">
-                        <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled,
-                            class: "sr-only peer",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_sms_enabled"
-                            } %>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Routing Toggle -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Automatic Routing</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable automatic routing for tree pickups. When disabled, pickups must be manually routed.  </p>
-                    </div>
-                    <div class="flex items-center">
-                      <label class="relative inline-flex items-center cursor-pointer" id="routing-toggle">
-                        <%= check_box_tag "setting[is_routing_enabled]", "1", setting.is_routing_enabled,
-                            class: "sr-only peer",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_routing_enabled"
-                            } %>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Donations Toggle -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Enable Online Donations</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Enable online donation acceptance through Stripe. When disabled, an informational page about donation methods will be shown.</p>
-                    </div>
-                    <div class="flex items-center">
-                      <label class="relative inline-flex items-center cursor-pointer" id="donations-toggle">
-                        <%= check_box_tag "setting[is_donations_enabled]", "1", setting.is_donations_enabled,
-                            class: "sr-only peer",
-                            data: {
-                              toggle_target: "toggle",
-                              setting: "is_donations_enabled"
-                            } %>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div class="admin-panel-body">
+      <div class="admin-toggle-list">
+        <div class="admin-toggle-row" data-toggle-row>
+          <div class="admin-toggle-copy" data-toggle-copy>
+            <h3 class="admin-toggle-title">Enable Reservations</h3>
+            <p class="admin-hint">Allow customers to make tree pickup reservations.</p>
+            <%= link_to "View Reservations Site", root_path, target: "_blank", rel: "noopener", class: "admin-link" %>
+          </div>
+          <div class="admin-toggle-control" data-toggle-control>
+            <label class="admin-switch" id="reservations-toggle" aria-label="Enable reservations">
+              <%= check_box_tag "setting[is_reservations_open]", "1", setting.is_reservations_open,
+                  class: "admin-switch-input",
+                  data: {
+                    testid: "reservations-toggle",
+                    toggle_target: "toggle",
+                    setting: "is_reservations_open"
+                  } %>
+              <span class="admin-switch-track" aria-hidden="true"></span>
+            </label>
           </div>
         </div>
-      </div>
 
-      <!-- Form Sections -->
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="space-y-6">
-            <%= form_tag admin_setting_path(setting), method: :patch, class: "space-y-8" do %>
-              <!-- Content Settings Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-
-
-
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Organization</h2>
-                <div class="space-y-4">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-
-                    <div>
-                      <%= label_tag "setting[organization_name]", "Organization Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= text_field_tag "setting[organization_name]", setting.organization_name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[organization_url]", "Organization URL", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= url_field_tag "setting[organization_url]", setting.organization_url, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-
-
-              <!-- Content Settings Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Site Content</h2>
-                <div class="space-y-4">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                    <div>
-                      <%= label_tag "setting[home_page_header]", "Header/Tab Title", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= text_field_tag "setting[home_page_header]", setting.home_page_header, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-
-                  </div>
-
-                  <div>
-                    <%= label_tag "setting[about_event_description]", "About", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div>
-                      <%= text_area_tag "setting[about_event_description]", setting.about_event_description, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                    </div>
-                  </div>
-
-                  <div>
-                    <%= label_tag "setting[reservations_closed_message]", "Reservations Closed Message", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div>
-                      <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                    </div>
-                  </div>
-
-                  <div>
-                    <%= label_tag "setting[on_day_of_pickup_instructions]", "On Day of Pickup Instructions", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                    <div>
-                      <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Event Settings Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Event Details</h2>
-                <div class="space-y-4">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <%= label_tag "setting[event_pickup_start]", "Event Pickup Date/Time", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= datetime_field_tag "setting[event_pickup_start]", setting.event_pickup_start&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[event_pickup_end]", "Event Pickup End Date/Time", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= datetime_field_tag "setting[event_pickup_end]", setting.event_pickup_end&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[event_sign_up_deadline]", "Sign Up Deadline", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= datetime_field_tag "setting[event_sign_up_deadline]", setting.event_sign_up_deadline&.strftime("%Y-%m-%dT%H:%M"), class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[default_city]", "Default City", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= text_field_tag "setting[default_city]", setting.default_city, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[default_state]", "Default State", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= text_field_tag "setting[default_state]", setting.default_state, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[suggested_donation]", "Suggested Donation", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= text_field_tag "setting[suggested_donation]", setting.suggested_donation, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2", placeholder: "e.g., $10-20" %>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-
-              <!-- Contacts Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Event Contacts</h2>
-                <div class="space-y-4">
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <%= label_tag "setting[contact_name]", "Contact Name", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= text_field_tag "setting[contact_name]", setting.contact_name, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[contact_email]", "Contact Email", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= email_field_tag "setting[contact_email]", setting.contact_email, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-                    <div>
-                      <%= label_tag "setting[contact_phone]", "Contact Phone", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= telephone_field_tag "setting[contact_phone]", setting.contact_phone, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-                    <div>
-                      <%= label_tag "setting[contact_sms]", "Contact SMS", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= telephone_field_tag "setting[contact_sms]", setting.contact_sms, class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      </div>
-                    </div>
-
-            
-                  </div>
-                </div>
-              </div>
-
-              <!-- Email Marketing Section -->
-              <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Email Marketing</h2>
-                <div class="space-y-4">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <%= label_tag "setting[email_batch_quantity]", "Email Batch Quantity", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
-                      <div>
-                        <%= number_field_tag "setting[email_batch_quantity]", setting.email_batch_quantity,
-                            class: "block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2",
-                            min: 1,
-                            step: 1 %>
-                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Number of emails to send in each batch</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex justify-end">
-                <%= submit_tag "Save Settings", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-              </div>
-            <% end %>
+        <div class="admin-toggle-row" data-toggle-row>
+          <div class="admin-toggle-copy" data-toggle-copy>
+            <h3 class="admin-toggle-title">Enable Email</h3>
+            <p class="admin-hint">Email notifications and marketing messages.</p>
+          </div>
+          <div class="admin-toggle-control" data-toggle-control>
+            <label class="admin-switch" id="emailing-toggle" aria-label="Enable email">
+              <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
+                  class: "admin-switch-input",
+                  data: {
+                    toggle_target: "toggle",
+                    setting: "is_emailing_enabled"
+                  } %>
+              <span class="admin-switch-track" aria-hidden="true"></span>
+            </label>
           </div>
         </div>
-      </div>
 
-      <!-- Tree Pickups Section -->
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="space-y-6">
-            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-              <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Tree Pickups</h2>
-                <%= link_to 'Manage Drivers', admin_drivers_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-              </div>
-              <%= form_tag admin_setting_path(setting), method: :patch, class: "space-y-4" do %>
-                <div class="space-y-4">
-                  <div>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Pickups Portal Access</h3>
-                    <div class="space-y-2">
-                      <%= label_tag "setting[driver_secret_key]", "Secret Key", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-                      <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "block w-full lg:w-1/2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm px-3 py-2" %>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">https://url/driver</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex justify-end">
-                  <%= submit_tag "Save Portal Settings", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-                </div>
-              <% end %>
-            </div>
+        <div class="admin-toggle-row" data-toggle-row>
+          <div class="admin-toggle-copy" data-toggle-copy>
+            <h3 class="admin-toggle-title">Enable SMS</h3>
+            <p class="admin-hint">SMS messaging and missing tree notifications.</p>
+          </div>
+          <div class="admin-toggle-control" data-toggle-control>
+            <label class="admin-switch" id="sms-toggle" aria-label="Enable SMS">
+              <%= check_box_tag "setting[is_sms_enabled]", "1", setting.is_sms_enabled,
+                  class: "admin-switch-input",
+                  data: {
+                    toggle_target: "toggle",
+                    setting: "is_sms_enabled"
+                  } %>
+              <span class="admin-switch-track" aria-hidden="true"></span>
+            </label>
           </div>
         </div>
-      </div>
 
-      <!-- Operations Section -->
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg mb-8">
-        <div class="px-4 py-5 sm:p-6">
-          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Operations</h2>
-          <div class="space-y-4">
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">Migrate Reservations</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">Migrate reservations to marketing</p>
-                </div>
-                <div class="flex items-center">
-                  <%= button_to admin_post_event_cleanup_path,
-                      class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
-                      data: {
-                        turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to prior reservations which will be used for marketing. This action cannot be undone. ",
-                        turbo_method: :post
-                      } do %>
-                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                    </svg>
-                    Migrate
-                  <% end %>
-                </div>
-              </div>
-            </div>
+        <div class="admin-toggle-row" data-toggle-row>
+          <div class="admin-toggle-copy" data-toggle-copy>
+            <h3 class="admin-toggle-title">Enable Automatic Routing</h3>
+            <p class="admin-hint">When disabled, pickups must be routed manually.</p>
+          </div>
+          <div class="admin-toggle-control" data-toggle-control>
+            <label class="admin-switch" id="routing-toggle" aria-label="Enable automatic routing">
+              <%= check_box_tag "setting[is_routing_enabled]", "1", setting.is_routing_enabled,
+                  class: "admin-switch-input",
+                  data: {
+                    toggle_target: "toggle",
+                    setting: "is_routing_enabled"
+                  } %>
+              <span class="admin-switch-track" aria-hidden="true"></span>
+            </label>
           </div>
         </div>
-      </div>
 
-      <!-- User Management Section -->
-      <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">User Management</h2>
-              <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">Manage system users and their permissions.</p>
-            </div>
-            <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-              <%= link_to "Manage Users", admin_users_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-            </div>
+        <div class="admin-toggle-row" data-toggle-row>
+          <div class="admin-toggle-copy" data-toggle-copy>
+            <h3 class="admin-toggle-title">Enable Online Donations</h3>
+            <p class="admin-hint">Accept donations through Stripe. When disabled, customers see information about other donation methods.</p>
+          </div>
+          <div class="admin-toggle-control" data-toggle-control>
+            <label class="admin-switch" id="donations-toggle" aria-label="Enable online donations">
+              <%= check_box_tag "setting[is_donations_enabled]", "1", setting.is_donations_enabled,
+                  class: "admin-switch-input",
+                  data: {
+                    toggle_target: "toggle",
+                    setting: "is_donations_enabled"
+                  } %>
+              <span class="admin-switch-track" aria-hidden="true"></span>
+            </label>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Event settings</h2>
+        <p class="admin-panel-description">Public copy, pickup windows, and contact information.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
+        <div class="admin-form-section">
+          <h3 class="admin-section-title">Organization</h3>
+          <p class="admin-section-description">The organization running the tree recycling event.</p>
+
+          <div class="admin-field-grid admin-field-grid--two">
+            <div class="admin-field">
+              <%= label_tag "setting[organization_name]", "Organization Name", class: "admin-label" %>
+              <%= text_field_tag "setting[organization_name]", setting.organization_name, class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[organization_url]", "Organization URL", class: "admin-label" %>
+              <%= url_field_tag "setting[organization_url]", setting.organization_url, class: "admin-input" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-form-section">
+          <h3 class="admin-section-title">Site content</h3>
+          <p class="admin-section-description">Headline and supporting copy shown on the public site.</p>
+
+          <div class="admin-field-grid admin-field-grid--two">
+            <div class="admin-field">
+              <%= label_tag "setting[home_page_header]", "Header/Tab Title", class: "admin-label" %>
+              <%= text_field_tag "setting[home_page_header]", setting.home_page_header, class: "admin-input" %>
+            </div>
+          </div>
+
+          <div class="admin-field admin-field--spaced">
+            <%= label_tag "setting[about_event_description]", "About", class: "admin-label" %>
+            <%= text_area_tag "setting[about_event_description]", setting.about_event_description, rows: 3, class: "admin-textarea" %>
+          </div>
+
+          <div class="admin-field admin-field--spaced">
+            <%= label_tag "setting[reservations_closed_message]", "Reservations Closed Message", class: "admin-label" %>
+            <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "admin-textarea" %>
+          </div>
+
+          <div class="admin-field admin-field--spaced">
+            <%= label_tag "setting[on_day_of_pickup_instructions]", "On Day of Pickup Instructions", class: "admin-label" %>
+            <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "admin-textarea" %>
+          </div>
+        </div>
+
+        <div class="admin-form-section">
+          <h3 class="admin-section-title">Event details</h3>
+          <p class="admin-section-description">Pickup window, sign-up deadline, and default address values.</p>
+
+          <div class="admin-field-grid admin-field-grid--two">
+            <div class="admin-field">
+              <%= label_tag "setting[event_pickup_start]", "Event Pickup Date/Time", class: "admin-label" %>
+              <%= datetime_field_tag "setting[event_pickup_start]", setting.event_pickup_start&.strftime("%Y-%m-%dT%H:%M"), class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[event_pickup_end]", "Event Pickup End Date/Time", class: "admin-label" %>
+              <%= datetime_field_tag "setting[event_pickup_end]", setting.event_pickup_end&.strftime("%Y-%m-%dT%H:%M"), class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[event_sign_up_deadline]", "Sign Up Deadline", class: "admin-label" %>
+              <%= datetime_field_tag "setting[event_sign_up_deadline]", setting.event_sign_up_deadline&.strftime("%Y-%m-%dT%H:%M"), class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[suggested_donation]", "Suggested Donation", class: "admin-label" %>
+              <%= text_field_tag "setting[suggested_donation]", setting.suggested_donation, class: "admin-input", placeholder: "e.g., $10-20" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[default_city]", "Default City", class: "admin-label" %>
+              <%= text_field_tag "setting[default_city]", setting.default_city, class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[default_state]", "Default State", class: "admin-label" %>
+              <%= text_field_tag "setting[default_state]", setting.default_state, class: "admin-input" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-form-section">
+          <h3 class="admin-section-title">Event contacts</h3>
+          <p class="admin-section-description">How customers can reach the event organizers.</p>
+
+          <div class="admin-field-grid admin-field-grid--two">
+            <div class="admin-field">
+              <%= label_tag "setting[contact_name]", "Contact Name", class: "admin-label" %>
+              <%= text_field_tag "setting[contact_name]", setting.contact_name, class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[contact_email]", "Contact Email", class: "admin-label" %>
+              <%= email_field_tag "setting[contact_email]", setting.contact_email, class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[contact_phone]", "Contact Phone", class: "admin-label" %>
+              <%= telephone_field_tag "setting[contact_phone]", setting.contact_phone, class: "admin-input" %>
+            </div>
+            <div class="admin-field">
+              <%= label_tag "setting[contact_sms]", "Contact SMS", class: "admin-label" %>
+              <%= telephone_field_tag "setting[contact_sms]", setting.contact_sms, class: "admin-input" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-form-section">
+          <h3 class="admin-section-title">Email marketing</h3>
+          <p class="admin-section-description">Controls the size of each marketing send.</p>
+
+          <div class="admin-field admin-field--short">
+            <%= label_tag "setting[email_batch_quantity]", "Email Batch Quantity", class: "admin-label" %>
+            <%= number_field_tag "setting[email_batch_quantity]", setting.email_batch_quantity, class: "admin-input", min: 1, step: 1 %>
+            <p class="admin-hint">Number of emails to send in each batch.</p>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <%= submit_tag "Save Settings", class: "admin-button" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="admin-panel" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Tree Pickups</h2>
+        <p class="admin-panel-description">Enable the driver portal and manage driver access.</p>
+      </div>
+      <%= link_to "Manage Drivers", admin_drivers_path, class: "admin-button admin-button--secondary admin-button--small" %>
+    </div>
+
+    <div class="admin-panel-body">
+      <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
+        <div class="admin-form-section admin-form-section--flush">
+          <h3 class="admin-section-title">Portal access</h3>
+          <p class="admin-section-description">Turn the driver portal on or off. Changes save immediately.</p>
+
+          <div class="admin-toggle-list admin-field--spaced">
+            <div class="admin-toggle-row" data-toggle-row>
+              <div class="admin-toggle-copy" data-toggle-copy>
+                <h3 class="admin-toggle-title">Enable Pickups Portal</h3>
+                <p class="admin-hint">Make the driver portal available at <code>/pickups</code>.</p>
+                <%= link_to "View Pickups Portal", pickups_root_path, target: "_blank", rel: "noopener", class: "admin-link" %>
+              </div>
+              <div class="admin-toggle-control" data-toggle-control>
+                <label class="admin-switch" id="pickups-toggle" aria-label="Enable pickups portal">
+                  <%= check_box_tag "setting[is_pickups_site_enabled]", "1", setting.is_pickups_site_enabled,
+                      class: "admin-switch-input",
+                      data: {
+                        testid: "pickups-toggle",
+                        toggle_target: "toggle",
+                        setting: "is_pickups_site_enabled"
+                      } %>
+                  <span class="admin-switch-track" aria-hidden="true"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-form-section">
+          <h3 class="admin-section-title">Pickups portal access</h3>
+          <p class="admin-section-description">The key drivers use to open their pickup lists.</p>
+
+          <div class="admin-field admin-field--spaced admin-field--medium">
+            <%= label_tag "setting[driver_secret_key]", "Secret Key", class: "admin-label" %>
+            <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "admin-input" %>
+            <p class="admin-hint">Drivers use this key at <code>/pickups</code> to open their pickup lists.</p>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <%= submit_tag "Save Portal Settings", class: "admin-button" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Operations</h2>
+        <p class="admin-panel-description">End-of-season data cleanup.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-toolbar">
+        <div>
+          <h3 class="admin-toggle-title">Migrate Reservations</h3>
+          <p class="admin-hint">Move reservations to prior reservations for next season's marketing.</p>
+        </div>
+        <%= button_to admin_post_event_cleanup_path,
+            class: "admin-button admin-button--danger",
+            data: {
+              turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to prior reservations which will be used for marketing. This action cannot be undone. ",
+              turbo_method: :post
+            } do %>
+          Migrate
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">User Management</h2>
+        <p class="admin-panel-description">Manage system users and their permissions.</p>
+      </div>
+      <%= link_to "Manage Users", admin_users_path, class: "admin-button admin-button--secondary" %>
+    </div>
+  </section>
 </div>

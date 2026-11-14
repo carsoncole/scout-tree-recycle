@@ -15,7 +15,7 @@ class Admin::SmsTest < ApplicationSystemTestCase
   test "should display canned responses" do
     visit admin_sms_url
     # First, expand a thread to see the canned responses
-    first(".cursor-pointer").click
+    first(".admin-conversation-main").click
 
     # Check that canned responses are present
     assert_text "Thank you! I'll let the Scouts know."
@@ -67,7 +67,7 @@ class Admin::SmsTest < ApplicationSystemTestCase
     
     # Visit SMS page and mark messages as viewed
     visit admin_sms_path
-    first(".cursor-pointer").click
+    first(".admin-conversation-main").click
 
     # Go back to admin root and check that badge is gone
     visit admin_root_path
@@ -140,7 +140,7 @@ class Admin::SmsTest < ApplicationSystemTestCase
     visit admin_sms_path
 
     # Get all conversation elements
-    conversations = page.all(".space-y-4 > div")
+    conversations = page.all(".admin-conversation")
     
     # Should have 4 conversations
     assert_equal 4, conversations.length
@@ -148,26 +148,26 @@ class Admin::SmsTest < ApplicationSystemTestCase
     # First conversation should be the most recent unviewed incoming (phone 1)
     first_conversation = conversations[0]
     assert first_conversation.has_content?("+15551234567")
-    assert first_conversation.has_selector?(".w-4.h-4.bg-blue-500") # unviewed indicator
+    assert first_conversation.has_selector?(".admin-unread-dot") # unviewed indicator
 
     # Second conversation should be the older unviewed incoming (phone 2) 
     second_conversation = conversations[1]
     assert second_conversation.has_content?("+15551234568")
-    assert second_conversation.has_selector?(".w-4.h-4.bg-blue-500") # unviewed indicator
+    assert second_conversation.has_selector?(".admin-unread-dot") # unviewed indicator
 
     # Third conversation should be the viewed conversation (phone 3)
     third_conversation = conversations[2]
     assert third_conversation.has_content?("+15551234569")
-    assert_not third_conversation.has_selector?(".w-4.h-4.bg-blue-500") # should not have unviewed indicator
+    assert_not third_conversation.has_selector?(".admin-unread-dot") # should not have unviewed indicator
 
     # Fourth conversation should be outgoing only (phone 4)
     fourth_conversation = conversations[3]
     assert fourth_conversation.has_content?("+15551234570")
-    assert_not fourth_conversation.has_selector?(".w-4.h-4.bg-blue-500") # should not have unviewed indicator
+    assert_not fourth_conversation.has_selector?(".admin-unread-dot") # should not have unviewed indicator
 
     # Verify timestamps are in descending order for conversations with unviewed messages
-    first_timestamp = first_conversation.find(".text-xs.text-gray-500").text
-    second_timestamp = second_conversation.find(".text-xs.text-gray-500").text
+    first_timestamp = first_conversation.find(".admin-conversation-time").text
+    second_timestamp = second_conversation.find(".admin-conversation-time").text
     
     # Parse timestamps to compare (simplified comparison)
     first_time = Time.parse(first_timestamp)

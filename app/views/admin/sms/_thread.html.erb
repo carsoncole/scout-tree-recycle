@@ -46,7 +46,7 @@
         <div class="admin-quick-replies-header">
           <h4 class="admin-label">Quick Responses:</h4>
           <div class="admin-quick-replies admin-quick-replies--spaced">
-            <% SMS_QUICK_RESPONSES.each do |quick_response| %>
+            <% Setting.instance.sms_quick_response_list.each do |quick_response| %>
               <button type="button"
                       class="canned-response-btn admin-quick-reply"
                       data-message="<%= quick_response %>"

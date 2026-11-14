@@ -61,7 +61,8 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       setting: {
         twilio_account_sid: "AC123",
         twilio_auth_token: "token-123",
-        twilio_from_number: "+15555550123"
+        twilio_from_number: "+15555550123",
+        sms_quick_responses: "Thanks!\nOn our way."
       }
     }
 
@@ -70,6 +71,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "AC123", setting.twilio_account_sid
     assert_equal "token-123", setting.twilio_auth_token
     assert_equal "+15555550123", setting.twilio_from_number
+    assert_equal [ "Thanks!", "On our way." ], setting.sms_quick_response_list
   end
 
   test "should update site and organization settings" do
@@ -88,6 +90,22 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "https://example.org", setting.site_url
     assert_equal "UTC", setting.time_zone
     assert_equal "Canada", setting.default_country
+  end
+
+  test "should update marketing cooldown and prior reservation retention" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        marketing_email_cooldown_days: 10,
+        prior_reservation_retention_months: 36
+      }
+    }
+
+    assert_redirected_to admin_settings_path
+    setting = Setting.first.reload
+    assert_equal 10, setting.marketing_email_cooldown_days
+    assert_equal 36, setting.prior_reservation_retention_months
   end
 
   test "should update stripe settings" do

@@ -26,9 +26,19 @@ class PriorReservationTest < ActiveSupport::TestCase
 
   test "removing old prior reservations" do
     reservation = prior_reservations(:full)
-    reservation.update(created_at: (MINIMUM_MONTHS_BEFORE_PRIOR_RESERVATION_REMOVAL + 1).months.ago)
+    reservation.update(created_at: (Setting.instance.prior_reservation_retention_months + 1).months.ago)
     PriorReservation.remove_old_prior_reservations!
     assert_not PriorReservation.find_by(id: reservation.id)
+  end
+
+  test "marketing email cooldown is active within the configured window" do
+    prior_reservation = prior_reservations(:full)
+    prior_reservation.update(marketing_1_email_sent_at: 1.day.ago)
+
+    assert prior_reservation.marketing_email_cooldown_active?
+
+    Setting.instance.update(marketing_email_cooldown_days: 0)
+    assert_not prior_reservation.marketing_email_cooldown_active?
   end
 
   test "clearing email flags" do

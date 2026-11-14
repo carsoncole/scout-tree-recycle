@@ -14,6 +14,8 @@
       <li><%= link_to "Donations", "#donations", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Location Services", "#location-services", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Operations", "#operations", class: "admin-settings-nav-link" %></li>
+      <li><%= link_to "Logs", "#logs", class: "admin-settings-nav-link" %></li>
+      <li><%= link_to "Jobs", "#jobs", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "User Management", "#user-management", class: "admin-settings-nav-link" %></li>
     </ul>
   </nav>
@@ -118,17 +120,6 @@
             </div>
           </div>
 
-          <div class="admin-form-section">
-            <h3 class="admin-section-title">Email Marketing</h3>
-            <p class="admin-section-description">Controls the size of each marketing send.</p>
-
-            <div class="admin-field admin-field--short">
-              <%= label_tag "setting[email_batch_quantity]", "Email Batch Quantity", class: "admin-label" %>
-              <%= number_field_tag "setting[email_batch_quantity]", setting.email_batch_quantity, class: "admin-input", min: 1, step: 1 %>
-              <p class="admin-hint">Number of emails to send in each batch.</p>
-            </div>
-          </div>
-
           <div class="admin-actions">
             <%= submit_tag "Save Settings", class: "admin-button" %>
           </div>
@@ -201,12 +192,21 @@
       <div class="admin-panel-body">
         <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
           <div class="admin-form-section admin-form-section--flush">
-            <div class="admin-field-grid admin-field-grid--two">
-              <div class="admin-field">
-                <%= label_tag "setting[home_page_header]", "Header/Tab Title", class: "admin-label" %>
+            <div class="admin-toolbar">
+              <div>
+                <%= label_tag "setting[home_page_header]", "Header/Tab Title", class: "admin-section-title" %>
+                <p class="admin-section-description">The title shown in the browser tab and site header.</p>
+              </div>
+
+              <div class="admin-field admin-field--short admin-toolbar-field">
                 <%= text_field_tag "setting[home_page_header]", setting.home_page_header, class: "admin-input" %>
               </div>
             </div>
+          </div>
+
+          <div class="admin-form-section">
+            <h3 class="admin-section-title">Page copy</h3>
+            <p class="admin-section-description">Supporting copy shown on the public site.</p>
 
             <div class="admin-field admin-field--spaced">
               <%= label_tag "setting[about_event_description]", "About", class: "admin-label" %>
@@ -262,13 +262,16 @@
           </div>
 
           <div class="admin-form-section">
-            <h3 class="admin-section-title">Pickups Portal Access</h3>
-            <p class="admin-section-description">The password drivers use to open their pickup lists.</p>
+            <div class="admin-toolbar">
+              <div>
+                <%= label_tag "setting[driver_secret_key]", "Password", class: "admin-section-title" %>
+                <p class="admin-section-description">The password drivers use to open their pickup lists.</p>
+                <p class="admin-hint">Drivers enter this password at <code>/pickups</code> to open their pickup lists.</p>
+              </div>
 
-            <div class="admin-field admin-field--spaced admin-field--medium">
-              <%= label_tag "setting[driver_secret_key]", "Password", class: "admin-label" %>
-              <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "admin-input" %>
-              <p class="admin-hint">Drivers enter this password at <code>/pickups</code> to open their pickup lists.</p>
+              <div class="admin-field admin-field--short admin-toolbar-field">
+                <%= text_field_tag "setting[driver_secret_key]", setting.driver_secret_key, class: "admin-input" %>
+              </div>
             </div>
           </div>
 
@@ -334,12 +337,28 @@
           </div>
 
           <div class="admin-form-section">
-            <h3 class="admin-section-title">Incoming messages</h3>
-            <p class="admin-section-description">Set this URL as the messaging webhook for your Twilio phone number so replies arrive in the app.</p>
+            <div class="admin-toolbar">
+              <div>
+                <%= label_tag "setting[sms_quick_responses]", "Quick Responses", class: "admin-section-title" %>
+                <p class="admin-section-description">One response per line. These appear as buttons when replying to a conversation.</p>
+              </div>
 
-            <div class="admin-field">
-              <%= label_tag :sms_webhook_url, "Webhook URL", class: "admin-label" %>
-              <%= text_field_tag :sms_webhook_url, api_v1_sms_reply_url, class: "admin-input", readonly: true %>
+              <div class="admin-field admin-field--medium admin-toolbar-field">
+                <%= text_area_tag "setting[sms_quick_responses]", setting.sms_quick_responses, rows: 5, class: "admin-textarea" %>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-form-section">
+            <div class="admin-toolbar">
+              <div>
+                <%= label_tag :sms_webhook_url, "Webhook URL", class: "admin-section-title" %>
+                <p class="admin-section-description">Set this URL as the messaging webhook for your Twilio phone number so replies arrive in the app.</p>
+              </div>
+
+              <div class="admin-field admin-field--medium admin-toolbar-field">
+                <%= text_field_tag :sms_webhook_url, api_v1_sms_reply_url, class: "admin-input", readonly: true %>
+              </div>
             </div>
           </div>
 
@@ -384,12 +403,15 @@
           </div>
 
           <div class="admin-form-section">
-            <h3 class="admin-section-title">Sender</h3>
-            <p class="admin-section-description">The address recipients see in the From field.</p>
+            <div class="admin-toolbar">
+              <div>
+                <%= label_tag "setting[email_from_address]", "From Address", class: "admin-section-title" %>
+                <p class="admin-section-description">The address recipients see in the From field.</p>
+              </div>
 
-            <div class="admin-field">
-              <%= label_tag "setting[email_from_address]", "From Address", class: "admin-label" %>
-              <%= text_field_tag "setting[email_from_address]", setting.email_from_address, class: "admin-input", placeholder: "Anytown Tree Recycle <example@example.com>" %>
+              <div class="admin-field admin-field--short admin-toolbar-field">
+                <%= text_field_tag "setting[email_from_address]", setting.email_from_address, class: "admin-input", placeholder: "Anytown Tree Recycle <example@example.com>" %>
+              </div>
             </div>
           </div>
 
@@ -426,6 +448,33 @@
                     options_for_select([ [ "STARTTLS (recommended)", "starttls" ], [ "TLS", "tls" ], [ "None", "none" ] ], setting.smtp_encryption),
                     class: "admin-select" %>
                 <p class="admin-hint">Most providers, including Gmail, use STARTTLS on port 587.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-form-section">
+            <h3 class="admin-section-title">Marketing</h3>
+            <p class="admin-section-description">Controls batch size and how soon the second marketing email can follow the first for the same person.</p>
+
+            <div class="admin-toolbar admin-field--spaced">
+              <div>
+                <%= label_tag "setting[email_batch_quantity]", "Email Batch Quantity", class: "admin-label" %>
+                <p class="admin-hint">Number of emails to send in each batch.</p>
+              </div>
+
+              <div class="admin-field admin-field--short admin-toolbar-field">
+                <%= number_field_tag "setting[email_batch_quantity]", setting.email_batch_quantity, class: "admin-input", min: 1, step: 1 %>
+              </div>
+            </div>
+
+            <div class="admin-toolbar admin-field--spaced">
+              <div>
+                <%= label_tag "setting[marketing_email_cooldown_days]", "Days Between Marketing Emails", class: "admin-label" %>
+                <p class="admin-hint">Set to 0 to allow both emails immediately.</p>
+              </div>
+
+              <div class="admin-field admin-field--short admin-toolbar-field">
+                <%= number_field_tag "setting[marketing_email_cooldown_days]", setting.marketing_email_cooldown_days, class: "admin-input", min: 0, step: 1 %>
               </div>
             </div>
           </div>
@@ -488,12 +537,15 @@
           </div>
 
           <div class="admin-form-section">
-            <h3 class="admin-section-title">Webhook</h3>
-            <p class="admin-section-description">Set this URL as the webhook endpoint in Stripe so completed donations are recorded.</p>
+            <div class="admin-toolbar">
+              <div>
+                <%= label_tag :stripe_webhook_url, "Webhook URL", class: "admin-section-title" %>
+                <p class="admin-section-description">Set this URL as the webhook endpoint in Stripe so completed donations are recorded.</p>
+              </div>
 
-            <div class="admin-field">
-              <%= label_tag :stripe_webhook_url, "Webhook URL", class: "admin-label" %>
-              <%= text_field_tag :stripe_webhook_url, api_v1_stripe_webhook_url, class: "admin-input", readonly: true %>
+              <div class="admin-field admin-field--medium admin-toolbar-field">
+                <%= text_field_tag :stripe_webhook_url, api_v1_stripe_webhook_url, class: "admin-input", readonly: true %>
+              </div>
             </div>
           </div>
 
@@ -538,6 +590,7 @@
           </div>
 
           <div class="admin-form-section">
+            <h3 class="admin-section-title">AWS credentials</h3>
             <p class="admin-section-description">Find these values in your AWS account. They are stored in the application database. If Location Services is not configured, reservations will need to be manually assigned to routes.</p>
 
             <div class="admin-field-grid admin-field-grid--two">
@@ -572,7 +625,54 @@
       <div class="admin-panel-header">
         <div>
           <h2 class="admin-panel-title">Operations</h2>
-          <p class="admin-panel-description">End-of-season data cleanup.</p>
+          <p class="admin-panel-description">Retention and end-of-season data cleanup.</p>
+        </div>
+      </div>
+
+      <div class="admin-panel-body">
+        <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
+          <div class="admin-form-section admin-form-section--flush">
+            <div class="admin-toolbar">
+              <div>
+                <%= label_tag "setting[prior_reservation_retention_months]", "Retention (Months)", class: "admin-section-title" %>
+                <p class="admin-section-description">How long past participants remain available for marketing. Prior reservations older than this are removed during cleanup.</p>
+              </div>
+
+              <div class="admin-field admin-field--short admin-toolbar-field">
+                <%= number_field_tag "setting[prior_reservation_retention_months]", setting.prior_reservation_retention_months, class: "admin-input", min: 1, step: 1 %>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-actions">
+            <%= submit_tag "Save Operations Settings", class: "admin-button" %>
+          </div>
+        <% end %>
+
+        <div class="admin-form-section admin-form-section--spaced">
+          <div class="admin-toolbar">
+            <div>
+              <h3 class="admin-toggle-title">Migrate Reservations</h3>
+              <p class="admin-hint">Move reservations to prior reservations for next season's marketing.</p>
+            </div>
+            <%= button_to admin_post_event_cleanup_path,
+                class: "admin-button admin-button--danger",
+                data: {
+                  turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to prior reservations which will be used for marketing. This action cannot be undone. ",
+                  turbo_method: :post
+                } do %>
+              Migrate
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-panel" id="logs">
+      <div class="admin-panel-header">
+        <div>
+          <h2 class="admin-panel-title">Logs</h2>
+          <p class="admin-panel-description">Review system errors and application events.</p>
         </div>
         <%= link_to admin_logs_path, class: "admin-button admin-button--secondary admin-button--small" do %>
           System Logs
@@ -581,22 +681,15 @@
           <% end %>
         <% end %>
       </div>
+    </section>
 
-      <div class="admin-panel-body">
-        <div class="admin-toolbar">
-          <div>
-            <h3 class="admin-toggle-title">Migrate Reservations</h3>
-            <p class="admin-hint">Move reservations to prior reservations for next season's marketing.</p>
-          </div>
-          <%= button_to admin_post_event_cleanup_path,
-              class: "admin-button admin-button--danger",
-              data: {
-                turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to prior reservations which will be used for marketing. This action cannot be undone. ",
-                turbo_method: :post
-              } do %>
-            Migrate
-          <% end %>
+    <section class="admin-panel" id="jobs">
+      <div class="admin-panel-header">
+        <div>
+          <h2 class="admin-panel-title">Jobs</h2>
+          <p class="admin-panel-description">Monitor background jobs, queues, and failures.</p>
         </div>
+        <%= link_to "View Jobs Dashboard", admin_mission_control_jobs_path, class: "admin-button admin-button--secondary" %>
       </div>
     </section>
 

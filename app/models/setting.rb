@@ -22,6 +22,8 @@ class Setting < ApplicationRecord
   validates :about_event_description, presence: true
   validates :on_day_of_pickup_instructions, presence: true
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
+  validates :marketing_email_cooldown_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :prior_reservation_retention_months, numericality: { only_integer: true, greater_than: 0 }
 
   before_validation :set_defaults, on: :create
 
@@ -36,6 +38,10 @@ class Setting < ApplicationRecord
 
   def sms_configured?
     twilio_account_sid.present? && twilio_auth_token.present? && twilio_from_number.present?
+  end
+
+  def sms_quick_response_list
+    sms_quick_responses.to_s.split("\n").map(&:strip).reject(&:blank?)
   end
 
   def email_configured?

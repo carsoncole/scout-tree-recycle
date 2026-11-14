@@ -18,6 +18,13 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.sms_configured?
   end
 
+  test "sms_quick_response_list splits and strips lines" do
+    setting = Setting.instance
+    setting.update(sms_quick_responses: "One\n\n Two \nThree")
+
+    assert_equal [ "One", "Two", "Three" ], setting.sms_quick_response_list
+  end
+
   test "email_configured? requires sender and smtp server" do
     setting = Setting.instance
     setting.update(email_from_address: nil, smtp_address: nil, smtp_port: nil)

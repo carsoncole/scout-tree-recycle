@@ -24,15 +24,17 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "Donations", href: "#donations"
       assert_link "Location Services", href: "#location-services"
       assert_link "Operations", href: "#operations"
+      assert_link "Logs", href: "#logs"
+      assert_link "Jobs", href: "#jobs"
       assert_link "User Management", href: "#user-management"
     end
 
-    %w[organization event-settings site-content tree-pickups sms email donations location-services operations user-management].each do |id|
+    %w[organization event-settings site-content tree-pickups sms email donations location-services operations logs jobs user-management].each do |id|
       assert_selector "section##{id}"
     end
 
     titles = all("section.admin-panel h2.admin-panel-title").map(&:text)
-    assert_equal [ "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "User Management" ], titles
+    assert_equal [ "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "Logs", "Jobs", "User Management" ], titles
   end
 
   test "pickups portal is disabled when not enabled" do
@@ -227,6 +229,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "Account SID"
       assert_field "Auth Token"
       assert_field "From Number"
+      assert_field "Quick Responses"
       assert_field "Webhook URL", with: api_v1_sms_reply_url
       assert_button "Save SMS Settings"
     end
@@ -241,6 +244,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Account SID", with: "AC123456"
       fill_in "Auth Token", with: "token-123"
       fill_in "From Number", with: "+15555550123"
+      fill_in "Quick Responses", with: "Thanks!\nOn our way."
       click_on "Save SMS Settings"
     end
 
@@ -250,6 +254,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "AC123456", setting.twilio_account_sid
     assert_equal "token-123", setting.twilio_auth_token
     assert_equal "+15555550123", setting.twilio_from_number
+    assert_equal [ "Thanks!", "On our way." ], setting.sms_quick_response_list
   end
 
   test "sms toggle saves immediately" do
@@ -277,6 +282,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "Password"
       assert_field "Authentication"
       assert_field "Encryption"
+      assert_field "Days Between Marketing Emails"
       assert_button "Save Email Settings"
     end
 
@@ -294,6 +300,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Password", with: "smtp-password"
       select "Plain", from: "Authentication"
       select "STARTTLS (recommended)", from: "Encryption"
+      fill_in "Email Batch Quantity", with: "99"
+      fill_in "Days Between Marketing Emails", with: "10"
       click_on "Save Email Settings"
     end
 
@@ -306,6 +314,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "smtp-user", setting.smtp_user_name
     assert_equal "smtp-password", setting.smtp_password
     assert_equal "plain", setting.smtp_authentication
+    assert_equal 99, setting.email_batch_quantity
+    assert_equal 10, setting.marketing_email_cooldown_days
   end
 
   test "email toggle saves immediately" do
@@ -398,9 +408,26 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "test-index", setting.aws_location_index_name
   end
 
+  test "operations panel saves retention settings" do
+    visit admin_settings_url
+
+    within "section#operations" do
+      fill_in "Retention (Months)", with: "36"
+      click_on "Save Operations Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+    assert_equal 36, Setting.instance.reload.prior_reservation_retention_months
+  end
+
   test "page links" do
     visit admin_settings_url
-    assert_link "System Logs", href: admin_logs_path
+    within "section#logs" do
+      assert_link "System Logs", href: admin_logs_path
+    end
+    within "section#jobs" do
+      assert_link "View Jobs Dashboard", href: admin_mission_control_jobs_path
+    end
     assert_link "Manage Drivers", href: admin_drivers_path
     assert_link "Manage Users", href: admin_users_path
   end
@@ -446,7 +473,6 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Contact Name", with: "Contact Name"
       fill_in "Contact Phone", with: "Contact Phone"
       fill_in "Contact Email", with: "email@example.com"
-      fill_in "Email Batch Quantity", with: "99"
       click_on "Save Settings"
     end
 
@@ -455,6 +481,5 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_field "Contact Name", with: "Contact Name"
     assert_field "Contact Phone", with: "Contact Phone"
     assert_field "Contact Email", with: "email@example.com"
-    assert_field "Email Batch Quantity", with: "99"
   end
 end

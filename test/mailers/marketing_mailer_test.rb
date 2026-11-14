@@ -30,19 +30,19 @@ class MarketingMailerTest < ActionMailer::TestCase
     Setting.instance.update(is_emailing_enabled: true, organization_url: "https://example.com")
     prior_reservation = prior_reservations(:full)
     mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_1
-    
+
     assert_match "Unsubscribe", mail.body.encoded
-    #TODO: Fix this encoding issue
-    # assert_match "https://example.com", mail.body.encoded
+        # TODO: Fix this encoding issue
+        # assert_match "https://example.com", mail.body.encoded
       end
 
   test "marketing_email_2 contains unsubscribe and organization link" do
     Setting.instance.update(is_emailing_enabled: true, organization_url: "https://example.com")
     prior_reservation = prior_reservations(:full)
     mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_2
-    
+
     assert_match "Unsubscribe", mail.body.encoded
-    #TODO: Fix this encoding issue
+    # TODO: Fix this encoding issue
     assert_match "https://example.com", mail.body.encoded
   end
 
@@ -50,7 +50,7 @@ class MarketingMailerTest < ActionMailer::TestCase
     Setting.instance.update(is_emailing_enabled: true)
     prior_reservation = prior_reservations(:full)
     mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_1
-    
+
     assert_match "Unsubscribe", mail.body.encoded
     assert_no_match "https://example.com", mail.body.encoded
     assert_match Setting.instance.organization_name, mail.body.encoded
@@ -60,10 +60,10 @@ class MarketingMailerTest < ActionMailer::TestCase
     Setting.instance.update(is_emailing_enabled: true)
     prior_reservation = prior_reservations(:full)
     mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_1
-    
+
     # Note: HTML encoding converts & to &amp; in the email body
     assert_match "http://example.com", mail.body.encoded
-    #TODO: Fix this encoding issue
+    # TODO: Fix this encoding issue
     # assert_match "prior_reservation_id=#{prior_reservation.id}", mail.body.encoded
   end
 
@@ -71,10 +71,35 @@ class MarketingMailerTest < ActionMailer::TestCase
     Setting.instance.update(is_emailing_enabled: true)
     prior_reservation = prior_reservations(:full)
     mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_2
-    
+
     # Note: HTML encoding converts & to &amp; in the email body
     assert_match "Register for a tree pickup", mail.body.encoded
     assert_match "http://example.com", mail.body.encoded
     assert_match "prior_reservation_id=#{prior_reservation.id}", mail.body.encoded
+  end
+
+  test "marketing_email_2 does not send during the cooldown window" do
+    Setting.instance.update(is_emailing_enabled: true, marketing_email_cooldown_days: 7)
+    prior_reservation = prior_reservations(:full)
+    prior_reservation.update(marketing_1_email_sent_at: 1.day.ago, marketing_2_email_sent_at: nil)
+
+    mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_2
+
+    assert_no_emails do
+      mail.deliver_now
+    end
+    assert_nil prior_reservation.reload.marketing_2_email_sent_at
+  end
+
+  test "marketing_email_2 sends after the cooldown window" do
+    Setting.instance.update(is_emailing_enabled: true, marketing_email_cooldown_days: 7)
+    prior_reservation = prior_reservations(:full)
+    prior_reservation.update(marketing_1_email_sent_at: 8.days.ago, marketing_2_email_sent_at: nil)
+
+    mail = MarketingMailer.with(prior_reservation_id: prior_reservation.id).marketing_email_2
+
+    assert_emails 1 do
+      mail.deliver_now
+    end
   end
 end

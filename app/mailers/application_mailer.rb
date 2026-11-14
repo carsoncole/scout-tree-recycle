@@ -1,6 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
   include ApplicationHelper
-  default from: EMAIL_FROM
   layout "mailer"
 
   before_action :apply_site_url
@@ -26,10 +25,12 @@ class ApplicationMailer < ActionMailer::Base
 
   def apply_email_settings
     setting = Setting.instance
-    return unless setting&.email_configured?
+    return unless setting
+
+    self.class.default from: setting.email_from_address if setting.email_from_address.present?
+    return unless setting.email_configured?
 
     ActionMailer::Base.delivery_method = :smtp
     ActionMailer::Base.smtp_settings = setting.smtp_settings
-    self.class.default from: setting.email_from_address
   end
 end

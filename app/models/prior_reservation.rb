@@ -5,7 +5,14 @@ class PriorReservation < ApplicationRecord
   normalizes :email, with: ->(e) { e.strip.downcase }
 
   def self.remove_old_prior_reservations!
-    PriorReservation.where("created_at < ?", MINIMUM_MONTHS_BEFORE_PRIOR_RESERVATION_REMOVAL.months.ago).destroy_all
+    retention_months = Setting.instance&.prior_reservation_retention_months || 24
+    PriorReservation.where("created_at < ?", retention_months.months.ago).destroy_all
+  end
+
+  def marketing_email_cooldown_active?
+    return false if marketing_1_email_sent_at.blank?
+
+    marketing_1_email_sent_at > Setting.instance.marketing_email_cooldown_days.days.ago
   end
 
   def self.clear_email_flags!

@@ -3,13 +3,14 @@ require "test_helper"
 class ApplicationMailerTest < ActionMailer::TestCase
   setup do
     @original_default_url_options = ActionMailer::Base.default_url_options
+    @original_default_params = PasswordsMailer.default_params
   end
 
   teardown do
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.smtp_settings = {}
     ActionMailer::Base.default_url_options = @original_default_url_options
-    PasswordsMailer.default from: EMAIL_FROM
+    PasswordsMailer.default_params = @original_default_params
   end
 
   test "uses configured sender and smtp settings" do

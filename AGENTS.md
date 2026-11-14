@@ -40,6 +40,4 @@ Before significant development work:
 | Models | [`app/models/AGENTS.md`](app/models/AGENTS.md) |
 | Views | [`app/views/AGENTS.md`](app/views/AGENTS.md) |
 | Controllers | [`app/controllers/AGENTS.md`](app/controllers/AGENTS.md) |
-| Services | [`app/services/AGENTS.md`](app/services/AGENTS.md) — external API syncs via jobs |
-| Configuration | [`config/AGENTS.md`](config/AGENTS.md) |
 | Testing | [`test/AGENTS.md`](test/AGENTS.md) — Minitest + fixtures; model/controller/system minimum |

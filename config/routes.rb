@@ -73,6 +73,12 @@ Rails.application.routes.draw do
     # Operations
     post "post-event-cleanup", to: "operations#post_event_cleanup"
 
+    # Data
+    resource :data, only: [ :show ] do
+      post :import
+      get :export
+    end
+
     # Marketing
     get "marketing/index"
     post "send-marketing-email-1", to: "marketing#send_marketing_email_1", as: :send_marketing_email_1
@@ -81,12 +87,18 @@ Rails.application.routes.draw do
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
 
+  # Pickup instructions (top-level aliases for the pickups portal)
+  get "pickups/pickup_instructions", to: "pickups/drivers#pickup_instructions", as: :pickup_instructions
+  get "pickups/instructions", to: "pickups/drivers#instructions", as: :instructions
+
   # Pickups namespace for drivers
   namespace :pickups do
     root to: "drivers#index"
     get "unauthorized", to: "drivers#unauthorized"
     resources :drivers, only: [ :index ]
     get "driver_pickup_lists", to: "drivers#driver_pickup_lists"
+    get "pickup_instructions", to: "drivers#pickup_instructions"
+    get "instructions", to: "drivers#instructions"
   end
 
   # API for Stripe and Twilio webhooks

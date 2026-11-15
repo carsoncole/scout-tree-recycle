@@ -45,6 +45,7 @@
       <li><%= link_to "Location Services", "#location-services", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Operations", "#operations", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Logs", "#logs", class: "admin-settings-nav-link" %></li>
+      <li><%= link_to "Data", "#data", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Jobs", "#jobs", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "User Management", "#user-management", class: "admin-settings-nav-link" %></li>
     </ul>
@@ -747,6 +748,16 @@
             <span class="admin-nav-badge"><%= @unviewed_logs_count %></span>
           <% end %>
         <% end %>
+      </div>
+    </section>
+
+    <section class="admin-panel" id="data">
+      <div class="admin-panel-header">
+        <div>
+          <h2 class="admin-panel-title">Data</h2>
+          <p class="admin-panel-description">Import and export reservation data as CSV.</p>
+        </div>
+        <%= link_to "Manage Data", admin_data_path, class: "admin-button admin-button--secondary admin-button--small" %>
       </div>
     </section>
 

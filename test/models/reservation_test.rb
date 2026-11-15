@@ -9,6 +9,25 @@ class ReservationTest < ActiveSupport::TestCase
     assert @reservation.valid?
   end
 
+  test "imported status is valid and reports routing status" do
+    reservation = Reservation.new(name: "Imported", street: "1 Main", city: "New York", state: "NY", country: "United States", email: "imported.status@example.com", status: "imported")
+    assert reservation.valid?
+    assert reservation.imported?
+    assert_equal "Imported", reservation.routing_status
+  end
+
+  test "migrate_reservations migrates imported reservations" do
+    Reservation.create!(name: "Imported", street: "1 Main", city: "New York", state: "NY", country: "United States", email: "imported.migrate@example.com", status: "imported")
+    Reservation.migrate_reservations!
+    assert PriorReservation.find_by(email: "imported.migrate@example.com")
+  end
+
+  test "to_csv exports reservation data" do
+    csv = Reservation.to_csv
+    assert_includes csv, "email"
+    assert_includes csv, reservations(:pending_pickup_1).email
+  end
+
   test "validates name" do
     @reservation.name = nil
     assert_not @reservation.valid?

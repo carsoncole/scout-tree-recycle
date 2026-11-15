@@ -1,0 +1,31 @@
+<div class="admin-container--narrow admin-stack">
+  <header class="admin-page-header print:hidden">
+    <p class="admin-eyebrow">Driver portal</p>
+    <h1 class="admin-page-title">Pickup Instructions</h1>
+    <p class="admin-page-description">Instructions for drivers and scouts picking up trees.</p>
+  </header>
+
+  <section class="admin-stack--spaced">
+    <h2 class="admin-section-title">Logging in to the pickups portal</h2>
+    <p>Use the shared driver password to access the pickups portal and your assigned pickup list.</p>
+    <ol class="admin-stack--tight">
+      <li>Visit <%= link_to pickups_root_url, pickups_root_url, class: "admin-link" %>.</li>
+      <li>Enter the current driver password:</li>
+    </ol>
+    <p class="admin-code"><%= @password %></p>
+  </section>
+
+  <section class="admin-stack--spaced">
+    <h2 class="admin-section-title">Picking up trees</h2>
+    <ul class="admin-stack--tight">
+      <li>Review your assigned route and pickup list before heading out.</li>
+      <li>Collect each tree at its listed address and mark it as picked up.</li>
+      <li>If a tree cannot be found, mark it as missing and contact the organizer.</li>
+      <li>Return your completed pickup list at the end of the event.</li>
+    </ul>
+  </section>
+
+  <p class="print:hidden">
+    <%= link_to "Back to Drivers", pickups_root_path, class: "admin-link" %>
+  </p>
+</div>

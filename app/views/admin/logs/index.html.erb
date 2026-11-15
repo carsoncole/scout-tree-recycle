@@ -52,6 +52,8 @@
     </table>
   </div>
 
+  <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
+
   <% if @logs.empty? %>
     <p class="admin-empty">No log entries have been recorded.</p>
   <% end %>

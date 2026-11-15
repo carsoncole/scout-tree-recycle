@@ -2,7 +2,9 @@ class Log < ApplicationRecord
   attribute :environment, :string, default: Rails.env
   attribute :severity, :string, default: "info"
 
-  after_create :notify_admins!
+  attr_accessor :skip_notification
+
+after_create :notify_admins!, unless: :skip_notification
 
   private
 

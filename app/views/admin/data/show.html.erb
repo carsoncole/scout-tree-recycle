@@ -1,0 +1,80 @@
+<%= render "admin/shared/page_header",
+           title: "Data",
+           description: "Import and export reservation data as CSV." %>
+
+<div class="admin-stack">
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Import reservations</h2>
+        <p class="admin-panel-description">Upload a CSV file, map its columns to reservation fields, and import.</p>
+      </div>
+    </div>
+    <div class="admin-panel-body">
+      <div class="admin-notice admin-notice--warning admin-notice--spaced" role="status">
+        <div>
+          <p class="admin-notice-title">Import errors</p>
+          <p>
+            Rows that cannot be imported are recorded in the
+            <%= link_to "System Logs", admin_logs_path, class: "admin-link" %>
+            with row numbers and validation messages.
+          </p>
+        </div>
+      </div>
+
+      <noscript>
+        <div class="admin-notice admin-notice--danger admin-notice--spaced" role="status">
+          <div>
+            <p class="admin-notice-title">JavaScript required</p>
+            <p>Column mapping requires JavaScript. Enable it in your browser to import CSV files.</p>
+          </div>
+        </div>
+      </noscript>
+
+      <%= form_with url: import_admin_data_path, method: :post, multipart: true,
+                    class: "admin-form",
+                    data: {
+                      controller: "csv-mapping",
+                      csv_mapping_fields_value: Reservation::IMPORTABLE_FIELDS.map do |value, label|
+                        { value: value, label: label, aliases: Reservation::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
+                      end.to_json
+                    } do |f| %>
+        <div class="admin-form-section admin-form-section--flush">
+          <div class="admin-field">
+            <%= label_tag :file, "CSV file", class: "admin-label" %>
+            <%= file_field_tag :file, accept: ".csv,text/csv", class: "admin-input",
+                  data: { csv_mapping_target: "file", action: "change->csv-mapping#load" } %>
+            <p class="admin-hint">Upload a CSV with a header row. Maximum 5 MB.</p>
+          </div>
+
+          <p class="admin-error-text" data-csv-mapping-target="error" hidden></p>
+        </div>
+
+        <div class="admin-form-section">
+          <div class="admin-field-grid admin-field-grid--two" style="gap: 1.25rem;" data-csv-mapping-target="mapping"></div>
+        </div>
+
+        <div class="admin-actions">
+          <%= submit_tag "Import Reservations CSV", class: "admin-button" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <h2 class="admin-panel-title">Export reservations</h2>
+        <p class="admin-panel-description">Download all reservations, including imported records, as a CSV file.</p>
+      </div>
+    </div>
+    <div class="admin-panel-body">
+      <p class="admin-hint admin-hint--spaced">Exports every reservation with its mapped fields and route name.</p>
+      <div class="admin-actions">
+        <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
+                    class: "admin-button",
+                    data: { turbo: false } %>
+      </div>
+    </div>
+  </section>
+</div>

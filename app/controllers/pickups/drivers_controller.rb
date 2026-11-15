@@ -24,5 +24,14 @@ module Pickups
         }
       end
     end
+
+    def pickup_instructions
+      @password = Setting.instance.driver_secret_key
+    end
+
+    def instructions
+      @password = Setting.instance.driver_secret_key
+      render "pickup_instructions"
+    end
   end
 end

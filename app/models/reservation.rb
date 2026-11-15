@@ -2,6 +2,45 @@
 class Reservation < ApplicationRecord
   include Geocodable
 
+  attr_accessor :importing
+
+  IMPORTABLE_FIELDS = {
+    "name" => "Name",
+    "email" => "Email",
+    "mobile" => "Mobile",
+    "street" => "Street",
+    "unit" => "Unit",
+    "city" => "City",
+    "state" => "State",
+    "zip" => "ZIP",
+    "country" => "Country",
+    "pickup_notes" => "Pickup notes",
+    "status" => "Status",
+    "donation_type" => "Donation type",
+    "latitude" => "Latitude",
+    "longitude" => "Longitude"
+  }.freeze
+
+  IMPORTABLE_FIELD_ALIASES = {
+    "name" => %w[full_name customer_name customer],
+    "email" => %w[email_address e_mail],
+    "mobile" => %w[phone phone_number mobile_phone cell cell_phone],
+    "street" => %w[address street_address pickup_address],
+    "unit" => %w[apt apartment suite],
+    "city" => %w[town],
+    "state" => %w[province],
+    "zip" => %w[zip_code postal_code postcode],
+    "pickup_notes" => %w[notes comments],
+    "donation_type" => %w[donation],
+    "route" => %w[route_name]
+  }.freeze
+
+  EXPORT_FIELDS = [
+    "name", "email", "mobile", "street", "unit", "city", "state", "zip", "country",
+    "pickup_notes", "status", "donation_type", "latitude", "longitude", "route",
+    "created_at", "updated_at"
+  ].freeze
+
   DEFAULT_MISSING_TREE_SMS = "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
   DEFAULT_MISSING_TREE_SMS_FOLLOW_UP = "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
 
@@ -9,7 +48,7 @@ class Reservation < ApplicationRecord
   has_one :zone, through: :route
   has_many :donations, dependent: :nullify
 
-  enum :status, { reservation_form: 0, address_verification: 1,  donation: 2, routing: 3, pending_pickup: 4, picked_up: 5, missing: 6, cancelled: 7 }, default: :reservation_form
+  enum :status, { reservation_form: 0, address_verification: 1, donation: 2, routing: 3, pending_pickup: 4, picked_up: 5, missing: 6, cancelled: 7, imported: 8 }, default: :reservation_form
   enum :donation_type, { online_donation: 1, cash_or_check_donation: 2, no_donation: 3 }
 
   attribute :city, :string, default: -> { Setting.instance.default_city }
@@ -25,6 +64,7 @@ class Reservation < ApplicationRecord
 
   scope :completed, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
+  scope :migratable, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled", "imported" ]) }
   scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }
   scope :not_active, -> { where.not(status: [ "routing", "pending_pickup" ]) }
   scope :pickup, -> { where(status: [ "pending_pickup", "missing" ]) }
@@ -41,7 +81,7 @@ class Reservation < ApplicationRecord
   before_save :extract_street_name
 
   # destroy any same-email not pending reservations since they're not needed
-  before_validation :destroy_not_active_reservations!, if: ->(obj) { obj.reservation_form? && !obj.persisted? }
+  before_validation :destroy_not_active_reservations!, if: ->(obj) { obj.reservation_form? && !obj.persisted? && !obj.importing }
 
   # GEOCODING and ROUTING callbacks
 
@@ -77,17 +117,17 @@ class Reservation < ApplicationRecord
   before_save :reset_status_to_pending_pickup_if_route_added!, if: ->(obj) { obj.routing? && obj.route_id.present? }
 
   # emails on confirmation and cancellation
-  after_update :send_confirmed_reservation_email!, if: ->(obj) { (obj.routing? || obj.pending_pickup?) && obj.saved_change_to_status? }
-  after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? }
+  after_update :send_confirmed_reservation_email!, if: ->(obj) { (obj.routing? || obj.pending_pickup?) && obj.saved_change_to_status? && !obj.importing }
+  after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? && !obj.importing }
 
   # remove prior reservation if it exists
-  after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? }
+  after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? && !obj.importing }
 
-  after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" && Setting.instance&.is_routing_enabled? }
+  after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" && Setting.instance&.is_routing_enabled? && !obj.importing }
 
   # missing tree reminder
-  after_commit :send_missing_sms!, if: ->(obj) { obj.missing? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
-  after_commit :send_missing_email!, if: ->(obj) { obj.missing? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? }
+  after_commit :send_missing_sms!, if: ->(obj) { obj.missing? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
+  after_commit :send_missing_email!, if: ->(obj) { obj.missing? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
 
   # class methods
   def self.open?
@@ -137,7 +177,7 @@ class Reservation < ApplicationRecord
   end
 
   def self.migrate_reservations!
-    Reservation.completed.each do |r|
+    Reservation.migratable.each do |r|
       PriorReservation.where(email: r.email).destroy_all
       PriorReservation.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
     end
@@ -205,6 +245,8 @@ class Reservation < ApplicationRecord
   end
 
   def routing_status
+    return "Imported" if imported?
+
     if route # Successfully routed
       route.name
     elsif status_lower_than?("routing") # Incomplete reservations
@@ -251,6 +293,27 @@ class Reservation < ApplicationRecord
     RouteReservationJob.perform_later(id)
   end
 
+
+  def self.to_csv
+    require "csv"
+
+    CSV.generate(headers: EXPORT_FIELDS, write_headers: true) do |csv|
+      includes(:route).find_each do |reservation|
+        csv << EXPORT_FIELDS.map { |field| csv_value(reservation, field) }
+      end
+    end
+  end
+
+  def self.csv_value(reservation, field)
+    case field
+    when "route"
+      reservation.route&.name
+    when "created_at", "updated_at"
+      reservation.public_send(field)&.iso8601
+    else
+      reservation.public_send(field)
+    end
+  end
 
   private
 end

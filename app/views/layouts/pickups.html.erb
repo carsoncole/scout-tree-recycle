@@ -15,7 +15,7 @@
   <body class="admin-body">
     <a class="site-skip-link" href="#pickups-main">Skip to content</a>
 
-    <header class="admin-header admin-no-print">
+    <header class="admin-header admin-no-print print:hidden">
       <div class="admin-header-inner">
         <nav class="admin-nav admin-nav--pickups" aria-label="Pickups">
           <%= link_to pickups_root_path, class: "admin-brand" do %>
@@ -25,6 +25,8 @@
 
           <%= link_to "Drivers", pickups_root_path,
                       class: admin_nav_class(current_page?(pickups_root_path) || current_page?(pickups_drivers_path)) %>
+          <%= link_to "Instructions", pickups_pickup_instructions_path,
+                      class: admin_nav_class(current_page?(pickups_pickup_instructions_path) || current_page?(pickups_instructions_path)) %>
           <%= link_to "PDF report", pickups_driver_pickup_lists_path(format: :pdf), target: "_blank", rel: "noopener",
                       class: "admin-nav-link" %>
         </nav>
@@ -33,7 +35,7 @@
 
     <main id="pickups-main" class="admin-shell">
       <div class="admin-container">
-        <div class="admin-flash" id="flash">
+        <div class="admin-flash print:hidden" id="flash">
           <%= render "shared/flash" %>
         </div>
 

@@ -8,7 +8,8 @@ module AdminHelper
       "pending_pickup" => "positive",
       "picked_up" => "info",
       "cancelled" => "danger",
-      "missing" => "warning"
+      "missing" => "warning",
+      "imported" => "info"
     }.fetch(status.to_s, "neutral")
 
     "admin-badge admin-badge--#{variant}"

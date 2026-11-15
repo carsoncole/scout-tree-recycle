@@ -2,6 +2,10 @@
            title: "Drivers",
            description: "View driver assignments and pickup counts." %>
 
+<div class="admin-page-actions print:hidden">
+  <%= link_to "Pickup Instructions", pickups_pickup_instructions_path, class: "admin-button admin-button--secondary" %>
+</div>
+
 <section class="admin-panel">
   <div class="admin-table-wrap">
     <table class="admin-table">

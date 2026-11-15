@@ -1,0 +1,4 @@
+Full Name,Email Address,Street,City,State,Postal Code,Status
+Imported Person,imported.person@example.com,123 Main St,New York,NY,10001,
+Duplicate Person,form.minimum@example.com,456 Side St,New York,NY,10002,pending_pickup
+,No Email Person,789 Nowhere,New York,NY,10003,pending_pickup

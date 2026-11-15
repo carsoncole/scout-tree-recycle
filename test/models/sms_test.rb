@@ -24,6 +24,12 @@ class SmsTest < ActiveSupport::TestCase
     end
   end
 
+  test "records the user who sent the message" do
+    sms = Sms.create!(phone: "1234567890", body: "Hello, world!", user: users(:admin))
+
+    assert_equal users(:admin), sms.reload.user
+  end
+
   test "creating sms does not create a send job if sms is disabled" do
     Setting.instance.update(is_sms_enabled: false)
     sms = Sms.new(phone: "1234567890", body: "Hello, world!")

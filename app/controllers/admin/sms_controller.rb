@@ -21,6 +21,7 @@ class Admin::SmsController < Admin::BaseController
     if Setting.instance.is_sms_enabled?
       @sms = Sms.new(sms_params)
       @sms.direction = :outgoing
+      @sms.user = Current.user
 
       # Detect if the request is from the show page
       is_show_page = request.referer&.include?("/admin/sms/thread/")
@@ -32,7 +33,7 @@ class Admin::SmsController < Admin::BaseController
           format.turbo_stream {
             if is_show_page
               @phone = @sms.phone
-              @smses = Sms.where(phone: @phone).order(:created_at)
+              @smses = Sms.includes(:user).where(phone: @phone).order(:created_at)
               flash.now[:notice] = "Message sent successfully."
               render turbo_stream: [
                 turbo_stream.replace("sms-thread-#{@phone.gsub(/[^0-9]/, '')}",
@@ -40,9 +41,16 @@ class Admin::SmsController < Admin::BaseController
                 turbo_stream.update("flash", partial: "shared/flash")
               ]
             else
-              # For index page, just update the flash message since the broadcast will handle the conversation list
+              # For index page, refresh the conversation list in the response as
+              # well as relying on the cable broadcast, so the sent message is
+              # immediately visible even if the websocket is unavailable.
               flash.now[:notice] = "Message sent successfully."
-              render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
+              render turbo_stream: [
+                turbo_stream.replace("sms_conversations",
+                  partial: "admin/sms/conversations",
+                  locals: { smses_by_phone: Sms.grouped_by_phone_for_index }),
+                turbo_stream.update("flash", partial: "shared/flash")
+              ]
             end
           }
           format.html {
@@ -54,7 +62,7 @@ class Admin::SmsController < Admin::BaseController
           format.turbo_stream {
             if is_show_page
               @phone = @sms.phone
-              @smses = Sms.where(phone: @phone).order(:created_at)
+              @smses = Sms.includes(:user).where(phone: @phone).order(:created_at)
               @error = @sms.errors.full_messages.join(", ")
               flash.now[:alert] = "Failed to send message: #{@error}"
               render turbo_stream: [
@@ -81,7 +89,7 @@ class Admin::SmsController < Admin::BaseController
         format.turbo_stream {
           if is_show_page
             @phone = sms_params[:phone]
-            @smses = Sms.where(phone: @phone).order(:created_at)
+            @smses = Sms.includes(:user).where(phone: @phone).order(:created_at)
             @error = "SMS messaging is disabled. Enable SMS in Settings to send messages."
             flash.now[:alert] = @error
             render turbo_stream: [
@@ -105,7 +113,7 @@ class Admin::SmsController < Admin::BaseController
   def show
     @phone = params[:phone]
     Sms.where(phone: @phone, viewed: false).update_all(viewed: true) # mark all as viewed
-    @smses = Sms.where(phone: @phone).order(:created_at)
+    @smses = Sms.includes(:user).where(phone: @phone).order(:created_at)
     @reservations = @smses.first&.reservations
   end
 

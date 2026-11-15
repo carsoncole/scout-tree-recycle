@@ -236,7 +236,8 @@ class Reservation < ApplicationRecord
     sms = Sms.create(
       body: message,
       phone: mobile,
-      direction: "outgoing"
+      direction: "outgoing",
+      user: Current.user
       )
     self.update(missing_tree_sms_sent_at: Time.current)
   end

@@ -1,29 +1,44 @@
-<div class="admin-conversation-list">
+<section id="sms_conversations" class="admin-conversation-list">
   <% smses_by_phone.each do |phone, smses| %>
+    <% latest = smses.last %>
+    <% reservations = smses.first&.reservations %>
     <% unviewed_count = smses.count { |sms| !sms.viewed && sms.incoming? } %>
     <div class="admin-conversation conversation">
+      <% if reservations&.any? %>
+        <div class="admin-conversation-reservations">
+          <% reservations.each do |reservation| %>
+            <%= link_to reservation.name, admin_reservation_path(reservation),
+                class: "admin-badge admin-badge--neutral admin-badge--link" %>
+            <span class="admin-table-note"><%= reservation.street %></span>
+            <span class="<%= admin_reservation_status_badge(reservation.status) %>">
+              <%= reservation.status.titleize %>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+
       <%= link_to admin_sms_thread_path(phone), class: "admin-conversation-main" do %>
         <% if unviewed_count.positive? %>
           <span class="admin-unread-dot" aria-label="Unread messages"></span>
         <% end %>
 
         <div class="admin-conversation-body">
-          <p class="admin-conversation-title">
-            <% if smses.first&.reservations&.any? %>
-              <% smses.first.reservations.each do |reservation| %>
-                <span class="admin-badge admin-badge--neutral"><%= reservation.name %></span>
-                <span class="admin-table-note"><%= reservation.street %></span>
-                <span class="<%= admin_reservation_status_badge(reservation.status) %>">
-                  <%= reservation.status.titleize %>
-                </span>
-              <% end %>
-            <% else %>
-              <%= phone %>
-            <% end %>
-          </p>
+          <% unless reservations&.any? %>
+            <p class="admin-conversation-title"><%= phone %></p>
+          <% end %>
           <p class="admin-conversation-meta">
             <span><%= phone %></span>
-            <span class="admin-conversation-time"><%= smses.last.created_at.strftime("%b %d %I:%M %p") %></span>
+            <% if latest.outgoing? && latest.user %>
+              <span>Sent by <%= latest.user.email %></span>
+            <% end %>
+            <span class="admin-conversation-time"><%= latest.created_at.strftime("%b %d %I:%M %p") %></span>
+          </p>
+          <p class="admin-conversation-preview">
+            <span class="admin-conversation-preview-direction"><%= latest.outgoing? ? "Sent" : "Received" %></span>
+            <span class="admin-conversation-preview-body"><%= truncate(latest.body.to_s, length: 80) %></span>
+            <% if latest.outgoing? && latest.service_status == "failed" %>
+              <span class="admin-badge admin-badge--danger">Failed</span>
+            <% end %>
           </p>
         </div>
       <% end %>
@@ -46,4 +61,4 @@
   <% if smses_by_phone.empty? %>
     <p class="admin-empty">No SMS conversations yet.</p>
   <% end %>
-</div>
+</section>

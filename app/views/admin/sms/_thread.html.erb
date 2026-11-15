@@ -31,6 +31,9 @@
       <div class="admin-thread-messages">
         <% smses.each do |sms| %>
           <div class="admin-message admin-message--<%= sms.outgoing? ? "outgoing" : "incoming" %>">
+            <% if sms.outgoing? && sms.user %>
+              <span class="admin-message-sender"><%= sms.user.email %></span>
+            <% end %>
             <p><%= sms.body %></p>
             <span class="admin-message-time">
               <%= sms.created_at.strftime("%b %d, %Y %I:%M %p") %>

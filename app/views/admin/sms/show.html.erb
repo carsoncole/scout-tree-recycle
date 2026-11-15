@@ -17,7 +17,12 @@
     <% @reservations.each do |reservation| %>
       <div class="admin-notice">
         <div>
-          <p class="admin-notice-title"><%= link_to reservation.summary, admin_reservation_path(reservation.id), class: "admin-link" %></p>
+          <p class="admin-notice-title">
+            <%= link_to reservation.name.presence || reservation.street, admin_reservation_path(reservation), class: "admin-link" %>
+          </p>
+          <p class="admin-hint">
+            <%= reservation.street %> · <%= reservation.status.titleize %>
+          </p>
         </div>
       </div>
     <% end %>

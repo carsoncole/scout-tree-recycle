@@ -1494,6 +1494,7 @@
 .admin-account-link:focus-visible,
 .admin-filter:focus-visible,
 .admin-pagination-link:focus-visible,
+.admin-badge--link:focus-visible,
 .admin-quick-reply:focus-visible {
   outline: 2px solid var(--site-ink);
   outline-offset: 3px;
@@ -1648,6 +1649,18 @@
 .admin-badge--neutral {
   background: var(--site-stone);
   color: var(--site-ink-soft);
+}
+
+.admin-badge--link {
+  text-decoration: none;
+  transition:
+    background-color var(--site-transition),
+    color var(--site-transition);
+}
+
+.admin-badge--link:hover {
+  background: var(--site-line);
+  color: var(--site-ink);
 }
 
 .admin-notice {
@@ -1959,6 +1972,14 @@
   border-color: var(--site-line-strong);
 }
 
+.admin-conversation-reservations {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .admin-conversation-main {
   display: flex;
   flex: 1 1 22rem;
@@ -1970,6 +1991,7 @@
 }
 
 .admin-conversation-body {
+  flex: 1;
   min-width: 0;
 }
 
@@ -1993,6 +2015,31 @@
   margin-top: 0.2rem;
   color: var(--site-ink-soft);
   font-size: 0.79rem;
+}
+
+.admin-conversation-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  margin-top: 0.15rem;
+  color: var(--site-ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.admin-conversation-preview-direction {
+  flex: none;
+  font-weight: 650;
+  color: var(--site-ink);
+}
+
+.admin-conversation-preview-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-unread-dot {
@@ -2056,6 +2103,14 @@
 
 .admin-message p {
   margin: 0;
+}
+
+.admin-message-sender {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 0.7rem;
+  font-weight: 650;
+  opacity: 0.85;
 }
 
 .admin-message--incoming {

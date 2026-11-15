@@ -1,7 +1,7 @@
 🌲 Support <%= @setting.organization_name %>! - Tree Recycling 🌲
 
-<% if @prior_reservation.name.present? && @prior_reservation.name.downcase != 'no name provided' %>
-Hi <%= @prior_reservation.name %>! 👋
+<% if @contact.name.present? && @contact.name.downcase != 'no name provided' %>
+Hi <%= @contact.name %>! 👋
 <% end %>
 
 Great news! Our annual tree recycling event is back, and we'd love to have you join us again! 🎉
@@ -17,7 +17,7 @@ Pickup Starts: <%= @setting.event_pickup_start.strftime('%I:%M %p') %>
 
 Your participation not only helps us recycle Christmas trees responsibly but also directly supports <%= @setting.organization_name %>. We suggest a donation of <%= number_to_currency(@setting.suggested_donation_amount, precision: 0) %> when you register, which goes directly to funding summer camps and other outdoor activities! 🎯
 
-🌱 Reserve My Tree Pickup: <%= root_url(prior_reservation_id: @prior_reservation.id, name: @prior_reservation.name, street: @prior_reservation.street, email: @prior_reservation.email, mobile: @prior_reservation.mobile) %>
+🌱 Reserve My Tree Pickup: <%= root_url(contact_id: @contact.id, name: @contact.name, street: @contact.street, email: @contact.email, mobile: @contact.mobile) %>
 
 We can't wait to see you again this year! Your support makes a real difference in our community. 🌟
 

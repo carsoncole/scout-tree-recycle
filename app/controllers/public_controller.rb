@@ -1,9 +1,9 @@
 class PublicController < ApplicationController
   def index
-    if params[:prior_reservation_id]
-      prior_reservation = PriorReservation.find_by(id: params[:prior_reservation_id])
-      if prior_reservation
-        @reservation = Reservation.new(email: prior_reservation.email, street: prior_reservation.street, name: prior_reservation.name, mobile: Phonelib.parse(prior_reservation.mobile, Setting.instance&.phone_default_country.presence || "US")&.e164)
+    if params[:contact_id]
+      contact = Contact.find_by(id: params[:contact_id])
+      if contact
+        @reservation = Reservation.new(email: contact.email, street: contact.street, name: contact.name, mobile: Phonelib.parse(contact.mobile, Setting.instance&.phone_default_country.presence || "US")&.e164)
       else
         @reservation = Reservation.new
       end

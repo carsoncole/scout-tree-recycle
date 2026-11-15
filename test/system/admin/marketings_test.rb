@@ -18,13 +18,13 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     assert_text "Sent only once per contact. Contacts who already received Marketing email 2 are skipped"
   end
 
-  test "index notes that prior reservations are removed for confirmed reservations" do
+  test "index notes that contacts are removed for confirmed reservations" do
     visit admin_marketing_index_url
 
-    assert_text "Any prior reservations with the same email as a newly confirmed reservation are removed automatically"
+    assert_text "Any contacts with the same email as a newly confirmed reservation are removed automatically"
   end
 
-  test "adding a prior reservation" do
+  test "adding a contact" do
     visit admin_marketing_index_url
     click_on "New Contact"
 
@@ -32,47 +32,68 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     fill_in "Email", with: "Jordan.Fields@example.com"
     fill_in "Mobile", with: "555-555-5555"
     fill_in "Street", with: "7 Pine Rd"
-    click_on "Create Prior Reservation"
+    click_on "Create Contact"
 
-    assert_text "Prior reservation was successfully created."
+    assert_text "Contact was successfully created."
     assert_text "jordan.fields@example.com"
-    assert_equal "Jordan Fields", PriorReservation.find_by(email: "jordan.fields@example.com").name
+    assert_equal "Jordan Fields", Contact.find_by(email: "jordan.fields@example.com").name
   end
 
-  test "editing a prior reservation" do
+  test "editing a contact" do
     visit admin_marketing_index_url
 
-    within "tr", text: prior_reservations(:full).email do
+    within "tr", text: contacts(:full).email do
       click_on "Edit"
     end
 
     fill_in "Name", with: "Susan B. Banks"
-    click_on "Update Prior Reservation"
+    click_on "Update Contact"
 
-    assert_text "Prior reservation was successfully updated."
+    assert_text "Contact was successfully updated."
     assert_text "Susan B. Banks"
   end
 
   test "shows the local date and time each marketing email was sent" do
-    sent_at = Time.zone.parse("2026-01-15 09:30")
-    prior_reservations(:full).update!(marketing_1_email_sent_at: sent_at, marketing_2_email_sent_at: sent_at)
+    this_year = Time.zone.parse("#{Time.current.year}-01-15 09:30")
+    last_year = Time.zone.parse("#{Time.current.year - 1}-03-02 14:05")
+    contacts(:full).update!(marketing_1_email_sent_at: this_year, marketing_2_email_sent_at: last_year)
 
     visit admin_marketing_index_url
 
-    within "tr", text: prior_reservations(:full).email do
-      assert_text "Jan 15, 2026 9:30 AM", count: 2
+    within "tr", text: contacts(:full).email do
+      assert_text "Jan 15, 9:30 AM"
+      assert_text "Mar 2, #{Time.current.year - 1} 2:05 PM"
     end
   end
 
-  test "delete all prior reservations with confirmation" do
-    visit admin_marketing_index_url
-    assert_text "3 prior reservations"
-    find("summary", text: "Delete All Prior Reservations").click
-    fill_in "Type DELETE to confirm", with: "DELETE"
-    click_on "Confirm Delete All Prior Reservations"
+  test "clearing a marketing email sent date" do
+    contact = contacts(:full)
+    contact.update!(marketing_1_email_sent_at: 1.day.ago)
 
-    assert_text "3 prior reservations have been deleted."
-    assert_text "No prior reservations are available for marketing."
-    assert_equal 0, PriorReservation.count
+    visit admin_marketing_index_url
+
+    within "tr", text: contact.email do
+      accept_confirm { click_on "Clear Marketing email 1 sent date" }
+    end
+
+    assert_text "Marketing email 1 sent date was cleared."
+    assert_nil contact.reload.marketing_1_email_sent_at
+
+    within "tr", text: contact.email do
+      assert_text "Not sent"
+      assert_no_button "Clear Marketing email 1 sent date"
+    end
+  end
+
+  test "delete all contacts with confirmation" do
+    visit admin_marketing_index_url
+    assert_text "3 contacts"
+    find("summary", text: "Delete All Contacts").click
+    fill_in "Type DELETE to confirm", with: "DELETE"
+    click_on "Confirm Delete All Contacts"
+
+    assert_text "3 contacts have been deleted."
+    assert_text "No contacts are available for marketing."
+    assert_equal 0, Contact.count
   end
 end

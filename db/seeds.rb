@@ -124,10 +124,10 @@ streets = Datasets::SeedData::STREETS
   r.save
 end
 
-# Prior Reservations
-PriorReservation.destroy_all
+# Contacts
+Contact.destroy_all
 100.times do
-  PriorReservation.create(name: Faker::Name.name, email: Faker::Internet.email, street: Faker::Address.street_address, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample, marketing_1_email_sent_at: [ Time.current, nil ].sample)
+  Contact.create(name: Faker::Name.name, email: Faker::Internet.email, street: Faker::Address.street_address, mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample, marketing_1_email_sent_at: [ Time.current, nil ].sample)
 end
 
 # Sms

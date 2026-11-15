@@ -1,4 +1,9 @@
-class PriorReservation < ApplicationRecord
+class Contact < ApplicationRecord
+  MARKETING_EMAIL_COLUMNS = {
+    1 => :marketing_1_email_sent_at,
+    2 => :marketing_2_email_sent_at
+  }.freeze
+
   IMPORTABLE_FIELDS = {
     "name" => "Name",
     "email" => "Email",
@@ -17,9 +22,9 @@ class PriorReservation < ApplicationRecord
 
   normalizes :email, with: ->(e) { e.strip.downcase }
 
-  def self.remove_old_prior_reservations!
-    retention_months = Setting.instance&.prior_reservation_retention_months || 24
-    PriorReservation.where("created_at < ?", retention_months.months.ago).destroy_all
+  def self.remove_old_contacts!
+    retention_months = Setting.instance&.contact_retention_months || 24
+    Contact.where("created_at < ?", retention_months.months.ago).destroy_all
   end
 
   def marketing_email_cooldown_active?
@@ -28,7 +33,15 @@ class PriorReservation < ApplicationRecord
     marketing_1_email_sent_at > Setting.instance.marketing_email_cooldown_days.days.ago
   end
 
+  # Clears a single marketing email send time so the contact can be emailed again.
+  def clear_marketing_email!(marketing_email)
+    column = MARKETING_EMAIL_COLUMNS[marketing_email.to_i]
+    return false if column.blank?
+
+    update(column => nil)
+  end
+
   def self.clear_email_flags!
-    PriorReservation.update_all(marketing_1_email_sent_at: nil, marketing_2_email_sent_at: nil)
+    Contact.update_all(marketing_1_email_sent_at: nil, marketing_2_email_sent_at: nil)
   end
 end

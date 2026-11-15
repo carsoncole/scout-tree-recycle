@@ -702,12 +702,12 @@
           <div class="admin-form-section admin-form-section--flush">
             <div class="admin-toolbar">
               <div>
-                <%= label_tag "setting[prior_reservation_retention_months]", "Retention (Months)", class: "admin-section-title" %>
-                <p class="admin-section-description">How long past participants remain available for marketing. Prior reservations older than this are removed during cleanup.</p>
+                <%= label_tag "setting[contact_retention_months]", "Retention (Months)", class: "admin-section-title" %>
+                <p class="admin-section-description">How long past participants remain available for marketing. Contacts older than this are removed during cleanup.</p>
               </div>
 
               <div class="admin-field admin-field--short admin-toolbar-field">
-                <%= number_field_tag "setting[prior_reservation_retention_months]", setting.prior_reservation_retention_months, class: "admin-input", min: 1, step: 1 %>
+                <%= number_field_tag "setting[contact_retention_months]", setting.contact_retention_months, class: "admin-input", min: 1, step: 1 %>
               </div>
             </div>
           </div>
@@ -721,12 +721,12 @@
           <div class="admin-toolbar">
             <div>
               <h3 class="admin-toggle-title">Migrate Reservations</h3>
-              <p class="admin-hint">Move reservations to prior reservations for next season's marketing.</p>
+              <p class="admin-hint">Move reservations to contacts for next season's marketing.</p>
             </div>
             <%= button_to admin_post_event_cleanup_path,
                 class: "admin-button admin-button--danger",
                 data: {
-                  turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to prior reservations which will be used for marketing. This action cannot be undone. ",
+                  turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to contacts which will be used for marketing. This action cannot be undone. ",
                   turbo_method: :post
                 } do %>
               Migrate

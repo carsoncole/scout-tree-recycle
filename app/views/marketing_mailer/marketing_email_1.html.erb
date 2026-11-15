@@ -12,9 +12,9 @@
               🌲 Support <%= @setting.organization_name %>! - Tree Recycling 🌲
             </h1>
 
-            <% if @prior_reservation.name.present? && @prior_reservation.name.downcase != 'no name provided' %>
+            <% if @contact.name.present? && @contact.name.downcase != 'no name provided' %>
               <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.6; font-weight:400; font-size: 18px; font-weight: normal; margin: 0 0 25px; padding: 0; color: #4a5568;">
-                Hi <%= @prior_reservation.name %>! 👋
+                Hi <%= @contact.name %>! 👋
               </p>
             <% end %>
 
@@ -57,7 +57,7 @@
                   <table cellspacing="0" cellpadding="0">
                     <tr>
                       <td style="border-radius: 8px" bgcolor="#48bb78" width="100%" style='text-align:center;'>
-                        <a href="<%= root_url(prior_reservation_id: @prior_reservation.id) %>" target="_blank" style="padding: 16px 24px; border: 1px solid #48bb78;border-radius: 8px;font-family: Helvetica, Arial, sans-serif;font-size: 16px; color: #ffffff !important;text-decoration: none;font-weight:bold;display: inline-block;">
+                        <a href="<%= root_url(contact_id: @contact.id) %>" target="_blank" style="padding: 16px 24px; border: 1px solid #48bb78;border-radius: 8px;font-family: Helvetica, Arial, sans-serif;font-size: 16px; color: #ffffff !important;text-decoration: none;font-weight:bold;display: inline-block;">
                           🌱 Reserve My Tree Pickup
                         </a>
                       </td>

@@ -1,11 +1,11 @@
-<%= form_with(model: [ :admin, prior_reservation ], class: "admin-stack") do |f| %>
-  <%= render "shared/form_errors", object: prior_reservation %>
+<%= form_with(model: [ :admin, contact ], class: "admin-stack") do |f| %>
+  <%= render "shared/form_errors", object: contact %>
 
   <section class="admin-panel">
     <div class="admin-panel-header">
       <div>
         <h2 class="admin-panel-title">Contact information</h2>
-        <p class="admin-panel-description">Name and email are required. Prior reservations must use a unique email address.</p>
+        <p class="admin-panel-description">Name and email are required. Contacts must use a unique email address.</p>
       </div>
     </div>
 
@@ -35,7 +35,7 @@
 
     <div class="admin-panel-footer">
       <%= link_to "Cancel", admin_marketing_index_path, class: "admin-button admin-button--secondary" %>
-      <%= f.submit(prior_reservation.persisted? ? "Update Prior Reservation" : "Create Prior Reservation", class: "admin-button") %>
+      <%= f.submit(contact.persisted? ? "Update Contact" : "Create Contact", class: "admin-button") %>
     </div>
   </section>
 <% end %>

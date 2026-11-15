@@ -21,7 +21,7 @@ class Admin::DataTest < ApplicationSystemTestCase
     selects[0].select("Name")
     selects[1].select("Email")
     selects[2].select("Street")
-    click_button "Import Reservations CSV"
-    assert_text "Imported 2 reservation"
+    click_button "Import Contacts CSV"
+    assert_text "Imported 2 contact"
   end
 end

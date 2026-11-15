@@ -1,6 +1,6 @@
 <%= render "admin/shared/page_header",
            title: "Data",
-           description: "Import and export reservation data as CSV." %>
+           description: "Import contacts and export reservation data as CSV." %>
 
 <div class="admin-stack">
   <% if flash[:import_errors].present? %>
@@ -54,8 +54,8 @@
                     class: "admin-form",
                     data: {
                       controller: "csv-mapping",
-                      csv_mapping_fields_value: PriorReservation::IMPORTABLE_FIELDS.map do |value, label|
-                        { value: value, label: label, aliases: PriorReservation::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
+                      csv_mapping_fields_value: Contact::IMPORTABLE_FIELDS.map do |value, label|
+                        { value: value, label: label, aliases: Contact::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
                       end.to_json
                     } do |f| %>
         <div class="admin-form-section admin-form-section--flush">
@@ -76,7 +76,7 @@
         </div>
 
         <div class="admin-actions">
-          <%= submit_tag "Import Reservations CSV", class: "admin-button" %>
+          <%= submit_tag "Import Contacts CSV", class: "admin-button" %>
         </div>
       <% end %>
     </div>

@@ -107,20 +107,20 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "CA", setting.phone_default_country
   end
 
-  test "should update marketing cooldown and prior reservation retention" do
+  test "should update marketing cooldown and contact retention" do
     sign_in
 
     patch admin_setting_path(Setting.first), params: {
       setting: {
         marketing_email_cooldown_days: 10,
-        prior_reservation_retention_months: 36
+        contact_retention_months: 36
       }
     }
 
     assert_redirected_to admin_settings_path
     setting = Setting.first.reload
     assert_equal 10, setting.marketing_email_cooldown_days
-    assert_equal 36, setting.prior_reservation_retention_months
+    assert_equal 36, setting.contact_retention_months
   end
 
   test "should update stripe settings" do

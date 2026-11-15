@@ -13,7 +13,7 @@
       </div>
 
       <%= button_to "Yes, Unsubscribe Me",
-                    prior_reservation_path(@prior_reservation),
+                    contact_path(@contact),
                     method: :delete,
                     class: "site-button site-button--secondary site-button--full",
                     data: { turbo_method: :delete } %>

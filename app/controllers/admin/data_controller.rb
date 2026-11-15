@@ -10,7 +10,7 @@ class Admin::DataController < Admin::BaseController
     end
 
     csv = file.read
-    result = PriorReservationCsvImport.new(
+    result = ContactCsvImport.new(
       csv: csv,
       filename: file.original_filename.to_s,
       mapping: params[:mapping],
@@ -30,15 +30,15 @@ class Admin::DataController < Admin::BaseController
         "Row #{row_error[:row]}: #{row_error[:errors].join(", ")}"
       end.join("; ")
       row_error_details += "; and #{all_row_errors.size - display_errors.size} more" if all_row_errors.size > display_errors.size
-      alert = "Imported #{result.imported} reservation(s). Skipped #{result.skipped} duplicate(s). #{result.failed} row(s) failed."
+      alert = "Imported #{result.imported} contact(s). Skipped #{result.skipped} duplicate(s). #{result.failed} row(s) failed."
       alert += " #{row_error_details}." if row_error_details.present?
       alert += " Check the System Logs for details."
       flash[:import_errors] = display_errors if display_errors.any?
       redirect_to admin_data_path, alert: alert
     elsif result.skipped.positive?
-      redirect_to admin_data_path, notice: "Imported #{result.imported} reservation(s). Skipped #{result.skipped} duplicate email(s)."
+      redirect_to admin_data_path, notice: "Imported #{result.imported} contact(s). Skipped #{result.skipped} duplicate email(s)."
     else
-      redirect_to admin_data_path, notice: "Imported #{result.imported} reservation(s) successfully."
+      redirect_to admin_data_path, notice: "Imported #{result.imported} contact(s) successfully."
     end
   end
 

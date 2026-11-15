@@ -29,12 +29,12 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "User Management", href: "#user-management"
     end
 
-    %w[organization event-settings site-content tree-pickups sms email donations location-services operations logs jobs user-management].each do |id|
+    %w[organization event-settings site-content tree-pickups sms email donations location-services operations logs data jobs user-management].each do |id|
       assert_selector "section##{id}"
     end
 
     titles = all("section.admin-panel:not(#configuration-status) h2.admin-panel-title").map(&:text)
-    assert_equal [ "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "Logs", "Jobs", "User Management" ], titles
+    assert_equal [ "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "Logs", "Data", "Jobs", "User Management" ], titles
   end
 
   test "shows configuration status and missing required settings" do
@@ -457,7 +457,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     end
 
     assert_text "Settings were successfully updated"
-    assert_equal 36, Setting.instance.reload.prior_reservation_retention_months
+    assert_equal 36, Setting.instance.reload.contact_retention_months
   end
 
   test "page links" do

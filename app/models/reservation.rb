@@ -120,8 +120,8 @@ class Reservation < ApplicationRecord
   after_update :send_confirmed_reservation_email!, if: ->(obj) { (obj.routing? || obj.pending_pickup?) && obj.saved_change_to_status? && !obj.importing }
   after_update :send_cancelled_reservation_email!, if: ->(obj) { obj.cancelled? && obj.saved_change_to_status? && !obj.importing }
 
-  # remove prior reservation if it exists
-  after_save :remove_prior_reservation!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? && !obj.importing }
+  # remove contact if it exists
+  after_save :remove_contact!, if: ->(obj) { obj.routing? && obj.saved_change_to_status? && !obj.importing }
 
   after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" && Setting.instance&.is_routing_enabled? && !obj.importing }
 
@@ -155,9 +155,9 @@ class Reservation < ApplicationRecord
     not_active.destroy_all if not_active.any?
   end
 
-  # remove prior reservation if it exists
-  def remove_prior_reservation!
-    PriorReservation.where(email: email).destroy_all
+  # remove contact if it exists
+  def remove_contact!
+    Contact.where(email: email).destroy_all
   end
 
   def reset_status_to_routing_if_route_removed!
@@ -178,8 +178,8 @@ class Reservation < ApplicationRecord
 
   def self.migrate_reservations!
     Reservation.migratable.each do |r|
-      PriorReservation.where(email: r.email).destroy_all
-      PriorReservation.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
+      Contact.where(email: r.email).destroy_all
+      Contact.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
     end
     Reservation.destroy_all
   end

@@ -22,8 +22,8 @@ Rails.application.routes.draw do
   get "/donation" => "donations#donation_without_reservation", as: "donation_without_reservation"
   get "/thank-you-for-your-donation" => "donations#success", as: "success"
 
-  # Prior Reservations
-  resources :prior_reservations, only: [] do
+  # Contacts
+  resources :contacts, only: [] do
     member do
       get :unsubscribe
       delete :destroy
@@ -54,7 +54,11 @@ Rails.application.routes.draw do
     end
     resources :zones, except: [ :show ]
     resources :users, except: [ :show ]
-    resources :prior_reservations, only: [ :new, :create, :edit, :update, :destroy ] do
+    resources :contacts, only: [ :new, :create, :edit, :update, :destroy ] do
+      member do
+        delete :clear_marketing_email_1
+        delete :clear_marketing_email_2
+      end
       collection do
         delete :destroy_all
       end

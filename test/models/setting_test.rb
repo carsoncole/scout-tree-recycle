@@ -45,7 +45,7 @@ class SettingTest < ActiveSupport::TestCase
       suggested_donation: nil,
       email_batch_quantity: nil,
       marketing_email_cooldown_days: nil,
-      prior_reservation_retention_months: nil
+      contact_retention_months: nil
     )
 
     setting.reload
@@ -63,7 +63,7 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal Setting::DEFAULT_SUGGESTED_DONATION, setting.suggested_donation_amount
     assert_equal Setting::DEFAULT_EMAIL_BATCH_QUANTITY, setting.email_batch_quantity
     assert_equal Setting::DEFAULT_MARKETING_COOLDOWN_DAYS, setting.marketing_email_cooldown_days
-    assert_equal Setting::DEFAULT_RETENTION_MONTHS, setting.prior_reservation_retention_months
+    assert_equal Setting::DEFAULT_RETENTION_MONTHS, setting.contact_retention_months
   end
 
   test "missing_required_settings reports core and enabled integration settings" do

@@ -24,16 +24,16 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "email"
   end
 
-  test "should import reservations" do
+  test "should import contacts" do
     sign_in
     file = fixture_file_upload("reservations_import.csv", "text/csv")
     mapping = [ "name", "email", "street", "city", "state", "zip", "status" ]
-    assert_difference "PriorReservation.count", 2 do
+    assert_difference "Contact.count", 2 do
       post import_admin_data_url, params: { file: file, mapping: mapping }
     end
     assert_redirected_to admin_data_url
-    assert_match "Imported 2 reservation", flash[:alert]
-    assert PriorReservation.find_by(email: "imported.person@example.com")
+    assert_match "Imported 2 contact", flash[:alert]
+    assert Contact.find_by(email: "imported.person@example.com")
   end
 
   test "should log import failures" do
@@ -45,6 +45,6 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to admin_data_url
     assert_match "failed", flash[:alert]
-    assert Log.where(error_type: "PriorReservationCsvImport", severity: "error").exists?
+    assert Log.where(error_type: "ContactCsvImport", severity: "error").exists?
   end
 end

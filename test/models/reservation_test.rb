@@ -19,7 +19,7 @@ class ReservationTest < ActiveSupport::TestCase
   test "migrate_reservations migrates imported reservations" do
     Reservation.create!(name: "Imported", street: "1 Main", city: "New York", state: "NY", country: "United States", email: "imported.migrate@example.com", status: "imported")
     Reservation.migrate_reservations!
-    assert PriorReservation.find_by(email: "imported.migrate@example.com")
+    assert Contact.find_by(email: "imported.migrate@example.com")
   end
 
   test "to_csv exports reservation data" do
@@ -118,14 +118,14 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not Reservation.find_by(id: new_reservation_with_same_email.id)
   end
 
-  # remove existing prior_reservation (same email) when reservation becomes routing
-  test "removing prior reservation on routing" do
+  # remove existing contact (same email) when reservation becomes routing
+  test "removing contact on routing" do
     reservation = Reservation.create(name: "Trip Wilson", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "United States", status: "donation", email: "trip.wilson@example.com")
     assert reservation.donation?
-    assert PriorReservation.find_by(email: "trip.wilson@example.com")
+    assert Contact.find_by(email: "trip.wilson@example.com")
     reservation.routing!
     assert reservation.routing?
-    assert_not PriorReservation.find_by(email: "trip.wilson@example.com")
+    assert_not Contact.find_by(email: "trip.wilson@example.com")
   end
 
   test "normalizing of mobile number" do
@@ -176,28 +176,28 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not Reservation.find_by(email: "bob.jones@example.com")
     assert_not Reservation.find_by(email: "bob.miurtha@example.com")
     assert_not Reservation.find_by(email: "bill.carson@example.com")
-    # should be 5 prior reservations based on their status
-    assert_not PriorReservation.find_by(email: "form.minimum@example.com") # reservation_form don't get migrated
-    assert_not PriorReservation.find_by(email: "john.doe@example.com") # address_verification don't get migrated
-    assert_not PriorReservation.find_by(email: "lisa.mills@example.com") # ddonation don't get migrated
-    assert PriorReservation.find_by(email: "mary.jones@example.com")
-    assert PriorReservation.find_by(email: "bob.jones@example.com")
-    assert PriorReservation.find_by(email: "bob.miurtha@example.com")
-    assert PriorReservation.find_by(email: "bill.carson@example.com")
+    # should be 5 contacts based on their status
+    assert_not Contact.find_by(email: "form.minimum@example.com") # reservation_form don't get migrated
+    assert_not Contact.find_by(email: "john.doe@example.com") # address_verification don't get migrated
+    assert_not Contact.find_by(email: "lisa.mills@example.com") # ddonation don't get migrated
+    assert Contact.find_by(email: "mary.jones@example.com")
+    assert Contact.find_by(email: "bob.jones@example.com")
+    assert Contact.find_by(email: "bob.miurtha@example.com")
+    assert Contact.find_by(email: "bill.carson@example.com")
   end
 
-  test "migration removes prior reservations with same email" do
+  test "migration removes contacts with same email" do
     assert Reservation.find_by(email: "bob.jones@example.com")
     current_reservation = Reservation.find_by(email: "bob.jones@example.com")
     current_reservation.update(name: "Bobby Jones")
 
-    assert PriorReservation.find_by(email: "bob.jones@example.com")
-    prior_reservation = PriorReservation.find_by(email: "bob.jones@example.com")
+    assert Contact.find_by(email: "bob.jones@example.com")
+    contact = Contact.find_by(email: "bob.jones@example.com")
 
     Reservation.migrate_reservations!
     assert_not Reservation.find_by(email: "bob.jones@example.com")
-    assert PriorReservation.find_by(email: "bob.jones@example.com")
-    assert_equal "Bobby Jones", PriorReservation.find_by(email: "bob.jones@example.com").name
+    assert Contact.find_by(email: "bob.jones@example.com")
+    assert_equal "Bobby Jones", Contact.find_by(email: "bob.jones@example.com").name
   end
 
   test "reset_geocoding! resets geocoding data AND routing data" do

@@ -109,7 +109,7 @@ class Admin::SettingsController < Admin::BaseController
       :missing_tree_sms_follow_up_message,
       :email_from_address,
       :marketing_email_cooldown_days,
-      :prior_reservation_retention_months,
+      :contact_retention_months,
       :smtp_address,
       :smtp_port,
       :smtp_user_name,

@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_000011) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "contacts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "street"
+    t.string "email"
+    t.string "mobile"
+    t.datetime "marketing_1_email_sent_at"
+    t.datetime "marketing_2_email_sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_contacts_on_email"
+    t.index ["marketing_1_email_sent_at"], name: "index_contacts_on_marketing_1_email_sent_at"
+  end
 
   create_table "donations", force: :cascade do |t|
     t.uuid "reservation_id"
@@ -78,19 +91,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_000011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["route_id"], name: "index_points_on_route_id"
-  end
-
-  create_table "prior_reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name"
-    t.string "street"
-    t.string "email"
-    t.string "mobile"
-    t.datetime "marketing_1_email_sent_at"
-    t.datetime "marketing_2_email_sent_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_prior_reservations_on_email"
-    t.index ["marketing_1_email_sent_at"], name: "index_prior_reserations_on_marketing_1_email_sent_at"
   end
 
   create_table "reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -210,7 +210,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_000011) do
     t.string "aws_region", default: "us-west-2"
     t.string "aws_location_index_name", default: "tree_recycle"
     t.integer "marketing_email_cooldown_days", default: 7
-    t.integer "prior_reservation_retention_months", default: 24
+    t.integer "contact_retention_months", default: 24
     t.text "sms_quick_responses", default: "Thank you! I'll let the Scouts know.\nThanks for the update. I'll have them swing by again to pick up the tree.\nWe are only picking up today, however I can see if we could swing by tomorrow.\nThank you for your support! We appreciate it."
     t.text "missing_tree_sms_message", default: "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
     t.text "missing_tree_sms_follow_up_message", default: "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"

@@ -1,6 +1,6 @@
 require "csv"
 
-class PriorReservationCsvImport
+class ContactCsvImport
   MAX_FILE_SIZE = 5.megabytes
   REQUIRED_FIELDS = %w[name email].freeze
 
@@ -47,7 +47,7 @@ class PriorReservationCsvImport
     return failure("The same field cannot be mapped to more than one column.") if mapped_fields.size != mapped_fields.uniq.size
     missing_required = REQUIRED_FIELDS - mapped_fields
     unless missing_required.empty?
-      return failure("Required fields must be mapped: #{missing_required.map { |f| PriorReservation::IMPORTABLE_FIELDS.fetch(f, f) }.join(", ")}.")
+      return failure("Required fields must be mapped: #{missing_required.map { |f| Contact::IMPORTABLE_FIELDS.fetch(f, f) }.join(", ")}.")
     end
 
     rows.each_with_index do |row, index|
@@ -57,14 +57,14 @@ class PriorReservationCsvImport
       attrs = build_attrs(row)
       errors = []
 
-      email = attrs["email"].present? ? PriorReservation.new(email: attrs["email"]).email : nil
+      email = attrs["email"].present? ? Contact.new(email: attrs["email"]).email : nil
 
-      prior_reservation = PriorReservation.new(attrs)
-      if prior_reservation.save
+      contact = Contact.new(attrs)
+      if contact.save
         @imported += 1
       else
         @failed += 1
-        messages = prior_reservation.errors.full_messages
+        messages = contact.errors.full_messages
         errors.concat(messages)
         @row_errors << { row: row_number, email: email, errors: errors.uniq }
         log_failure(row_number, email, errors.uniq)
@@ -76,8 +76,8 @@ class PriorReservationCsvImport
     end
 
     Log.create(
-      message: "Prior reservation import completed: imported #{@imported}, skipped #{@skipped}, failed #{@failed}.",
-      error_type: "PriorReservationCsvImport",
+      message: "Contact import completed: imported #{@imported}, skipped #{@skipped}, failed #{@failed}.",
+      error_type: "ContactCsvImport",
       severity: "info",
       handled: true,
       skip_notification: true,
@@ -100,8 +100,8 @@ class PriorReservationCsvImport
 
   def failure(message)
     Log.create(
-      message: "Prior reservation import failed: #{message}",
-      error_type: "PriorReservationCsvImport",
+      message: "Contact import failed: #{message}",
+      error_type: "ContactCsvImport",
       severity: "error",
       handled: false,
       skip_notification: true,
@@ -115,7 +115,7 @@ class PriorReservationCsvImport
     attrs = {}
     @mapping.each_with_index do |field, index|
       next if field.blank?
-      next unless PriorReservation::IMPORTABLE_FIELDS.key?(field)
+      next unless Contact::IMPORTABLE_FIELDS.key?(field)
 
       value = row[index].to_s.strip
 
@@ -132,8 +132,8 @@ class PriorReservationCsvImport
 
   def log_failure(row_number, email, errors)
     Log.create(
-      message: "Prior reservation import failed for row #{row_number} (#{email.presence || "no email"}): #{errors.join(", ")}",
-      error_type: "PriorReservationCsvImport",
+      message: "Contact import failed for row #{row_number} (#{email.presence || "no email"}): #{errors.join(", ")}",
+      error_type: "ContactCsvImport",
       severity: "error",
       handled: false,
       skip_notification: true,

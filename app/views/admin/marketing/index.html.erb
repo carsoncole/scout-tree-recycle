@@ -1,6 +1,6 @@
 <%= render "admin/shared/page_header",
            title: "Marketing",
-           description: "Send campaign emails and review prior reservation contacts." %>
+           description: "Send campaign emails and review contacts." %>
 
 <div class="admin-stack">
   <div class="admin-grid admin-grid--two">
@@ -45,17 +45,17 @@
 
   <div class="admin-notice" role="note">
     <div>
-      <p><strong>Note:</strong> Any prior reservations with the same email as a newly confirmed reservation are removed automatically, so a row may disappear from this table once that contact reserves again.</p>
+      <p><strong>Note:</strong> Any contacts with the same email as a newly confirmed reservation are removed automatically, so a row may disappear from this table once that contact reserves again.</p>
     </div>
   </div>
 
   <section class="admin-panel">
     <div class="admin-panel-header">
       <div>
-        <h2 class="admin-panel-title">Prior Reservations/Contacts</h2>
+        <h2 class="admin-panel-title">Contacts</h2>
         <p class="admin-panel-description">Contacts from prior reservations and imported contacts. <%= link_to "Import data", admin_data_path, class: "admin-link" %></p>
       </div>
-      <%= link_to "New Contact", new_admin_prior_reservation_path, class: "admin-button" %>
+      <%= link_to "New Contact", new_admin_contact_path, class: "admin-button" %>
     </div>
 
     <div class="admin-table-wrap">
@@ -71,37 +71,57 @@
           </tr>
         </thead>
         <tbody>
-          <% @prior_reservations.each do |reservation| %>
+          <% @contacts.each do |contact| %>
             <tr>
-              <td><%= reservation.name %></td>
-              <td><%= reservation.street %></td>
+              <td><%= contact.name %></td>
+              <td><%= contact.street %></td>
               <td>
-                <%= reservation.email %><br>
-                <span class="admin-table-note"><%= reservation.mobile.present? ? Phonelib.parse(reservation.mobile).national : nil %></span>
+                <%= contact.email %><br>
+                <span class="admin-table-note"><%= contact.mobile.present? ? Phonelib.parse(contact.mobile).national : nil %></span>
               </td>
               <td>
-                <% if reservation.marketing_1_email_sent_at.present? %>
-                  <span class="admin-badge admin-badge--positive">Sent</span><br>
-                  <span class="admin-table-note"><%= reservation.marketing_1_email_sent_at.in_time_zone.strftime("%b %-d, %Y %-l:%M %p") %></span>
+                <% if contact.marketing_1_email_sent_at.present? %>
+                  <div class="admin-table-inline">
+                    <span class="admin-table-note"><%= admin_marketing_sent_at(contact.marketing_1_email_sent_at) %></span>
+                    <%= button_to clear_marketing_email_1_admin_contact_path(contact),
+                        method: :delete,
+                        class: "admin-icon-action",
+                        form_class: "admin-icon-form",
+                        title: "Clear Marketing email 1 sent date",
+                        aria: { label: "Clear Marketing email 1 sent date" },
+                        data: { turbo_confirm: "Clear the Marketing email 1 sent date for this contact? They can be emailed again." } do %>
+                      <%= admin_trash_icon %>
+                    <% end %>
+                  </div>
                 <% else %>
                   <span class="admin-badge admin-badge--neutral">Not sent</span>
                 <% end %>
               </td>
               <td>
-                <% if reservation.marketing_2_email_sent_at.present? %>
-                  <span class="admin-badge admin-badge--positive">Sent</span><br>
-                  <span class="admin-table-note"><%= reservation.marketing_2_email_sent_at.in_time_zone.strftime("%b %-d, %Y %-l:%M %p") %></span>
+                <% if contact.marketing_2_email_sent_at.present? %>
+                  <div class="admin-table-inline">
+                    <span class="admin-table-note"><%= admin_marketing_sent_at(contact.marketing_2_email_sent_at) %></span>
+                    <%= button_to clear_marketing_email_2_admin_contact_path(contact),
+                        method: :delete,
+                        class: "admin-icon-action",
+                        form_class: "admin-icon-form",
+                        title: "Clear Marketing email 2 sent date",
+                        aria: { label: "Clear Marketing email 2 sent date" },
+                        data: { turbo_confirm: "Clear the Marketing email 2 sent date for this contact? They can be emailed again." } do %>
+                      <%= admin_trash_icon %>
+                    <% end %>
+                  </div>
                 <% else %>
                   <span class="admin-badge admin-badge--neutral">Not sent</span>
                 <% end %>
               </td>
               <td>
                 <div class="admin-table-actions">
-                  <%= link_to "Edit", edit_admin_prior_reservation_path(reservation), class: "admin-link" %>
-                  <%= button_to "Delete", admin_prior_reservation_path(reservation),
+                  <%= link_to "Edit", edit_admin_contact_path(contact), class: "admin-link" %>
+                  <%= button_to "Delete", admin_contact_path(contact),
                       method: :delete,
                       data: {
-                        turbo_confirm: "Are you sure you want to delete this prior reservation? This action cannot be undone.",
+                        turbo_confirm: "Are you sure you want to delete this contact? This action cannot be undone.",
                         turbo_method: :delete
                       },
                       class: "admin-link admin-link--danger" %>
@@ -115,24 +135,24 @@
 
     <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
 
-    <% if @prior_reservations.empty? %>
-      <p class="admin-empty">No prior reservations are available for marketing.</p>
+    <% if @contacts.empty? %>
+      <p class="admin-empty">No contacts are available for marketing.</p>
     <% end %>
 
     <% if @pagy.present? && @pagy.count.positive? %>
-      <div class="admin-danger-zone" id="delete-all-prior-reservations">
+      <div class="admin-danger-zone" id="delete-all-contacts">
         <div class="admin-toolbar">
           <div>
-            <h3 class="admin-toggle-title">Delete all prior reservations</h3>
+            <h3 class="admin-toggle-title">Delete all contacts</h3>
             <p class="admin-hint">
-              This permanently deletes <strong><%= pluralize(@pagy.count, "prior reservation") %></strong>. Type DELETE to confirm.
+              This permanently deletes <strong><%= pluralize(@pagy.count, "contact") %></strong>. Type DELETE to confirm.
             </p>
           </div>
 
           <details class="admin-destructive">
-            <summary class="admin-button admin-button--danger">Delete All Prior Reservations</summary>
+            <summary class="admin-button admin-button--danger">Delete All Contacts</summary>
             <div class="admin-destructive-body">
-              <%= form_with url: destroy_all_admin_prior_reservations_path, method: :delete, class: "admin-inline-form" do %>
+              <%= form_with url: destroy_all_admin_contacts_path, method: :delete, class: "admin-inline-form" do %>
                 <div class="admin-field">
                   <%= label_tag :confirmation, "Type DELETE to confirm", class: "admin-label" %>
                   <%= text_field_tag :confirmation, nil,
@@ -143,7 +163,7 @@
                       autocomplete: "off",
                       spellcheck: false %>
                 </div>
-                <%= submit_tag "Confirm Delete All Prior Reservations", class: "admin-button admin-button--danger" %>
+                <%= submit_tag "Confirm Delete All Contacts", class: "admin-button admin-button--danger" %>
               <% end %>
             </div>
           </details>

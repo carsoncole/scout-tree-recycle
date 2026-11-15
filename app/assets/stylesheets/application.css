@@ -1612,6 +1612,37 @@
   font-size: 0.82rem;
 }
 
+.admin-table-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admin-icon-form {
+  display: inline-flex;
+}
+
+.admin-icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem;
+  border: 0;
+  background: none;
+  color: var(--site-ink-soft);
+  cursor: pointer;
+  transition: color var(--site-transition);
+}
+
+.admin-icon-action:hover {
+  color: var(--site-error-text);
+}
+
+.admin-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
 .admin-badge {
   display: inline-flex;
   align-items: center;

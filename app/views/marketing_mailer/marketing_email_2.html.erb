@@ -12,9 +12,9 @@
               Reserve your Pickup Today
             </h1>
 
-            <% if @prior_reservation.name.present? && @prior_reservation.name.downcase != 'no name provided' %>
+            <% if @contact.name.present? && @contact.name.downcase != 'no name provided' %>
               <p style="font-family:'SF UI Display Medium',system,-apple-system,-webkit-system-font,'SFNSText','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif !important; box-sizing: border-box; line-height: 1.5; font-weight:400; font-size: 16px; font-weight: normal; margin: 0 0 20px; padding: 0;">
-                Hello <%= @prior_reservation.name %>,
+                Hello <%= @contact.name %>,
               </p>
             <% end %>
 
@@ -33,7 +33,7 @@
                     <table cellspacing="0" cellpadding="0" style='width:100%'>
                       <tr>
                         <td style="border-radius: 4px" bgcolor="#ED2939" style='text-align:center; width: 70%'>
-                          <a href="<%= root_url(prior_reservation_id: @prior_reservation.id) %>" target="_blank" style="padding: 8px 12px; border: 1px solid #ED2939;border-radius: 2px;font-family: Helvetica, Arial, sans-serif;font-size: 14px; color: #ffffff !important;text-decoration: none;font-weight:bold;display: inline-block;">
+                          <a href="<%= root_url(contact_id: @contact.id) %>" target="_blank" style="padding: 8px 12px; border: 1px solid #ED2939;border-radius: 2px;font-family: Helvetica, Arial, sans-serif;font-size: 14px; color: #ffffff !important;text-decoration: none;font-weight:bold;display: inline-block;">
                             Register for a tree pickup
                           </a>
                         </td>

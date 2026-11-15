@@ -45,7 +45,7 @@ class Setting < ApplicationRecord
   validates :home_page_header, presence: true, if: ->(setting) { setting.organization_name.present? }
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
   validates :marketing_email_cooldown_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :prior_reservation_retention_months, numericality: { only_integer: true, greater_than: 0 }
+  validates :contact_retention_months, numericality: { only_integer: true, greater_than: 0 }
 
   before_validation :apply_defaults
 
@@ -56,7 +56,7 @@ class Setting < ApplicationRecord
     self.phone_default_country = DEFAULT_PHONE_COUNTRY if phone_default_country.blank?
     self.email_batch_quantity = DEFAULT_EMAIL_BATCH_QUANTITY if email_batch_quantity.blank?
     self.marketing_email_cooldown_days = DEFAULT_MARKETING_COOLDOWN_DAYS if marketing_email_cooldown_days.blank?
-    self.prior_reservation_retention_months = DEFAULT_RETENTION_MONTHS if prior_reservation_retention_months.blank?
+    self.contact_retention_months = DEFAULT_RETENTION_MONTHS if contact_retention_months.blank?
   end
 
   def suggested_donation_amount

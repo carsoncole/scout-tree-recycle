@@ -2,6 +2,8 @@
 
 Tree Recycle is a Rails application for running a Christmas tree recycling fundraiser: public tree-pickup reservations and donations, an admin back office, and a driver pickups portal.
 
+Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of Troop 1564 on Bainbridge Island, WA.
+
 ## Stack
 
 - Ruby 3.4 / Rails 8.1

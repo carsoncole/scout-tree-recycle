@@ -1,0 +1,110 @@
+<%= render "admin/shared/page_header",
+           title: "Email Templates",
+           description: "Edit the marketing emails sent to contacts. Changes are saved as drafts until you publish them." do %>
+  <%= link_to "Back to Marketing", admin_marketing_index_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "New Template", new_admin_marketing_email_template_path, class: "admin-button" %>
+  <%= button_to "Load Default Templates",
+      install_defaults_admin_marketing_email_templates_path,
+      class: "admin-button admin-button--secondary",
+      data: { turbo_confirm: "Load the built-in default content? Existing templates will be refreshed as drafts, but published emails will not change until you publish them." } %>
+<% end %>
+
+<% if @missing_default_names.any? %>
+  <div class="admin-notice admin-notice--warning admin-notice--spaced" role="note">
+    <div>
+      <p class="admin-notice-title">Default templates are missing</p>
+      <p><%= @missing_default_names.map(&:titleize).to_sentence %> can be loaded from the built-in defaults. Use “Load Default Templates” above to create them.</p>
+    </div>
+  </div>
+<% end %>
+
+<div class="admin-notice admin-notice--spaced" role="note">
+  <div>
+    <p><strong>How templates work:</strong> Write normal HTML with a <code>&lt;style&gt;</code> block and Liquid variables such as <code>{{ contact.first_name }}</code>. CSS is inlined automatically when the email is sent. Publishing copies the current draft to the live version, so edits do not go out until you choose to publish.</p>
+  </div>
+</div>
+
+<section class="admin-panel">
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th scope="col">Template</th>
+          <th scope="col">Status</th>
+          <th scope="col">Subject</th>
+          <th scope="col">Last published</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @templates.each do |template| %>
+          <tr>
+            <td>
+              <strong><%= template.display_name %></strong>
+              <div class="admin-table-note"><%= template.name %></div>
+              <% if template.description.present? %>
+                <div class="admin-table-note"><%= template.description %></div>
+              <% end %>
+            </td>
+            <td>
+              <% if template.published? && template.draft_changes? %>
+                <span class="admin-badge admin-badge--warning">Published with draft changes</span>
+              <% elsif template.published? %>
+                <span class="admin-badge admin-badge--positive">Published</span>
+              <% else %>
+                <span class="admin-badge admin-badge--neutral">Draft</span>
+              <% end %>
+            </td>
+            <td>
+              <%= template.live_subject %>
+              <% if template.published? && template.draft_changes? %>
+                <div class="admin-table-note">Draft: <%= template.subject %></div>
+              <% end %>
+            </td>
+            <td>
+              <% if template.published_at.present? %>
+                <span class="admin-table-note"><%= admin_marketing_sent_at(template.published_at) %></span>
+              <% else %>
+                <span class="admin-table-note">Never published</span>
+              <% end %>
+            </td>
+            <td>
+              <div class="admin-table-actions">
+                <%= link_to "Edit", edit_admin_marketing_email_template_path(template), class: "admin-link" %>
+                <%= link_to "Preview", preview_admin_marketing_email_template_path(template, source: template.published? ? "published" : "draft"),
+                    class: "admin-link",
+                    target: "_blank",
+                    rel: "noopener" %>
+
+                <% if template.published? %>
+                  <%= button_to "Unpublish", unpublish_admin_marketing_email_template_path(template),
+                      method: :patch,
+                      class: "admin-link",
+                      form_class: "admin-inline-form",
+                      data: { turbo_confirm: "Unpublish this template? Marketing emails using it will stop sending until it is published again." } %>
+                <% else %>
+                  <%= button_to "Publish", publish_admin_marketing_email_template_path(template),
+                      method: :patch,
+                      class: "admin-link",
+                      form_class: "admin-inline-form" %>
+                <% end %>
+
+                <% unless template.default? %>
+                  <%= button_to "Delete", admin_marketing_email_template_path(template),
+                      method: :delete,
+                      class: "admin-link admin-link--danger",
+                      form_class: "admin-inline-form",
+                      data: { turbo_confirm: "Are you sure you want to delete this template? This action cannot be undone." } %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if @templates.empty? %>
+    <p class="admin-empty">No email templates have been created yet. Load the default templates to get started.</p>
+  <% end %>
+</section>

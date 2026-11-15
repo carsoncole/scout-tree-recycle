@@ -31,6 +31,21 @@ class ContactTest < ActiveSupport::TestCase
     assert_not Contact.find_by(id: contact.id)
   end
 
+  test "first name uses the first word of the name" do
+    assert_equal "Susan", contacts(:full).first_name
+  end
+
+  test "has name is false for blank and placeholder names" do
+    contact = contacts(:full)
+    assert contact.has_name?
+
+    contact.name = "no name provided"
+    assert_not contact.has_name?
+
+    contact.name = nil
+    assert_not contact.has_name?
+  end
+
   test "marketing email cooldown is active within the configured window" do
     contact = contacts(:full)
     contact.update(marketing_1_email_sent_at: 1.day.ago)

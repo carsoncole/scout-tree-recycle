@@ -38,7 +38,7 @@ Database connection settings live in `config/database.yml`.
 
 ## Configuration
 
-Most configuration is done in `/admin/settings` (organization, email, routing, SMS, donations, pickups). Secrets use Rails encrypted credentials (`bin/rails credentials:edit`). Optional integrations are configured through the settings UI.
+Most configuration is done in `/admin/settings` (event, organization, site content, email, routing, SMS, donations, pickups). The Site Content section controls the public home page header, image, and supporting copy. Secrets use Rails encrypted credentials (`bin/rails credentials:edit`). Optional integrations are configured through the settings UI.
 
 Set **Site URL** to the public HTTPS URL of the deployment. It is used for links in emails.
 
@@ -86,6 +86,17 @@ Without Stripe configured, the donation form still accepts cash/check or no-dona
 3. Verify **Site URL** is set so email links point at the public host.
 
 SMTP settings are stored in the database and applied to Action Mailer at runtime, so changes take effect without a restart. In development and test, mail is not delivered by SMTP.
+
+#### Marketing email templates
+
+Marketing emails are stored in the database and edited at `/admin/marketing_email_templates` (also linked from `/admin/marketing`). The two built-in campaigns are seeded from `db/email_templates/` and can be restored at any time with **Load Default Templates** or `bin/rails marketing_email_templates:install_defaults`.
+
+- Templates are rendered with [Liquid](https://shopify.github.io/liquid/), so admins can use variables like `{{ contact.first_name }}` without giving templates access to Ruby.
+- Styles are written in normal `<style>` blocks or classes and are inlined automatically by [premailer-rails](https://github.com/premailer/premailer-rails) when the email is delivered.
+- Edits save as a draft. Emails keep sending the last published version until **Publish Template** is clicked, so a bad edit cannot go live immediately.
+- Each template page shows the available variables, a preview using a real contact, and a **Send Test Email** button. A plain-text version is optional; if it is blank, one is generated from the HTML at send time.
+- The **View Email Images** page lists files directly in `app/assets/images` along with the Liquid variable generated from each filename.
+- Marketing sends and test sends require the **From Address**, **SMTP Address**, and **SMTP Port** in Settings. If any are missing, sending is blocked and the page lists what still needs to be configured.
 
 ### Amazon Location Service (geocoding and routing)
 

@@ -4,6 +4,14 @@ class MarketingMailerTest < ActionMailer::TestCase
   include ActionDispatch::Routing::UrlFor
   include Rails.application.routes.url_helpers
 
+  class FailingDelivery
+    def initialize(_settings = {}); end
+
+    def deliver!(_mail)
+      raise "delivery failed"
+    end
+  end
+
   setup do
     @default_url_options = { host: "example.com" }
   end
@@ -101,5 +109,133 @@ class MarketingMailerTest < ActionMailer::TestCase
     assert_emails 1 do
       mail.deliver_now
     end
+  end
+
+  test "uses the published template instead of the draft" do
+    Setting.instance.update(is_emailing_enabled: true)
+    template = marketing_email_templates(:marketing_email_1)
+    template.update!(subject: "Draft subject", body_html: "<p>Draft body</p>")
+
+    mail = MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1
+
+    assert_equal "Tree recycling January 6. Register today.", mail.subject
+    assert_match "Support Troop 100! - Tree Recycling", mail.body.encoded
+    assert_no_match "Draft body", mail.body.encoded
+  end
+
+  test "uses the published from address instead of the draft from address" do
+    Setting.instance.update(is_emailing_enabled: true)
+    template = marketing_email_templates(:marketing_email_1)
+    template.update!(from: "draft@example.com")
+
+    mail = MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1
+    assert_equal [ "example@example.com" ], mail.from
+
+    template.update_columns(published_from: "published@example.com")
+    mail = MarketingMailer.with(contact_id: contacts(:no_mobile).id).marketing_email_1
+    assert_equal [ "published@example.com" ], mail.from
+  end
+
+  test "marks the contact as sent only after successful delivery" do
+    Setting.instance.update(is_emailing_enabled: true)
+    contact = contacts(:full)
+
+    mail = MarketingMailer.with(contact_id: contact.id).marketing_email_1
+    assert_nil contact.reload.marketing_1_email_sent_at
+
+    assert_emails 1 do
+      mail.deliver_now
+    end
+
+    assert contact.reload.marketing_1_email_sent_at.present?
+  end
+
+  test "does not mark the contact as sent when delivery fails" do
+    Setting.instance.update(is_emailing_enabled: true)
+    contact = contacts(:full)
+    original_delivery_method = ActionMailer::Base.delivery_method
+    ActionMailer::Base.delivery_method = FailingDelivery
+
+    mail = MarketingMailer.with(contact_id: contact.id).marketing_email_1
+
+    assert_raises(RuntimeError) do
+      mail.deliver_now
+    end
+    assert_nil contact.reload.marketing_1_email_sent_at
+  ensure
+    ActionMailer::Base.delivery_method = original_delivery_method
+  end
+
+  test "does not send without a from address" do
+    Setting.instance.update(is_emailing_enabled: true, email_from_address: nil)
+
+    assert_no_emails do
+      MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1.deliver_now
+    end
+  end
+
+  test "does not send when the template is unpublished" do
+    Setting.instance.update(is_emailing_enabled: true)
+    marketing_email_templates(:marketing_email_1).unpublish!
+
+    assert_no_emails do
+      MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1.deliver_now
+    end
+  end
+
+  test "does not send when the template is missing" do
+    Setting.instance.update(is_emailing_enabled: true)
+    MarketingEmailTemplate.where(name: "marketing_email_1").delete_all
+
+    assert_no_emails do
+      MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1.deliver_now
+    end
+  end
+
+  test "raises when an explicit contact id is missing" do
+    Setting.instance.update(is_emailing_enabled: true)
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      MarketingMailer.with(contact_id: SecureRandom.uuid).marketing_email_1.deliver_now
+    end
+  end
+
+  test "includes a plain text alternative" do
+    Setting.instance.update(is_emailing_enabled: true)
+
+    mail = MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1
+
+    assert mail.multipart?
+    assert_includes mail.text_part.body.to_s, "Reserve My Tree Pickup: http://example.com"
+    assert_not_includes mail.text_part.body.to_s, "&amp;"
+  end
+
+  test "inlines template styles when delivered" do
+    Setting.instance.update(is_emailing_enabled: true)
+
+    MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1.deliver_now
+
+    delivered = ActionMailer::Base.deliveries.last
+    html = delivered.html_part&.body&.to_s || delivered.body.to_s
+    assert_includes html, "color: #123456"
+  end
+
+  test "test email sends the draft to the requested address" do
+    Setting.instance.update(is_emailing_enabled: false)
+    template = marketing_email_templates(:marketing_email_1)
+    template.update!(subject: "Draft subject", body_html: "<p>Draft body for {{ contact.name }}</p>")
+    contact = contacts(:full)
+
+    mail = MarketingMailer.with(
+      template_id: template.id,
+      contact_id: contact.id,
+      email: "qa@example.com",
+      source: "draft"
+    ).test_email
+
+    assert_equal [ "qa@example.com" ], mail.to
+    assert_equal "[TEST] Draft subject", mail.subject
+    assert_match "Draft body for Susan Banks", mail.body.encoded
+    assert_nil contact.reload.marketing_1_email_sent_at
   end
 end

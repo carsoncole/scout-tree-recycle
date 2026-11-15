@@ -1,0 +1,12 @@
+Tree Pickup Time!
+
+We noticed that you haven't signed up yet, so we are sending a friendly reminder that {{ setting.organization_name }} is picking up trees on {{ event.pickup_start_weekday }}.
+
+If you would like us to pick up a tree again this year, please register at {{ urls.registration }}. Once registered we will send you a confirmation email and then pick up your tree on {{ event.pickup_start_weekday }}.
+
+Thank You,
+{{ setting.organization_name }}
+
+{% if urls.unsubscribe != blank %}
+Unsubscribe: {{ urls.unsubscribe }}
+{% endif %}

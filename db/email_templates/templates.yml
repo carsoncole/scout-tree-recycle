@@ -1,0 +1,16 @@
+# Built-in marketing email templates. The migration seeds these, and admins can
+# reload them with "Load Default Templates" or the marketing_email_templates
+# rake task. HTML and text bodies live in the sibling files.
+marketing_email_1:
+  description: "First marketing email announcing that registration is open for past participants."
+  from: ""
+  subject: "Tree recycling {{ event.pickup_start_short }}. Register today."
+  html_file: marketing_email_1.html
+  text_file: marketing_email_1.text
+
+marketing_email_2:
+  description: "Reminder email for contacts who have not registered yet."
+  from: ""
+  subject: "Last call! Tree recycling {{ event.pickup_start_short }}. Register today."
+  html_file: marketing_email_2.html
+  text_file: marketing_email_2.text

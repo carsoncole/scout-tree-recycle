@@ -222,7 +222,7 @@
       <div class="admin-panel-header">
         <div>
           <h2 class="admin-panel-title">Site Content</h2>
-          <p class="admin-panel-description">Headline and supporting copy shown on the public site.</p>
+          <p class="admin-panel-description">Headline, home page image, and supporting copy shown on the public site.</p>
         </div>
       </div>
 
@@ -238,6 +238,23 @@
               <div class="admin-field admin-field--short admin-toolbar-field">
                 <%= text_field_tag "setting[home_page_header]", setting.home_page_header, class: "admin-input" %>
               </div>
+            </div>
+          </div>
+
+          <div class="admin-form-section">
+            <h3 class="admin-section-title">Home page image</h3>
+            <p class="admin-section-description">Choose the image shown at the top of the public home page. It is displayed at a fixed size.</p>
+
+            <div class="admin-field admin-field--spaced">
+              <%= label_tag "setting[home_page_image]", "Home Page Image", class: "admin-label" %>
+              <%= select_tag "setting[home_page_image]",
+                  options_for_select(MarketingEmailTemplate.available_images, setting.home_page_image_name),
+                  class: "admin-select" %>
+              <p class="admin-hint">Images come from app/assets/images. <%= link_to "View available images", admin_marketing_images_path, class: "admin-link" %>.</p>
+            </div>
+
+            <div class="admin-image-preview admin-image-preview--settings">
+              <%= image_tag setting.home_page_image_name, alt: "Home page image preview" %>
             </div>
           </div>
 

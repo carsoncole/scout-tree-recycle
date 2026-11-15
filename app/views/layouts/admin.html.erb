@@ -38,7 +38,7 @@
             <%= link_to "Donations", admin_donations_path,
                         class: admin_nav_class(controller_name == "donations") %>
             <%= link_to "Marketing", admin_marketing_index_path,
-                        class: admin_nav_class(controller_name == "marketing") %>
+                        class: admin_nav_class(%w[marketing marketing_email_templates marketing_images].include?(controller_name)) %>
             <%= link_to "Routes", admin_routes_path,
                         class: admin_nav_class(%w[routes zones].include?(controller_name)) %>
             <%= link_to admin_sms_path, class: admin_nav_class(controller_name == "sms") do %>

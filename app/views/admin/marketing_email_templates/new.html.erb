@@ -1,0 +1,45 @@
+<%= render "admin/shared/page_header",
+           title: "New Email Template",
+           description: "Create a template, then preview it with contact data before publishing." do %>
+  <%= link_to "Back to Templates", admin_marketing_email_templates_path, class: "admin-button admin-button--secondary" %>
+<% end %>
+
+<div data-controller="email-template-editor"
+     data-action="keydown->email-template-editor#handleKeydown focusin->email-template-editor#focus">
+  <div class="admin-template-layout">
+    <div>
+      <%= render "form", template: @template %>
+    </div>
+
+    <aside class="admin-template-sidebar">
+      <section class="admin-panel">
+        <div class="admin-panel-header">
+          <div>
+            <h2 class="admin-panel-title">Available variables</h2>
+            <p class="admin-panel-description">Click a variable to insert it into the editor you last focused.</p>
+          </div>
+        </div>
+
+        <div class="admin-panel-body">
+          <div class="admin-variable-list">
+            <% MarketingEmailTemplate.available_variables.each do |variable| %>
+              <button type="button"
+                      class="admin-variable-button"
+                      title="<%= variable[:description] %>"
+                      data-action="email-template-editor#insert"
+                      data-variable="{{ <%= variable[:name] %> }}">
+                {{ <%= variable[:name] %> }}
+              </button>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
+      <div class="admin-notice" role="note">
+        <div>
+          <p><strong>New templates start as drafts.</strong> After previewing, publish the template so marketing emails can use it.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

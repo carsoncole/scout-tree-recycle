@@ -26,4 +26,14 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       get root_url
       assert_response :success
     end
+
+    test "should use the configured home page image" do
+      image = MarketingEmailTemplate.available_images.first
+      Setting.instance.update!(home_page_image: image)
+
+      get root_url
+
+      assert_response :success
+      assert_includes response.body, File.basename(image, ".*")
+    end
 end

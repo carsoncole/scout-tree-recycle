@@ -1,6 +1,12 @@
 <%= render "admin/shared/page_header",
            title: "Marketing",
-           description: "Send campaign emails and review contacts." %>
+           description: "Send campaign emails and review contacts." do %>
+  <%= link_to "View Email Images", admin_marketing_images_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Manage Email Templates", admin_marketing_email_templates_path, class: "admin-button admin-button--secondary" %>
+<% end %>
+
+<% template_1 = @marketing_email_templates["marketing_email_1"] %>
+<% template_2 = @marketing_email_templates["marketing_email_2"] %>
 
 <div class="admin-stack">
   <div class="admin-grid admin-grid--two">
@@ -10,12 +16,39 @@
           <h2 class="admin-panel-title">Marketing email 1</h2>
           <p class="admin-panel-description"><%= @marketing_1_count %> emails remaining.</p>
         </div>
+        <div class="admin-table-inline">
+          <% if template_1.nil? %>
+            <span class="admin-badge admin-badge--danger">Template missing</span>
+          <% elsif template_1.published? && template_1.draft_changes? %>
+            <span class="admin-badge admin-badge--warning">Published with changes</span>
+          <% elsif template_1.published? %>
+            <span class="admin-badge admin-badge--positive">Published</span>
+          <% else %>
+            <span class="admin-badge admin-badge--warning">Draft - not sending</span>
+          <% end %>
+        </div>
       </div>
       <div class="admin-panel-body">
         <div class="admin-stack admin-stack--tight">
           <p class="admin-panel-description">
             Sent only once per contact. Contacts who already received Marketing email 1 are skipped, so nobody is emailed twice.
           </p>
+
+          <% if template_1.present? %>
+            <p class="admin-hint"><strong>Subject:</strong> <%= template_1.live_subject %></p>
+            <div class="admin-actions admin-actions--start">
+              <%= link_to "Edit Template", edit_admin_marketing_email_template_path(template_1), class: "admin-button admin-button--secondary admin-button--small" %>
+              <%= link_to "Preview", preview_admin_marketing_email_template_path(template_1, source: template_1.published? ? "published" : "draft"),
+                  class: "admin-button admin-button--secondary admin-button--small",
+                  target: "_blank",
+                  rel: "noopener" %>
+            </div>
+          <% else %>
+            <p class="admin-hint">The default template has not been loaded into the database yet.</p>
+            <%= button_to "Load Default Templates", install_defaults_admin_marketing_email_templates_path,
+                class: "admin-button admin-button--secondary admin-button--small" %>
+          <% end %>
+
           <%= button_to admin_send_marketing_email_1_path, class: "admin-button" do %>
             Send Marketing Email 1
           <% end %>
@@ -29,12 +62,39 @@
           <h2 class="admin-panel-title">Marketing email 2</h2>
           <p class="admin-panel-description"><%= @marketing_2_count %> emails remaining.</p>
         </div>
+        <div class="admin-table-inline">
+          <% if template_2.nil? %>
+            <span class="admin-badge admin-badge--danger">Template missing</span>
+          <% elsif template_2.published? && template_2.draft_changes? %>
+            <span class="admin-badge admin-badge--warning">Published with changes</span>
+          <% elsif template_2.published? %>
+            <span class="admin-badge admin-badge--positive">Published</span>
+          <% else %>
+            <span class="admin-badge admin-badge--warning">Draft - not sending</span>
+          <% end %>
+        </div>
       </div>
       <div class="admin-panel-body">
         <div class="admin-stack admin-stack--tight">
           <p class="admin-panel-description">
             Sent only once per contact. Contacts who already received Marketing email 2 are skipped, so nobody is emailed twice.
           </p>
+
+          <% if template_2.present? %>
+            <p class="admin-hint"><strong>Subject:</strong> <%= template_2.live_subject %></p>
+            <div class="admin-actions admin-actions--start">
+              <%= link_to "Edit Template", edit_admin_marketing_email_template_path(template_2), class: "admin-button admin-button--secondary admin-button--small" %>
+              <%= link_to "Preview", preview_admin_marketing_email_template_path(template_2, source: template_2.published? ? "published" : "draft"),
+                  class: "admin-button admin-button--secondary admin-button--small",
+                  target: "_blank",
+                  rel: "noopener" %>
+            </div>
+          <% else %>
+            <p class="admin-hint">The default template has not been loaded into the database yet.</p>
+            <%= button_to "Load Default Templates", install_defaults_admin_marketing_email_templates_path,
+                class: "admin-button admin-button--secondary admin-button--small" %>
+          <% end %>
+
           <%= button_to admin_send_marketing_email_2_path, class: "admin-button" do %>
             Send Marketing Email 2
           <% end %>

@@ -1,0 +1,192 @@
+<style>
+  .email-wrapper {
+    width: 100%;
+    border: 0;
+    border-collapse: collapse;
+  }
+
+  .email-wrapper > tbody > tr > td {
+    padding: 0;
+    border: 0;
+  }
+
+  .email-container {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+  }
+
+  .email-content {
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .email-logo {
+    margin: 16px auto 0;
+    text-align: center;
+  }
+
+  .email-logo img {
+    width: 140px;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .email-heading {
+    margin: 30px auto 70px;
+    color: #2d3748;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .email-text {
+    margin: 0 0 20px;
+    color: #4a5568;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .email-button-row {
+    width: 70%;
+    margin: 0 auto 30px;
+    text-align: center;
+  }
+
+  .email-button {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #ed2939;
+    border-radius: 2px;
+    background-color: #ed2939;
+    color: #ffffff;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .email-list {
+    margin: 0 0 20px;
+    padding-left: 1.2em;
+    color: #4a5568;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .email-list li {
+    margin-bottom: 6px;
+  }
+
+  .email-list strong {
+    font-weight: 800;
+  }
+
+  .email-sign-off {
+    margin: 0 0 60px;
+    color: #4a5568;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .email-footer {
+    margin: 0 0 25px;
+    color: #718096;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .email-footer a {
+    color: #718096;
+    text-decoration: none;
+  }
+
+  .email-footer-divider {
+    padding: 0 6px;
+    color: #a0aec0;
+  }
+</style>
+
+<table class="email-wrapper" role="presentation" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>
+      <table class="email-container" role="presentation">
+        <tr>
+          <td class="email-content">
+            <div class="email-logo">
+              <img src="{{ images.fleur_de_lis_2024_logo_4c_bc }}" alt="Scouting America" width="140">
+            </div>
+
+            <h1 class="email-heading">Reserve your Pickup Today</h1>
+
+            {% if contact.has_name %}
+              <p class="email-text">Hello {{ contact.name | escape }},</p>
+            {% endif %}
+
+            <p class="email-text">We hope this message finds you well. As the new year begins, we wanted to remind you that the tree pickup service provided by {{ setting.organization_name }} is scheduled for {{ event.pickup_start_weekday }}.</p>
+
+            <p class="email-text">It appears that you haven't signed up for this year's tree pickup yet, and we didn't want you to miss the opportunity. To ensure a hassle-free experience, please take a moment to register on our website:</p>
+
+            <table class="email-button-row" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="center">
+                  <table role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td bgcolor="#ed2939" align="center" style="border-radius: 2px;">
+                        <a class="email-button" href="{{ urls.registration }}" target="_blank">Register for a tree pickup</a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <p class="email-text">Here's a quick overview of the process:</p>
+
+            <ol class="email-list">
+              <li><strong>Register for a Tree Pickup:</strong> Simply visit our website and complete the registration process.</li>
+              <li><strong>Confirmation Email:</strong> Once registered, you will receive a confirmation email detailing the pickup logistics.</li>
+              <li><strong>Scheduled Pickup:</strong> Our team will be on standby to collect your tree on {{ event.pickup_start_weekday }}.</li>
+            </ol>
+
+            <p class="email-text">Please note that the deadline for reserving a pickup slot is {{ event.pickup_end_weekday }}.</p>
+
+            <p class="email-text">Your participation not only supports {{ setting.organization_name }} but also contributes to the environmentally friendly disposal of Christmas trees in our community.</p>
+
+            <p class="email-text">Thank you for considering our tree pickup service. We appreciate your support.</p>
+
+            <p class="email-sign-off">
+              Warm regards,<br>
+              {{ setting.organization_name }}
+            </p>
+
+            <div class="email-footer">
+              {% if urls.organization != blank %}
+                <a href="{{ urls.organization }}" target="_blank">{{ setting.organization_name }}</a>
+              {% else %}
+                {{ setting.organization_name }}
+              {% endif %}
+              {% if urls.unsubscribe != blank %}
+                <span class="email-footer-divider">|</span>
+                <a href="{{ urls.unsubscribe }}" target="_blank">Unsubscribe</a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

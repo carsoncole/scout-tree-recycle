@@ -116,6 +116,10 @@ GEM
     concurrent-ruby (1.3.8)
     connection_pool (3.0.2)
     crass (1.0.8)
+    css_parser (3.4.0)
+      addressable
+      base64
+      ssrf_filter (~> 1.5)
     csv (3.3.7)
     date (3.6.0)
     debug (1.11.1)
@@ -185,6 +189,9 @@ GEM
       zeitwerk (>= 2.6.18, < 3.0)
     language_server-protocol (3.17.0.6)
     lint_roller (1.1.0)
+    liquid (5.14.0)
+      bigdecimal
+      strscan (>= 3.1.1)
     logger (1.7.0)
     loofah (2.25.3)
       crass (~> 1.0.2)
@@ -263,6 +270,13 @@ GEM
     phonelib (0.11.0)
     pp (0.6.4)
       prettyprint
+    premailer (1.33.0)
+      addressable
+      css_parser (>= 3.1.0)
+    premailer-rails (1.12.0)
+      actionmailer (>= 3)
+      net-smtp
+      premailer (~> 1.7, >= 1.7.9)
     prettyprint (0.2.1)
     prism (2.1.0-aarch64-linux-gnu)
     prism (2.1.0-aarch64-linux-musl)
@@ -392,11 +406,13 @@ GEM
       net-sftp (>= 2.1.2)
       net-ssh (>= 2.8.0)
       ostruct
+    ssrf_filter (1.6.0)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stripe (21.0.0)
       bigdecimal
       logger
+    strscan (3.1.8)
     tailwindcss-rails (4.7.0)
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
@@ -466,10 +482,12 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
+  liquid
   mission_control-jobs
   pagy
   pg (~> 1.1)
   phonelib
+  premailer-rails
   propshaft
   puma (>= 5.0)
   rails (~> 8.1)

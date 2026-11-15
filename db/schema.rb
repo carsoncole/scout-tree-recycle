@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -81,6 +81,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["is_viewed"], name: "index_logs_on_is_viewed"
+  end
+
+  create_table "marketing_email_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.string "from"
+    t.string "subject", null: false
+    t.text "body_html", null: false
+    t.text "body_text"
+    t.string "published_from"
+    t.string "published_subject"
+    t.text "published_body_html"
+    t.text "published_body_text"
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_marketing_email_templates_on_name", unique: true
   end
 
   create_table "points", force: :cascade do |t|
@@ -215,6 +232,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_000001) do
     t.text "missing_tree_sms_message", default: "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
     t.text "missing_tree_sms_follow_up_message", default: "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
     t.string "phone_default_country", default: "US"
+    t.string "home_page_image", default: "fleur-de-lis-2024-logo-4c-bc.png", null: false
   end
 
   create_table "sms", force: :cascade do |t|

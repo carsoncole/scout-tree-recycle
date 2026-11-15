@@ -1,0 +1,220 @@
+<style>
+  .email-wrapper {
+    width: 100%;
+    border: 0;
+    border-collapse: collapse;
+  }
+
+  .email-wrapper > tbody > tr > td {
+    padding: 0;
+    border: 0;
+  }
+
+  .email-container {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+  }
+
+  .email-content {
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .email-logo {
+    margin: 16px auto 0;
+    text-align: center;
+  }
+
+  .email-logo img {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .email-heading {
+    margin: 30px auto 60px;
+    color: #2d3748;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .email-text {
+    margin: 0 0 25px;
+    color: #4a5568;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .email-highlight {
+    margin: 30px 0;
+    padding: 30px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    text-align: center;
+  }
+
+  .email-highlight-title {
+    margin: 0 0 15px;
+    color: #ffffff;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  .email-highlight-text {
+    margin: 0;
+    color: #ffffff;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    opacity: 0.9;
+  }
+
+  .email-details {
+    margin: 30px 0;
+    padding: 25px;
+    border-radius: 8px;
+    background-color: #f7fafc;
+  }
+
+  .email-details-title {
+    margin: 0 0 15px;
+    color: #2d3748;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .email-details p {
+    margin: 0 0 10px;
+    color: #4a5568;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .email-button-row {
+    margin-bottom: 30px;
+  }
+
+  .email-button {
+    display: inline-block;
+    padding: 16px 24px;
+    border: 1px solid #48bb78;
+    border-radius: 8px;
+    background-color: #48bb78;
+    color: #ffffff;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .email-sign-off {
+    margin: 0 0 60px;
+    color: #4a5568;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .email-footer {
+    margin: 0 0 25px;
+    color: #718096;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .email-footer a {
+    color: #718096;
+    text-decoration: none;
+  }
+
+  .email-footer-divider {
+    padding: 0 6px;
+    color: #a0aec0;
+  }
+</style>
+
+<table class="email-wrapper" role="presentation" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>
+      <table class="email-container" role="presentation">
+        <tr>
+          <td class="email-content">
+            <div class="email-logo">
+              <img src="{{ images.tree_scout }}" alt="Tree Recycling Event" width="300">
+            </div>
+
+            <h1 class="email-heading">🌲 Support {{ setting.organization_name }}! - Tree Recycling 🌲</h1>
+
+            {% if contact.has_name %}
+              <p class="email-text">Hi {{ contact.name | escape }}! 👋</p>
+            {% endif %}
+
+            <p class="email-text">Great news! Our annual tree recycling event is back, and we'd love to have you join us again! 🎉</p>
+
+            <p class="email-text">Since you've participated in our tree recycling program before, we wanted to give you a heads up that registration is now open for {{ event.pickup_start_weekday }}!</p>
+
+            <div class="email-highlight">
+              <h2 class="email-highlight-title">Support {{ setting.organization_name }}!</h2>
+              <p class="email-highlight-text">Your participation helps fund our youth programs and environmental initiatives!</p>
+            </div>
+
+            <div class="email-details">
+              <h3 class="email-details-title">📅 Event Details</h3>
+              <p><strong>Date:</strong> {{ event.pickup_start_date }}</p>
+              <p><strong>Pickup Starts:</strong> {{ event.pickup_start_time }}</p>
+            </div>
+
+            <p class="email-text">Your participation not only helps us recycle Christmas trees responsibly but also directly supports {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }} when you register, which goes directly to funding summer camps and other outdoor activities! 🎯</p>
+
+            <table class="email-button-row" role="presentation" width="100%" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="center">
+                  <table role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td bgcolor="#48bb78" align="center" style="border-radius: 8px;">
+                        <a class="email-button" href="{{ urls.registration }}" target="_blank">🌱 Reserve My Tree Pickup</a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <p class="email-text">We can't wait to see you again this year! Your support makes a real difference in our community. 🌟</p>
+
+            <p class="email-sign-off">
+              Thank you for your support! 🌲<br>
+              <strong>{{ setting.organization_name }}</strong>
+            </p>
+
+            <div class="email-footer">
+              {% if urls.organization != blank %}
+                <a href="{{ urls.organization }}" target="_blank">{{ setting.organization_name }}</a>
+              {% else %}
+                {{ setting.organization_name }}
+              {% endif %}
+              {% if urls.unsubscribe != blank %}
+                <span class="email-footer-divider">|</span>
+                <a href="{{ urls.unsubscribe }}" target="_blank">Unsubscribe</a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

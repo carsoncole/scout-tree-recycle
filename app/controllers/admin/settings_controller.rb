@@ -80,6 +80,7 @@ class Admin::SettingsController < Admin::BaseController
       :organization_name,
       :organization_url,
       :site_url,
+      :home_page_image,
       :time_zone,
       :default_country,
       :phone_default_country,

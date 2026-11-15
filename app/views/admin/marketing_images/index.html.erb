@@ -1,0 +1,44 @@
+<%= render "admin/shared/page_header",
+           title: "Email Images",
+           description: "Images stored directly in app/assets/images that can be used in email templates." do %>
+  <%= link_to "Back to Marketing", admin_marketing_index_path, class: "admin-button admin-button--secondary" %>
+<% end %>
+
+<div class="admin-notice admin-notice--spaced" role="note">
+  <div>
+    <p><strong>Using an image:</strong> use its Liquid variable in the template HTML, for example <code>&lt;img src="{{ images.tree }}" alt="Tree"&gt;</code>. Every image in this folder gets a variable generated from its filename: lowercase, with spaces, hyphens, and other punctuation replaced by underscores.</p>
+  </div>
+</div>
+
+<% if @image_filenames.any? %>
+  <div class="admin-grid admin-grid--three">
+    <% @image_filenames.each do |filename| %>
+      <% variable = MarketingEmailTemplate.image_variable_for(filename) %>
+
+      <section class="admin-panel">
+        <div class="admin-image-preview">
+          <%= image_tag filename, alt: filename %>
+        </div>
+
+        <div class="admin-panel-body">
+          <div class="admin-stack admin-stack--tight">
+            <p class="admin-image-name"><%= filename %></p>
+
+            <% if variable.present? %>
+              <div class="admin-field">
+                <span class="admin-hint">Liquid variable</span>
+                <code class="admin-image-variable">{{ <%= variable %> }}</code>
+              </div>
+            <% else %>
+              <span class="admin-badge admin-badge--neutral">No Liquid variable</span>
+            <% end %>
+
+            <%= link_to "Open image", image_path(filename), class: "admin-link", target: "_blank", rel: "noopener" %>
+          </div>
+        </div>
+      </section>
+    <% end %>
+  </div>
+<% else %>
+  <p class="admin-empty">No images were found directly in app/assets/images.</p>
+<% end %>

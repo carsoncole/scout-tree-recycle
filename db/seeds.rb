@@ -5,6 +5,9 @@ require 'faker'
 # Settings
 Setting.delete_all
 
+# Marketing email templates (built-in defaults)
+MarketingEmailTemplate.install_defaults!
+
 # Users
 User.destroy_all
 User.create(email: "admin@example.com", password: "password1234", role: "admin")

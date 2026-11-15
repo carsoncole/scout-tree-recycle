@@ -2,8 +2,12 @@ class SendMarketingEmail1Job < ApplicationJob
   queue_as :default
 
   def perform(*args)
-    return unless Setting.instance.is_emailing_enabled?
-    contacts = Contact.where(marketing_1_email_sent_at: nil).order(:email).limit(Setting.instance.email_batch_quantity)
+    setting = Setting.instance
+    return unless setting&.is_emailing_enabled?
+    return unless setting.email_configured?
+    return unless MarketingEmailTemplate.published.exists?(name: "marketing_email_1")
+
+    contacts = Contact.where(marketing_1_email_sent_at: nil).order(:email).limit(setting.email_batch_quantity)
     contacts.each do |contact|
       MarketingMailer.with(contact_id: contact.id).marketing_email_1.deliver_later
     end

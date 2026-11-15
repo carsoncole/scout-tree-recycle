@@ -141,6 +141,54 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal true, settings[:enable_starttls_auto]
   end
 
+  test "home page image falls back to the default for a new setting" do
+    assert_equal Setting::DEFAULT_HOME_PAGE_IMAGE, Setting.new.home_page_image_name
+  end
+
+  test "home page image must be an available image" do
+    setting = Setting.instance
+    setting.home_page_image = "missing.png"
+
+    assert_not setting.valid?
+    assert_includes setting.errors[:home_page_image], "is not an available image"
+  end
+
+  test "home page image accepts an available image" do
+    setting = Setting.instance
+    image = MarketingEmailTemplate.available_images.first
+    setting.home_page_image = image
+
+    assert setting.valid?
+    assert_equal image, setting.home_page_image_name
+  end
+
+  test "email_configuration_alert lists missing email settings" do
+    setting = Setting.instance
+    setting.update(email_from_address: nil, smtp_address: nil, smtp_port: nil)
+
+    alert = setting.email_configuration_alert(purpose: "sending marketing emails")
+
+    assert_includes alert, "Email From Address"
+    assert_includes alert, "SMTP Address"
+    assert_includes alert, "SMTP Port"
+    assert_includes alert, "before sending marketing emails"
+
+    setting.update(email_from_address: "sender@example.com", smtp_address: "smtp.example.com", smtp_port: 587)
+
+    assert_nil setting.email_configuration_alert
+  end
+
+  test "email_from_configured? only requires a from address" do
+    setting = Setting.instance
+    setting.update(email_from_address: nil)
+
+    assert_not setting.email_from_configured?
+
+    setting.update(email_from_address: "sender@example.com")
+
+    assert setting.email_from_configured?
+  end
+
   test "stripe_configured? requires secret key and price id" do
     setting = Setting.instance
     setting.update(stripe_secret_key: nil, stripe_price_id: nil)

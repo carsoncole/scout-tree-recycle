@@ -27,6 +27,15 @@ class Contact < ApplicationRecord
     Contact.where("created_at < ?", retention_months.months.ago).destroy_all
   end
 
+  def first_name
+    name.to_s.strip.split(/\s+/).first.to_s
+  end
+
+  def has_name?
+    cleaned_name = name.to_s.strip
+    cleaned_name.present? && cleaned_name.downcase != "no name provided"
+  end
+
   def marketing_email_cooldown_active?
     return false if marketing_1_email_sent_at.blank?
 

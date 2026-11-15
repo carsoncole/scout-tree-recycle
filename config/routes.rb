@@ -89,8 +89,23 @@ Rails.application.routes.draw do
 
     # Marketing
     get "marketing/index"
+    get "marketing/images", to: "marketing_images#index", as: :marketing_images
     post "send-marketing-email-1", to: "marketing#send_marketing_email_1", as: :send_marketing_email_1
     post "send-marketing-email-2", to: "marketing#send_marketing_email_2", as: :send_marketing_email_2
+
+    resources :marketing_email_templates, except: [ :show ] do
+      member do
+        get :preview
+        post :send_test
+        patch :publish
+        patch :unpublish
+        post :restore_default
+      end
+
+      collection do
+        post :install_defaults
+      end
+    end
 
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end

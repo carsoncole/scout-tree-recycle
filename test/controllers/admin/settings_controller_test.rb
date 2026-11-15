@@ -87,6 +87,16 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Follow-up custom", setting.missing_tree_sms_follow_up_message
   end
 
+  test "should update the home page image" do
+    sign_in
+    image = MarketingEmailTemplate.available_images.first
+
+    patch admin_setting_path(Setting.first), params: { setting: { home_page_image: image } }
+
+    assert_redirected_to admin_settings_path
+    assert_equal image, Setting.first.reload.home_page_image
+  end
+
   test "should update site and organization settings" do
     sign_in
 

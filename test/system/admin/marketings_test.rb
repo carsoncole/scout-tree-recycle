@@ -18,10 +18,33 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     assert_text "Sent only once per contact. Contacts who already received Marketing email 2 are skipped"
   end
 
+  test "viewing the available email images" do
+    image = MarketingEmailTemplate.available_images.first
+    variable = MarketingEmailTemplate.image_variable_for(image)
+
+    visit admin_marketing_index_url
+    click_on "View Email Images"
+
+    assert_selector "h1", text: "Email Images"
+    assert_text image
+    assert_text variable
+  end
+
   test "index notes that contacts are removed for confirmed reservations" do
     visit admin_marketing_index_url
 
     assert_text "Any contacts with the same email as a newly confirmed reservation are removed automatically"
+  end
+
+  test "index shows a flash when email settings are incomplete" do
+    Setting.instance.update!(is_emailing_enabled: true, email_from_address: nil, smtp_address: nil, smtp_port: nil)
+
+    visit admin_marketing_index_url
+
+    assert_text "Email settings are incomplete."
+    assert_text "Email From Address"
+    assert_text "SMTP Address"
+    assert_text "SMTP Port"
   end
 
   test "adding a contact" do

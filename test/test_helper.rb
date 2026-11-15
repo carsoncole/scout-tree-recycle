@@ -68,5 +68,14 @@ module ActiveSupport
         aws_location_index_name: "tree_recycle"
       )
     end
+
+    def configure_email!(enabled: true)
+      Setting.instance.update!(
+        is_emailing_enabled: enabled,
+        email_from_address: "example@example.com",
+        smtp_address: "smtp.example.com",
+        smtp_port: 587
+      )
+    end
   end
 end

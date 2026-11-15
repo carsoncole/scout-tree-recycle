@@ -477,6 +477,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "section.admin-panel", text: "Site Content" do
       assert_field "Header/Tab Title"
+      assert_field "Home Page Image"
       assert_field "About"
       assert_field "On Day of Pickup Instructions"
       assert_button "Save Site Content"
@@ -503,6 +504,23 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_field "Header/Tab Title", with: "Home Page Header"
     assert_field "About", with: "About Event Description"
     assert_field "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
+  end
+
+  test "site content panel updates the home page image" do
+    image = MarketingEmailTemplate.available_images.first
+
+    visit admin_settings_url
+    within "section.admin-panel", text: "Site Content" do
+      select image, from: "Home Page Image"
+      click_on "Save Site Content"
+    end
+
+    assert_text "Settings were successfully updated"
+    assert_equal image, Setting.instance.reload.home_page_image
+
+    visit root_url
+    src = find("img.site-hero-image")[:src]
+    assert_includes src, File.basename(image, ".*")
   end
 
   test "update event settings" do

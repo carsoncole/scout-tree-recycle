@@ -1,0 +1,29 @@
+🌲 Support {{ setting.organization_name }}! - Tree Recycling 🌲
+
+{% if contact.has_name %}
+Hi {{ contact.name }}! 👋
+
+{% endif %}
+Great news! Our annual tree recycling event is back, and we'd love to have you join us again! 🎉
+
+Since you've participated in our tree recycling program before, we wanted to give you a heads up that registration is now open for {{ event.pickup_start_weekday }}!
+
+Support {{ setting.organization_name }}!
+Your participation helps fund our youth programs and environmental initiatives!
+
+📅 Event Details
+Date: {{ event.pickup_start_date }}
+Pickup Starts: {{ event.pickup_start_time }}
+
+Your participation not only helps us recycle Christmas trees responsibly but also directly supports {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }} when you register, which goes directly to funding summer camps and other outdoor activities! 🎯
+
+🌱 Reserve My Tree Pickup: {{ urls.registration }}
+
+We can't wait to see you again this year! Your support makes a real difference in our community. 🌟
+
+Thank you for your support! 🌲
+{{ setting.organization_name }}
+
+{% if urls.unsubscribe != blank %}
+Unsubscribe: {{ urls.unsubscribe }}
+{% endif %}

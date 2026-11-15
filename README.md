@@ -40,9 +40,64 @@ Database connection settings live in `config/database.yml`.
 
 Most configuration is done in `/admin/settings` (organization, email, routing, SMS, donations, pickups). Secrets use Rails encrypted credentials (`bin/rails credentials:edit`). Optional integrations are configured through the settings UI.
 
+Set **Site URL** to the public HTTPS URL of the deployment. It is used for links in emails.
+
+## External services
+
+Every integration below is optional and can be enabled or disabled independently in `/admin/settings`. When one is disabled, the related feature is hidden or falls back to a manual workflow (for example, reservations are routed by hand instead of automatically).
+
+| Service | Used for | What you need | Where to get it |
+|---------|----------|---------------|-----------------|
+| [Twilio](https://www.twilio.com) | Outgoing SMS notifications and incoming replies | Account SID, Auth Token, an SMS-capable From number | Twilio Console |
+| [Stripe](https://stripe.com) | Online donations and card payments | Secret key (test or live) and a one-time Price ID | Stripe Dashboard |
+| SMTP email provider | Reservation confirmations, password resets, marketing, and log emails | Host, port, username, password, authentication, encryption, From address | Your email provider (e.g. Postmark, SendGrid, Mailgun, Google Workspace) |
+| [Amazon Location Service](https://aws.amazon.com/location/) | Address geocoding and automatic pickup routing | Access key ID, secret access key, region, and a Place Index name | AWS Console / IAM |
+
+### Twilio (SMS)
+
+1. Create a Twilio account and buy or provision a phone number with SMS capability.
+2. In `/admin/settings` → SMS, enable SMS and enter the **Account SID**, **Auth Token**, and **From Number** (E.164 format, e.g. `+15555550123`).
+3. On the Twilio number's messaging configuration, set the webhook for incoming messages to:
+
+   ```text
+   https://your-host/api/v1/sms/reply
+   ```
+
+   Twilio sends `From` and `Body` parameters; replies appear in the admin SMS inbox. SMS signature verification is not implemented yet.
+
+### Stripe (donations)
+
+1. Create a Stripe product/price for donations. A one-time price is expected; checkout uses the configured Price ID.
+2. In `/admin/settings` → Donations, enable online donations and enter the **Secret Key** and **Price ID** (`price_...`). Use test keys while developing.
+3. Add a webhook endpoint in Stripe pointing to:
+
+   ```text
+   https://your-host/api/v1/stripe-webhook
+   ```
+
+   Subscribe to the events the app processes: `checkout.session.completed` (records the donation and links it to the reservation), `charge.refunded`/`charge.updated` (refunds), and `payment_intent.*` (in-person Stripe Terminal charges). Stripe signature verification is not implemented yet.
+
+Without Stripe configured, the donation form still accepts cash/check or no-donation choices.
+
+### Email (SMTP)
+
+1. Obtain SMTP credentials from your email provider or transactional email service.
+2. In `/admin/settings` → Email, enable emailing and enter the **From Address** plus SMTP **address**, **port**, **username**, **password**, **authentication** (`plain`, `login`, or `cram_md5`), and **encryption** (`STARTTLS` is recommended; `TLS` and `None` are also supported).
+3. Verify **Site URL** is set so email links point at the public host.
+
+SMTP settings are stored in the database and applied to Action Mailer at runtime, so changes take effect without a restart. In development and test, mail is not delivered by SMTP.
+
+### Amazon Location Service (geocoding and routing)
+
+1. Create a [Place Index](https://docs.aws.amazon.com/location/latest/developerguide/places.html) in Amazon Location Service.
+2. Create an IAM user with permission to use Location Service place indexes, and generate an access key.
+3. In `/admin/settings` → Location Services, enable automatic routing and enter the **Access Key ID**, **Secret Access Key**, **Region** (default `us-west-2`), and **Place Index Name**.
+
+Addresses are geocoded with the Place Index and assigned to routes by zone. If Location Services is not configured or routing is disabled, reservations must be assigned to routes manually in the admin.
+
 ## Deployment
 
-Deploy as a Docker container with Kamal: configure `config/deploy.yml` and `.kamal/secrets`, then run `kamal setup` and `kamal deploy`.
+Deploy as a Docker container with Kamal: configure `config/deploy.yml` and `.kamal/secrets`, then run `kamal setup` and `kamal deploy`. You will need a PostgreSQL database, a container registry, and the Rails master key (`RAILS_MASTER_KEY`) available to the container.
 
 ## Testing
 

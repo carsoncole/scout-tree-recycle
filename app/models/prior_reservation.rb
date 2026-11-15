@@ -1,4 +1,17 @@
 class PriorReservation < ApplicationRecord
+  IMPORTABLE_FIELDS = {
+    "name" => "Name",
+    "email" => "Email",
+    "mobile" => "Mobile",
+    "street" => "Street"
+  }.freeze
+
+  IMPORTABLE_FIELD_ALIASES = {
+    "name" => %w[full_name customer_name customer],
+    "email" => %w[email_address e_mail],
+    "mobile" => %w[phone phone_number mobile_phone cell cell_phone],
+    "street" => %w[address street_address pickup_address]
+  }.freeze
   validates :name, :email, presence: true
   validates :email, uniqueness: true
 

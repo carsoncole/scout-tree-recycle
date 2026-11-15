@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["file", "mapping", "error"]
+  static targets = ["file", "mapping", "error", "matchStatus"]
   static values = { fields: Array }
 
   connect() {
@@ -17,18 +17,27 @@ export default class extends Controller {
 
     this.errorTarget.hidden = true
     this.errorTarget.textContent = ""
+    if (this.hasMatchStatusTarget) {
+      this.matchStatusTarget.textContent = "Matching fields found: none yet."
+    }
 
     file.text().then((text) => {
       const headers = this.parseHeader(text)
       if (headers.length === 0 || headers.every((h) => h === "")) {
         this.renderError("The selected file does not contain a readable header row.")
         this.mappingTarget.innerHTML = ""
+        if (this.hasMatchStatusTarget) {
+          this.matchStatusTarget.textContent = "Matching fields found: none yet."
+        }
         return
       }
       this.renderMapping(headers)
     }).catch(() => {
       this.renderError("Could not read the selected file.")
       this.mappingTarget.innerHTML = ""
+      if (this.hasMatchStatusTarget) {
+        this.matchStatusTarget.textContent = "Matching fields found: none yet."
+      }
     })
   }
 
@@ -120,9 +129,24 @@ export default class extends Controller {
       })
 
       select.value = this.autoSelect(header)
+      select.addEventListener("change", () => this.updateMatchStatus())
       field.appendChild(select)
       this.mappingTarget.appendChild(field)
     })
+    this.updateMatchStatus()
+  }
+
+  updateMatchStatus() {
+    if (!this.hasMatchStatusTarget) return
+    const selected = Array.from(this.mappingTarget.querySelectorAll("select"))
+      .map((select) => select.value)
+      .filter(Boolean)
+    const found = this.fieldsValue
+      .filter((field) => selected.includes(field.value))
+      .map((field) => field.label)
+    this.matchStatusTarget.textContent = found.length
+      ? `Matching fields found: ${found.join(", ")}.`
+      : "Matching fields found: none yet."
   }
 
   renderEmpty() {

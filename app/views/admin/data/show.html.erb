@@ -3,11 +3,30 @@
            description: "Import and export reservation data as CSV." %>
 
 <div class="admin-stack">
+  <% if flash[:import_errors].present? %>
+    <section class="admin-panel">
+      <div class="admin-panel-header">
+        <div>
+          <h2 class="admin-panel-title">Import row errors</h2>
+          <p class="admin-panel-description">The following rows could not be imported.</p>
+        </div>
+      </div>
+      <div class="admin-panel-body">
+        <ul class="admin-list">
+          <% Array(flash[:import_errors]).each do |row_error| %>
+            <% row_number = row_error.is_a?(Hash) ? (row_error[:row] || row_error["row"]) : nil %>
+            <% messages = row_error.is_a?(Hash) ? Array(row_error[:errors] || row_error["errors"]) : [row_error.to_s] %>
+            <li><%= "Row #{row_number}: " if row_number.present? %><%= messages.join(", ") %></li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+  <% end %>
   <section class="admin-panel">
     <div class="admin-panel-header">
       <div>
-        <h2 class="admin-panel-title">Import reservations</h2>
-        <p class="admin-panel-description">Upload a CSV file, map its columns to reservation fields, and import.</p>
+        <h2 class="admin-panel-title">Import contacts</h2>
+        <p class="admin-panel-description">Upload a CSV file, map its columns to contact fields, and import.</p>
       </div>
     </div>
     <div class="admin-panel-body">
@@ -35,8 +54,8 @@
                     class: "admin-form",
                     data: {
                       controller: "csv-mapping",
-                      csv_mapping_fields_value: Reservation::IMPORTABLE_FIELDS.map do |value, label|
-                        { value: value, label: label, aliases: Reservation::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
+                      csv_mapping_fields_value: PriorReservation::IMPORTABLE_FIELDS.map do |value, label|
+                        { value: value, label: label, aliases: PriorReservation::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
                       end.to_json
                     } do |f| %>
         <div class="admin-form-section admin-form-section--flush">
@@ -44,7 +63,9 @@
             <%= label_tag :file, "CSV file", class: "admin-label" %>
             <%= file_field_tag :file, accept: ".csv,text/csv", class: "admin-input",
                   data: { csv_mapping_target: "file", action: "change->csv-mapping#load" } %>
-            <p class="admin-hint">Upload a CSV with a header row. Maximum 5 MB.</p>
+            <p class="admin-hint">Upload a CSV with a header row. These fields are required: name, email, mobile, street. Maximum 5 MB.</p>
+
+            <p class="admin-hint" data-csv-mapping-target="matchStatus">Matching fields found: none yet.</p>
           </div>
 
           <p class="admin-error-text" data-csv-mapping-target="error" hidden></p>

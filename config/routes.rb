@@ -54,7 +54,11 @@ Rails.application.routes.draw do
     end
     resources :zones, except: [ :show ]
     resources :users, except: [ :show ]
-    resources :prior_reservations, only: [ :destroy ]
+    resources :prior_reservations, only: [ :new, :create, :edit, :update, :destroy ] do
+      collection do
+        delete :destroy_all
+      end
+    end
     resources :donations, only: [ :index, :show, :destroy ]
 
     # SMS

@@ -13,7 +13,7 @@ class ReservationTest < ActiveSupport::TestCase
     reservation = Reservation.new(name: "Imported", street: "1 Main", city: "New York", state: "NY", country: "United States", email: "imported.status@example.com", status: "imported")
     assert reservation.valid?
     assert reservation.imported?
-    assert_equal "Imported", reservation.routing_status
+    assert_nil reservation.routing_status
   end
 
   test "migrate_reservations migrates imported reservations" do

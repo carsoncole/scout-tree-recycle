@@ -8,7 +8,7 @@ class Admin::DataTest < ApplicationSystemTestCase
   test "visiting the data page" do
     visit admin_data_url
     assert_selector "h1", text: "Data"
-    assert_text "Import reservations"
+    assert_text "Import contacts"
     assert_text "Export reservations"
     assert_link "System Logs"
   end
@@ -21,11 +21,7 @@ class Admin::DataTest < ApplicationSystemTestCase
     selects[0].select("Name")
     selects[1].select("Email")
     selects[2].select("Street")
-    selects[3].select("City")
-    selects[4].select("State")
-    selects[5].select("ZIP")
-    selects[6].select("Status")
     click_button "Import Reservations CSV"
-    assert_text "Imported 1 reservation"
+    assert_text "Imported 2 reservation"
   end
 end

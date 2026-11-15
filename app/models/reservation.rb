@@ -245,7 +245,7 @@ class Reservation < ApplicationRecord
   end
 
   def routing_status
-    return "Imported" if imported?
+    return nil if imported?
 
     if route # Successfully routed
       route.name

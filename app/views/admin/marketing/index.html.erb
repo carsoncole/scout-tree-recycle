@@ -12,9 +12,14 @@
         </div>
       </div>
       <div class="admin-panel-body">
-        <%= button_to admin_send_marketing_email_1_path, class: "admin-button" do %>
-          Send Marketing Email 1
-        <% end %>
+        <div class="admin-stack admin-stack--tight">
+          <p class="admin-panel-description">
+            Sent only once per contact. Contacts who already received Marketing email 1 are skipped, so nobody is emailed twice.
+          </p>
+          <%= button_to admin_send_marketing_email_1_path, class: "admin-button" do %>
+            Send Marketing Email 1
+          <% end %>
+        </div>
       </div>
     </section>
 
@@ -26,19 +31,31 @@
         </div>
       </div>
       <div class="admin-panel-body">
-        <%= button_to admin_send_marketing_email_2_path, class: "admin-button" do %>
-          Send Marketing Email 2
-        <% end %>
+        <div class="admin-stack admin-stack--tight">
+          <p class="admin-panel-description">
+            Sent only once per contact. Contacts who already received Marketing email 2 are skipped, so nobody is emailed twice.
+          </p>
+          <%= button_to admin_send_marketing_email_2_path, class: "admin-button" do %>
+            Send Marketing Email 2
+          <% end %>
+        </div>
       </div>
     </section>
+  </div>
+
+  <div class="admin-notice" role="note">
+    <div>
+      <p><strong>Note:</strong> Any prior reservations with the same email as a newly confirmed reservation are removed automatically, so a row may disappear from this table once that contact reserves again.</p>
+    </div>
   </div>
 
   <section class="admin-panel">
     <div class="admin-panel-header">
       <div>
-        <h2 class="admin-panel-title">Prior Reservations</h2>
-        <p class="admin-panel-description">Contacts carried over from previous events.</p>
+        <h2 class="admin-panel-title">Prior Reservations/Contacts</h2>
+        <p class="admin-panel-description">Contacts from prior reservations and imported contacts. <%= link_to "Import data", admin_data_path, class: "admin-link" %></p>
       </div>
+      <%= link_to "New Contact", new_admin_prior_reservation_path, class: "admin-button" %>
     </div>
 
     <div class="admin-table-wrap">
@@ -64,26 +81,31 @@
               </td>
               <td>
                 <% if reservation.marketing_1_email_sent_at.present? %>
-                  <span class="admin-badge admin-badge--positive">Sent</span>
+                  <span class="admin-badge admin-badge--positive">Sent</span><br>
+                  <span class="admin-table-note"><%= reservation.marketing_1_email_sent_at.in_time_zone.strftime("%b %-d, %Y %-l:%M %p") %></span>
                 <% else %>
                   <span class="admin-badge admin-badge--neutral">Not sent</span>
                 <% end %>
               </td>
               <td>
                 <% if reservation.marketing_2_email_sent_at.present? %>
-                  <span class="admin-badge admin-badge--positive">Sent</span>
+                  <span class="admin-badge admin-badge--positive">Sent</span><br>
+                  <span class="admin-table-note"><%= reservation.marketing_2_email_sent_at.in_time_zone.strftime("%b %-d, %Y %-l:%M %p") %></span>
                 <% else %>
                   <span class="admin-badge admin-badge--neutral">Not sent</span>
                 <% end %>
               </td>
               <td>
-                <%= button_to "Delete", admin_prior_reservation_path(reservation),
-                    method: :delete,
-                    data: {
-                      turbo_confirm: "Are you sure you want to delete this prior reservation? This action cannot be undone.",
-                      turbo_method: :delete
-                    },
-                    class: "admin-link admin-link--danger" %>
+                <div class="admin-table-actions">
+                  <%= link_to "Edit", edit_admin_prior_reservation_path(reservation), class: "admin-link" %>
+                  <%= button_to "Delete", admin_prior_reservation_path(reservation),
+                      method: :delete,
+                      data: {
+                        turbo_confirm: "Are you sure you want to delete this prior reservation? This action cannot be undone.",
+                        turbo_method: :delete
+                      },
+                      class: "admin-link admin-link--danger" %>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -91,8 +113,42 @@
       </table>
     </div>
 
+    <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
+
     <% if @prior_reservations.empty? %>
       <p class="admin-empty">No prior reservations are available for marketing.</p>
+    <% end %>
+
+    <% if @pagy.present? && @pagy.count.positive? %>
+      <div class="admin-danger-zone" id="delete-all-prior-reservations">
+        <div class="admin-toolbar">
+          <div>
+            <h3 class="admin-toggle-title">Delete all prior reservations</h3>
+            <p class="admin-hint">
+              This permanently deletes <strong><%= pluralize(@pagy.count, "prior reservation") %></strong>. Type DELETE to confirm.
+            </p>
+          </div>
+
+          <details class="admin-destructive">
+            <summary class="admin-button admin-button--danger">Delete All Prior Reservations</summary>
+            <div class="admin-destructive-body">
+              <%= form_with url: destroy_all_admin_prior_reservations_path, method: :delete, class: "admin-inline-form" do %>
+                <div class="admin-field">
+                  <%= label_tag :confirmation, "Type DELETE to confirm", class: "admin-label" %>
+                  <%= text_field_tag :confirmation, nil,
+                      class: "admin-input",
+                      required: true,
+                      pattern: "DELETE",
+                      title: "Type DELETE exactly to confirm.",
+                      autocomplete: "off",
+                      spellcheck: false %>
+                </div>
+                <%= submit_tag "Confirm Delete All Prior Reservations", class: "admin-button admin-button--danger" %>
+              <% end %>
+            </div>
+          </details>
+        </div>
+      </div>
     <% end %>
   </section>
 </div>

@@ -37,6 +37,7 @@
     <ul class="admin-settings-nav-list">
       <li><%= link_to "The Event", "#event-settings", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Organization", "#organization", class: "admin-settings-nav-link" %></li>
+      <li><%= link_to "Site Details", "#site-details", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Site Content", "#site-content", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "Pickups Portal", "#tree-pickups", class: "admin-settings-nav-link" %></li>
       <li><%= link_to "SMS", "#sms", class: "admin-settings-nav-link" %></li>
@@ -163,7 +164,7 @@
       <div class="admin-panel-header">
         <div>
           <h2 class="admin-panel-title">Organization</h2>
-          <p class="admin-panel-description">Organization details and site-wide defaults.</p>
+          <p class="admin-panel-description">Organization name and website.</p>
         </div>
       </div>
 
@@ -182,10 +183,24 @@
             </div>
           </div>
 
-          <div class="admin-form-section">
-            <h3 class="admin-section-title">Site</h3>
-            <p class="admin-section-description">Address, time zone, and default country used throughout the app.</p>
+          <div class="admin-actions">
+            <%= submit_tag "Save Organization Settings", class: "admin-button" %>
+          </div>
+        <% end %>
+      </div>
+    </section>
 
+    <section class="admin-panel" id="site-details">
+      <div class="admin-panel-header">
+        <div>
+          <h2 class="admin-panel-title">Site Details</h2>
+          <p class="admin-panel-description">Site address, time zone, and default country used throughout the app.</p>
+        </div>
+      </div>
+
+      <div class="admin-panel-body">
+        <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
+          <div class="admin-form-section admin-form-section--flush">
             <div class="admin-field-grid admin-field-grid--two">
               <div class="admin-field">
                 <%= label_tag "setting[site_url]", "Site URL", class: "admin-label" %>
@@ -211,7 +226,7 @@
           </div>
 
           <div class="admin-actions">
-            <%= submit_tag "Save Organization Settings", class: "admin-button" %>
+            <%= submit_tag "Save Site Details", class: "admin-button" %>
           </div>
         <% end %>
       </div>

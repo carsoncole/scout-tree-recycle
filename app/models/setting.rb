@@ -23,7 +23,7 @@ class Setting < ApplicationRecord
 
   REQUIRED_SETTINGS = [
     { attribute: :organization_name, label: "Organization Name", section: "organization" },
-    { attribute: :site_url, label: "Site URL", section: "organization" },
+    { attribute: :site_url, label: "Site URL", section: "site-details" },
     { attribute: :default_city, label: "Default City", section: "event-settings" },
     { attribute: :default_state, label: "Default State", section: "event-settings" },
     { attribute: :event_pickup_start, label: "Event Pickup Start", section: "event-settings" },

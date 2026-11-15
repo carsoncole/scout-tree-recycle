@@ -735,6 +735,11 @@
   margin: 0;
 }
 
+.site-footer-logo-picture,
+.site-about-logo-picture {
+  display: block;
+}
+
 .site-footer-logo {
   width: 1.75rem;
   height: auto;

@@ -7,7 +7,7 @@
       <span aria-hidden="true">←</span> Back to Home
     <% end %>
 
-    <%= image_tag "scouting-america-logo.png", alt: "Scouting America", class: "site-about-logo" %>
+    <%= render "shared/scouting_america_logo", logo_class: "site-about-logo", picture_class: "site-about-logo-picture", alt: "Scouting America" %>
 
     <%= render "shared/page_header",
                eyebrow: "Our neighborhood fundraiser",

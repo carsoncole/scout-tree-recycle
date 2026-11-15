@@ -1,0 +1,44 @@
+<% content_for :title, "About This App | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :description, "About the Tree Recycle application and its author." %>
+
+<section class="site-page">
+  <div class="site-container site-container--narrow">
+    <%= link_to root_path, class: "site-back-link" do %>
+      <span aria-hidden="true">←</span> Back to Home
+    <% end %>
+
+    <%= render "shared/page_header",
+               eyebrow: "Built for the fundraiser",
+               title: "About This App",
+               description: "A Rails application for running a Christmas tree recycling fundraiser." %>
+
+    <div class="site-prose">
+      <h2>What it does</h2>
+      <p>
+        Tree Recycle handles the whole fundraiser: public tree pickup
+        reservations with address verification, online and offline donations,
+        an admin back office for routes, drivers, zones, and communications,
+        and a simple pickups portal for the drivers collecting trees.
+      </p>
+      <p>
+        It is built with Ruby on Rails, PostgreSQL, Hotwire, and Tailwind CSS,
+        and integrates with Stripe for donations, Twilio for SMS, Amazon
+        Location Service for geocoding, and SMTP for email. The source code is
+        open source under the MIT license.
+      </p>
+
+      <h2>Who wrote it</h2>
+      <p>
+        Tree Recycle was written by <strong>Carson Cole</strong>, a former
+        Scoutmaster of Troop 1564 on Bainbridge Island, WA, to support the
+        troop's annual tree recycling fundraiser.
+      </p>
+      <p>
+        You can find more of his work on
+        <%= link_to "GitHub", "https://github.com/carsoncole", target: "_blank", rel: "noopener", class: "site-link" %>
+        or reach him by email at
+        <%= mail_to "carson.cole@gmail.com", "carson.cole@gmail.com", class: "site-link" %>.
+      </p>
+    </div>
+  </div>
+</section>

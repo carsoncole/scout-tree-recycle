@@ -18,4 +18,7 @@ class PublicController < ApplicationController
 
   def privacy
   end
+
+  def credits
+  end
 end

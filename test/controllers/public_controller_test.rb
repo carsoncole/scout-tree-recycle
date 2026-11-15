@@ -16,6 +16,11 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
+    test "should get credits" do
+      get credits_url
+      assert_response :success
+    end
+
     test "should get index with reservations closed" do
       Setting.instance.update(is_reservations_open: false)
       get root_url

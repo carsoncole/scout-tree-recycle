@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root "public#index"
   get "about", to: "public#about"
   get "privacy", to: "public#privacy"
+  get "credits", to: "public#credits"
 
   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
 

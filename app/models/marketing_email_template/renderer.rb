@@ -89,15 +89,20 @@ class MarketingEmailTemplate
     end
 
     def image_url(name)
-      "#{base_url}#{helpers.image_path(name)}"
-    end
-
-    def base_url
       protocol = url_options[:protocol].presence || "http"
       host = url_options[:host].to_s
       port = url_options[:port]
-      host = "#{host}:#{port}" if port.present? && !host.include?(":")
-      "#{protocol}://#{host}"
+      host_with_port = port.present? && !host.include?(":") ? "#{host}:#{port}" : host
+      path = helpers.image_path(name)
+
+      case path
+      when /\Ahttps?:\/\//i
+        path
+      when /\A\/\//
+        "#{protocol}:#{path}"
+      else
+        "#{protocol}://#{host_with_port}#{path}"
+      end
     end
 
     def formatted_time(time, format)

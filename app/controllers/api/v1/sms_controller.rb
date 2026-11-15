@@ -8,7 +8,8 @@ module Api
           direction: "incoming"
         )
         head :ok
-      rescue ActiveRecord::RecordInvalid
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.error.report(e, handled: true, context: { params: params.to_unsafe_h })
         head :unprocessable_entity
       end
     end

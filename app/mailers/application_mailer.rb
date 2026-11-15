@@ -31,8 +31,9 @@ class ApplicationMailer < ActionMailer::Base
     options = { host: uri.host, protocol: uri.scheme }
     options[:port] = uri.port if uri.port && uri.port != uri.default_port
     ActionMailer::Base.default_url_options = options
-  rescue URI::InvalidURIError
+  rescue URI::InvalidURIError => e
     Rails.logger.warn("Invalid site URL configured: #{setting&.site_url}")
+    Rails.error.report(e, handled: true, severity: :warning, context: { site_url: setting&.site_url })
   end
 
   def apply_email_settings

@@ -1,4 +1,5 @@
 class Sms < ApplicationRecord
+  belongs_to :user, optional: true
   has_many :reservations, foreign_key: "mobile", primary_key: "phone"
 
   enum :direction, { outgoing: 1, incoming: 2 }, default: :outgoing
@@ -18,7 +19,7 @@ class Sms < ApplicationRecord
 
   def self.grouped_by_phone_for_index
     # Get all SMS messages ordered by creation time descending
-    all_smses = order(created_at: :desc)
+    all_smses = includes(:user).order(created_at: :desc)
 
     # Group by phone and sort conversations
     smses_by_phone = all_smses.group_by(&:phone).transform_values do |messages|
@@ -52,6 +53,7 @@ class Sms < ApplicationRecord
       update_column(:service_status, "sent") # optional: mark status after send
     rescue => e
       Rails.logger.error("Twilio send failed: #{e}")
+      Rails.error.report(e, handled: true, context: { phone: phone })
       update_column(:service_status, "failed") # optional: mark failure
     end
   end
@@ -103,21 +105,24 @@ class Sms < ApplicationRecord
         partial: "admin/sms/conversations",
         locals: { smses_by_phone: Sms.grouped_by_phone_for_index }
 
-      # Broadcast to the specific thread if it exists
+      # Broadcast to the specific thread if it exists. The thread partial is only
+      # rendered on the conversation page, where it should stay expanded so the
+      # newest message remains visible after the update.
       broadcast_replace_to "sms_thread_#{phone.gsub(/[^0-9]/, '')}",
         target: "sms-thread-#{phone.gsub(/[^0-9]/, '')}",
         partial: "admin/sms/thread",
         locals: {
           phone: phone,
-          smses: Sms.where(phone: phone).order(:created_at),
-          expanded: false,
-          show_page: false
+          smses: Sms.includes(:user).where(phone: phone).order(:created_at),
+          expanded: true,
+          show_page: true
         }
 
       Rails.logger.info "SMS broadcast completed successfully"
     rescue => e
       Rails.logger.error "SMS broadcast failed: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
+      Rails.error.report(e, handled: true, context: { phone: phone })
     end
   end
 

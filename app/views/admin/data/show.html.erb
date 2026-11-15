@@ -2,7 +2,10 @@
            title: "Data",
            description: "Import contacts and export reservation data as CSV." %>
 
-<div class="admin-stack">
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
   <% if flash[:import_errors].present? %>
     <section class="admin-panel">
       <div class="admin-panel-header">
@@ -98,4 +101,6 @@
       </div>
     </div>
   </section>
+</div>
+
 </div>

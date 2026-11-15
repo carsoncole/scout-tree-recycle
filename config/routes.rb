@@ -45,6 +45,13 @@ Rails.application.routes.draw do
         patch :toggle
       end
     end
+    scope path: "settings" do
+      resource :data, only: [ :show ], controller: "data" do
+        post :import
+        get :export
+      end
+      resources :users, except: [ :show ]
+    end
     resources :routes do
       resources :points, only: [ :create, :destroy ]
       member do
@@ -53,7 +60,6 @@ Rails.application.routes.draw do
       end
     end
     resources :zones, except: [ :show ]
-    resources :users, except: [ :show ]
     resources :contacts, only: [ :new, :create, :edit, :update, :destroy ] do
       member do
         delete :clear_marketing_email_1
@@ -81,11 +87,7 @@ Rails.application.routes.draw do
     # Operations
     post "post-event-cleanup", to: "operations#post_event_cleanup"
 
-    # Data
-    resource :data, only: [ :show ] do
-      post :import
-      get :export
-    end
+
 
     # Marketing
     get "marketing/index"

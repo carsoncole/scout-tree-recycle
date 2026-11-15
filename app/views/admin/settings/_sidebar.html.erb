@@ -1,0 +1,18 @@
+<nav class="admin-settings-nav" aria-label="Settings sections">
+  <ul class="admin-settings-nav-list">
+    <li><%= link_to "The Event", admin_settings_path(anchor: "event-settings"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Organization", admin_settings_path(anchor: "organization"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Site Details", admin_settings_path(anchor: "site-details"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Site Content", admin_settings_path(anchor: "site-content"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Pickups Portal", admin_settings_path(anchor: "tree-pickups"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "SMS", admin_settings_path(anchor: "sms"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Email", admin_settings_path(anchor: "email"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Donations", admin_settings_path(anchor: "donations"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Location Services", admin_settings_path(anchor: "location-services"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Operations", admin_settings_path(anchor: "operations"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "System", admin_settings_path(anchor: "system"), class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Data", admin_data_path, class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Jobs", "/admin/jobs", class: "admin-settings-nav-link" %></li>
+    <li><%= link_to "Users", admin_users_path, class: "admin-settings-nav-link" %></li>
+  </ul>
+</nav>

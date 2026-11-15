@@ -2,6 +2,10 @@
            title: "New User",
            description: "Create a user account and assign a role." %>
 
-<div class="admin-container--narrow admin-container--flush">
-  <%= render "form", user: @user %>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-container--narrow admin-container--flush">
+    <%= render "form", user: @user %>
+  </div>
 </div>

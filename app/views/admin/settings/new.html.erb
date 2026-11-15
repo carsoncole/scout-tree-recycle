@@ -1,13 +1,13 @@
-<div class="admin-container--medium admin-container--flush">
-  <div class="admin-page-header">
-    <div>
-      <p class="admin-eyebrow">First run</p>
-      <h1 class="admin-page-title">Initial Application Setup</h1>
-      <p class="admin-page-description">Please configure the required settings to continue.</p>
-    </div>
-  </div>
+<%= render "admin/shared/page_header",
+           eyebrow: "First run",
+           title: "Initial Application Setup",
+           description: "Please configure the required settings to continue." %>
 
-  <%= form_with url: admin_settings_path, method: :post, model: @setting, local: true, class: "admin-stack" do |f| %>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-container--medium admin-container--flush">
+    <%= form_with url: admin_settings_path, method: :post, model: @setting, local: true, class: "admin-stack" do |f| %>
     <section class="admin-panel">
       <div class="admin-panel-body">
         <div class="admin-form">
@@ -82,4 +82,5 @@
       </div>
     </section>
   <% end %>
+</div>
 </div>

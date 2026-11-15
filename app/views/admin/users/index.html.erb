@@ -2,7 +2,10 @@
            title: "Users",
            description: "Manage system users and their permissions." %>
 
-<div class="admin-stack">
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
   <section class="admin-panel">
     <div class="admin-panel-header">
       <div>
@@ -100,4 +103,6 @@
       </table>
     </div>
   </section>
+</div>
+
 </div>

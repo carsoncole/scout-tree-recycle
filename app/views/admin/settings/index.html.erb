@@ -33,24 +33,7 @@
 </section>
 
 <div class="admin-settings-layout">
-  <nav class="admin-settings-nav" aria-label="Settings sections">
-    <ul class="admin-settings-nav-list">
-      <li><%= link_to "The Event", "#event-settings", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Organization", "#organization", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Site Details", "#site-details", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Site Content", "#site-content", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Pickups Portal", "#tree-pickups", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "SMS", "#sms", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Email", "#email", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Donations", "#donations", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Location Services", "#location-services", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Operations", "#operations", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "System", "#system", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Data", "#data", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "Jobs", "#jobs", class: "admin-settings-nav-link" %></li>
-      <li><%= link_to "User Management", "#user-management", class: "admin-settings-nav-link" %></li>
-    </ul>
-  </nav>
+  <%= render "admin/settings/sidebar" %>
 
   <div class="admin-stack">
     <section class="admin-panel" id="event-settings" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
@@ -825,7 +808,7 @@
           <h2 class="admin-panel-title">Jobs</h2>
           <p class="admin-panel-description">Monitor background jobs, queues, and failures.</p>
         </div>
-        <%= link_to "View Jobs Dashboard", admin_mission_control_jobs_path, class: "admin-button admin-button--secondary" %>
+        <%= link_to "View Jobs Dashboard", "/admin/jobs", class: "admin-button admin-button--secondary" %>
       </div>
     </section>
 

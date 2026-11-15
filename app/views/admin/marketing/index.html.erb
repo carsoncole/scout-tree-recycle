@@ -112,7 +112,7 @@
   <section class="admin-panel">
     <div class="admin-panel-header">
       <div>
-        <h2 class="admin-panel-title">Contacts</h2>
+        <h2 class="admin-panel-title">Contacts (<%= @pagy.count %>)</h2>
         <p class="admin-panel-description">Contacts from prior reservations and imported contacts. <%= link_to "Import data", admin_data_path, class: "admin-link" %></p>
       </div>
       <%= link_to "New Contact", new_admin_contact_path, class: "admin-button" %>

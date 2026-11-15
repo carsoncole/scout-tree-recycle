@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_000004) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_200409) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -233,6 +233,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_000004) do
     t.text "missing_tree_sms_follow_up_message", default: "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
     t.string "phone_default_country", default: "US"
     t.string "home_page_image", default: "fleur-de-lis-2024-logo-4c-bc.png", null: false
+    t.boolean "is_log_notifications_enabled", default: true, null: false
   end
 
   create_table "sms", force: :cascade do |t|

@@ -42,6 +42,7 @@ class Setting < ApplicationRecord
   attribute :reservations_closed_message, :string, default: DEFAULT_RESERVATIONS_CLOSED_MESSAGE
   attribute :time_zone, :string, default: DEFAULT_TIME_ZONE
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
+  attribute :is_log_notifications_enabled, :boolean, default: true
 
   normalizes :phone_default_country, with: ->(country) { country.to_s.strip.upcase.presence }
 

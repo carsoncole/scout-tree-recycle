@@ -4,6 +4,7 @@ class Admin::SettingsController < Admin::BaseController
   TOGGLEABLE_SETTINGS = %w[
     is_reservations_open
     is_emailing_enabled
+    is_log_notifications_enabled
     is_sms_enabled
     is_pickups_site_enabled
     is_routing_enabled
@@ -95,9 +96,11 @@ class Admin::SettingsController < Admin::BaseController
       :on_day_of_pickup_instructions,
       :is_reservations_open,
       :is_emailing_enabled,
+      :is_log_notifications_enabled,
       :is_sms_enabled,
       :is_pickups_site_enabled,
       :is_routing_enabled,
+      :is_donations_enabled,
       :contact_name,
       :contact_email,
       :contact_phone,

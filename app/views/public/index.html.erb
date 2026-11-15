@@ -1,5 +1,7 @@
+<% pickup_date = setting.event_pickup_start.strftime("%B %-d, %Y") %>
+<% sign_up_deadline = setting.event_sign_up_deadline.strftime("%B %-d, %Y at %-l:%M%P") %>
 <% content_for :title, "Make a Reservation | #{setting&.home_page_header || "Tree Recycle"}" %>
-<% content_for :description, "Schedule a Christmas tree pickup for #{setting.event_pickup_start.strftime("%B %-d, %Y")}." %>
+<% content_for :description, "Schedule a Christmas tree pickup for #{pickup_date}. Sign up by #{sign_up_deadline}." %>
 
 <section class="site-hero" id="reserve">
   <div class="site-container site-container--narrow">
@@ -8,7 +10,12 @@
     <%= render "shared/page_header",
                eyebrow: "Holiday tree pickup",
                title: "Make a Reservation",
-               description: "Schedule your tree pickup for #{setting.event_pickup_start.strftime("%B %-d, %Y")}." %>
+               description: "Schedule your tree pickup for #{pickup_date}." do %>
+      <p class="site-deadline-badge">
+        <span class="site-deadline-badge-label">Sign up by</span>
+        <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
+      </p>
+    <% end %>
 
     <% if setting.is_reservations_open %>
       <div class="site-form-panel">
@@ -26,7 +33,7 @@
     <% else %>
       <div class="site-empty">
         <h2 class="site-subtitle">Reservations are closed</h2>
-        <p><%= setting.reservations_closed_message %></p>
+        <p><%= setting.reservations_closed_message_text %></p>
       </div>
     <% end %>
   </div>

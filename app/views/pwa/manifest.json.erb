@@ -16,7 +16,7 @@
   "start_url": "/",
   "display": "standalone",
   "scope": "/",
-  "description": <%= (Setting.instance&.about_event_description.presence || "Christmas tree pickup reservations for the Tree Recycle fundraiser.").to_json %>,
+  "description": <%= (Setting.instance&.about_event_description_text || "Christmas tree pickup reservations for the Tree Recycle fundraiser.").to_json %>,
   "theme_color": "#516b58",
   "background_color": "#f4f3ed"
 }

@@ -1,5 +1,5 @@
 <% content_for :title, "About | #{setting&.home_page_header || "Tree Recycle"}" %>
-<% content_for :description, setting.about_event_description %>
+<% content_for :description, setting.about_event_description_text %>
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
@@ -12,7 +12,7 @@
     <%= render "shared/page_header",
                eyebrow: "Our neighborhood fundraiser",
                title: "About",
-               description: setting.about_event_description %>
+               description: setting.about_event_description_text %>
 
     <div class="site-prose">
       <h2><%= setting.organization_name %></h2>
@@ -25,7 +25,7 @@
 
       <div class="site-callout">
         <h3>On day of pickup instructions</h3>
-        <p><%= setting.on_day_of_pickup_instructions %></p>
+        <p><%= setting.pickup_instructions_text %></p>
       </div>
 
       <h4>Date of pick-up</h4>

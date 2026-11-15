@@ -43,8 +43,6 @@ class Setting < ApplicationRecord
   validates :phone_default_country, presence: true, length: { is: 2 }
   validates :event_pickup_start, :event_pickup_end, :event_sign_up_deadline, presence: { message: "date and time can't be blank" }
   validates :home_page_header, presence: true, if: ->(setting) { setting.organization_name.present? }
-  validates :about_event_description, presence: true
-  validates :on_day_of_pickup_instructions, presence: true
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
   validates :marketing_email_cooldown_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :prior_reservation_retention_months, numericality: { only_integer: true, greater_than: 0 }
@@ -53,16 +51,28 @@ class Setting < ApplicationRecord
 
   def apply_defaults
     self.home_page_header = "#{organization_name.strip} Tree Recycle" if organization_name.present? && home_page_header.blank?
-    self.about_event_description = DEFAULT_ABOUT_EVENT_DESCRIPTION if about_event_description.blank?
-    self.on_day_of_pickup_instructions = DEFAULT_PICKUP_INSTRUCTIONS if on_day_of_pickup_instructions.blank?
-    self.reservations_closed_message = DEFAULT_RESERVATIONS_CLOSED_MESSAGE if reservations_closed_message.blank?
     self.time_zone = DEFAULT_TIME_ZONE if time_zone.blank?
     self.default_country = DEFAULT_COUNTRY if default_country.blank?
     self.phone_default_country = DEFAULT_PHONE_COUNTRY if phone_default_country.blank?
-    self.suggested_donation = DEFAULT_SUGGESTED_DONATION if suggested_donation.blank?
     self.email_batch_quantity = DEFAULT_EMAIL_BATCH_QUANTITY if email_batch_quantity.blank?
     self.marketing_email_cooldown_days = DEFAULT_MARKETING_COOLDOWN_DAYS if marketing_email_cooldown_days.blank?
     self.prior_reservation_retention_months = DEFAULT_RETENTION_MONTHS if prior_reservation_retention_months.blank?
+  end
+
+  def suggested_donation_amount
+    suggested_donation.presence || DEFAULT_SUGGESTED_DONATION
+  end
+
+  def about_event_description_text
+    about_event_description.presence || DEFAULT_ABOUT_EVENT_DESCRIPTION
+  end
+
+  def pickup_instructions_text
+    on_day_of_pickup_instructions.presence || DEFAULT_PICKUP_INSTRUCTIONS
+  end
+
+  def reservations_closed_message_text
+    reservations_closed_message.presence || DEFAULT_RESERVATIONS_CLOSED_MESSAGE
   end
 
   def self.instance

@@ -3,7 +3,7 @@
   <head>
     <title><%= content_for(:title) || Setting.instance&.home_page_header.presence || "Tree Recycle" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : setting&.about_event_description %>">
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : setting&.about_event_description_text %>">
     <meta name="theme-color" content="#516b58">
     <meta name="theme-color" content="#171915" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">

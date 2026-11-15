@@ -50,13 +50,17 @@ class SettingTest < ActiveSupport::TestCase
 
     setting.reload
     assert_equal "Troop 100 Tree Recycle", setting.home_page_header
-    assert_equal Setting::DEFAULT_ABOUT_EVENT_DESCRIPTION, setting.about_event_description
-    assert_equal Setting::DEFAULT_PICKUP_INSTRUCTIONS, setting.on_day_of_pickup_instructions
-    assert_equal Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE, setting.reservations_closed_message
+    assert setting.about_event_description.blank?
+    assert setting.on_day_of_pickup_instructions.blank?
+    assert setting.reservations_closed_message.blank?
+    assert_equal Setting::DEFAULT_ABOUT_EVENT_DESCRIPTION, setting.about_event_description_text
+    assert_equal Setting::DEFAULT_PICKUP_INSTRUCTIONS, setting.pickup_instructions_text
+    assert_equal Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE, setting.reservations_closed_message_text
     assert_equal Setting::DEFAULT_TIME_ZONE, setting.time_zone
     assert_equal Setting::DEFAULT_COUNTRY, setting.default_country
     assert_equal Setting::DEFAULT_PHONE_COUNTRY, setting.phone_default_country
-    assert_equal Setting::DEFAULT_SUGGESTED_DONATION, setting.suggested_donation
+    assert_nil setting.suggested_donation
+    assert_equal Setting::DEFAULT_SUGGESTED_DONATION, setting.suggested_donation_amount
     assert_equal Setting::DEFAULT_EMAIL_BATCH_QUANTITY, setting.email_batch_quantity
     assert_equal Setting::DEFAULT_MARKETING_COOLDOWN_DAYS, setting.marketing_email_cooldown_days
     assert_equal Setting::DEFAULT_RETENTION_MONTHS, setting.prior_reservation_retention_months

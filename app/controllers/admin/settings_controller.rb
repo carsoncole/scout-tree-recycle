@@ -87,6 +87,7 @@ class Admin::SettingsController < Admin::BaseController
       :event_pickup_start,
       :event_pickup_end,
       :event_sign_up_deadline,
+      :suggested_donation,
       :default_city,
       :default_state,
       :about_event_description,

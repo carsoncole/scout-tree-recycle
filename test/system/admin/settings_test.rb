@@ -158,6 +158,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "section.admin-panel", text: "The Event" do
       assert_selector "#reservations-toggle"
       assert_field "Reservations Closed Message"
+      assert_field "Suggested Donation"
       assert_text "Displayed on the public home page in place of the reservation form when Enable Reservations is off."
     end
 
@@ -509,6 +510,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "section.admin-panel", text: "The Event" do
       fill_in "Reservations Closed Message", with: "Reservations Closed Message"
+      fill_in "Suggested Donation", with: "50"
       fill_in "Contact Name", with: "Contact Name"
       fill_in "Contact Phone", with: "Contact Phone"
       fill_in "Contact Email", with: "email@example.com"
@@ -517,6 +519,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     assert_text "Settings were successfully updated"
     assert_field "Reservations Closed Message", with: "Reservations Closed Message"
+    assert_field "Suggested Donation", with: "50"
     assert_field "Contact Name", with: "Contact Name"
     assert_field "Contact Phone", with: "Contact Phone"
     assert_field "Contact Email", with: "email@example.com"

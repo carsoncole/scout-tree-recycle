@@ -222,6 +222,29 @@
   line-height: 1.6;
 }
 
+.site-deadline-badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 1.25rem 0 0;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--site-radius-pill);
+  background: var(--site-warning-badge-bg);
+  color: var(--site-warning-badge-text);
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.site-deadline-badge-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
 .site-subtitle {
   margin: 0 0 0.5rem;
   color: var(--site-ink);

@@ -89,8 +89,8 @@
 
             <div class="admin-field admin-field--spaced">
               <%= label_tag "setting[reservations_closed_message]", "Reservations Closed Message", class: "admin-label" %>
-              <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "admin-textarea" %>
-              <p class="admin-hint">Displayed on the public home page in place of the reservation form when Enable Reservations is off.</p>
+              <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "admin-textarea", placeholder: Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE %>
+              <p class="admin-hint">Displayed on the public home page in place of the reservation form when Enable Reservations is off. Leave blank to use the default message.</p>
             </div>
           </div>
 
@@ -113,7 +113,8 @@
               </div>
               <div class="admin-field">
                 <%= label_tag "setting[suggested_donation]", "Suggested Donation", class: "admin-label" %>
-                <%= text_field_tag "setting[suggested_donation]", setting.suggested_donation, class: "admin-input", placeholder: "e.g., $10-20" %>
+                <%= number_field_tag "setting[suggested_donation]", setting.suggested_donation, class: "admin-input", min: 0, step: 1, placeholder: Setting::DEFAULT_SUGGESTED_DONATION %>
+                <p class="admin-hint">Leave blank to use the default of <%= Setting::DEFAULT_SUGGESTED_DONATION %>.</p>
               </div>
               <div class="admin-field">
                 <%= label_tag "setting[default_city]", "Default City", class: "admin-label" %>
@@ -245,12 +246,14 @@
 
             <div class="admin-field admin-field--spaced">
               <%= label_tag "setting[about_event_description]", "About", class: "admin-label" %>
-              <%= text_area_tag "setting[about_event_description]", setting.about_event_description, rows: 3, class: "admin-textarea" %>
+              <%= text_area_tag "setting[about_event_description]", setting.about_event_description, rows: 3, class: "admin-textarea", placeholder: Setting::DEFAULT_ABOUT_EVENT_DESCRIPTION %>
+              <p class="admin-hint">Leave blank to use the default description.</p>
             </div>
 
             <div class="admin-field admin-field--spaced">
               <%= label_tag "setting[on_day_of_pickup_instructions]", "On Day of Pickup Instructions", class: "admin-label" %>
-              <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "admin-textarea" %>
+              <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "admin-textarea", placeholder: Setting::DEFAULT_PICKUP_INSTRUCTIONS %>
+              <p class="admin-hint">Leave blank to use the default instructions.</p>
             </div>
           </div>
 

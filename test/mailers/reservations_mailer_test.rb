@@ -36,7 +36,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_match "Tree pick-up scheduled", email.body.encoded
     assert_match Setting.instance.organization_name, email.body.encoded
     assert_match "3:00pm", email.body.encoded
-    assert_match "$#{Setting.instance.suggested_donation}", email.body.encoded
+    assert_match "$#{Setting.instance.suggested_donation_amount}", email.body.encoded
     assert_match "/reservations/#{reservation.id}/edit", email.body.encoded
     assert_match "/reservations/#{reservation.id}/donations/new", email.body.encoded
     assert_no_match "FIX", email.body.encoded

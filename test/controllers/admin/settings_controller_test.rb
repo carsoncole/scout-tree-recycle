@@ -54,6 +54,15 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Settings were successfully updated.", flash[:notice]
   end
 
+  test "should update suggested donation" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: { setting: { suggested_donation: 42 } }
+
+    assert_redirected_to admin_settings_path
+    assert_equal 42, Setting.first.reload.suggested_donation
+  end
+
   test "should update sms credentials" do
     sign_in
 

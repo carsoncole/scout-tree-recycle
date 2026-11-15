@@ -8,4 +8,6 @@
   <% if local_assigns[:description].present? %>
     <p class="site-lede"><%= description %></p>
   <% end %>
+
+  <%= yield if block_given? %>
 </header>

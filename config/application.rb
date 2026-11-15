@@ -21,6 +21,8 @@ module TreeRecycle
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
+    # Fallback for console/rake contexts. Requests, jobs, and mailers use the
+    # Time Zone configured in /admin/settings.
     config.time_zone = "Pacific Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
   end

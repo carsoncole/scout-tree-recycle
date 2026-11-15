@@ -6,6 +6,7 @@ class ApplicationJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   around_perform do |_job, block|
+    Setting.instance&.apply_phone_default_country!
     zone_name = Setting.instance&.time_zone
     zone = ActiveSupport::TimeZone[zone_name] if zone_name.present?
     zone ? Time.use_zone(zone, &block) : block.call

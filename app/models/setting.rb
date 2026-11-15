@@ -9,14 +9,38 @@ class Setting < ApplicationRecord
     "UTC"
   ].freeze
 
-  attribute :on_day_of_pickup_instructions, :string, default: "To prepare your tree for pick-up, remove all decorations and tinsel from your tree. Prior to pickup, place your tree in a visible location at the curb or where you indicated to us in your reservation. Your tree will be collected and recycled into mulch. We cannot take wreaths, flocked trees, or artificial trees. If we can not find your tree, we will try contacting you by SMS or phone call to make arrangements to attempt another pick-up."
-  attribute :about_event_description, :string, default: "Tree Recycle is a community event where we collect trees and recycle them into mulch. This is our primary fundraiser for the year and all proceeds go to the Troop."
-  attribute :reservations_closed_message, :string, default: "Stay tuned for when we open reservations again."
-  attribute :time_zone, :string, default: "Pacific Time (US & Canada)"
-  attribute :suggested_donation, :integer, default: 25
+  DEFAULT_TIME_ZONE = "Pacific Time (US & Canada)"
+  DEFAULT_COUNTRY = "United States"
+  DEFAULT_PHONE_COUNTRY = "US"
+  DEFAULT_SUGGESTED_DONATION = 25
+  DEFAULT_EMAIL_BATCH_QUANTITY = 100
+  DEFAULT_MARKETING_COOLDOWN_DAYS = 7
+  DEFAULT_RETENTION_MONTHS = 24
+  DEFAULT_ABOUT_EVENT_DESCRIPTION = "Tree Recycle is a community event where we collect trees and recycle them into mulch. This is our primary fundraiser for the year and all proceeds go to the Troop."
+  DEFAULT_PICKUP_INSTRUCTIONS = "To prepare your tree for pick-up, remove all decorations and tinsel from your tree. Prior to pickup, place your tree in a visible location at the curb or where you indicated to us in your reservation. Your tree will be collected and recycled into mulch. We cannot take wreaths, flocked trees, or artificial trees. If we can not find your tree, we will try contacting you by SMS or phone call to make arrangements to attempt another pick-up."
+  DEFAULT_RESERVATIONS_CLOSED_MESSAGE = "Stay tuned for when we open reservations again."
+
+  REQUIRED_SETTINGS = [
+    { attribute: :organization_name, label: "Organization Name", section: "organization" },
+    { attribute: :site_url, label: "Site URL", section: "organization" },
+    { attribute: :default_city, label: "Default City", section: "event-settings" },
+    { attribute: :default_state, label: "Default State", section: "event-settings" },
+    { attribute: :event_pickup_start, label: "Event Pickup Start", section: "event-settings" },
+    { attribute: :event_pickup_end, label: "Event Pickup End", section: "event-settings" },
+    { attribute: :event_sign_up_deadline, label: "Sign Up Deadline", section: "event-settings" }
+  ].freeze
+
+  attribute :on_day_of_pickup_instructions, :string, default: DEFAULT_PICKUP_INSTRUCTIONS
+  attribute :about_event_description, :string, default: DEFAULT_ABOUT_EVENT_DESCRIPTION
+  attribute :reservations_closed_message, :string, default: DEFAULT_RESERVATIONS_CLOSED_MESSAGE
+  attribute :time_zone, :string, default: DEFAULT_TIME_ZONE
+  attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
+
+  normalizes :phone_default_country, with: ->(country) { country.to_s.strip.upcase.presence }
 
   validates :organization_name, presence: true
-  validates :default_city, :default_state, :default_country, presence: true
+  validates :default_country, presence: true
+  validates :phone_default_country, presence: true, length: { is: 2 }
   validates :event_pickup_start, :event_pickup_end, :event_sign_up_deadline, presence: { message: "date and time can't be blank" }
   validates :home_page_header, presence: true, if: ->(setting) { setting.organization_name.present? }
   validates :about_event_description, presence: true
@@ -25,11 +49,20 @@ class Setting < ApplicationRecord
   validates :marketing_email_cooldown_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :prior_reservation_retention_months, numericality: { only_integer: true, greater_than: 0 }
 
-  before_validation :set_defaults, on: :create
+  before_validation :apply_defaults
 
-  def set_defaults
-    return unless self.organization_name.present?
-    self.home_page_header = self.organization_name.strip + " Tree Recycle"
+  def apply_defaults
+    self.home_page_header = "#{organization_name.strip} Tree Recycle" if organization_name.present? && home_page_header.blank?
+    self.about_event_description = DEFAULT_ABOUT_EVENT_DESCRIPTION if about_event_description.blank?
+    self.on_day_of_pickup_instructions = DEFAULT_PICKUP_INSTRUCTIONS if on_day_of_pickup_instructions.blank?
+    self.reservations_closed_message = DEFAULT_RESERVATIONS_CLOSED_MESSAGE if reservations_closed_message.blank?
+    self.time_zone = DEFAULT_TIME_ZONE if time_zone.blank?
+    self.default_country = DEFAULT_COUNTRY if default_country.blank?
+    self.phone_default_country = DEFAULT_PHONE_COUNTRY if phone_default_country.blank?
+    self.suggested_donation = DEFAULT_SUGGESTED_DONATION if suggested_donation.blank?
+    self.email_batch_quantity = DEFAULT_EMAIL_BATCH_QUANTITY if email_batch_quantity.blank?
+    self.marketing_email_cooldown_days = DEFAULT_MARKETING_COOLDOWN_DAYS if marketing_email_cooldown_days.blank?
+    self.prior_reservation_retention_months = DEFAULT_RETENTION_MONTHS if prior_reservation_retention_months.blank?
   end
 
   def self.instance
@@ -40,8 +73,50 @@ class Setting < ApplicationRecord
     twilio_account_sid.present? && twilio_auth_token.present? && twilio_from_number.present?
   end
 
+  def missing_required_settings
+    missing = REQUIRED_SETTINGS.select { |item| public_send(item[:attribute]).blank? }
+
+    if is_emailing_enabled?
+      missing << { attribute: :email_from_address, label: "Email From Address", section: "email" } if email_from_address.blank?
+      missing << { attribute: :smtp_address, label: "SMTP Address", section: "email" } if smtp_address.blank?
+      missing << { attribute: :smtp_port, label: "SMTP Port", section: "email" } if smtp_port.blank?
+    end
+
+    if is_sms_enabled?
+      missing << { attribute: :twilio_account_sid, label: "Twilio Account SID", section: "sms" } if twilio_account_sid.blank?
+      missing << { attribute: :twilio_auth_token, label: "Twilio Auth Token", section: "sms" } if twilio_auth_token.blank?
+      missing << { attribute: :twilio_from_number, label: "Twilio From Number", section: "sms" } if twilio_from_number.blank?
+    end
+
+    if is_donations_enabled?
+      missing << { attribute: :stripe_secret_key, label: "Stripe Secret Key", section: "donations" } if stripe_secret_key.blank?
+      missing << { attribute: :stripe_price_id, label: "Stripe Price ID", section: "donations" } if stripe_price_id.blank?
+    end
+
+    if is_routing_enabled?
+      missing << { attribute: :aws_access_key_id, label: "AWS Access Key ID", section: "location-services" } if aws_access_key_id.blank?
+      missing << { attribute: :aws_secret_access_key, label: "AWS Secret Access Key", section: "location-services" } if aws_secret_access_key.blank?
+      missing << { attribute: :aws_region, label: "AWS Region", section: "location-services" } if aws_region.blank?
+      missing << { attribute: :aws_location_index_name, label: "AWS Place Index Name", section: "location-services" } if aws_location_index_name.blank?
+    end
+
+    if is_pickups_site_enabled? && driver_secret_key.blank?
+      missing << { attribute: :driver_secret_key, label: "Pickups Portal Password", section: "tree-pickups" }
+    end
+
+    missing
+  end
+
+  def required_data_complete?
+    missing_required_settings.empty?
+  end
+
   def sms_quick_response_list
     sms_quick_responses.to_s.split("\n").map(&:strip).reject(&:blank?)
+  end
+
+  def apply_phone_default_country!
+    Phonelib.default_country = phone_default_country.presence || "US"
   end
 
   def email_configured?

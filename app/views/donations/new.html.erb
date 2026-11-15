@@ -1,18 +1,17 @@
-<% content_for :title, "Support Our Scouts | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :title, "Support #{setting.organization_name} | #{setting&.home_page_header || "Tree Recycle"}" %>
 <% content_for :description, "Choose how you would like to support the tree pickup fundraiser." %>
 
 <section class="site-page">
   <div class="site-container site-container--medium">
     <%= render "shared/page_header",
                eyebrow: "One last step",
-               title: "Support Our Scouts",
+               title: "Support #{setting.organization_name}",
                description: "Complete your reservation by choosing a donation option." %>
 
     <div class="site-prose">
       <p>
-        Our tree pickup service is free, but your donation makes a real difference
-        in the lives of our Scouts. Your support helps <%= setting.organization_name %>
-        take part in:
+        Our tree pickup service is free, but your donation makes a real difference.
+        Your support helps <%= setting.organization_name %> take part in:
       </p>
       <ul>
         <li>Summer camps and outdoor adventures</li>

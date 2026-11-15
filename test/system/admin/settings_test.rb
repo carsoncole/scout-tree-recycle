@@ -33,8 +33,42 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_selector "section##{id}"
     end
 
-    titles = all("section.admin-panel h2.admin-panel-title").map(&:text)
+    titles = all("section.admin-panel:not(#configuration-status) h2.admin-panel-title").map(&:text)
     assert_equal [ "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "Logs", "Jobs", "User Management" ], titles
+  end
+
+  test "shows configuration status and missing required settings" do
+    visit admin_settings_url
+
+    within "#configuration-status" do
+      assert_text "1 missing"
+      assert_link "Site URL", href: "#organization"
+    end
+
+    Setting.instance.update(site_url: "https://example.com")
+    visit admin_settings_url
+
+    within "#configuration-status" do
+      assert_text "Ready"
+      assert_text "All required settings are configured."
+    end
+  end
+
+  test "blank default city and state are reported as missing" do
+    visit admin_settings_url
+
+    within "section.admin-panel", text: "The Event" do
+      fill_in "Default City", with: ""
+      fill_in "Default State", with: ""
+      click_on "Save Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    within "#configuration-status" do
+      assert_link "Default City", href: "#event-settings"
+      assert_link "Default State", href: "#event-settings"
+    end
   end
 
   test "pickups portal is disabled when not enabled" do
@@ -67,14 +101,10 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     Setting.destroy_all
     visit root_path
     fill_in "Organization Name", with: ""
-    fill_in "Default City", with: ""
     fill_in "Event Pickup Start", with: ""
     click_on "Save Settings"
 
     within("#organization_name_section") do
-      assert_text "can't be blank"
-    end
-    within("#default_city_section") do
       assert_text "can't be blank"
     end
     within("#event_pickup_start_section") do
@@ -156,6 +186,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "Site URL"
       assert_field "Time Zone"
       assert_field "Default Country"
+      assert_field "Default Phone Country"
       assert_button "Save Organization Settings"
     end
 
@@ -174,6 +205,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Site URL", with: "https://trees.example.com"
       select "UTC", from: "Time Zone"
       fill_in "Default Country", with: "Canada"
+      fill_in "Default Phone Country", with: "CA"
       click_on "Save Organization Settings"
     end
 
@@ -185,6 +217,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "https://trees.example.com", setting.site_url
     assert_equal "UTC", setting.time_zone
     assert_equal "Canada", setting.default_country
+    assert_equal "CA", setting.phone_default_country
   end
 
   test "event contacts describe that fields are optional" do

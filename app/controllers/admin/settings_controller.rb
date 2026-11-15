@@ -82,6 +82,7 @@ class Admin::SettingsController < Admin::BaseController
       :site_url,
       :time_zone,
       :default_country,
+      :phone_default_country,
       :reservations_closed_message,
       :event_pickup_start,
       :event_pickup_end,

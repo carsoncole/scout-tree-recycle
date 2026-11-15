@@ -85,7 +85,8 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       setting: {
         site_url: "https://example.org",
         time_zone: "UTC",
-        default_country: "Canada"
+        default_country: "Canada",
+        phone_default_country: "CA"
       }
     }
 
@@ -94,6 +95,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "https://example.org", setting.site_url
     assert_equal "UTC", setting.time_zone
     assert_equal "Canada", setting.default_country
+    assert_equal "CA", setting.phone_default_country
   end
 
   test "should update marketing cooldown and prior reservation retention" do

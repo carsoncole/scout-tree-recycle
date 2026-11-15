@@ -2,6 +2,36 @@
            title: "Settings",
            description: "Manage event details, feature toggles, and portal access." %>
 
+<% missing_settings = setting.missing_required_settings %>
+<section class="admin-panel admin-settings-status" id="configuration-status">
+  <div class="admin-panel-header">
+    <div>
+      <h2 class="admin-panel-title">Configuration status</h2>
+      <p class="admin-panel-description">Required settings needed for the application to run correctly.</p>
+    </div>
+    <span class="admin-badge <%= missing_settings.empty? ? "admin-badge--positive" : "admin-badge--warning" %>">
+      <%= missing_settings.empty? ? "Ready" : "#{missing_settings.size} missing" %>
+    </span>
+  </div>
+
+  <div class="admin-panel-body">
+    <% if missing_settings.empty? %>
+      <p class="admin-hint">All required settings are configured.</p>
+    <% else %>
+      <div class="admin-notice admin-notice--warning" role="status">
+        <div>
+          <p class="admin-notice-title">Missing required settings</p>
+          <ul class="admin-setup-missing-list">
+            <% missing_settings.each do |item| %>
+              <li><%= link_to item[:label], "##{item[:section]}", class: "admin-link" %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+
 <div class="admin-settings-layout">
   <nav class="admin-settings-nav" aria-label="Settings sections">
     <ul class="admin-settings-nav-list">
@@ -169,6 +199,11 @@
                 <%= label_tag "setting[default_country]", "Default Country", class: "admin-label" %>
                 <%= text_field_tag "setting[default_country]", setting.default_country, class: "admin-input", placeholder: "United States" %>
                 <p class="admin-hint">Used as the default country for new reservations.</p>
+              </div>
+              <div class="admin-field">
+                <%= label_tag "setting[phone_default_country]", "Default Phone Country", class: "admin-label" %>
+                <%= text_field_tag "setting[phone_default_country]", setting.phone_default_country, class: "admin-input", maxlength: 2, placeholder: "US" %>
+                <p class="admin-hint">Two-letter ISO country code used to parse phone numbers.</p>
               </div>
             </div>
           </div>

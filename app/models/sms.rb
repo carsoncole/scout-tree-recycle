@@ -10,7 +10,7 @@ class Sms < ApplicationRecord
   validates :phone, presence: true
   validates :direction, presence: true
 
-  normalizes :phone, with: ->(phone) { Phonelib.parse(phone).full_e164.presence if phone.present? }
+  normalizes :phone, with: ->(phone) { Phonelib.parse(phone, Setting.instance&.phone_default_country.presence || "US").full_e164.presence if phone.present? }
 
   after_create_commit :send_outgoing!, if: :outgoing?
 
@@ -78,7 +78,7 @@ class Sms < ApplicationRecord
   end
 
   def formatted_phone
-    parsed_phone = Phonelib.parse(phone)
+    parsed_phone = Phonelib.parse(phone, Setting.instance&.phone_default_country.presence || "US")
     return phone if parsed_phone.invalid?
 
     formatted =

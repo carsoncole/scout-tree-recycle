@@ -1,6 +1,7 @@
 <footer class="site-footer">
   <div class="site-footer-inner">
     <p>
+      <%= image_tag "scouting-america-logo.png", alt: "Scouting America", class: "site-footer-logo" %>
       <% if setting&.organization_url.present? %>
         <%= link_to(setting.organization_name.presence || "Tree Recycle", setting.organization_url, target: "_blank", rel: "noopener") %>
       <% else %>

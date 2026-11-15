@@ -7,7 +7,7 @@ class DonationsTest < ApplicationSystemTestCase
 
   test "new donation page with donations enabled" do
     make_system_reservation
-    assert_selector "h1", text: "Support Our Scouts"
+    assert_selector "h1", text: "Support #{Setting.instance.organization_name}"
     assert_text "Donate Online"
     assert_button "Donate Online"
 

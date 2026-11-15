@@ -6,8 +6,13 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
 
   around_action :use_setting_time_zone
+  before_action :configure_phonelib
 
   private
+
+  def configure_phonelib
+    Setting.instance&.apply_phone_default_country!
+  end
 
   def use_setting_time_zone(&block)
     zone_name = Setting.instance&.time_zone

@@ -23,16 +23,11 @@ class Admin::SettingsInitialTest < ApplicationSystemTestCase
     visit root_path
 
     fill_in "Organization Name", with: ""
-    fill_in "Default City", with: ""
     fill_in "Sign Up Deadline", with: "2024-01-15T14:30"
 
     click_button "Save"
 
     within "#organization_name_section" do
-      assert_text "can't be blank"
-    end
-
-    within "#default_city_section" do
       assert_text "can't be blank"
     end
 

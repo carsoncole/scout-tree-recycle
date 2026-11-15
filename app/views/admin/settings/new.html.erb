@@ -20,6 +20,12 @@
             <% end %>
           </div>
 
+          <div class="admin-field">
+            <%= f.label :site_url, "Site URL", class: "admin-label" %>
+            <%= f.url_field :site_url, class: "admin-input", placeholder: "https://example.com" %>
+            <p class="admin-hint">Used for links in emails, such as password resets.</p>
+          </div>
+
           <div class="admin-field-grid admin-field-grid--two">
             <div class="admin-field" id="default_city_section">
               <%= f.label :default_city, "Default City", class: "admin-label" %>
@@ -32,7 +38,7 @@
 
             <div class="admin-field" id="default_state_section">
               <%= f.label :default_state, "Default State", class: "admin-label" %>
-              <%= f.select :default_state, options_for_select(us_states), {},
+              <%= f.select :default_state, options_for_select(us_states), { include_blank: true },
                   class: "admin-select #{'admin-select--error' if @setting&.errors[:default_state].any?}" %>
               <% if @setting&.errors[:default_state].any? %>
                 <p class="admin-error-text"><%= @setting.errors[:default_state].first %></p>

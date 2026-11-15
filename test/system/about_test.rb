@@ -5,6 +5,7 @@ class AboutsTest < ApplicationSystemTestCase
     visit about_url
 
     assert_selector "h1", text: "About"
+    assert_selector "img[alt='Scouting America']"
   end
 
   test "should display contact info" do

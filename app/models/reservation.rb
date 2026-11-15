@@ -37,7 +37,7 @@ class Reservation < ApplicationRecord
 
   # data normalization
   normalizes :email, with: ->(e) { e.strip.downcase }
-  normalizes :mobile, with: ->(m) { Phonelib.parse(m).full_e164.presence if m.present? }
+  normalizes :mobile, with: ->(m) { Phonelib.parse(m, Setting.instance&.phone_default_country.presence || "US").full_e164.presence if m.present? }
   before_save :extract_street_name
 
   # destroy any same-email not pending reservations since they're not needed

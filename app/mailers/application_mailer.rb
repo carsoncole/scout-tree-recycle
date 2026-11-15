@@ -4,8 +4,20 @@ class ApplicationMailer < ActionMailer::Base
 
   before_action :apply_site_url
   before_action :apply_email_settings
+  before_action :configure_phonelib
+  around_action :use_setting_time_zone
 
   private
+
+  def configure_phonelib
+    Setting.instance&.apply_phone_default_country!
+  end
+
+  def use_setting_time_zone(&block)
+    zone_name = Setting.instance&.time_zone
+    zone = ActiveSupport::TimeZone[zone_name] if zone_name.present?
+    zone ? Time.use_zone(zone, &block) : block.call
+  end
 
   def apply_site_url
     setting = Setting.instance

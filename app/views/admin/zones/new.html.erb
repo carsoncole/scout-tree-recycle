@@ -2,6 +2,12 @@
            title: "New Zone",
            description: "Create a geographic zone for pickup routes." %>
 
-<div class="admin-container--narrow admin-container--flush">
-  <%= render "form", zone: @zone %>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
+    <div class="admin-container--narrow admin-container--flush">
+      <%= render "form", zone: @zone %>
+    </div>
+  </div>
 </div>

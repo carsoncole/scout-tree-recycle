@@ -1,0 +1,52 @@
+<%# locals: (route:, reservation:, error: nil) %>
+<% color = case reservation.status.to_s
+   when "pending_pickup" then "#16a34a"
+   when "missing" then "#dc2626"
+   when "picked_up" then "#6b7280"
+   else "#2563eb"
+   end %>
+<div id="<%= dom_id(reservation, :panel) %>"
+     class="admin-stack"
+     data-controller="pickups-route-panel"
+     data-pickups-route-panel-reservation-id-value="<%= reservation.id %>"
+     data-pickups-route-panel-status-value="<%= reservation.status %>"
+     data-pickups-route-panel-color-value="<%= color %>">
+  <div>
+    <p class="admin-label">Address</p>
+    <p class="admin-detail-value"><%= [reservation.street, reservation.unit.presence, reservation.city, reservation.state, reservation.zip.presence].compact_blank.join(", ") %></p>
+  </div>
+
+  <div>
+    <p class="admin-label">Notes</p>
+    <% if reservation.pickup_notes.present? %>
+      <p class="admin-detail-value whitespace-pre-wrap"><%= reservation.pickup_notes %></p>
+    <% else %>
+      <p class="admin-table-note">No special instructions.</p>
+    <% end %>
+  </div>
+
+  <div>
+    <p class="admin-label">Current status</p>
+    <p><span class="<%= admin_reservation_status_badge(reservation.status) %>" data-pickups-route-target="statusBadge"><%= reservation.status.to_s.titleize %></span></p>
+  </div>
+
+  <% if error.present? %>
+    <p class="text-red-600 dark:text-red-400 text-sm"><%= error %></p>
+  <% end %>
+
+  <%= form_with model: reservation,
+                url: pickups_route_reservation_path(route, reservation),
+                method: :patch,
+                data: { turbo: true } do |f| %>
+    <div class="admin-field">
+      <%= f.label :status, "Update status", class: "admin-label" %>
+      <%= f.select :status,
+                   [["Pending Pickup", "pending_pickup"], ["Picked Up", "picked_up"], ["Missing", "missing"]],
+                   {},
+                   class: "admin-select" %>
+    </div>
+    <div class="mt-3">
+      <%= f.submit "Update status", class: "admin-button" %>
+    </div>
+  <% end %>
+</div>

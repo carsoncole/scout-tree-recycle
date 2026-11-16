@@ -2,6 +2,12 @@
            title: "Edit Driver",
            description: "Update contact details and route assignments." %>
 
-<div class="admin-container--narrow admin-container--flush">
-  <%= render "form", driver: @driver %>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
+    <div class="admin-container--narrow admin-container--flush">
+      <%= render "form", driver: @driver %>
+    </div>
+  </div>
 </div>

@@ -9,6 +9,7 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <%= javascript_importmap_tags %>
   </head>
 
@@ -23,8 +24,8 @@
             <span class="admin-brand-meta">Driver portal</span>
           <% end %>
 
-          <%= link_to "Drivers", pickups_root_path,
-                      class: admin_nav_class(current_page?(pickups_root_path) || current_page?(pickups_drivers_path)) %>
+          <%= link_to "Drivers", pickups_drivers_path,
+                      class: admin_nav_class(current_page?(pickups_drivers_path)) %>
           <%= link_to "Instructions", pickups_pickup_instructions_path,
                       class: admin_nav_class(current_page?(pickups_pickup_instructions_path) || current_page?(pickups_instructions_path)) %>
           <%= link_to "PDF report", pickups_driver_pickup_lists_path(format: :pdf), target: "_blank", rel: "noopener",

@@ -1,0 +1,16 @@
+<%# locals: (markers: [], polygons: [], center: nil, zoom: 13, height_class: "h-80", empty_message: "No map data available.", show_empty_message: true, interactive: false) %>
+<% markers_data = Array(markers) %>
+<% polygons_data = Array(polygons) %>
+<% drawable_polygon = polygons_data.any? { |polygon| (Array(polygon.is_a?(Hash) ? polygon[:points] || polygon["points"] : polygon).size) > 3 } %>
+<% drawable_marker = markers_data.any? { |marker| marker.present? } %>
+<% if drawable_polygon || drawable_marker %>
+  <div class="w-full <%= height_class %> rounded-md border border-[var(--site-line)] overflow-hidden"
+       data-controller="map"
+       data-map-markers-value="<%= json_escape(markers_data.to_json) %>"
+       data-map-polygons-value="<%= json_escape(polygons_data.to_json) %>"
+       data-map-interactive-value="<%= interactive %>"
+       <% if center.present? %>data-map-center-value="<%= json_escape(Array(center).to_json) %>"<% end %>
+       data-map-zoom-value="<%= zoom %>"></div>
+<% elsif show_empty_message %>
+  <p class="admin-empty"><%= empty_message %></p>
+<% end %>

@@ -6,6 +6,17 @@ module Pickups
       render "pickups/base/unauthorized", status: :unauthorized
     end
 
+    def home
+      actionable_statuses = %w[pending_pickup picked_up missing]
+      @reservation_counts = Reservation
+        .where(status: actionable_statuses)
+        .group(:route_id, :status)
+        .count
+
+      @zones = Zone.ordered.includes(:routes)
+      @unzoned_routes = Route.unzoned.ordered
+    end
+
     def index
       @drivers = Driver.includes(routes: { reservations: :route }).all
     end

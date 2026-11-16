@@ -1,0 +1,99 @@
+<%= render "admin/shared/page_header",
+           title: "Zone: #{@zone.name}" do %>
+  <%= link_to "Edit", edit_admin_zone_path(@zone), class: "admin-button" %>
+  <%= link_to "Back to Zones", admin_zones_path, class: "admin-button admin-button--secondary" %>
+<% end %>
+
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
+    <section class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Zone information</h2>
+      </div>
+      <div class="admin-panel-body">
+        <dl class="admin-detail-list">
+          <div class="admin-detail">
+            <dt class="admin-detail-label">Name</dt>
+            <dd class="admin-detail-value"><%= @zone.name %></dd>
+          </div>
+          <div class="admin-detail">
+            <dt class="admin-detail-label">Address</dt>
+            <dd class="admin-detail-value"><%= [ @zone.street, @zone.city, @zone.state, @zone.country ].compact_blank.join(", ").presence || "—" %></dd>
+          </div>
+          <div class="admin-detail">
+            <dt class="admin-detail-label">Routes</dt>
+            <dd class="admin-detail-value"><%= @routes.size %></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Zone map</h2>
+        <p class="admin-panel-description">Bounded areas for all routes in this zone and plotted reservations.</p>
+      </div>
+      <div class="admin-panel-body">
+        <% route_polygons = @routes.flat_map { |route| route_boundary_polygon(route) } %>
+        <% reservation_markers = reservation_map_markers(@reservations) %>
+        <% if route_polygons.any? || reservation_markers.any? %>
+          <%= render "shared/map",
+                polygons: route_polygons,
+                markers: reservation_markers,
+                height_class: "h-96",
+                empty_message: "No map data available for this zone." %>
+          <% routes_without_boundary = @routes.select { |route| route.points.length <= 3 } %>
+          <% if routes_without_boundary.any? %>
+            <p class="admin-table-note mt-3">
+              Routes without a bounded area (&gt; 3 ordered points): <%= routes_without_boundary.map(&:name).join(", ") %>.
+            </p>
+          <% end %>
+        <% else %>
+          <p class="admin-empty">No route boundaries or reservations with coordinates are available for this zone.</p>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="admin-panel">
+      <div class="admin-panel-header">
+        <h2 class="admin-panel-title">Routes</h2>
+        <p class="admin-panel-description">Routes associated with this zone.</p>
+      </div>
+      <div class="admin-panel-body">
+        <% if @routes.any? %>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Reservations</th>
+                  <th scope="col">Boundary points</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @routes.each do |route| %>
+                  <tr>
+                    <td><%= link_to route.name, admin_route_path(route), class: "admin-link" %></td>
+                    <td><%= route.reservations_count %></td>
+                    <td><%= route.points.size %></td>
+                    <td>
+                      <div class="admin-table-actions">
+                        <%= link_to "View", admin_route_path(route), class: "admin-link" %>
+                        <%= link_to "Edit", edit_admin_route_path(route), class: "admin-link" %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="admin-empty">No routes are associated with this zone.</p>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</div>

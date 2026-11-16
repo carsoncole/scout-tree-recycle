@@ -5,8 +5,8 @@ class Pickups::DriversTest < ApplicationSystemTestCase
     Setting.instance.update(is_pickups_site_enabled: true, driver_secret_key: "secret")
   end
 
-  test "visiting the root" do
-    visit pickups_root_url
+  test "visiting drivers" do
+    visit pickups_drivers_url
     fill_in "Password", with: "secret"
     click_on "Access Pickups"
 

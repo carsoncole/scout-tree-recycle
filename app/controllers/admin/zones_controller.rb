@@ -1,8 +1,13 @@
 class Admin::ZonesController < Admin::BaseController
-  before_action :set_zone, only: [ :edit, :update, :destroy ]
+  before_action :set_zone, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @pagy, @zones = pagy(Zone.ordered)
+  end
+
+  def show
+    @routes = @zone.routes.includes(:points).ordered
+    @reservations = @zone.reservations.where.not(latitude: nil, longitude: nil)
   end
 
   def new

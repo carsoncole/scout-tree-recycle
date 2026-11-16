@@ -1,68 +1,76 @@
 <%= render "admin/shared/page_header",
            title: "Drivers",
            description: "Manage drivers and the routes assigned to them." do %>
+  <%= link_to "Zones", admin_zones_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Routes", admin_routes_path, class: "admin-button admin-button--secondary" %>
   <%= link_to "New Driver", new_admin_driver_path, class: "admin-button" %>
 <% end %>
 
-<section class="admin-panel">
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Mobile</th>
-          <th scope="col">Routes</th>
-          <th scope="col">Zones</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @drivers.each do |driver| %>
-          <tr>
-            <td><%= driver.name %></td>
-            <td><%= Phonelib.parse(driver.mobile).national if driver.mobile.present? %></td>
-            <td>
-              <% if driver.routes.any? %>
-                <div class="admin-table-actions">
-                  <% driver.routes.each do |route| %>
-                    <span class="admin-badge admin-badge--info"><%= route.name %></span>
-                  <% end %>
-                </div>
-              <% else %>
-                <span class="admin-table-note">No routes assigned</span>
-              <% end %>
-            </td>
-            <td>
-              <% zones = driver.routes.map(&:zone).compact.uniq %>
-              <% if zones.any? %>
-                <div class="admin-table-actions">
-                  <% zones.each do |zone| %>
-                    <span class="admin-badge admin-badge--positive"><%= zone.name %></span>
-                  <% end %>
-                </div>
-              <% else %>
-                <span class="admin-table-note">No zones assigned</span>
-              <% end %>
-            </td>
-            <td>
-              <div class="admin-table-actions">
-                <%= link_to "Edit", edit_admin_driver_path(driver), class: "admin-link" %>
-                <%= button_to "Delete", admin_driver_path(driver),
-                    method: :delete,
-                    data: {
-                      turbo_confirm: "Are you sure you want to delete this driver? This action cannot be undone.",
-                      turbo_method: :delete
-                    },
-                    class: "admin-link admin-link--danger" %>
-              </div>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
 
-  <% if @drivers.empty? %>
-    <p class="admin-empty">No drivers have been added yet.</p>
-  <% end %>
-</section>
+  <div class="admin-stack">
+    <section class="admin-panel">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Mobile</th>
+              <th scope="col">Routes</th>
+              <th scope="col">Zones</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @drivers.each do |driver| %>
+              <tr>
+                <td><%= driver.name %></td>
+                <td><%= Phonelib.parse(driver.mobile).national if driver.mobile.present? %></td>
+                <td>
+                  <% if driver.routes.any? %>
+                    <div class="admin-table-actions">
+                      <% driver.routes.each do |route| %>
+                        <span class="admin-badge admin-badge--info"><%= route.name %></span>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class="admin-table-note">No routes assigned</span>
+                  <% end %>
+                </td>
+                <td>
+                  <% zones = driver.routes.map(&:zone).compact.uniq %>
+                  <% if zones.any? %>
+                    <div class="admin-table-actions">
+                      <% zones.each do |zone| %>
+                        <span class="admin-badge admin-badge--positive"><%= zone.name %></span>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class="admin-table-note">No zones assigned</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="admin-table-actions">
+                    <%= link_to "Edit", edit_admin_driver_path(driver), class: "admin-link" %>
+                    <%= button_to "Delete", admin_driver_path(driver),
+                        method: :delete,
+                        data: {
+                          turbo_confirm: "Are you sure you want to delete this driver? This action cannot be undone.",
+                          turbo_method: :delete
+                        },
+                        class: "admin-link admin-link--danger" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if @drivers.empty? %>
+        <p class="admin-empty">No drivers have been added yet.</p>
+      <% end %>
+    </section>
+  </div>
+</div>

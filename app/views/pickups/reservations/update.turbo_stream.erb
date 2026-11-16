@@ -1,0 +1,6 @@
+<%= turbo_stream.replace dom_id(@reservation, :panel) do %>
+  <%= render "pickups/routes/reservation_panel", route: @route, reservation: @reservation %>
+<% end %>
+<%= turbo_stream.update "flash" do %>
+  <%= render "shared/flash" %>
+<% end %>

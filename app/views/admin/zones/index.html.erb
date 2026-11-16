@@ -1,55 +1,64 @@
 <%= render "admin/shared/page_header",
            title: "Zones",
            description: "Group pickup routes into geographic zones." do %>
+  <%= link_to "Drivers", admin_drivers_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Routes", admin_routes_path, class: "admin-button admin-button--secondary" %>
   <%= link_to "New Zone", new_admin_zone_path, class: "admin-button" %>
 <% end %>
 
-<section class="admin-panel">
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Address</th>
-          <th scope="col">Routes</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @zones.each do |zone| %>
-          <tr>
-            <td><%= zone.name %></td>
-            <td><%= [ zone.street, zone.city, zone.state, zone.country ].compact.join(", ") %></td>
-            <td>
-              <% if zone.routes.any? %>
-                <div class="admin-table-actions">
-                  <% zone.routes.each do |route| %>
-                    <span class="admin-badge admin-badge--info"><%= route.name %></span>
-                  <% end %>
-                </div>
-              <% else %>
-                <span class="admin-table-note">No routes assigned</span>
-              <% end %>
-            </td>
-            <td>
-              <div class="admin-table-actions">
-                <%= link_to "Edit", edit_admin_zone_path(zone), class: "admin-link" %>
-                <%= button_to "Delete", admin_zone_path(zone),
-                    method: :delete,
-                    data: {
-                      turbo_confirm: "Are you sure you want to delete this zone? This action cannot be undone.",
-                      turbo_method: :delete
-                    },
-                    class: "admin-link admin-link--danger" %>
-              </div>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
 
-  <% if @zones.empty? %>
-    <p class="admin-empty">No zones have been added yet.</p>
-  <% end %>
-</section>
+  <div class="admin-stack">
+    <section class="admin-panel">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Address</th>
+              <th scope="col">Routes</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @zones.each do |zone| %>
+              <tr>
+                <td><%= zone.name %></td>
+                <td><%= [ zone.street, zone.city, zone.state, zone.country ].compact.join(", ") %></td>
+                <td>
+                  <% if zone.routes.any? %>
+                    <div class="admin-table-actions">
+                      <% zone.routes.each do |route| %>
+                        <%= link_to route.name, admin_route_path(route), class: "admin-badge admin-badge--info" %>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class="admin-table-note">No routes assigned</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="admin-table-actions">
+                    <%= link_to "View", admin_zone_path(zone), class: "admin-link" %>
+                    <%= link_to "Edit", edit_admin_zone_path(zone), class: "admin-link" %>
+                    <%= button_to "Delete", admin_zone_path(zone),
+                        method: :delete,
+                        data: {
+                          turbo_confirm: "Are you sure you want to delete this zone? This action cannot be undone.",
+                          turbo_method: :delete
+                        },
+                        class: "admin-link admin-link--danger" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if @zones.empty? %>
+        <p class="admin-empty">No zones have been added yet.</p>
+      <% end %>
+    </section>
+  </div>
+</div>

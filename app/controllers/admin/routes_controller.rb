@@ -7,6 +7,7 @@ class Admin::RoutesController < Admin::BaseController
   end
 
   def show
+    @pickup_reservations = @route.reservations.pickup.where.not(latitude: nil, longitude: nil)
   end
 
   def new
@@ -54,7 +55,7 @@ class Admin::RoutesController < Admin::BaseController
   private
 
   def set_route
-    @route = Route.find(params[:id])
+    @route = Route.includes(:zone, :drivers, :points).find(params[:id])
   end
 
   def route_params

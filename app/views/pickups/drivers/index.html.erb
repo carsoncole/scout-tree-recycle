@@ -26,7 +26,7 @@
               <% if driver.routes.any? %>
                 <div class="admin-table-actions">
                   <% driver.routes.each do |route| %>
-                    <span class="admin-badge admin-badge--info"><%= route.name %></span>
+                    <%= link_to route.name, pickups_route_path(route), class: "admin-badge admin-badge--info" %>
                   <% end %>
                 </div>
               <% else %>

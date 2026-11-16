@@ -286,7 +286,6 @@
           <h2 class="admin-panel-title">Pickups Portal</h2>
           <p class="admin-panel-description">Enable the driver portal and manage driver access.</p>
         </div>
-        <%= link_to "Manage Drivers", admin_drivers_path, class: "admin-button admin-button--secondary admin-button--small" %>
       </div>
 
       <div class="admin-panel-body">
@@ -314,6 +313,32 @@
               </div>
             </div>
           </div>
+
+        <div class="admin-form-section admin-form-section--flush">
+          <div class="admin-toolbar">
+            <div>
+              <h3 class="admin-toggle-title">Drivers</h3>
+              <p class="admin-hint">Manage drivers and access to pickup lists.</p>
+            </div>
+            <%= link_to "View drivers", admin_drivers_path, class: "admin-button admin-button--secondary admin-button--small" %>
+          </div>
+
+          <div class="admin-toolbar admin-field--spaced">
+            <div>
+              <h3 class="admin-toggle-title">Zones</h3>
+              <p class="admin-hint">Manage geographic zones for pickup routes.</p>
+            </div>
+            <%= link_to "View zones", admin_zones_path, class: "admin-button admin-button--secondary admin-button--small" %>
+          </div>
+
+          <div class="admin-toolbar admin-field--spaced">
+            <div>
+              <h3 class="admin-toggle-title">Routes</h3>
+              <p class="admin-hint">Manage pickup routes and assignments.</p>
+            </div>
+            <%= link_to "View routes", admin_routes_path, class: "admin-button admin-button--secondary admin-button--small" %>
+          </div>
+        </div>
 
           <div class="admin-form-section">
             <div class="admin-toolbar">

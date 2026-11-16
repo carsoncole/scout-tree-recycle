@@ -39,27 +39,27 @@ Rails.application.routes.draw do
         post :geocode
       end
     end
-    resources :drivers, except: [ :show ]
     resources :settings, only: [ :index, :new, :create, :update ] do
       member do
         patch :toggle
       end
     end
     scope path: "settings" do
+      resources :drivers, except: [ :show ]
       resource :data, only: [ :show ], controller: "data" do
         post :import
         get :export
       end
       resources :users, except: [ :show ]
-    end
-    resources :routes do
-      resources :points, only: [ :create, :destroy ]
-      member do
-        post :add_driver
-        delete :remove_driver
+      resources :routes do
+        resources :points, only: [ :create, :destroy ]
+        member do
+          post :add_driver
+          delete :remove_driver
+        end
       end
+      resources :zones
     end
-    resources :zones, except: [ :show ]
     resources :contacts, only: [ :new, :create, :edit, :update, :destroy ] do
       member do
         delete :clear_marketing_email_1
@@ -118,9 +118,12 @@ Rails.application.routes.draw do
 
   # Pickups namespace for drivers
   namespace :pickups do
-    root to: "drivers#index"
+    root to: "drivers#home"
     get "unauthorized", to: "drivers#unauthorized"
     resources :drivers, only: [ :index ]
+    resources :routes, only: [ :show ] do
+      resources :reservations, only: [ :update ]
+    end
     get "driver_pickup_lists", to: "drivers#driver_pickup_lists"
     get "pickup_instructions", to: "drivers#pickup_instructions"
     get "instructions", to: "drivers#instructions"

@@ -2,6 +2,12 @@
            title: "New Route",
            description: "Create a collection route and assign its area." %>
 
-<div class="admin-container--medium admin-container--flush">
-  <%= render "form", route: @route %>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
+    <div class="admin-container--medium admin-container--flush">
+      <%= render "form", route: @route %>
+    </div>
+  </div>
 </div>

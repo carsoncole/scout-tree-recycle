@@ -1,69 +1,82 @@
 <%= render "admin/shared/page_header",
            title: "Routes",
            description: "Manage pickup routes, zones, and driver assignments." do %>
-  <%= link_to "Manage Zones", admin_zones_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Drivers", admin_drivers_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Zones", admin_zones_path, class: "admin-button admin-button--secondary" %>
   <%= link_to "New Route", new_admin_route_path, class: "admin-button" %>
 <% end %>
 
-<section class="admin-panel">
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Zone</th>
-          <th scope="col">Reservations</th>
-          <th scope="col">Assigned drivers</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @routes.each do |route| %>
-          <tr>
-            <td><%= route.name %></td>
-            <td><%= route.zone&.name || "Unzoned" %></td>
-            <td><%= route.reservations.count %></td>
-            <td>
-              <% if route.drivers.any? %>
-                <div class="admin-table-actions">
-                  <% route.drivers.each do |driver| %>
-                    <span class="admin-badge admin-badge--neutral"><%= driver.name %></span>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
+    <section class="admin-panel">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Zone</th>
+              <th scope="col">Reservations</th>
+              <th scope="col">Assigned drivers</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @routes.each do |route| %>
+              <tr>
+                <td><%= link_to route.name, admin_route_path(route), class: "admin-link" %></td>
+                <td>
+                  <% if route.zone %>
+                    <%= link_to route.zone.name, admin_zone_path(route.zone), class: "admin-link" %>
+                  <% else %>
+                    Unzoned
                   <% end %>
+                </td>
+                <td><%= route.reservations.count %></td>
+                <td>
+                  <% if route.drivers.any? %>
+                    <div class="admin-table-actions">
+                      <% route.drivers.each do |driver| %>
+                        <span class="admin-badge admin-badge--neutral"><%= driver.name %></span>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class="admin-table-note">No drivers assigned</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="admin-table-actions">
+                    <%= link_to "View", admin_route_path(route), class: "admin-link" %>
+                    <%= link_to "Edit", edit_admin_route_path(route), class: "admin-link" %>
+                    <%= button_to "Delete", admin_route_path(route),
+                        method: :delete,
+                        data: {
+                          turbo_confirm: "Are you sure you want to delete this route? This action cannot be undone.",
+                          turbo_method: :delete
+                        },
+                        class: "admin-link admin-link--danger" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+
+            <tr>
+              <td>Unassigned</td>
+              <td>—</td>
+              <td><%= Reservation.where(route_id: nil).count %></td>
+              <td><span class="admin-table-note">No route</span></td>
+              <td>
+                <div class="admin-table-actions">
+                  <%= link_to "View", admin_reservations_path(route_id: nil), class: "admin-link" %>
                 </div>
-              <% else %>
-                <span class="admin-table-note">No drivers assigned</span>
-              <% end %>
-            </td>
-            <td>
-              <div class="admin-table-actions">
-                <%= link_to "View", admin_route_path(route), class: "admin-link" %>
-                <%= link_to "Edit", edit_admin_route_path(route), class: "admin-link" %>
-                <%= button_to "Delete", admin_route_path(route),
-                    method: :delete,
-                    data: {
-                      turbo_confirm: "Are you sure you want to delete this route? This action cannot be undone.",
-                      turbo_method: :delete
-                    },
-                    class: "admin-link admin-link--danger" %>
-              </div>
-            </td>
-          </tr>
-        <% end %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <tr>
-          <td>Unassigned</td>
-          <td>—</td>
-          <td><%= Reservation.where(route_id: nil).count %></td>
-          <td><span class="admin-table-note">No route</span></td>
-          <td>
-            <div class="admin-table-actions">
-              <%= link_to "View", admin_reservations_path(route_id: nil), class: "admin-link" %>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <%= render "admin/shared/pagination", pagy: @pagy %>
+    </section>
   </div>
-
-  <%= render "admin/shared/pagination", pagy: @pagy %>
-</section>
+</div>

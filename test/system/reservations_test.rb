@@ -14,6 +14,13 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_selector ".site-deadline-badge", text: /sign up by/i
     assert_selector ".site-deadline-badge",
                     text: Setting.instance.event_sign_up_deadline.strftime("%B %-d, %Y at %-l:%M%P")
+    assert_text "Pickup in #{Setting.instance.default_city}, #{Setting.instance.default_state}."
+    assert_text "Mobile number (optional)"
+    assert_text "we can text you sooner than email"
+    assert_text "Pickup note (optional)"
+    assert_no_selector "#reservation_mobile[required]"
+    assert_no_selector "#reservation_pickup_notes[required]"
+    assert_selector "input#reservation_pickup_notes"
   end
 
   # test "making a reservation and checking status" do

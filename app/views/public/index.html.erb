@@ -3,25 +3,43 @@
 <% content_for :title, "Make a Reservation | #{setting&.home_page_header || "Tree Recycle"}" %>
 <% content_for :description, "Schedule a Christmas tree pickup for #{pickup_date}. Sign up by #{sign_up_deadline}." %>
 
-<section class="site-hero" id="reserve">
-  <div class="site-container site-container--narrow">
-    <%= image_tag setting.home_page_image_name, alt: "Recycle Your Tree", class: "site-hero-image" %>
-
-    <%= render "shared/page_header",
-               eyebrow: "Holiday tree pickup",
-               title: "Make a Reservation",
-               description: "Schedule your tree pickup for #{pickup_date}." do %>
-      <p class="site-deadline-badge bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
-        <span class="site-deadline-badge-label">Sign up by</span>
-        <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
-      </p>
-    <% end %>
-
-    <% if setting.is_reservations_open %>
-      <div class="site-form-panel">
-        <%= render "reservations/form" %>
+<section class="site-hero site-home-hero" id="reserve">
+  <div class="site-container site-container--wide">
+    <div class="site-home-layout <%= "site-home-layout--closed" unless setting.is_reservations_open %>">
+      <div class="site-home-intro">
+        <div class="site-home-heading">
+          <%= image_tag setting.home_page_image_name, alt: "Recycle Your Tree", class: "site-home-image" %>
+          <div>
+            <p class="site-eyebrow text-sage-deep dark:text-sage-deep-dark">Holiday tree pickup</p>
+            <h1 class="site-title text-ink dark:text-ink-dark">Make a Reservation</h1>
+          </div>
+        </div>
+        <p class="site-lede text-ink-soft dark:text-ink-soft-dark">
+          Schedule your tree pickup for <strong class="font-semibold text-ink dark:text-ink-dark"><%= pickup_date %></strong>.
+        </p>
+        <p class="site-home-service-area text-ink-soft dark:text-ink-soft-dark">
+          Pickup in <%= [ setting.default_city, setting.default_state ].compact_blank.join(", ") %>.
+        </p>
+        <p class="site-deadline-badge bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
+          <span class="site-deadline-badge-label">Sign up by</span>
+          <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
+        </p>
       </div>
 
+      <% if setting.is_reservations_open %>
+        <div class="site-home-form border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+          <h2 class="site-home-form-title text-ink dark:text-ink-dark">Reserve your pickup</h2>
+          <%= render "reservations/form" %>
+        </div>
+      <% else %>
+        <div class="site-home-closed border-y border-line dark:border-line-dark">
+          <h2 class="site-subtitle text-ink dark:text-ink-dark">Reservations are closed</h2>
+          <p class="m-0 max-w-[34rem] text-ink-soft dark:text-ink-soft-dark"><%= setting.reservations_closed_message_text %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <% if setting.is_reservations_open %>
       <section class="site-section border-line dark:border-line-dark" aria-labelledby="pickup-steps">
         <h2 id="pickup-steps" class="site-subtitle text-ink dark:text-ink-dark">How pickup works</h2>
         <ol class="site-steps site-steps--three">
@@ -30,11 +48,6 @@
           <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Leave your tree where we can find it.</li>
         </ol>
       </section>
-    <% else %>
-      <div class="mt-10 border-y border-line py-8 dark:border-line-dark">
-        <h2 class="site-subtitle text-ink dark:text-ink-dark">Reservations are closed</h2>
-        <p class="m-0 max-w-[34rem] text-ink-soft dark:text-ink-soft-dark"><%= setting.reservations_closed_message_text %></p>
-      </div>
     <% end %>
   </div>
 </section>

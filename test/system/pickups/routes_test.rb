@@ -14,6 +14,9 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     click_on @route.name, match: :first
     assert_selector "h1", text: "Route: #{@route.name}"
     assert_selector "[data-controller='map']"
+    assert_no_link "Back to Pickups"
+    assert_no_selector "h2", text: "Route map"
+    assert_text "Green: Pending - Grey: Picked - Red: Missing"
 
     # click marker via JS (Leaflet markers rendered in canvas/svg-like layers; use evaluate to select first marker)
     # pick a known geocoded reservation on route one

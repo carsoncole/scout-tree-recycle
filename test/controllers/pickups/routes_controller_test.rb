@@ -8,8 +8,14 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
 
   test "should get show with valid driver key" do
     get pickups_route_url(@route), params: { driver_secret_key: "secret" }
+    assert_redirected_to pickups_root_url
+
+    get pickups_route_url(@route)
     assert_response :success
     assert_select "h1", /Route:/
+    assert_select "a", text: "Back to Pickups", count: 0
+    assert_select "h2", text: "Route map", count: 0
+    assert_select ".admin-page-description", text: /Green: Pending - Grey: Picked - Red: Missing/
   end
 
   test "should not get show without driver key" do

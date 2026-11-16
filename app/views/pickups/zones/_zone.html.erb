@@ -1,0 +1,39 @@
+<%# locals: (name:, routes:, reservation_counts:) %>
+<% pending = routes.sum { |route| reservation_counts.fetch([route.id, "pending_pickup"], 0) } %>
+
+<section class="admin-panel">
+  <div class="admin-panel-header">
+    <div>
+      <h2 class="admin-panel-title"><%= name %></h2>
+      <p class="admin-panel-description"><%= pluralize(routes.size, "route") %></p>
+    </div>
+    <span class="admin-badge admin-badge--info"><%= pluralize(pending, "pending pickup") %></span>
+  </div>
+
+  <div class="admin-table-wrap">
+    <% if routes.any? %>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Route</th>
+            <th scope="col">Pending</th>
+            <th scope="col">Picked</th>
+            <th scope="col">Missing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% routes.each do |route| %>
+            <tr>
+              <td><%= link_to route.name, pickups_route_path(route), class: "admin-link" %></td>
+              <td><%= reservation_counts.fetch([route.id, "pending_pickup"], 0) %></td>
+              <td><%= reservation_counts.fetch([route.id, "picked_up"], 0) %></td>
+              <td><%= reservation_counts.fetch([route.id, "missing"], 0) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="admin-empty">No routes in this zone.</p>
+    <% end %>
+  </div>
+</section>

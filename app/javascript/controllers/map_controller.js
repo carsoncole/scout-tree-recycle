@@ -15,13 +15,12 @@ export default class extends Controller {
 
     this.element.__mapController = this
     this.markerLayers = new Map()
-    this.settled = false
     this.mapBounds = null
 
     const hasCenter = Array.isArray(this.centerValue) && this.centerValue.length === 2 && this.validCoord(this.centerValue[0], this.centerValue[1])
     const initialCenter = hasCenter ? [Number(this.centerValue[0]), Number(this.centerValue[1])] : [47.6062, -122.3321]
 
-    this.map = L.map(this.element, { scrollWheelZoom: false, worldCopyJump: true }).setView(initialCenter, this.zoomValue)
+    this.map = L.map(this.element, { scrollWheelZoom: false, worldCopyJump: true, zoomSnap: 0.1 }).setView(initialCenter, this.zoomValue)
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -43,10 +42,7 @@ export default class extends Controller {
     requestAnimationFrame(() => this.resizeMap(true))
     setTimeout(() => this.resizeMap(true), 100)
     setTimeout(() => this.resizeMap(true), 300)
-    setTimeout(() => {
-      this.resizeMap(true)
-      this.settled = true
-    }, 750)
+    setTimeout(() => this.resizeMap(true), 750)
   }
 
   disconnect() {
@@ -69,11 +65,40 @@ export default class extends Controller {
     const rect = this.element.getBoundingClientRect()
     if (rect.width === 0 || rect.height === 0) return
 
+    const widthChanged = this.lastWidth !== rect.width
+    this.lastWidth = rect.width
+
     this.map.invalidateSize({ animate: false, pan: false })
 
-    if (refit && !this.settled && this.mapBounds && this.mapBounds.isValid()) {
-      this.map.fitBounds(this.mapBounds, { padding: [20, 20], maxZoom: 17 })
+    // Re-fit when the width changes (initial layout, rotation, window resize).
+    // Height-only changes, such as a mobile browser hiding its address bar,
+    // should not reset the driver's map position.
+    if (refit && widthChanged && this.mapBounds && this.mapBounds.isValid()) {
+      this.fitToBounds(this.mapBounds)
     }
+  }
+
+  fitToBounds(bounds) {
+    if (!this.map || !bounds || !bounds.isValid()) return
+
+    const padding = 8
+    const size = this.map.getSize()
+    const availableWidth = size.x - padding * 2
+    const availableHeight = size.y - padding * 2
+    if (availableWidth <= 0 || availableHeight <= 0) return
+
+    // fitBounds snaps to whole zoom levels, which often leaves a large margin
+    // around the polygon. Calculate the exact zoom so the bounds fill the map.
+    const northWest = this.map.project(bounds.getNorthWest(), 0)
+    const southEast = this.map.project(bounds.getSouthEast(), 0)
+    const boundsWidth = Math.abs(southEast.x - northWest.x)
+    const boundsHeight = Math.abs(southEast.y - northWest.y)
+    const scaleX = boundsWidth > 0 ? availableWidth / boundsWidth : Infinity
+    const scaleY = boundsHeight > 0 ? availableHeight / boundsHeight : Infinity
+    const exactZoom = Math.log2(Math.min(scaleX, scaleY))
+    const zoom = Math.min(17, Math.floor(exactZoom * 10) / 10)
+
+    this.map.setView(bounds.getCenter(), zoom, { animate: false })
   }
 
   markersValueChanged() {
@@ -138,7 +163,7 @@ export default class extends Controller {
       const combined = bounds.reduce((acc, b) => (acc ? acc.extend(b) : b), null)
       if (combined && combined.isValid()) {
         this.mapBounds = combined
-        this.map.fitBounds(combined, { padding: [20, 20], maxZoom: 17 })
+        this.fitToBounds(combined)
       }
     }
   }

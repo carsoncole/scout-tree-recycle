@@ -1018,6 +1018,49 @@
   border-radius: var(--site-radius);
 }
 
+/* Pickups portal: fill the mobile viewport, leaving only a small outer gutter. */
+.admin-shell--pickups {
+  padding: 1.25rem 0 3rem;
+}
+
+.admin-container--pickups {
+  padding-inline: 0.5rem;
+}
+
+.admin-header-inner--pickups {
+  padding: 0.6rem 0.75rem;
+}
+
+.admin-shell--pickups .admin-flash {
+  margin-bottom: 1rem;
+}
+
+.admin-shell--pickups .admin-page-header {
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .admin-shell--pickups {
+    padding: 2.25rem 0 4.5rem;
+  }
+
+  .admin-container--pickups {
+    padding-inline: 1.5rem;
+  }
+
+  .admin-header-inner--pickups {
+    padding: 0.85rem 1.5rem;
+  }
+
+  .admin-shell--pickups .admin-flash {
+    margin-bottom: 1.5rem;
+  }
+
+  .admin-shell--pickups .admin-page-header {
+    margin-bottom: 2rem;
+  }
+}
+
 .admin-page-header {
   display: flex;
   flex-wrap: wrap;
@@ -1206,6 +1249,16 @@
 
 .admin-panel-body--flush {
   padding: 0;
+}
+
+.admin-panel-body--tight {
+  padding: 0.5rem;
+}
+
+@media (min-width: 900px) {
+  .admin-panel-body--tight {
+    padding: 1.5rem;
+  }
 }
 
 .admin-panel--nested {

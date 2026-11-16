@@ -17,25 +17,24 @@
     <a class="site-skip-link" href="#pickups-main">Skip to content</a>
 
     <header class="admin-header admin-no-print print:hidden">
-      <div class="admin-header-inner">
+      <div class="admin-header-inner admin-header-inner--pickups">
         <nav class="admin-nav admin-nav--pickups" aria-label="Pickups">
           <%= link_to pickups_root_path, class: "admin-brand" do %>
             <span class="admin-brand-link">Tree Pickups</span>
-            <span class="admin-brand-meta">Driver portal</span>
           <% end %>
 
+          <%= link_to "Routes", pickups_root_path,
+                      class: admin_nav_class(controller_name == "routes" || (controller_name == "drivers" && action_name == "home")) %>
           <%= link_to "Drivers", pickups_drivers_path,
-                      class: admin_nav_class(current_page?(pickups_drivers_path)) %>
-          <%= link_to "Instructions", pickups_pickup_instructions_path,
-                      class: admin_nav_class(current_page?(pickups_pickup_instructions_path) || current_page?(pickups_instructions_path)) %>
-          <%= link_to "PDF report", pickups_driver_pickup_lists_path(format: :pdf), target: "_blank", rel: "noopener",
-                      class: "admin-nav-link" %>
+                      class: admin_nav_class(controller_name == "drivers" && action_name != "home") %>
+          <%= link_to "Zones", pickups_zones_path,
+                      class: admin_nav_class(controller_name == "zones") %>
         </nav>
       </div>
     </header>
 
-    <main id="pickups-main" class="admin-shell">
-      <div class="admin-container">
+    <main id="pickups-main" class="admin-shell admin-shell--pickups">
+      <div class="admin-container admin-container--pickups">
         <div class="admin-flash print:hidden" id="flash">
           <%= render "shared/flash" %>
         </div>

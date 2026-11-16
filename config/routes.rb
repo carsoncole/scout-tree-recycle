@@ -121,6 +121,7 @@ Rails.application.routes.draw do
     root to: "drivers#home"
     get "unauthorized", to: "drivers#unauthorized"
     resources :drivers, only: [ :index ]
+    resources :zones, only: [ :index ]
     resources :routes, only: [ :show ] do
       resources :reservations, only: [ :update ]
     end

@@ -1,8 +1,6 @@
 <%= render "admin/shared/page_header",
            title: "Route: #{@route.name}",
-           description: [@route.zone&.name || "No Zone", "Tap a point to view and update pickup status."].join(" · ") do %>
-  <%= link_to "Back to Pickups", pickups_root_path, class: "admin-button admin-button--secondary" %>
-<% end %>
+           description: [@route.zone&.name || "No Zone", "Tap a point to view and update status. Green: Pending - Grey: Picked - Red: Missing"].join(" · ") %>
 
 <% boundary_polygons = route_boundary_polygon(@route) %>
 <% pickup_markers = pickups_route_map_markers(@route, @pickup_reservations) %>
@@ -11,13 +9,7 @@
      data-controller="pickups-route"
      data-action="map:marker-selected@window->pickups-route#select">
   <section class="admin-panel lg:col-span-2">
-    <div class="admin-panel-header">
-      <div>
-        <h2 class="admin-panel-title">Route map</h2>
-        <p class="admin-panel-description">Green: pending pickup · Red: missing · Gray: picked up</p>
-      </div>
-    </div>
-    <div class="admin-panel-body">
+    <div class="admin-panel-body admin-panel-body--tight">
       <% if boundary_polygons.any? || pickup_markers.any? %>
         <div data-pickups-route-target="mapWrap" data-action="pickups:marker-update@window->pickups-route#markerUpdated">
           <%= render "shared/map",

@@ -23,6 +23,6 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h2", text: "Route map"
-    assert_select "p.admin-empty", text: "No route boundary or pickup locations with coordinates are available for this route."
+    assert_select "p", text: "No route boundary or pickup locations with coordinates are available for this route."
   end
 end

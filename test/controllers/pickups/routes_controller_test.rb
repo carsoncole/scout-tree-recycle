@@ -15,7 +15,7 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", /Route:/
     assert_select "a", text: "Back to Pickups", count: 0
     assert_select "h2", text: "Route map", count: 0
-    assert_select ".admin-page-description", text: /Green: Pending - Grey: Picked - Red: Missing/
+    assert_select "p", text: /Green: Pending - Grey: Picked - Red: Missing/
   end
 
   test "should not get show without driver key" do

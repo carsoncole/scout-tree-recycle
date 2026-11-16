@@ -1,11 +1,11 @@
-<header class="site-header">
+<header class="site-header border-b border-line bg-page dark:border-line-dark dark:bg-page-dark">
   <div class="site-header-inner">
-    <%= link_to(setting&.home_page_header.presence || "Tree Recycle", root_path, class: "site-wordmark") %>
+    <%= link_to(setting&.home_page_header.presence || "Tree Recycle", root_path, class: "site-wordmark text-ink hover:text-sage-deep dark:text-ink-dark dark:hover:text-sage-deep-dark") %>
 
     <nav class="site-nav" aria-label="Primary">
-      <%= link_to "About", about_path, class: "site-nav-link" %>
+      <%= link_to "About", about_path, class: "site-nav-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
       <% if setting&.is_reservations_open %>
-        <%= link_to "Reserve a pickup", root_path(anchor: "reserve"), class: "site-button site-button--small" %>
+        <%= link_to "Reserve a pickup", root_path(anchor: "reserve"), class: "site-button site-button--small bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
       <% end %>
     </nav>
   </div>

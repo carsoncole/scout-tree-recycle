@@ -1,44 +1,44 @@
 <%= render "admin/shared/page_header",
            title: "Email Images",
            description: "Images stored directly in app/assets/images that can be used in email templates." do %>
-  <%= link_to "Back to Marketing", admin_marketing_index_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Back to Marketing", admin_marketing_index_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
 <% end %>
 
-<div class="admin-notice admin-notice--spaced" role="note">
+<div class="admin-notice admin-notice--spaced border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" role="note">
   <div>
     <p><strong>Using an image:</strong> use its Liquid variable in the template HTML, for example <code>&lt;img src="{{ images.tree }}" alt="Tree"&gt;</code>. Every image in this folder gets a variable generated from its filename: lowercase, with spaces, hyphens, and other punctuation replaced by underscores.</p>
   </div>
 </div>
 
 <% if @image_filenames.any? %>
-  <div class="admin-grid admin-grid--three">
+  <div class="grid gap-5 md:grid-cols-3">
     <% @image_filenames.each do |filename| %>
       <% variable = MarketingEmailTemplate.image_variable_for(filename) %>
 
-      <section class="admin-panel">
-        <div class="admin-image-preview">
+      <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+        <div class="admin-image-preview border-line bg-stone dark:border-line-dark dark:bg-stone-dark">
           <%= image_tag filename, alt: filename %>
         </div>
 
         <div class="admin-panel-body">
-          <div class="admin-stack admin-stack--tight">
-            <p class="admin-image-name"><%= filename %></p>
+          <div class="flex flex-col gap-4">
+            <p class="admin-image-name text-ink dark:text-ink-dark"><%= filename %></p>
 
             <% if variable.present? %>
               <div class="admin-field">
-                <span class="admin-hint">Liquid variable</span>
-                <code class="admin-image-variable">{{ <%= variable %> }}</code>
+                <span class="admin-hint text-ink-soft dark:text-ink-soft-dark">Liquid variable</span>
+                <code class="admin-image-variable border border-line-strong bg-stone text-ink dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark">{{ <%= variable %> }}</code>
               </div>
             <% else %>
-              <span class="admin-badge admin-badge--neutral">No Liquid variable</span>
+              <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">No Liquid variable</span>
             <% end %>
 
-            <%= link_to "Open image", image_path(filename), class: "admin-link", target: "_blank", rel: "noopener" %>
+            <%= link_to "Open image", image_path(filename), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark", target: "_blank", rel: "noopener" %>
           </div>
         </div>
       </section>
     <% end %>
   </div>
 <% else %>
-  <p class="admin-empty">No images were found directly in app/assets/images.</p>
+  <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No images were found directly in app/assets/images.</p>
 <% end %>

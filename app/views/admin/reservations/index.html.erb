@@ -2,97 +2,103 @@
            title: "Reservations",
            description: "Manage tree pickup reservations, routing, and customer details." %>
 
-<div class="admin-stack">
+<div class="flex flex-col gap-6">
   <div class="admin-toolbar">
-    <div class="admin-filter-group" role="group" aria-label="Filter reservations">
+    <div class="admin-filter-group border border-line-strong bg-surface dark:border-line-strong-dark dark:bg-surface-dark" role="group" aria-label="Filter reservations">
       <%= link_to "All Reservations", admin_reservations_path,
-                  class: "admin-filter #{'is-active' if params[:status].nil?}" %>
+                  class: "admin-filter #{params[:status].nil? ? 'is-active bg-sage text-surface dark:bg-sage-dark dark:text-page-dark' : 'text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark'}" %>
       <%= link_to "Needs Routing", admin_reservations_path(status: "routing"),
-                  class: "admin-filter #{'is-active' if params[:status] == 'routing'}" %>
+                  class: "admin-filter #{params[:status] == 'routing' ? 'is-active bg-sage text-surface dark:bg-sage-dark dark:text-page-dark' : 'text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark'}" %>
     </div>
   </div>
 
   <% unless setting.is_routing_enabled %>
-    <div class="admin-notice admin-notice--warning" role="status">
+    <div class="admin-notice admin-notice--warning border border-line border-l-[3px] border-l-warning bg-warning-bg text-ink dark:border-line-dark dark:border-l-warning-dark dark:bg-warning-bg-dark dark:text-ink-dark" role="status">
       <div>
         <p class="admin-notice-title">Automatic routing is disabled</p>
         <p>
           Routes will need to be manually assigned. Enable automatic routing in
-          <%= link_to "Settings", admin_settings_path, class: "admin-link" %>.
+          <%= link_to "Settings", admin_settings_path, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>.
         </p>
       </div>
     </div>
   <% end %>
 
-  <section class="admin-panel">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-table-wrap">
-      <table class="admin-table <%= params[:status] == 'routing' ? 'needs-routing' : 'all-reservations' %>">
+      <table class="admin-table text-ink <%= params[:status] == 'routing' ? 'needs-routing' : 'all-reservations' %> dark:text-ink-dark">
         <thead>
-          <tr>
-            <th scope="col">
-              <%= link_to admin_reservations_path(sort: "name", direction: params[:sort] == "name" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]) do %>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">
+              <%= link_to admin_reservations_path(sort: "name", direction: params[:sort] == "name" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]), class: "hover:text-ink dark:hover:text-ink-dark" do %>
                 Name<% if params[:sort] == "name" %> <%= params[:direction] == "asc" ? "↑" : "↓" %><% end %>
               <% end %>
             </th>
-            <th scope="col">
-              <%= link_to admin_reservations_path(sort: "address", direction: params[:sort] == "address" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]) do %>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">
+              <%= link_to admin_reservations_path(sort: "address", direction: params[:sort] == "address" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]), class: "hover:text-ink dark:hover:text-ink-dark" do %>
                 Address<% if params[:sort] == "address" %> <%= params[:direction] == "asc" ? "↑" : "↓" %><% end %>
               <% end %>
             </th>
-            <th scope="col">
-              <%= link_to admin_reservations_path(sort: "email", direction: params[:sort] == "email" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]) do %>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">
+              <%= link_to admin_reservations_path(sort: "email", direction: params[:sort] == "email" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]), class: "hover:text-ink dark:hover:text-ink-dark" do %>
                 Contact<% if params[:sort] == "email" %> <%= params[:direction] == "asc" ? "↑" : "↓" %><% end %>
               <% end %>
             </th>
-            <th scope="col">
-              <%= link_to admin_reservations_path(sort: "route", direction: params[:sort] == "route" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]) do %>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">
+              <%= link_to admin_reservations_path(sort: "route", direction: params[:sort] == "route" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]), class: "hover:text-ink dark:hover:text-ink-dark" do %>
                 Route<% if params[:sort] == "route" %> <%= params[:direction] == "asc" ? "↑" : "↓" %><% end %>
               <% end %>
             </th>
-            <th scope="col">
-              <%= link_to admin_reservations_path(sort: "status", direction: params[:sort] == "status" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]) do %>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">
+              <%= link_to admin_reservations_path(sort: "status", direction: params[:sort] == "status" && params[:direction] == "asc" ? "desc" : "asc", status: params[:status]), class: "hover:text-ink dark:hover:text-ink-dark" do %>
                 Status<% if params[:sort] == "status" %> <%= params[:direction] == "asc" ? "↑" : "↓" %><% end %>
               <% end %>
             </th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @reservations.each do |reservation| %>
-            <tr class="<%= "is-warning" if reservation.routing_status == "Pending" %><%= "is-danger" if reservation.routing_status == "Manual" %>">
-              <td><%= reservation.name %></td>
-              <td>
+            <tr class="<%= 'bg-warning-row dark:bg-warning-row-dark' if reservation.routing_status == 'Pending' %><%= ' bg-danger-row dark:bg-danger-row-dark' if reservation.routing_status == 'Manual' %> hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= reservation.name %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <%= reservation.street %><br>
-                <span class="admin-table-note"><%= reservation.city %></span>
+                <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= reservation.city %></span>
               </td>
-              <td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <%= reservation.email %><br>
-                <span class="admin-table-note"><%= reservation.mobile.present? ? Phonelib.parse(reservation.mobile).national : nil %></span>
+                <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= reservation.mobile.present? ? Phonelib.parse(reservation.mobile).national : nil %></span>
               </td>
-              <td>
-                <span class="admin-badge <%= "admin-badge--warning" if reservation.routing_status == "Pending" %><%= "admin-badge--danger" if reservation.routing_status == "Manual" %>">
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+                <span class="admin-badge <%= if reservation.routing_status == 'Pending'
+                                              'admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark'
+                                            elsif reservation.routing_status == 'Manual'
+                                              'admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark'
+                                            else
+                                              'admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark'
+                                            end %>">
                   <%= reservation.routing_status %>
                 </span>
                 <% if reservation.manual_routing_required? %>
-                  <span class="admin-table-note" title="Route needs to be manually set">Needs attention</span>
+                  <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark" title="Route needs to be manually set">Needs attention</span>
                 <% end %>
               </td>
-              <td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <span class="<%= admin_reservation_status_badge(reservation.status) %>">
                   <%= reservation.status.titleize %>
                 </span>
               </td>
-              <td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <div class="admin-table-actions">
-                  <%= link_to "View", admin_reservation_path(reservation), class: "admin-link" %>
-                  <%= link_to "Edit", edit_admin_reservation_path(reservation), class: "admin-link" %>
+                  <%= link_to "View", admin_reservation_path(reservation), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                  <%= link_to "Edit", edit_admin_reservation_path(reservation), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
                   <%= button_to "Delete", admin_reservation_path(reservation),
                       method: :delete,
                       data: {
                         turbo_confirm: "Are you sure you want to delete this reservation? This action cannot be undone.",
                         turbo_method: :delete
                       },
-                      class: "admin-link admin-link--danger" %>
+                      class: "admin-link admin-link--danger text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark" %>
                 </div>
               </td>
             </tr>

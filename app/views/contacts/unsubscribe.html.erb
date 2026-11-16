@@ -7,15 +7,15 @@
                title: "Unsubscribe from Tree Recycling Updates",
                description: "We’re sorry to see you go. By proceeding, we will remove your email from any further messages about our tree recycling event." %>
 
-    <div class="site-section">
-      <div class="site-prose">
+    <div class="site-section border-line dark:border-line-dark">
+      <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
         <p>Are you sure you want to unsubscribe?</p>
       </div>
 
       <%= button_to "Yes, Unsubscribe Me",
                     contact_path(@contact),
                     method: :delete,
-                    class: "site-button site-button--secondary site-button--full",
+                    class: "site-button site-button--secondary site-button--full border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
                     data: { turbo_method: :delete } %>
     </div>
   </div>

@@ -13,14 +13,14 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="admin-body">
-    <a class="site-skip-link" href="#pickups-main">Skip to content</a>
+  <body class="admin-body bg-page text-ink dark:bg-page-dark dark:text-ink-dark">
+    <a class="site-skip-link bg-ink text-surface dark:bg-ink-dark dark:text-page-dark" href="#pickups-main">Skip to content</a>
 
-    <header class="admin-header admin-no-print print:hidden">
+    <header class="admin-header print:hidden border-b border-line bg-page dark:border-line-dark dark:bg-page-dark">
       <div class="admin-header-inner admin-header-inner--pickups">
         <nav class="admin-nav admin-nav--pickups" aria-label="Pickups">
           <%= link_to pickups_root_path, class: "admin-brand" do %>
-            <span class="admin-brand-link">Tree Pickups</span>
+            <span class="admin-brand-link text-ink hover:text-sage-deep dark:text-ink-dark dark:hover:text-sage-deep-dark">Tree Pickups</span>
           <% end %>
 
           <%= link_to "Routes", pickups_root_path,

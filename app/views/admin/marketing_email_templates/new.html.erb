@@ -1,7 +1,7 @@
 <%= render "admin/shared/page_header",
            title: "New Email Template",
            description: "Create a template, then preview it with contact data before publishing." do %>
-  <%= link_to "Back to Templates", admin_marketing_email_templates_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Back to Templates", admin_marketing_email_templates_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
 <% end %>
 
 <div data-controller="email-template-editor"
@@ -12,11 +12,11 @@
     </div>
 
     <aside class="admin-template-sidebar">
-      <section class="admin-panel">
-        <div class="admin-panel-header">
+      <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+        <div class="admin-panel-header border-line dark:border-line-dark">
           <div>
-            <h2 class="admin-panel-title">Available variables</h2>
-            <p class="admin-panel-description">Click a variable to insert it into the editor you last focused.</p>
+            <h2 class="admin-panel-title text-ink dark:text-ink-dark">Available variables</h2>
+            <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Click a variable to insert it into the editor you last focused.</p>
           </div>
         </div>
 
@@ -24,7 +24,7 @@
           <div class="admin-variable-list">
             <% MarketingEmailTemplate.available_variables.each do |variable| %>
               <button type="button"
-                      class="admin-variable-button"
+                      class="admin-variable-button border border-line-strong bg-stone text-ink dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark"
                       title="<%= variable[:description] %>"
                       data-action="email-template-editor#insert"
                       data-variable="{{ <%= variable[:name] %> }}">
@@ -35,7 +35,7 @@
         </div>
       </section>
 
-      <div class="admin-notice" role="note">
+      <div class="admin-notice border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" role="note">
         <div>
           <p><strong>New templates start as drafts.</strong> After previewing, publish the template so marketing emails can use it.</p>
         </div>

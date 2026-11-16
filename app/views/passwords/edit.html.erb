@@ -9,25 +9,25 @@
 
     <div class="site-form-panel">
       <%= form_with url: password_path(params[:token]), method: :put, class: "site-form" do |form| %>
-        <div class="site-field">
-          <%= form.label :password, "New password", class: "site-label" %>
+        <div class="flex flex-col gap-[0.45rem]">
+          <%= form.label :password, "New password", class: "site-label text-ink dark:text-ink-dark" %>
           <%= form.password_field :password,
                                   required: true,
                                   autocomplete: "new-password",
                                   maxlength: 72,
-                                  class: "site-input" %>
+                                  class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
         </div>
 
-        <div class="site-field">
-          <%= form.label :password_confirmation, "Confirm new password", class: "site-label" %>
+        <div class="flex flex-col gap-[0.45rem]">
+          <%= form.label :password_confirmation, "Confirm new password", class: "site-label text-ink dark:text-ink-dark" %>
           <%= form.password_field :password_confirmation,
                                   required: true,
                                   autocomplete: "new-password",
                                   maxlength: 72,
-                                  class: "site-input" %>
+                                  class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
         </div>
 
-        <%= form.submit "Update password", class: "site-button site-button--full" %>
+        <%= form.submit "Update password", class: "site-button site-button--full bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
       <% end %>
     </div>
   </div>

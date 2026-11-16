@@ -3,7 +3,7 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <%= link_to root_path, class: "site-back-link" do %>
+    <%= link_to root_path, class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
       <span aria-hidden="true">←</span> Back to Home
     <% end %>
 
@@ -14,24 +14,24 @@
                title: "About",
                description: setting.about_event_description_text %>
 
-    <div class="site-prose">
-      <h2><%= setting.organization_name %></h2>
+    <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
+      <h2 class="text-ink dark:text-ink-dark"><%= setting.organization_name %></h2>
 
       <% if setting.organization_url.present? %>
         <p>
-          <%= link_to "Learn more", setting.organization_url, target: "_blank", rel: "noopener", class: "site-link" %>
+          <%= link_to "Learn more", setting.organization_url, target: "_blank", rel: "noopener", class: "site-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
         </p>
       <% end %>
 
-      <div class="site-callout">
-        <h3>On day of pickup instructions</h3>
+      <div class="site-callout border-line dark:border-line-dark">
+        <h3 class="text-ink dark:text-ink-dark">On day of pickup instructions</h3>
         <p><%= setting.pickup_instructions_text %></p>
       </div>
 
-      <h4>Date of pick-up</h4>
+      <h4 class="text-ink dark:text-ink-dark">Date of pick-up</h4>
       <p><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></p>
 
-      <h4>Your tree should be ready for pickup:</h4>
+      <h4 class="text-ink dark:text-ink-dark">Your tree should be ready for pickup:</h4>
       <p><%= setting.event_pickup_start.strftime("%l:%M%P") %> - <%= setting.event_pickup_end.strftime("%l:%M%P") %></p>
 
       <% contact_name = setting.contact_name.presence %>
@@ -39,7 +39,7 @@
       <% contact_sms = setting.contact_sms.presence %>
 
       <% if contact_name || contact_methods.any? || contact_sms %>
-        <h4>Questions?</h4>
+        <h4 class="text-ink dark:text-ink-dark">Questions?</h4>
         <p>
           <% if contact_methods.any? %>
             Contact <%= contact_name || "us" %> at <%= contact_methods.join(" or ") %>.

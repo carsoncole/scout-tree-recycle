@@ -2,7 +2,7 @@
            title: "Zones",
            description: "Routes grouped by zone with pickup counts." %>
 
-<div class="admin-stack">
+<div class="flex flex-col gap-6">
   <% @zones.each do |zone| %>
     <%= render "pickups/zones/zone", name: zone.name, routes: zone.routes, reservation_counts: @reservation_counts %>
   <% end %>
@@ -12,6 +12,6 @@
   <% end %>
 
   <% if @zones.empty? && @unzoned_routes.empty? %>
-    <p class="admin-empty">No zones have been created yet.</p>
+    <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No zones have been created yet.</p>
   <% end %>
 </div>

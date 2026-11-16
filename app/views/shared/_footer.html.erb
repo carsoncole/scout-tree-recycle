@@ -1,17 +1,17 @@
-<footer class="site-footer">
-  <div class="site-footer-inner">
+<footer class="site-footer border-line dark:border-line-dark">
+  <div class="site-footer-inner text-muted dark:text-muted-dark">
     <p>
       <%= render "shared/scouting_america_logo", logo_class: "site-footer-logo", picture_class: "site-footer-logo-picture", alt: "Scouting America" %>
       <% if setting&.organization_url.present? %>
-        <%= link_to(setting.organization_name.presence || "Tree Recycle", setting.organization_url, target: "_blank", rel: "noopener") %>
+        <%= link_to(setting.organization_name.presence || "Tree Recycle", setting.organization_url, target: "_blank", rel: "noopener", class: "dark:text-sage-deep-dark dark:hover:text-ink-dark") %>
       <% else %>
-        <%= setting&.organization_name.presence || "Tree Recycle" %>
+        <span class="dark:text-ink-soft-dark"><%= setting&.organization_name.presence || "Tree Recycle" %></span>
       <% end %>
     </p>
 
     <nav class="site-footer-links" aria-label="Footer">
-      <%= link_to "About this app", credits_path %>
-      <%= link_to "Privacy Policy", privacy_path %>
+      <%= link_to "About this app", credits_path, class: "dark:text-muted-dark dark:hover:text-ink-dark" %>
+      <%= link_to "Privacy Policy", privacy_path, class: "dark:text-muted-dark dark:hover:text-ink-dark" %>
     </nav>
   </div>
 </footer>

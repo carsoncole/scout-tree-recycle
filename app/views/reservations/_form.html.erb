@@ -1,73 +1,73 @@
 <%= form_with model: @reservation, class: "site-form" do |f| %>
   <%= render "shared/form_errors", object: @reservation %>
 
-  <div class="site-field">
-    <%= f.label :name, class: "site-label" do %>
-      Name <span class="site-required">*</span>
+  <div class="flex flex-col gap-[0.45rem]">
+    <%= f.label :name, class: "site-label text-ink dark:text-ink-dark" do %>
+      Name <span class="site-required text-muted dark:text-muted-dark">*</span>
     <% end %>
     <%= f.text_field :name,
                      required: true,
                      autocomplete: "name",
-                     class: "site-input" %>
+                     class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
   </div>
 
-  <div class="site-field-row site-field-row--street">
-    <div class="site-field">
-      <%= f.label :street, class: "site-label" do %>
-        Street address <span class="site-required">*</span>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
+    <div class="flex flex-col gap-[0.45rem]">
+      <%= f.label :street, class: "site-label text-ink dark:text-ink-dark" do %>
+        Street address <span class="site-required text-muted dark:text-muted-dark">*</span>
       <% end %>
       <%= f.text_field :street,
                        required: true,
                        autocomplete: "street-address",
-                       class: "site-input",
+                       class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
                        placeholder: "Street and number" %>
     </div>
 
-    <div class="site-field">
-      <%= f.label :city, "City", class: "site-label" %>
+    <div class="flex flex-col gap-[0.45rem]">
+      <%= f.label :city, "City", class: "site-label text-ink dark:text-ink-dark" %>
       <%= f.text_field :city,
                        value: @reservation.city,
                        disabled: true,
                        autocomplete: "address-level2",
-                       class: "site-input" %>
+                       class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
     </div>
   </div>
 
-  <div class="site-field-row site-field-row--two">
-    <div class="site-field">
-      <%= f.label :email, class: "site-label" do %>
-        Email <span class="site-required">*</span>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div class="flex flex-col gap-[0.45rem]">
+      <%= f.label :email, class: "site-label text-ink dark:text-ink-dark" do %>
+        Email <span class="site-required text-muted dark:text-muted-dark">*</span>
       <% end %>
       <%= f.email_field :email,
                         required: true,
                         autocomplete: "email",
-                        class: "site-input" %>
+                        class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
     </div>
 
-    <div class="site-field">
-      <%= f.label :mobile, "Mobile (Recommended)", class: "site-label" %>
+    <div class="flex flex-col gap-[0.45rem]">
+      <%= f.label :mobile, "Mobile (Recommended)", class: "site-label text-ink dark:text-ink-dark" %>
       <%= f.telephone_field :mobile,
                             autocomplete: "tel",
-                            class: "site-input",
+                            class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
                             aria: { describedby: "mobile-hint" } %>
-      <p id="mobile-hint" class="site-hint">Optional, but helpful if we can’t find your tree.</p>
+      <p id="mobile-hint" class="site-hint text-ink-soft dark:text-ink-soft-dark">Optional, but helpful if we can’t find your tree.</p>
     </div>
   </div>
 
-  <div class="site-field">
-    <%= f.label :pickup_notes, "Notes", class: "site-label" %>
+  <div class="flex flex-col gap-[0.45rem]">
+    <%= f.label :pickup_notes, "Notes", class: "site-label text-ink dark:text-ink-dark" %>
     <%= f.text_area :pickup_notes,
                     rows: 3,
                     placeholder: "If your tree won’t be out front, where should we look?",
-                    class: "site-textarea" %>
+                    class: "site-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
   </div>
 
   <%= f.submit @reservation.persisted? ? "Update Reservation" : "Create Reservation",
-               class: "site-button site-button--full" %>
+               class: "site-button site-button--full bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
 <% end %>
 
 <% if @reservation.persisted? && (@reservation.routing? || @reservation.pending_pickup?) %>
-  <div class="site-section">
+  <div class="site-section border-line dark:border-line-dark">
     <%= button_to "Cancel Reservation",
                   reservation_path(@reservation),
                   method: :delete,
@@ -75,6 +75,6 @@
                     turbo_confirm: "Are you sure you want to cancel your reservation? This action cannot be undone.",
                     turbo_method: :delete
                   },
-                  class: "site-button site-button--quiet site-button--full" %>
+                  class: "site-button site-button--quiet site-button--full text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
   </div>
 <% end %>

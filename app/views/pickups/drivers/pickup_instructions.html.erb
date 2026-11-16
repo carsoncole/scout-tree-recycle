@@ -1,23 +1,23 @@
-<div class="admin-container--narrow admin-stack">
+<div class="admin-container--narrow flex flex-col gap-6">
   <header class="admin-page-header print:hidden">
-    <p class="admin-eyebrow">Driver portal</p>
-    <h1 class="admin-page-title">Pickup Instructions</h1>
-    <p class="admin-page-description">Instructions for drivers and scouts picking up trees.</p>
+    <p class="admin-eyebrow text-sage-deep dark:text-sage-deep-dark">Driver portal</p>
+    <h1 class="admin-page-title text-ink dark:text-ink-dark">Pickup Instructions</h1>
+    <p class="mt-[0.45rem] mb-0 max-w-[44rem] text-[0.96rem] leading-[1.55] text-ink-soft dark:text-ink-soft-dark">Instructions for drivers and scouts picking up trees.</p>
   </header>
 
-  <section class="admin-stack--spaced">
-    <h2 class="admin-section-title">Logging in to the pickups portal</h2>
+  <section class="mb-5">
+    <h2 class="admin-section-title text-ink dark:text-ink-dark">Logging in to the pickups portal</h2>
     <p>Use the shared driver password to access the pickups portal and your assigned pickup list.</p>
-    <ol class="admin-stack--tight">
-      <li>Visit <%= link_to pickups_root_url, pickups_root_url, class: "admin-link" %>.</li>
+    <ol class="flex flex-col gap-4">
+      <li>Visit <%= link_to pickups_root_url, pickups_root_url, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>.</li>
       <li>Enter the current driver password:</li>
     </ol>
-    <p class="admin-code"><%= @password %></p>
+    <p class="admin-code bg-stone text-ink dark:bg-stone-dark dark:text-ink-dark"><%= @password %></p>
   </section>
 
-  <section class="admin-stack--spaced">
-    <h2 class="admin-section-title">Picking up trees</h2>
-    <ul class="admin-stack--tight">
+  <section class="mb-5">
+    <h2 class="admin-section-title text-ink dark:text-ink-dark">Picking up trees</h2>
+    <ul class="flex flex-col gap-4">
       <li>Review your assigned route and pickup list before heading out.</li>
       <li>Collect each tree at its listed address and mark it as picked up.</li>
       <li>If a tree cannot be found, mark it as missing and contact the organizer.</li>
@@ -26,6 +26,6 @@
   </section>
 
   <p class="print:hidden">
-    <%= link_to "Back to Drivers", pickups_drivers_path, class: "admin-link" %>
+    <%= link_to "Back to Drivers", pickups_drivers_path, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
   </p>
 </div>

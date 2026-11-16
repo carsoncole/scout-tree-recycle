@@ -4,7 +4,7 @@
 <% last_page = [ first_page + 4, pagy.pages ].min %>
 <% first_page = [ last_page - 4, 1 ].max %>
 
-<div class="admin-pagination">
+<div class="admin-pagination border-line text-ink-soft dark:border-line-dark dark:text-ink-soft-dark">
   <p>
     Showing <strong><%= pagy.from %></strong> to <strong><%= pagy.to %></strong>
     of <strong><%= pagy.count %></strong> results
@@ -13,22 +13,22 @@
   <nav class="admin-pagination-pages" aria-label="Pagination">
     <% if pagy.previous %>
       <%= link_to "Previous", url_for(query.merge(page: pagy.previous)),
-                  class: "admin-pagination-link" %>
+                  class: "admin-pagination-link border border-line text-ink-soft hover:bg-stone hover:text-ink dark:border-line-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark" %>
     <% else %>
-      <span class="admin-pagination-link is-disabled" aria-hidden="true">Previous</span>
+      <span class="admin-pagination-link is-disabled border border-line text-ink-soft hover:bg-stone hover:text-ink dark:border-line-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark" aria-hidden="true">Previous</span>
     <% end %>
 
     <% (first_page..last_page).each do |page| %>
       <%= link_to page, url_for(query.merge(page: page)),
-                  class: "admin-pagination-link #{'is-current' if page == pagy.page}",
+                  class: "admin-pagination-link #{page == pagy.page ? 'is-current border-sage bg-sage text-surface dark:border-sage-dark dark:bg-sage-dark dark:text-page-dark' : 'border border-line text-ink-soft hover:bg-stone hover:text-ink dark:border-line-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark'}",
                   aria: { current: ("page" if page == pagy.page) } %>
     <% end %>
 
     <% if pagy.next %>
       <%= link_to "Next", url_for(query.merge(page: pagy.next)),
-                  class: "admin-pagination-link" %>
+                  class: "admin-pagination-link border border-line text-ink-soft hover:bg-stone hover:text-ink dark:border-line-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark" %>
     <% else %>
-      <span class="admin-pagination-link is-disabled" aria-hidden="true">Next</span>
+      <span class="admin-pagination-link is-disabled border border-line text-ink-soft hover:bg-stone hover:text-ink dark:border-line-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark" aria-hidden="true">Next</span>
     <% end %>
   </nav>
 </div>

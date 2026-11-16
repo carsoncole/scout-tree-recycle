@@ -3,7 +3,7 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <%= link_to root_path, class: "site-back-link" do %>
+    <%= link_to root_path, class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
       <span aria-hidden="true">←</span> Back to Home
     <% end %>
 
@@ -12,8 +12,8 @@
                title: "About This App",
                description: "A Rails application for running a Christmas tree recycling fundraiser." %>
 
-    <div class="site-prose">
-      <h2>What it does</h2>
+    <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
+      <h2 class="text-ink dark:text-ink-dark">What it does</h2>
       <p>
         Tree Recycle handles the whole fundraiser: public tree pickup
         reservations with address verification, online and offline donations,
@@ -27,7 +27,7 @@
         open source under the MIT license.
       </p>
 
-      <h2>Who wrote it</h2>
+      <h2 class="text-ink dark:text-ink-dark">Who wrote it</h2>
       <p>
         Tree Recycle was written by <strong>Carson Cole</strong>, a former
         Scoutmaster of Troop 1564 on Bainbridge Island, WA, to support the
@@ -35,9 +35,9 @@
       </p>
       <p>
         You can find more of his work on
-        <%= link_to "GitHub", "https://github.com/carsoncole", target: "_blank", rel: "noopener", class: "site-link" %>
+        <%= link_to "GitHub", "https://github.com/carsoncole", target: "_blank", rel: "noopener", class: "site-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
         or reach him by email at
-        <%= mail_to "carson.cole@gmail.com", "carson.cole@gmail.com", class: "site-link" %>.
+        <%= mail_to "carson.cole@gmail.com", "carson.cole@gmail.com", class: "site-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>.
       </p>
     </div>
   </div>

@@ -8,7 +8,7 @@
                title: "Support #{setting.organization_name}",
                description: "Complete your reservation by choosing a donation option." %>
 
-    <div class="site-prose">
+    <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
       <p>
         Our tree pickup service is free, but your donation makes a real difference.
         Your support helps <%= setting.organization_name %> take part in:
@@ -21,38 +21,38 @@
     </div>
 
     <div class="donation-options">
-      <div class="site-choice-grid site-choice-grid--two">
-        <section class="site-choice" aria-labelledby="donate-online">
-          <h2 id="donate-online">Donate Online</h2>
-          <p>Quick, secure, and convenient.</p>
+      <div class="site-choice-grid site-choice-grid--two border-line dark:border-line-dark">
+        <section class="site-choice border-line dark:border-line-dark" aria-labelledby="donate-online">
+          <h2 id="donate-online" class="text-ink dark:text-ink-dark">Donate Online</h2>
+          <p class="text-ink-soft dark:text-ink-soft-dark">Quick, secure, and convenient.</p>
           <%= form_with url: reservation_donations_path(@reservation),
                         method: :post,
                         data: { turbo: false },
                         class: "site-form" do |form| %>
-            <%= form.submit "Donate Online", class: "site-button site-button--full" %>
+            <%= form.submit "Donate Online", class: "site-button site-button--full bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
           <% end %>
         </section>
 
-        <section class="site-choice" aria-labelledby="donate-pickup">
-          <h2 id="donate-pickup">Donate at Pickup</h2>
-          <p>Leave cash or a check with your tree.</p>
+        <section class="site-choice border-line dark:border-line-dark" aria-labelledby="donate-pickup">
+          <h2 id="donate-pickup" class="text-ink dark:text-ink-dark">Donate at Pickup</h2>
+          <p class="text-ink-soft dark:text-ink-soft-dark">Leave cash or a check with your tree.</p>
           <%= form_with url: reservation_cash_or_check_path(reservation_id: @reservation.id),
                         method: :post,
                         data: { turbo: false },
                         class: "site-form" do |form| %>
-            <%= form.submit "Donate at Pickup", class: "site-button site-button--secondary site-button--full" %>
+            <%= form.submit "Donate at Pickup", class: "site-button site-button--secondary site-button--full border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
           <% end %>
         </section>
       </div>
 
-      <section class="site-choice" aria-labelledby="no-donation">
-        <h2 id="no-donation">Continue without a donation</h2>
-        <p>You can still reserve a tree pickup. Donations are always optional.</p>
+      <section class="site-choice border-line dark:border-line-dark" aria-labelledby="no-donation">
+        <h2 id="no-donation" class="text-ink dark:text-ink-dark">Continue without a donation</h2>
+        <p class="text-ink-soft dark:text-ink-soft-dark">You can still reserve a tree pickup. Donations are always optional.</p>
         <%= form_with url: reservation_no_donation_path(reservation_id: @reservation.id),
                       method: :post,
                       data: { turbo: false },
                       class: "site-form" do |form| %>
-          <%= form.submit "Continue without donation", class: "site-button site-button--quiet" %>
+          <%= form.submit "Continue without donation", class: "site-button site-button--quiet text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
         <% end %>
       </section>
     </div>

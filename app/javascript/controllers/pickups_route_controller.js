@@ -66,28 +66,28 @@ export default class extends Controller {
     const badgeClass = this.badgeClass(status)
 
     this.contentTarget.innerHTML = `
-      <div id="panel_reservation_${marker.id}" class="admin-stack" data-pickups-route-panel-reservation-id-value="${marker.id}">
+      <div id="panel_reservation_${marker.id}" class="flex flex-col gap-6" data-pickups-route-panel-reservation-id-value="${marker.id}">
         <div>
-          <p class="admin-label">Address</p>
-          <p class="admin-detail-value"></p>
+          <p class="admin-label text-ink dark:text-ink-dark">Address</p>
+          <p class="admin-detail-value text-ink dark:text-ink-dark"></p>
         </div>
         <div>
-          <p class="admin-label">Notes</p>
+          <p class="admin-label text-ink dark:text-ink-dark">Notes</p>
           <div class="notes-slot"></div>
         </div>
         <div>
-          <p class="admin-label">Current status</p>
+          <p class="admin-label text-ink dark:text-ink-dark">Current status</p>
           <p><span class="${badgeClass}" data-status-badge>${this.statusLabel(status)}</span></p>
         </div>
         <form action="${marker.update_url}" method="post" data-turbo="true" class="admin-form">
           <input type="hidden" name="_method" value="patch">
           <input type="hidden" name="authenticity_token" value="${csrf}">
           <div class="admin-field">
-            <label class="admin-label" for="reservation_status_${marker.id}">Update status</label>
-            <select id="reservation_status_${marker.id}" name="reservation[status]" class="admin-select">${optionsHtml}</select>
+            <label class="admin-label text-ink dark:text-ink-dark" for="reservation_status_${marker.id}">Update status</label>
+            <select id="reservation_status_${marker.id}" name="reservation[status]" class="admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark">${optionsHtml}</select>
           </div>
           <div class="mt-3">
-            <button type="submit" class="admin-button">Update status</button>
+            <button type="submit" class="admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark">Update status</button>
           </div>
         </form>
       </div>
@@ -97,10 +97,10 @@ export default class extends Controller {
       panel.querySelector(".admin-detail-value").textContent = marker.address || ""
       const notesSlot = panel.querySelector(".notes-slot")
       if (marker.pickup_notes && marker.pickup_notes.length > 0) {
-        notesSlot.innerHTML = `<p class="admin-detail-value whitespace-pre-wrap"></p>`
+        notesSlot.innerHTML = `<p class="admin-detail-value whitespace-pre-wrap text-ink dark:text-ink-dark"></p>`
         notesSlot.querySelector("p").textContent = marker.pickup_notes
       } else {
-        notesSlot.innerHTML = `<p class="admin-table-note">No special instructions.</p>`
+        notesSlot.innerHTML = `<p class="admin-table-note text-ink-soft dark:text-ink-soft-dark">No special instructions.</p>`
       }
     }
   }

@@ -3,13 +3,13 @@
     <% latest = smses.last %>
     <% reservations = smses.first&.reservations %>
     <% unviewed_count = smses.count { |sms| !sms.viewed && sms.incoming? } %>
-    <div class="admin-conversation conversation">
+    <div class="admin-conversation conversation border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <% if reservations&.any? %>
         <div class="admin-conversation-reservations">
           <% reservations.each do |reservation| %>
             <%= link_to reservation.name, admin_reservation_path(reservation),
-                class: "admin-badge admin-badge--neutral admin-badge--link" %>
-            <span class="admin-table-note"><%= reservation.street %></span>
+                class: "admin-badge admin-badge--neutral admin-badge--link bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark" %>
+            <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= reservation.street %></span>
             <span class="<%= admin_reservation_status_badge(reservation.status) %>">
               <%= reservation.status.titleize %>
             </span>
@@ -19,35 +19,35 @@
 
       <%= link_to admin_sms_thread_path(phone), class: "admin-conversation-main" do %>
         <% if unviewed_count.positive? %>
-          <span class="admin-unread-dot" aria-label="Unread messages"></span>
+          <span class="admin-unread-dot bg-sage dark:bg-sage-dark" aria-label="Unread messages"></span>
         <% end %>
 
         <div class="admin-conversation-body">
           <% unless reservations&.any? %>
-            <p class="admin-conversation-title"><%= phone %></p>
+            <p class="admin-conversation-title text-ink dark:text-ink-dark"><%= phone %></p>
           <% end %>
-          <p class="admin-conversation-meta">
+          <p class="admin-conversation-meta text-ink-soft dark:text-ink-soft-dark">
             <span><%= phone %></span>
             <% if latest.outgoing? && latest.user %>
               <span>Sent by <%= latest.user.email %></span>
             <% end %>
             <span class="admin-conversation-time"><%= latest.created_at.strftime("%b %d %I:%M %p") %></span>
           </p>
-          <p class="admin-conversation-preview">
-            <span class="admin-conversation-preview-direction"><%= latest.outgoing? ? "Sent" : "Received" %></span>
+          <p class="admin-conversation-preview text-ink-soft dark:text-ink-soft-dark">
+            <span class="admin-conversation-preview-direction text-ink dark:text-ink-dark"><%= latest.outgoing? ? "Sent" : "Received" %></span>
             <span class="admin-conversation-preview-body"><%= truncate(latest.body.to_s, length: 80) %></span>
             <% if latest.outgoing? && latest.service_status == "failed" %>
-              <span class="admin-badge admin-badge--danger">Failed</span>
+              <span class="admin-badge admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark">Failed</span>
             <% end %>
           </p>
         </div>
       <% end %>
 
       <div class="admin-conversation-actions">
-        <%= link_to "Open", admin_sms_thread_path(phone), class: "admin-button admin-button--secondary admin-button--small" %>
+        <%= link_to "Open", admin_sms_thread_path(phone), class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
         <%= button_to admin_sms_path(phone: phone),
             method: :delete,
-            class: "delete-button admin-button admin-button--danger admin-button--small",
+            class: "delete-button admin-button admin-button--danger admin-button--small bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark",
             data: {
               turbo_confirm: "Are you sure you want to delete this entire conversation? This action cannot be undone.",
               turbo_method: :delete
@@ -59,6 +59,6 @@
   <% end %>
 
   <% if smses_by_phone.empty? %>
-    <p class="admin-empty">No SMS conversations yet.</p>
+    <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No SMS conversations yet.</p>
   <% end %>
 </section>

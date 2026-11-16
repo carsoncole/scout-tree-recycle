@@ -1,21 +1,21 @@
 <% @drivers.each do |driver| %>
-  <div class="admin-pickup-sheet">
+  <div class="admin-pickup-sheet border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-pickup-header">
       <div>
-        <h1 class="admin-pickup-driver"><%= driver.name %></h1>
-        <p class="admin-table-note">Pickup list</p>
+        <h1 class="admin-pickup-driver text-ink dark:text-ink-dark"><%= driver.name %></h1>
+        <p class="admin-table-note text-ink-soft dark:text-ink-soft-dark">Pickup list</p>
       </div>
-      <p class="admin-table-note"><%= Date.current.strftime("%B %d, %Y") %></p>
+      <p class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= Date.current.strftime("%B %d, %Y") %></p>
     </div>
 
     <% if driver.routes.any? %>
       <% driver.routes.each do |route| %>
-        <div class="admin-pickup-route">
+        <div class="admin-pickup-route border-line dark:border-line-dark">
           <div class="admin-pickup-route-header">
-            <h2 class="admin-pickup-route-title">
-              <%= link_to route.name, pickups_route_path(route), class: "admin-link" %> · <%= route.zone&.name || "No Zone" %>
+            <h2 class="admin-pickup-route-title text-ink dark:text-ink-dark">
+              <%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %> · <%= route.zone&.name || "No Zone" %>
             </h2>
-            <span class="admin-badge admin-badge--info">
+            <span class="admin-badge admin-badge--info bg-info-bg text-info dark:bg-info-bg-dark dark:text-info-dark">
               <%= pluralize(route.reservations.pickup.count, "pickup") %>
             </span>
           </div>
@@ -23,16 +23,16 @@
           <% if route.reservations.pickup.any? %>
             <ul class="admin-pickup-list">
               <% route.reservations.pickup.each do |reservation| %>
-                <li class="admin-pickup-item">
+                <li class="admin-pickup-item border-line dark:border-line-dark">
                   <input type="checkbox"
-                         class="admin-pickup-check"
+                         class="admin-pickup-check accent-sage dark:accent-sage-dark"
                          id="reservation_<%= reservation.id %>">
                   <label for="reservation_<%= reservation.id %>">
                     <p class="admin-pickup-address">
                       <%= reservation.street %>, <%= reservation.city %>
                     </p>
                     <% if reservation.pickup_notes.present? %>
-                      <p class="admin-pickup-note">Notes: <%= reservation.pickup_notes %></p>
+                      <p class="admin-pickup-note text-ink-soft dark:text-ink-soft-dark">Notes: <%= reservation.pickup_notes %></p>
                     <% end %>
                   </label>
                   <span class="<%= admin_reservation_status_badge(reservation.status) %>">
@@ -42,15 +42,15 @@
               <% end %>
             </ul>
           <% else %>
-            <p class="admin-pickup-note">No pickups for this route.</p>
+            <p class="admin-pickup-note text-ink-soft dark:text-ink-soft-dark">No pickups for this route.</p>
           <% end %>
         </div>
       <% end %>
     <% else %>
-      <p class="admin-pickup-note">No routes assigned.</p>
+      <p class="admin-pickup-note text-ink-soft dark:text-ink-soft-dark">No routes assigned.</p>
     <% end %>
 
-    <div class="admin-pickup-signature">
+    <div class="admin-pickup-signature border-line dark:border-line-dark">
       <p>Driver signature: _______________________</p>
       <p>Date: _______________________</p>
     </div>

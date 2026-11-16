@@ -8,15 +8,15 @@
                title: "Donations",
                description: "Support our mission." %>
 
-    <div class="site-prose">
+    <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
       <p>
         Thank you for your interest in supporting <%= setting.organization_name %>.
         Your generosity helps us continue our work of environmental stewardship
         and community service.
       </p>
 
-      <div class="site-callout">
-        <h2>How to Donate</h2>
+      <div class="site-callout border-line dark:border-line-dark">
+        <h2 class="text-ink dark:text-ink-dark">How to Donate</h2>
         <p>
           If you would like to make a donation, you can leave it in a ziplock bag
           with your tree on the day of pickup. Our volunteers will collect it
@@ -29,8 +29,8 @@
       </div>
     </div>
 
-    <div class="site-actions">
-      <%= link_to "Confirm Your Tree Pickup Reservation", reservation_confirmation_path(@reservation), class: "site-button" %>
+    <div class="flex flex-wrap items-center gap-4">
+      <%= link_to "Confirm Your Tree Pickup Reservation", reservation_confirmation_path(@reservation), class: "site-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
     </div>
   </div>
 </section>

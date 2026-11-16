@@ -1,9 +1,9 @@
-<div class="admin-stack">
-  <section class="admin-panel">
-    <div class="admin-panel-header">
+<div class="flex flex-col gap-6">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Route information</h2>
-        <p class="admin-panel-description">Name the route and assign it to a zone.</p>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route information</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Name the route and assign it to a zone.</p>
       </div>
     </div>
 
@@ -13,31 +13,31 @@
 
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
-            <%= f.label :name, class: "admin-label" %>
-            <%= f.text_field :name, class: "admin-input" %>
+            <%= f.label :name, class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= f.text_field :name, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
           </div>
 
           <div class="admin-field">
-            <%= f.label :zone_id, "Zone", class: "admin-label" %>
+            <%= f.label :zone_id, "Zone", class: "admin-label text-ink dark:text-ink-dark" %>
             <%= f.collection_select :zone_id, Zone.ordered, :id, :name,
                 { include_blank: "Select a zone" },
-                class: "admin-select" %>
+                class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
           </div>
         </div>
 
-        <div class="admin-actions">
-          <%= link_to "Cancel", admin_routes_path, class: "admin-button admin-button--secondary" %>
-          <%= f.submit class: "admin-button" %>
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <%= link_to "Cancel", admin_routes_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+          <%= f.submit class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
         </div>
       <% end %>
     </div>
   </section>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Route points</h2>
-        <p class="admin-panel-description">Define the polygon points that make up this route's area.</p>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route points</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Define the polygon points that make up this route's area.</p>
       </div>
     </div>
 
@@ -45,45 +45,45 @@
       <%= form_with(model: [:admin, @route, Point.new], url: admin_route_points_path(@route), class: "admin-form") do |point_form| %>
         <div class="admin-field-grid admin-field-grid--three">
           <div class="admin-field">
-            <%= point_form.label :latitude, class: "admin-label" %>
-            <%= point_form.number_field :latitude, step: :any, required: true, class: "admin-input" %>
+            <%= point_form.label :latitude, class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= point_form.number_field :latitude, step: :any, required: true, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
           </div>
           <div class="admin-field">
-            <%= point_form.label :longitude, class: "admin-label" %>
-            <%= point_form.number_field :longitude, step: :any, required: true, class: "admin-input" %>
+            <%= point_form.label :longitude, class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= point_form.number_field :longitude, step: :any, required: true, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
           </div>
           <div class="admin-field">
-            <%= point_form.label :order, class: "admin-label" %>
-            <%= point_form.number_field :order, required: true, class: "admin-input" %>
+            <%= point_form.label :order, class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= point_form.number_field :order, required: true, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
           </div>
         </div>
 
-        <div class="admin-actions">
-          <%= point_form.submit "Add Point", class: "admin-button admin-button--small" %>
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <%= point_form.submit "Add Point", class: "admin-button admin-button--small bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
         </div>
       <% end %>
 
       <% if @route.points.any? %>
         <div class="admin-table-wrap admin-table-wrap--spaced">
-          <table class="admin-table">
+          <table class="admin-table text-ink dark:text-ink-dark">
             <thead>
-              <tr>
-                <th scope="col">Order</th>
-                <th scope="col">Latitude</th>
-                <th scope="col">Longitude</th>
-                <th scope="col">Actions</th>
+              <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Order</th>
+                <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Latitude</th>
+                <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Longitude</th>
+                <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
               </tr>
             </thead>
             <tbody>
               <% @route.points.order(:order).each do |point| %>
-                <tr>
-                  <td><%= point.order %></td>
-                  <td><%= point.latitude %></td>
-                  <td><%= point.longitude %></td>
-                  <td>
+                <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                  <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.order %></td>
+                  <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.latitude %></td>
+                  <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.longitude %></td>
+                  <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                     <%= button_to "Delete", admin_route_point_path(@route, point),
                         method: :delete,
-                        class: "admin-link admin-link--danger",
+                        class: "admin-link admin-link--danger text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark",
                         form: { data: { turbo_confirm: "Are you sure you want to delete this point?" } } %>
                   </td>
                 </tr>
@@ -92,31 +92,31 @@
           </table>
         </div>
       <% else %>
-        <p class="admin-empty">No points defined for this route.</p>
+        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No points defined for this route.</p>
       <% end %>
     </div>
   </section>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Route drivers</h2>
-        <p class="admin-panel-description">Manage the drivers assigned to this route.</p>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route drivers</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Manage the drivers assigned to this route.</p>
       </div>
     </div>
 
-    <div class="admin-panel-body admin-stack">
+    <div class="admin-panel-body flex flex-col gap-6">
       <%= form_with(url: add_driver_admin_route_path(@route), method: :post, class: "admin-form") do |driver_form| %>
         <div class="admin-field">
-          <label for="driver_id" class="admin-label">Add driver</label>
+          <label for="driver_id" class="admin-label text-ink dark:text-ink-dark">Add driver</label>
           <div class="admin-toolbar">
             <div class="admin-toolbar-field">
               <%= driver_form.select :driver_id,
                   options_from_collection_for_select(Driver.all - @route.drivers, :id, :name),
                   { include_blank: "Select a driver" },
-                  class: "admin-select" %>
+                  class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
             </div>
-            <%= driver_form.submit "Add Driver", class: "admin-button admin-button--small" %>
+            <%= driver_form.submit "Add Driver", class: "admin-button admin-button--small bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
           </div>
         </div>
       <% end %>
@@ -124,15 +124,15 @@
       <% if @route.drivers.any? %>
         <dl class="admin-detail-list">
           <% @route.drivers.each do |driver| %>
-            <div class="admin-detail">
-              <dt class="admin-detail-label"><%= driver.name %></dt>
-              <dd class="admin-detail-value">
+            <div class="admin-detail border-line dark:border-line-dark">
+              <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= driver.name %></dt>
+              <dd class="admin-detail-value text-ink dark:text-ink-dark">
                 <div class="admin-toolbar">
                   <span><%= driver.mobile %></span>
                   <%= button_to "Remove",
                       remove_driver_admin_route_path(@route, driver_id: driver.id),
                       method: :delete,
-                      class: "admin-link admin-link--danger",
+                      class: "admin-link admin-link--danger text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark",
                       data: { turbo_confirm: "Are you sure you want to remove this driver from the route?" } %>
                 </div>
               </dd>
@@ -140,7 +140,7 @@
           <% end %>
         </dl>
       <% else %>
-        <p class="admin-empty">No drivers assigned to this route.</p>
+        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No drivers assigned to this route.</p>
       <% end %>
     </div>
   </section>

@@ -1,10 +1,14 @@
 /*
- * Tree Recycle public interface
+ * Tree Recycle component layer.
  *
- * A small, semantic component layer for the public booking experience.
- * Keep new public UI on these classes rather than one-off utility combinations.
+ * Layout, shape, and typography for the public and back-office screens.
+ * Colors are applied with Tailwind utilities (including dark: variants) in
+ * markup; see app/views/AGENTS.md for the canonical recipes.
  */
 
+@layer theme, base, components, utilities;
+
+@layer components {
 :root {
   --site-bg: #f4f3ed;
   --site-surface: #fbfaf5;
@@ -266,18 +270,6 @@
   margin-top: 2.5rem;
 }
 
-.site-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-}
-
-.site-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-}
-
 .site-label {
   color: var(--site-ink);
   font-size: 0.93rem;
@@ -334,12 +326,6 @@
   background: var(--site-stone);
   color: var(--site-muted);
   cursor: not-allowed;
-}
-
-.site-field-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
 }
 
 .site-hint {
@@ -425,17 +411,6 @@
   min-height: 2.55rem;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
-}
-
-.site-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-}
-
-.site-actions--center {
-  justify-content: center;
 }
 
 .site-form-inline {
@@ -667,27 +642,8 @@
   color: var(--site-ink-soft);
 }
 
-.site-choice .site-form,
 .site-choice .site-button {
   margin-top: auto;
-}
-
-.site-empty {
-  margin-top: 2.5rem;
-  padding: 2rem 0;
-  border-top: 1px solid var(--site-line);
-  border-bottom: 1px solid var(--site-line);
-}
-
-.site-empty p {
-  max-width: 34rem;
-  margin: 0;
-  color: var(--site-ink-soft);
-}
-
-.site-meta {
-  color: var(--site-muted);
-  font-size: 0.88rem;
 }
 
 .site-confirmation-mark {
@@ -706,12 +662,6 @@
 .site-confirmation-mark svg {
   width: 1.4rem;
   height: 1.4rem;
-}
-
-.site-divider {
-  margin: 2.5rem 0;
-  border: 0;
-  border-top: 1px solid var(--site-line);
 }
 
 .site-footer {
@@ -775,28 +725,7 @@
   border-bottom-color: var(--site-line-strong);
 }
 
-.site-visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 @media (min-width: 640px) {
-  .site-field-row--two,
-  .site-field-row--street {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .site-field-row--street {
-    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-  }
-
   .site-steps--three {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1079,14 +1008,6 @@
   line-height: 1.15;
 }
 
-.admin-page-description {
-  max-width: 44rem;
-  margin: 0.45rem 0 0;
-  color: var(--site-ink-soft);
-  font-size: 0.96rem;
-  line-height: 1.55;
-}
-
 .admin-page-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1109,20 +1030,6 @@
   letter-spacing: 0.14em;
   line-height: 1.4;
   text-transform: uppercase;
-}
-
-.admin-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.admin-stack--tight {
-  gap: 1rem;
-}
-
-.admin-stack--spaced {
-  margin-bottom: 1.25rem;
 }
 
 .admin-settings-layout {
@@ -1272,11 +1179,6 @@
   gap: 0.75rem;
   padding: 1.15rem 1.5rem;
   border-top: 1px solid var(--site-line);
-}
-
-.admin-grid {
-  display: grid;
-  gap: 1.25rem;
 }
 
 .admin-toolbar {
@@ -1558,18 +1460,6 @@
 .admin-quick-reply:focus-visible {
   outline: 2px solid var(--site-ink);
   outline-offset: 3px;
-}
-
-.admin-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.admin-actions--start {
-  justify-content: flex-start;
 }
 
 .admin-link {
@@ -2161,13 +2051,6 @@
   }
 }
 
-.admin-empty {
-  padding: 2rem 1.5rem;
-  color: var(--site-ink-soft);
-  font-size: 0.9rem;
-  text-align: center;
-}
-
 .admin-filter-group {
   display: inline-flex;
   padding: 0.2rem;
@@ -2573,10 +2456,6 @@
   font-size: 0.82rem;
 }
 
-.admin-print-only {
-  display: none;
-}
-
 @media (min-width: 640px) {
   .admin-field-grid--two {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2588,14 +2467,6 @@
 }
 
 @media (min-width: 720px) {
-  .admin-grid--two {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .admin-grid--three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .admin-detail {
     grid-template-columns: 11rem minmax(0, 1fr);
     align-items: baseline;
@@ -2642,6 +2513,10 @@
   }
 }
 
+
+
+}
+
 @page {
   margin: 0.35in;
 }
@@ -2651,7 +2526,6 @@
   .admin-footer,
   .admin-flash,
   .admin-page-actions,
-  .admin-no-print,
   .site-skip-link {
     display: none !important;
   }
@@ -2698,60 +2572,11 @@
     padding: 0.35rem 0;
   }
 
-  .admin-print-only {
-    display: block;
-  }
-
   .admin-page-break {
     break-after: page;
   }
 
   a[href]::after {
     content: "";
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --site-bg: #171915;
-    --site-surface: #22241e;
-    --site-ink: #e7e5dc;
-    --site-ink-soft: #b0aea4;
-    --site-muted: #8a8980;
-    --site-line: #33352e;
-    --site-line-strong: #44463f;
-    --site-sage: #8fb39a;
-    --site-sage-dark: #a8c9b2;
-    --site-sage-soft: #2a342d;
-    --site-stone: #2a2c26;
-    --site-cool: #24261f;
-    --site-input-bg: #2a2c26;
-    --site-input-focus-bg: #2f312b;
-    --site-placeholder: #8a8980;
-    --site-error-border: #d17a70;
-    --site-error-text: #e0958d;
-    --site-error-bg: #3a2826;
-    --site-error-bg-strong: #4a302d;
-    --site-warning: #d6b06a;
-    --site-warning-bg: #3a3324;
-    --site-warning-row: #332f24;
-    --site-danger-row: #3a2826;
-    --site-table-hover: #2f312b;
-    --site-positive-bg: #2a342d;
-    --site-positive-text: #9fc2a8;
-    --site-info-bg: #2a3036;
-    --site-info-text: #a3b8c9;
-    --site-warning-badge-bg: #3a3324;
-    --site-warning-badge-text: #d6b06a;
-    --site-confirmation-border: #44463f;
-  }
-
-  .site-body,
-  .admin-body {
-    color-scheme: dark;
-  }
-
-  .admin-table tbody tr:hover {
-    background: var(--site-table-hover);
   }
 }

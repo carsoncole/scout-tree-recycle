@@ -1,101 +1,101 @@
 <%= render "admin/shared/page_header",
            title: "Marketing",
            description: "Send campaign emails and review contacts." do %>
-  <%= link_to "View Email Images", admin_marketing_images_path, class: "admin-button admin-button--secondary" %>
-  <%= link_to "Manage Email Templates", admin_marketing_email_templates_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "View Email Images", admin_marketing_images_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Manage Email Templates", admin_marketing_email_templates_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
 <% end %>
 
 <% template_1 = @marketing_email_templates["marketing_email_1"] %>
 <% template_2 = @marketing_email_templates["marketing_email_2"] %>
 
-<div class="admin-stack">
-  <div class="admin-grid admin-grid--two">
-    <section class="admin-panel">
-      <div class="admin-panel-header">
+<div class="flex flex-col gap-6">
+  <div class="grid gap-5 md:grid-cols-2">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
-          <h2 class="admin-panel-title">Marketing email 1</h2>
-          <p class="admin-panel-description"><%= @marketing_1_count %> emails remaining.</p>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Marketing email 1</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= @marketing_1_count %> emails remaining.</p>
         </div>
         <div class="admin-table-inline">
           <% if template_1.nil? %>
-            <span class="admin-badge admin-badge--danger">Template missing</span>
+            <span class="admin-badge admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark">Template missing</span>
           <% elsif template_1.published? && template_1.draft_changes? %>
-            <span class="admin-badge admin-badge--warning">Published with changes</span>
+            <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Published with changes</span>
           <% elsif template_1.published? %>
-            <span class="admin-badge admin-badge--positive">Published</span>
+            <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">Published</span>
           <% else %>
-            <span class="admin-badge admin-badge--warning">Draft - not sending</span>
+            <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Draft - not sending</span>
           <% end %>
         </div>
       </div>
       <div class="admin-panel-body">
-        <div class="admin-stack admin-stack--tight">
-          <p class="admin-panel-description">
+        <div class="flex flex-col gap-4">
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
             Sent only once per contact. Contacts who already received Marketing email 1 are skipped, so nobody is emailed twice.
           </p>
 
           <% if template_1.present? %>
-            <p class="admin-hint"><strong>Subject:</strong> <%= template_1.live_subject %></p>
-            <div class="admin-actions admin-actions--start">
-              <%= link_to "Edit Template", edit_admin_marketing_email_template_path(template_1), class: "admin-button admin-button--secondary admin-button--small" %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Subject:</strong> <%= template_1.live_subject %></p>
+            <div class="flex flex-wrap items-center justify-start gap-3">
+              <%= link_to "Edit Template", edit_admin_marketing_email_template_path(template_1), class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
               <%= link_to "Preview", preview_admin_marketing_email_template_path(template_1, source: template_1.published? ? "published" : "draft"),
-                  class: "admin-button admin-button--secondary admin-button--small",
+                  class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
                   target: "_blank",
                   rel: "noopener" %>
             </div>
           <% else %>
-            <p class="admin-hint">The default template has not been loaded into the database yet.</p>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The default template has not been loaded into the database yet.</p>
             <%= button_to "Load Default Templates", install_defaults_admin_marketing_email_templates_path,
-                class: "admin-button admin-button--secondary admin-button--small" %>
+                class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
           <% end %>
 
-          <%= button_to admin_send_marketing_email_1_path, class: "admin-button" do %>
+          <%= button_to admin_send_marketing_email_1_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
             Send Marketing Email 1
           <% end %>
         </div>
       </div>
     </section>
 
-    <section class="admin-panel">
-      <div class="admin-panel-header">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
-          <h2 class="admin-panel-title">Marketing email 2</h2>
-          <p class="admin-panel-description"><%= @marketing_2_count %> emails remaining.</p>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Marketing email 2</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= @marketing_2_count %> emails remaining.</p>
         </div>
         <div class="admin-table-inline">
           <% if template_2.nil? %>
-            <span class="admin-badge admin-badge--danger">Template missing</span>
+            <span class="admin-badge admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark">Template missing</span>
           <% elsif template_2.published? && template_2.draft_changes? %>
-            <span class="admin-badge admin-badge--warning">Published with changes</span>
+            <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Published with changes</span>
           <% elsif template_2.published? %>
-            <span class="admin-badge admin-badge--positive">Published</span>
+            <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">Published</span>
           <% else %>
-            <span class="admin-badge admin-badge--warning">Draft - not sending</span>
+            <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Draft - not sending</span>
           <% end %>
         </div>
       </div>
       <div class="admin-panel-body">
-        <div class="admin-stack admin-stack--tight">
-          <p class="admin-panel-description">
+        <div class="flex flex-col gap-4">
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
             Sent only once per contact. Contacts who already received Marketing email 2 are skipped, so nobody is emailed twice.
           </p>
 
           <% if template_2.present? %>
-            <p class="admin-hint"><strong>Subject:</strong> <%= template_2.live_subject %></p>
-            <div class="admin-actions admin-actions--start">
-              <%= link_to "Edit Template", edit_admin_marketing_email_template_path(template_2), class: "admin-button admin-button--secondary admin-button--small" %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Subject:</strong> <%= template_2.live_subject %></p>
+            <div class="flex flex-wrap items-center justify-start gap-3">
+              <%= link_to "Edit Template", edit_admin_marketing_email_template_path(template_2), class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
               <%= link_to "Preview", preview_admin_marketing_email_template_path(template_2, source: template_2.published? ? "published" : "draft"),
-                  class: "admin-button admin-button--secondary admin-button--small",
+                  class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
                   target: "_blank",
                   rel: "noopener" %>
             </div>
           <% else %>
-            <p class="admin-hint">The default template has not been loaded into the database yet.</p>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The default template has not been loaded into the database yet.</p>
             <%= button_to "Load Default Templates", install_defaults_admin_marketing_email_templates_path,
-                class: "admin-button admin-button--secondary admin-button--small" %>
+                class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
           <% end %>
 
-          <%= button_to admin_send_marketing_email_2_path, class: "admin-button" do %>
+          <%= button_to admin_send_marketing_email_2_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
             Send Marketing Email 2
           <% end %>
         </div>
@@ -103,49 +103,49 @@
     </section>
   </div>
 
-  <div class="admin-notice" role="note">
+  <div class="admin-notice border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" role="note">
     <div>
       <p><strong>Note:</strong> Any contacts with the same email as a newly confirmed reservation are removed automatically, so a row may disappear from this table once that contact reserves again.</p>
     </div>
   </div>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Contacts (<%= @pagy.count %>)</h2>
-        <p class="admin-panel-description">Contacts from prior reservations and imported contacts. <%= link_to "Import data", admin_data_path, class: "admin-link" %></p>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Contacts (<%= @pagy.count %>)</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Contacts from prior reservations and imported contacts. <%= link_to "Import data", admin_data_path, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></p>
       </div>
-      <%= link_to "New Contact", new_admin_contact_path, class: "admin-button" %>
+      <%= link_to "New Contact", new_admin_contact_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
     </div>
 
     <div class="admin-table-wrap">
-      <table class="admin-table">
+      <table class="admin-table text-ink dark:text-ink-dark">
         <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Street</th>
-            <th scope="col">Contact</th>
-            <th scope="col">Email 1</th>
-            <th scope="col">Email 2</th>
-            <th scope="col">Actions</th>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Name</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Street</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Contact</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Email 1</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Email 2</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @contacts.each do |contact| %>
-            <tr>
-              <td><%= contact.name %></td>
-              <td><%= contact.street %></td>
-              <td>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= contact.name %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= contact.street %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <%= contact.email %><br>
-                <span class="admin-table-note"><%= contact.mobile.present? ? Phonelib.parse(contact.mobile).national : nil %></span>
+                <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= contact.mobile.present? ? Phonelib.parse(contact.mobile).national : nil %></span>
               </td>
-              <td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <% if contact.marketing_1_email_sent_at.present? %>
                   <div class="admin-table-inline">
-                    <span class="admin-table-note"><%= admin_marketing_sent_at(contact.marketing_1_email_sent_at) %></span>
+                    <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= admin_marketing_sent_at(contact.marketing_1_email_sent_at) %></span>
                     <%= button_to clear_marketing_email_1_admin_contact_path(contact),
                         method: :delete,
-                        class: "admin-icon-action",
+                        class: "admin-icon-action text-ink-soft hover:text-danger dark:text-ink-soft-dark dark:hover:text-danger-dark",
                         form_class: "admin-icon-form",
                         title: "Clear Marketing email 1 sent date",
                         aria: { label: "Clear Marketing email 1 sent date" },
@@ -154,16 +154,16 @@
                     <% end %>
                   </div>
                 <% else %>
-                  <span class="admin-badge admin-badge--neutral">Not sent</span>
+                  <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">Not sent</span>
                 <% end %>
               </td>
-              <td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <% if contact.marketing_2_email_sent_at.present? %>
                   <div class="admin-table-inline">
-                    <span class="admin-table-note"><%= admin_marketing_sent_at(contact.marketing_2_email_sent_at) %></span>
+                    <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= admin_marketing_sent_at(contact.marketing_2_email_sent_at) %></span>
                     <%= button_to clear_marketing_email_2_admin_contact_path(contact),
                         method: :delete,
-                        class: "admin-icon-action",
+                        class: "admin-icon-action text-ink-soft hover:text-danger dark:text-ink-soft-dark dark:hover:text-danger-dark",
                         form_class: "admin-icon-form",
                         title: "Clear Marketing email 2 sent date",
                         aria: { label: "Clear Marketing email 2 sent date" },
@@ -172,19 +172,19 @@
                     <% end %>
                   </div>
                 <% else %>
-                  <span class="admin-badge admin-badge--neutral">Not sent</span>
+                  <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">Not sent</span>
                 <% end %>
               </td>
-              <td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                 <div class="admin-table-actions">
-                  <%= link_to "Edit", edit_admin_contact_path(contact), class: "admin-link" %>
+                  <%= link_to "Edit", edit_admin_contact_path(contact), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
                   <%= button_to "Delete", admin_contact_path(contact),
                       method: :delete,
                       data: {
                         turbo_confirm: "Are you sure you want to delete this contact? This action cannot be undone.",
                         turbo_method: :delete
                       },
-                      class: "admin-link admin-link--danger" %>
+                      class: "admin-link admin-link--danger text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark" %>
                 </div>
               </td>
             </tr>
@@ -196,34 +196,34 @@
     <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
 
     <% if @contacts.empty? %>
-      <p class="admin-empty">No contacts are available for marketing.</p>
+      <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No contacts are available for marketing.</p>
     <% end %>
 
     <% if @pagy.present? && @pagy.count.positive? %>
-      <div class="admin-danger-zone" id="delete-all-contacts">
+      <div class="admin-danger-zone border-danger-border bg-danger-bg dark:border-danger-border-dark dark:bg-danger-bg-dark" id="delete-all-contacts">
         <div class="admin-toolbar">
           <div>
-            <h3 class="admin-toggle-title">Delete all contacts</h3>
-            <p class="admin-hint">
-              This permanently deletes <strong><%= pluralize(@pagy.count, "contact") %></strong>. Type DELETE to confirm.
+            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Delete all contacts</h3>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+              This permanently deletes <strong class="text-ink dark:text-ink-dark"><%= pluralize(@pagy.count, "contact") %></strong>. Type DELETE to confirm.
             </p>
           </div>
 
           <details class="admin-destructive">
-            <summary class="admin-button admin-button--danger">Delete All Contacts</summary>
+            <summary class="admin-button admin-button--danger bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark">Delete All Contacts</summary>
             <div class="admin-destructive-body">
               <%= form_with url: destroy_all_admin_contacts_path, method: :delete, class: "admin-inline-form" do %>
                 <div class="admin-field">
-                  <%= label_tag :confirmation, "Type DELETE to confirm", class: "admin-label" %>
+                  <%= label_tag :confirmation, "Type DELETE to confirm", class: "admin-label text-ink dark:text-ink-dark" %>
                   <%= text_field_tag :confirmation, nil,
-                      class: "admin-input",
+                      class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
                       required: true,
                       pattern: "DELETE",
                       title: "Type DELETE exactly to confirm.",
                       autocomplete: "off",
                       spellcheck: false %>
                 </div>
-                <%= submit_tag "Confirm Delete All Contacts", class: "admin-button admin-button--danger" %>
+                <%= submit_tag "Confirm Delete All Contacts", class: "admin-button admin-button--danger bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark" %>
               <% end %>
             </div>
           </details>

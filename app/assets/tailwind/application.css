@@ -1,1 +1,69 @@
 @import "tailwindcss";
+
+/*
+ * Semantic color tokens.
+ *
+ * Light values are the default; the `*-dark` tokens are used with Tailwind's
+ * `dark:` variant (prefers-color-scheme: dark). Views compose these into the
+ * recipes documented in app/views/AGENTS.md.
+ */
+@theme {
+  /* Light */
+  --color-page: #f4f3ed;
+  --color-surface: #fbfaf5;
+  --color-ink: #252721;
+  --color-ink-soft: #5d625a;
+  --color-muted: #7c8178;
+  --color-line: #dfded5;
+  --color-line-strong: #c9c9bf;
+  --color-stone: #ece9e1;
+  --color-cool: #eef0eb;
+  --color-sage: #516b58;
+  --color-sage-deep: #405645;
+  --color-sage-soft: #e6ece4;
+  --color-danger: #8a443c;
+  --color-danger-border: #a2544a;
+  --color-danger-bg: #f6e9e6;
+  --color-danger-bg-strong: #f2e2df;
+  --color-warning: #b08a3e;
+  --color-warning-bg: #f7f1e4;
+  --color-warning-row: #f8f2e5;
+  --color-warning-badge: #f3ecdc;
+  --color-warning-badge-text: #7a5f2e;
+  --color-positive: #3f5a47;
+  --color-positive-bg: #e4ece4;
+  --color-info: #3d5566;
+  --color-info-bg: #e5ebee;
+  --color-table-hover: #f8f7f1;
+  --color-danger-row: #f7eae7;
+
+  /* Dark */
+  --color-page-dark: #171915;
+  --color-surface-dark: #22241e;
+  --color-ink-dark: #e7e5dc;
+  --color-ink-soft-dark: #b0aea4;
+  --color-muted-dark: #8a8980;
+  --color-line-dark: #33352e;
+  --color-line-strong-dark: #44463f;
+  --color-stone-dark: #2a2c26;
+  --color-cool-dark: #24261f;
+  --color-sage-dark: #8fb39a;
+  --color-sage-deep-dark: #a8c9b2;
+  --color-sage-soft-dark: #2a342d;
+  --color-danger-dark: #e0958d;
+  --color-danger-border-dark: #d17a70;
+  --color-danger-bg-dark: #3a2826;
+  --color-danger-bg-strong-dark: #4a302d;
+  --color-warning-dark: #d6b06a;
+  --color-warning-bg-dark: #3a3324;
+  --color-warning-row-dark: #332f24;
+  --color-warning-badge-dark: #3a3324;
+  --color-warning-badge-text-dark: #d6b06a;
+  --color-positive-dark: #9fc2a8;
+  --color-positive-bg-dark: #2a342d;
+  --color-info-dark: #a3b8c9;
+  --color-info-bg-dark: #2a3036;
+  --color-table-hover-dark: #2f312b;
+  --color-danger-row-dark: #3a2826;
+  --color-input-focus-dark: #2f312b;
+}

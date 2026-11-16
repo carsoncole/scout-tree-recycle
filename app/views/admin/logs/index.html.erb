@@ -1,47 +1,62 @@
 <%= render "admin/shared/page_header",
            title: "System Logs",
            description: "View application activity and error reports." do %>
-  <%= button_to "Delete All Logs", admin_destroy_all_logs_path,
-      method: :delete,
-      class: "admin-button admin-button--danger" %>
+  <details class="admin-destructive">
+    <summary class="admin-button admin-button--danger bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark">Delete All Logs</summary>
+    <div class="admin-destructive-body">
+      <%= form_with url: admin_destroy_all_logs_path, method: :delete, class: "admin-inline-form" do %>
+        <div class="admin-field">
+          <%= label_tag :confirmation, "Type DELETE to confirm", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= text_field_tag :confirmation, nil,
+              class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
+              required: true,
+              pattern: "DELETE",
+              title: "Type DELETE exactly to confirm.",
+              autocomplete: "off",
+              spellcheck: false %>
+        </div>
+        <%= submit_tag "Confirm Delete All Logs", class: "admin-button admin-button--danger bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark" %>
+      <% end %>
+    </div>
+  </details>
 <% end %>
 
 <div class="admin-settings-layout">
   <%= render "admin/settings/sidebar" %>
 
-  <div class="admin-stack">
-    <section class="admin-panel">
+  <div class="flex flex-col gap-6">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-table-wrap">
-        <table class="admin-table">
+        <table class="admin-table text-ink dark:text-ink-dark">
           <thead>
-            <tr>
-              <th scope="col">Timestamp</th>
-              <th scope="col">Severity</th>
-              <th scope="col">Message</th>
-              <th scope="col">Error type</th>
-              <th scope="col">Environment</th>
-              <th scope="col">Context</th>
-              <th scope="col">Status</th>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Timestamp</th>
+              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Severity</th>
+              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Message</th>
+              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Error type</th>
+              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Environment</th>
+              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Context</th>
+              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Status</th>
             </tr>
           </thead>
           <tbody>
             <% @logs.each do |log| %>
-              <tr>
-                <td><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
-                <td>
+              <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                   <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
                 </td>
-                <td>
-                  <%= link_to log.message&.truncate(100), admin_log_path(log), class: "admin-link" %>
+                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+                  <%= link_to log.message&.truncate(100), admin_log_path(log), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
                 </td>
-                <td><%= log.error_type %></td>
-                <td><%= log.environment %></td>
-                <td>
+                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= log.error_type %></td>
+                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= log.environment %></td>
+                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                   <% if log.context.present? %>
-                    <pre class="admin-code"><%= JSON.pretty_generate(log.context) %></pre>
+                    <pre class="admin-code bg-stone text-ink dark:bg-stone-dark dark:text-ink-dark"><%= JSON.pretty_generate(log.context) %></pre>
                   <% end %>
                 </td>
-                <td>
+                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                   <span class="<%= admin_handled_badge(log.handled) %>">
                     <%= log.handled ? "Handled" : "Unhandled" %>
                   </span>
@@ -55,7 +70,7 @@
       <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
 
       <% if @logs.empty? %>
-        <p class="admin-empty">No log entries have been recorded.</p>
+        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No log entries have been recorded.</p>
       <% end %>
     </section>
   </div>

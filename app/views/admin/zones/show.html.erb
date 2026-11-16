@@ -1,39 +1,39 @@
 <%= render "admin/shared/page_header",
            title: "Zone: #{@zone.name}" do %>
-  <%= link_to "Edit", edit_admin_zone_path(@zone), class: "admin-button" %>
-  <%= link_to "Back to Zones", admin_zones_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Edit", edit_admin_zone_path(@zone), class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+  <%= link_to "Back to Zones", admin_zones_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
 <% end %>
 
 <div class="admin-settings-layout">
   <%= render "admin/settings/sidebar" %>
 
-  <div class="admin-stack">
-    <section class="admin-panel">
-      <div class="admin-panel-header">
-        <h2 class="admin-panel-title">Zone information</h2>
+  <div class="flex flex-col gap-6">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Zone information</h2>
       </div>
       <div class="admin-panel-body">
         <dl class="admin-detail-list">
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Name</dt>
-            <dd class="admin-detail-value"><%= @zone.name %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Name</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @zone.name %></dd>
           </div>
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Address</dt>
-            <dd class="admin-detail-value"><%= [ @zone.street, @zone.city, @zone.state, @zone.country ].compact_blank.join(", ").presence || "—" %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Address</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= [ @zone.street, @zone.city, @zone.state, @zone.country ].compact_blank.join(", ").presence || "—" %></dd>
           </div>
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Routes</dt>
-            <dd class="admin-detail-value"><%= @routes.size %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Routes</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @routes.size %></dd>
           </div>
         </dl>
       </div>
     </section>
 
-    <section class="admin-panel">
-      <div class="admin-panel-header">
-        <h2 class="admin-panel-title">Zone map</h2>
-        <p class="admin-panel-description">Bounded areas for all routes in this zone and plotted reservations.</p>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Zone map</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Bounded areas for all routes in this zone and plotted reservations.</p>
       </div>
       <div class="admin-panel-body">
         <% route_polygons = @routes.flat_map { |route| route_boundary_polygon(route) } %>
@@ -46,43 +46,43 @@
                 empty_message: "No map data available for this zone." %>
           <% routes_without_boundary = @routes.select { |route| route.points.length <= 3 } %>
           <% if routes_without_boundary.any? %>
-            <p class="admin-table-note mt-3">
+            <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">
               Routes without a bounded area (&gt; 3 ordered points): <%= routes_without_boundary.map(&:name).join(", ") %>.
             </p>
           <% end %>
         <% else %>
-          <p class="admin-empty">No route boundaries or reservations with coordinates are available for this zone.</p>
+          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundaries or reservations with coordinates are available for this zone.</p>
         <% end %>
       </div>
     </section>
 
-    <section class="admin-panel">
-      <div class="admin-panel-header">
-        <h2 class="admin-panel-title">Routes</h2>
-        <p class="admin-panel-description">Routes associated with this zone.</p>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Routes</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Routes associated with this zone.</p>
       </div>
       <div class="admin-panel-body">
         <% if @routes.any? %>
           <div class="admin-table-wrap">
-            <table class="admin-table">
+            <table class="admin-table text-ink dark:text-ink-dark">
               <thead>
-                <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Reservations</th>
-                  <th scope="col">Boundary points</th>
-                  <th scope="col">Actions</th>
+                <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Name</th>
+                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Reservations</th>
+                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Boundary points</th>
+                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <% @routes.each do |route| %>
-                  <tr>
-                    <td><%= link_to route.name, admin_route_path(route), class: "admin-link" %></td>
-                    <td><%= route.reservations_count %></td>
-                    <td><%= route.points.size %></td>
-                    <td>
+                  <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= link_to route.name, admin_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></td>
+                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route.reservations_count %></td>
+                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route.points.size %></td>
+                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
                       <div class="admin-table-actions">
-                        <%= link_to "View", admin_route_path(route), class: "admin-link" %>
-                        <%= link_to "Edit", edit_admin_route_path(route), class: "admin-link" %>
+                        <%= link_to "View", admin_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                        <%= link_to "Edit", edit_admin_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
                       </div>
                     </td>
                   </tr>
@@ -91,7 +91,7 @@
             </table>
           </div>
         <% else %>
-          <p class="admin-empty">No routes are associated with this zone.</p>
+          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No routes are associated with this zone.</p>
         <% end %>
       </div>
     </section>

@@ -3,7 +3,7 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <div class="site-confirmation-mark" aria-hidden="true">
+    <div class="site-confirmation-mark border border-line-strong bg-sage-soft text-sage-deep dark:border-line-strong-dark dark:bg-sage-soft-dark dark:text-sage-deep-dark" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <circle cx="12" cy="12" r="9"></circle>
         <path d="m8.5 12.3 2.3 2.3 4.8-5"></path>
@@ -15,67 +15,67 @@
                title: "Reservation Confirmed",
                description: "Thank you, #{@reservation.name}. We’ll take it from here." %>
 
-    <section class="site-section" aria-labelledby="reservation-details">
-      <h2 id="reservation-details" class="site-subtitle">Reservation details</h2>
+    <section class="site-section border-line dark:border-line-dark" aria-labelledby="reservation-details">
+      <h2 id="reservation-details" class="site-subtitle text-ink dark:text-ink-dark">Reservation details</h2>
 
       <dl class="site-details">
-        <div class="site-detail">
-          <dt class="site-detail-label">Name</dt>
-          <dd class="site-detail-value"><%= @reservation.name %></dd>
+        <div class="site-detail border-line dark:border-line-dark">
+          <dt class="site-detail-label dark:text-muted-dark">Name</dt>
+          <dd class="site-detail-value dark:text-ink-dark"><%= @reservation.name %></dd>
         </div>
 
-        <div class="site-detail">
-          <dt class="site-detail-label">Address</dt>
-          <dd class="site-detail-value">
+        <div class="site-detail border-line dark:border-line-dark">
+          <dt class="site-detail-label dark:text-muted-dark">Address</dt>
+          <dd class="site-detail-value dark:text-ink-dark">
             <%= @reservation.street.titleize %><br>
             <%= @reservation.city %>
           </dd>
         </div>
 
-        <div class="site-detail">
-          <dt class="site-detail-label">Pickup date</dt>
-          <dd class="site-detail-value"><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></dd>
+        <div class="site-detail border-line dark:border-line-dark">
+          <dt class="site-detail-label dark:text-muted-dark">Pickup date</dt>
+          <dd class="site-detail-value dark:text-ink-dark"><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></dd>
         </div>
 
-        <div class="site-detail">
-          <dt class="site-detail-label">Email</dt>
-          <dd class="site-detail-value"><%= @reservation.email %></dd>
+        <div class="site-detail border-line dark:border-line-dark">
+          <dt class="site-detail-label dark:text-muted-dark">Email</dt>
+          <dd class="site-detail-value dark:text-ink-dark"><%= @reservation.email %></dd>
         </div>
 
         <% if @reservation.mobile.present? %>
-          <div class="site-detail">
-            <dt class="site-detail-label">Mobile</dt>
-            <dd class="site-detail-value">
+          <div class="site-detail border-line dark:border-line-dark">
+            <dt class="site-detail-label dark:text-muted-dark">Mobile</dt>
+            <dd class="site-detail-value dark:text-ink-dark">
               <%= Phonelib.parse(@reservation.mobile).national %>
-              <span class="site-detail-note">We’ll only message this number if we can’t find your tree.</span>
+              <span class="site-detail-note text-ink-soft dark:text-ink-soft-dark">We’ll only message this number if we can’t find your tree.</span>
             </dd>
           </div>
         <% end %>
 
         <% if @reservation.pickup_notes.present? %>
-          <div class="site-detail">
-            <dt class="site-detail-label">Notes</dt>
-            <dd class="site-detail-value"><%= @reservation.pickup_notes %></dd>
+          <div class="site-detail border-line dark:border-line-dark">
+            <dt class="site-detail-label dark:text-muted-dark">Notes</dt>
+            <dd class="site-detail-value dark:text-ink-dark"><%= @reservation.pickup_notes %></dd>
           </div>
         <% end %>
       </dl>
     </section>
 
-    <section class="site-section" aria-labelledby="before-pickup">
-      <h2 id="before-pickup" class="site-subtitle">Before pickup</h2>
+    <section class="site-section border-line dark:border-line-dark" aria-labelledby="before-pickup">
+      <h2 id="before-pickup" class="site-subtitle text-ink dark:text-ink-dark">Before pickup</h2>
       <ol class="site-steps">
-        <li class="site-step">You’ll receive a confirmation email shortly.</li>
-        <li class="site-step">
+        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">You’ll receive a confirmation email shortly.</li>
+        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">
           Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %>
           on <%= setting.event_pickup_start.strftime("%A, %B %-e") %>.
         </li>
-        <li class="site-step">Remove all decorations and tinsel from your tree.</li>
+        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Remove all decorations and tinsel from your tree.</li>
       </ol>
     </section>
 
-    <div class="site-actions">
-      <%= link_to "Edit Reservation", edit_reservation_path(@reservation), class: "site-button site-button--secondary" %>
-      <%= link_to "Back to home", root_path, class: "site-button site-button--quiet" %>
+    <div class="flex flex-wrap items-center gap-4">
+      <%= link_to "Edit Reservation", edit_reservation_path(@reservation), class: "site-button site-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+      <%= link_to "Back to home", root_path, class: "site-button site-button--quiet text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
     </div>
   </div>
 </section>

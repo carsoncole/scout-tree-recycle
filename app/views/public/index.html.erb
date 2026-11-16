@@ -11,7 +11,7 @@
                eyebrow: "Holiday tree pickup",
                title: "Make a Reservation",
                description: "Schedule your tree pickup for #{pickup_date}." do %>
-      <p class="site-deadline-badge">
+      <p class="site-deadline-badge bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
         <span class="site-deadline-badge-label">Sign up by</span>
         <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
       </p>
@@ -22,18 +22,18 @@
         <%= render "reservations/form" %>
       </div>
 
-      <section class="site-section" aria-labelledby="pickup-steps">
-        <h2 id="pickup-steps" class="site-subtitle">How pickup works</h2>
+      <section class="site-section border-line dark:border-line-dark" aria-labelledby="pickup-steps">
+        <h2 id="pickup-steps" class="site-subtitle text-ink dark:text-ink-dark">How pickup works</h2>
         <ol class="site-steps site-steps--three">
-          <li class="site-step">Reserve a pickup time for your tree.</li>
-          <li class="site-step">We confirm the details by email.</li>
-          <li class="site-step">Leave your tree where we can find it.</li>
+          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Reserve a pickup time for your tree.</li>
+          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">We confirm the details by email.</li>
+          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Leave your tree where we can find it.</li>
         </ol>
       </section>
     <% else %>
-      <div class="site-empty">
-        <h2 class="site-subtitle">Reservations are closed</h2>
-        <p><%= setting.reservations_closed_message_text %></p>
+      <div class="mt-10 border-y border-line py-8 dark:border-line-dark">
+        <h2 class="site-subtitle text-ink dark:text-ink-dark">Reservations are closed</h2>
+        <p class="m-0 max-w-[34rem] text-ink-soft dark:text-ink-soft-dark"><%= setting.reservations_closed_message_text %></p>
       </div>
     <% end %>
   </div>

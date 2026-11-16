@@ -8,7 +8,7 @@
 <div class="grid gap-6 lg:grid-cols-3"
      data-controller="pickups-route"
      data-action="map:marker-selected@window->pickups-route#select">
-  <section class="admin-panel lg:col-span-2">
+  <section class="admin-panel lg:col-span-2 border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-body admin-panel-body--tight">
       <% if boundary_polygons.any? || pickup_markers.any? %>
         <div data-pickups-route-target="mapWrap" data-action="pickups:marker-update@window->pickups-route#markerUpdated">
@@ -20,34 +20,34 @@
                 empty_message: "No map data available for this route." %>
         </div>
         <% if @missing_coordinates_count.positive? %>
-          <p class="admin-table-note mt-3"><%= pluralize(@missing_coordinates_count, "reservation") %> in this route do not have coordinates and are not shown on the map.</p>
+          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(@missing_coordinates_count, "reservation") %> in this route do not have coordinates and are not shown on the map.</p>
         <% end %>
         <% if boundary_polygons.empty? && @route.points.any? %>
-          <p class="admin-table-note mt-3">A bounded area requires more than 3 ordered points. Pickup markers are shown when available.</p>
+          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">A bounded area requires more than 3 ordered points. Pickup markers are shown when available.</p>
         <% elsif boundary_polygons.empty? %>
-          <p class="admin-table-note mt-3">No route boundary defined. Pickup markers are shown when available.</p>
+          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">No route boundary defined. Pickup markers are shown when available.</p>
         <% end %>
       <% else %>
-        <p class="admin-empty">No route boundary or pickup locations with coordinates are available for this route.</p>
+        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundary or pickup locations with coordinates are available for this route.</p>
         <% if @missing_coordinates_count.positive? %>
-          <p class="admin-table-note mt-3"><%= pluralize(@missing_coordinates_count, "reservation") %> in this route are missing coordinates.</p>
+          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(@missing_coordinates_count, "reservation") %> in this route are missing coordinates.</p>
         <% end %>
       <% end %>
     </div>
   </section>
 
-  <section class="admin-panel scroll-mt-24 lg:sticky lg:top-24 lg:self-start"
+  <section class="admin-panel scroll-mt-24 lg:sticky lg:top-24 lg:self-start border border-line bg-surface dark:border-line-dark dark:bg-surface-dark"
            id="pickup-detail-panel"
            data-pickups-route-target="panel">
-    <div class="admin-panel-header">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Reservation details</h2>
-        <p class="admin-panel-description">Select a point on the map to view its address, notes, and update status.</p>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Reservation details</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Select a point on the map to view its address, notes, and update status.</p>
       </div>
     </div>
     <div class="admin-panel-body">
       <div id="pickup_reservation_panel" data-pickups-route-target="content">
-        <p class="admin-empty">No reservation selected.</p>
+        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No reservation selected.</p>
       </div>
     </div>
   </section>

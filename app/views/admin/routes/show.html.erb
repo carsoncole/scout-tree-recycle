@@ -1,26 +1,26 @@
 <%= render "admin/shared/page_header",
            title: "Route: #{@route.name}" do %>
-  <%= link_to "Edit", edit_admin_route_path(@route), class: "admin-button" %>
-  <%= link_to "Back to Routes", admin_routes_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Edit", edit_admin_route_path(@route), class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+  <%= link_to "Back to Routes", admin_routes_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
 <% end %>
 
 <div class="admin-settings-layout">
   <%= render "admin/settings/sidebar" %>
 
-  <div class="admin-stack">
-    <section class="admin-panel">
-      <div class="admin-panel-header">
-        <h2 class="admin-panel-title">Route information</h2>
+  <div class="flex flex-col gap-6">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route information</h2>
       </div>
       <div class="admin-panel-body">
         <dl class="admin-detail-list">
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Name</dt>
-            <dd class="admin-detail-value"><%= @route.name %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Name</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @route.name %></dd>
           </div>
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Zone</dt>
-            <dd class="admin-detail-value">
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Zone</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark">
               <% if @route.zone %>
                 <%= link_to @route.zone.name, admin_zone_path(@route.zone) %>
               <% else %>
@@ -28,30 +28,30 @@
               <% end %>
             </dd>
           </div>
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Address</dt>
-            <dd class="admin-detail-value"><%= [ @route.street, @route.city, @route.state, @route.country ].compact.join(", ") %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Address</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= [ @route.street, @route.city, @route.state, @route.country ].compact.join(", ") %></dd>
           </div>
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Distance</dt>
-            <dd class="admin-detail-value"><%= number_with_precision(@route.distance, precision: 2) if @route.distance %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Distance</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= number_with_precision(@route.distance, precision: 2) if @route.distance %></dd>
           </div>
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Distance to zone</dt>
-            <dd class="admin-detail-value"><%= number_with_precision(@route.distance_to_zone, precision: 2) if @route.distance_to_zone %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Distance to zone</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= number_with_precision(@route.distance_to_zone, precision: 2) if @route.distance_to_zone %></dd>
           </div>
-          <div class="admin-detail">
-            <dt class="admin-detail-label">Coordinates</dt>
-            <dd class="admin-detail-value"><%= [ @route.latitude, @route.longitude ].compact.join(", ") %></dd>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Coordinates</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= [ @route.latitude, @route.longitude ].compact.join(", ") %></dd>
           </div>
         </dl>
       </div>
     </section>
 
-    <section class="admin-panel">
-      <div class="admin-panel-header">
-        <h2 class="admin-panel-title">Route map</h2>
-        <p class="admin-panel-description">Route boundary area and pickup locations.</p>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route map</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Route boundary area and pickup locations.</p>
       </div>
       <div class="admin-panel-body">
         <% boundary_polygons = route_boundary_polygon(@route) %>
@@ -62,65 +62,65 @@
                 markers: pickup_markers,
                 empty_message: "No map data available for this route." %>
           <% if boundary_polygons.empty? && @route.points.any? %>
-            <p class="admin-table-note mt-3">A bounded area requires more than 3 ordered points. Add more route points to display the route boundary.</p>
+            <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">A bounded area requires more than 3 ordered points. Add more route points to display the route boundary.</p>
           <% elsif boundary_polygons.empty? %>
-            <p class="admin-table-note mt-3">No route boundary defined. Pickup markers are shown when available.</p>
+            <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">No route boundary defined. Pickup markers are shown when available.</p>
           <% end %>
         <% else %>
-          <p class="admin-empty">No route boundary or pickup locations with coordinates are available for this route.</p>
+          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundary or pickup locations with coordinates are available for this route.</p>
         <% end %>
       </div>
     </section>
 
-    <section class="admin-panel">
-      <div class="admin-panel-header">
-        <h2 class="admin-panel-title">Drivers</h2>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Drivers</h2>
       </div>
       <div class="admin-panel-body">
         <% if @route.drivers.any? %>
           <dl class="admin-detail-list">
             <% @route.drivers.each do |driver| %>
-              <div class="admin-detail">
-                <dt class="admin-detail-label"><%= driver.name %></dt>
-                <dd class="admin-detail-value"><%= Phonelib.parse(driver.mobile).national.presence || driver.mobile %></dd>
+              <div class="admin-detail border-line dark:border-line-dark">
+                <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= driver.name %></dt>
+                <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= Phonelib.parse(driver.mobile).national.presence || driver.mobile %></dd>
               </div>
             <% end %>
           </dl>
         <% else %>
-          <p class="admin-empty">No drivers assigned to this route.</p>
+          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No drivers assigned to this route.</p>
         <% end %>
       </div>
     </section>
 
-    <section class="admin-panel">
-      <div class="admin-panel-header">
-        <h2 class="admin-panel-title">Route points</h2>
-        <p class="admin-panel-description">Polygon points that define this route's area.</p>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route points</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Polygon points that define this route's area.</p>
       </div>
       <div class="admin-panel-body">
         <% if @route.points.any? %>
           <div class="admin-table-wrap">
-            <table class="admin-table">
+            <table class="admin-table text-ink dark:text-ink-dark">
               <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>Latitude</th>
-                  <th>Longitude</th>
+                <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                  <th class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Order</th>
+                  <th class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Latitude</th>
+                  <th class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Longitude</th>
                 </tr>
               </thead>
               <tbody>
                 <% @route.points.order(:order).each do |point| %>
-                  <tr>
-                    <td><%= point.order %></td>
-                    <td><%= point.latitude %></td>
-                    <td><%= point.longitude %></td>
+                  <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.order %></td>
+                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.latitude %></td>
+                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.longitude %></td>
                   </tr>
                 <% end %>
               </tbody>
             </table>
           </div>
         <% else %>
-          <p class="admin-empty">No points defined for this route.</p>
+          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No points defined for this route.</p>
         <% end %>
       </div>
     </section>

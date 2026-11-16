@@ -1,13 +1,13 @@
 <div class="admin-page-header">
   <div>
     <% if local_assigns[:eyebrow].present? %>
-      <p class="admin-eyebrow"><%= eyebrow %></p>
+      <p class="admin-eyebrow text-sage-deep dark:text-sage-deep-dark"><%= eyebrow %></p>
     <% end %>
 
-    <h1 class="admin-page-title"><%= title %></h1>
+    <h1 class="admin-page-title text-ink dark:text-ink-dark"><%= title %></h1>
 
     <% if local_assigns[:description].present? %>
-      <p class="admin-page-description"><%= description %></p>
+      <p class="mt-[0.45rem] mb-0 max-w-[44rem] text-[0.96rem] leading-[1.55] text-ink-soft dark:text-ink-soft-dark"><%= description %></p>
     <% end %>
   </div>
 

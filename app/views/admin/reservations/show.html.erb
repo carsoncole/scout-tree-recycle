@@ -1,16 +1,16 @@
 <%= render "admin/shared/page_header",
            title: "Reservation Details",
            description: "View and manage reservation ##{@reservation.id}." do %>
-  <%= link_to "Edit", edit_admin_reservation_path(@reservation), class: "admin-button" %>
-  <%= link_to "Back to list", admin_reservations_path, class: "admin-button admin-button--secondary" %>
+  <%= link_to "Edit", edit_admin_reservation_path(@reservation), class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+  <%= link_to "Back to list", admin_reservations_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
 <% end %>
 
-<div class="admin-stack">
-  <section class="admin-panel">
-    <div class="admin-panel-header">
+<div class="flex flex-col gap-6">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Status</h2>
-        <p class="admin-panel-description">
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Status</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
           Created <%= time_ago_in_words(@reservation.created_at) %> ago
         </p>
       </div>
@@ -23,7 +23,7 @@
       <%= form_with model: [:admin, @reservation], local: false, class: "admin-field-grid admin-field-grid--two",
                     data: { controller: "form" } do |form| %>
         <div class="admin-field">
-          <%= form.label :status, "Update status", class: "admin-label" %>
+          <%= form.label :status, "Update status", class: "admin-label text-ink dark:text-ink-dark" %>
           <%= form.select :status,
               options_for_select([
                 [ "Routing", "routing" ],
@@ -33,25 +33,25 @@
                 [ "Cancelled", "cancelled" ]
               ], @reservation.status),
               {},
-              class: "admin-select",
+              class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
               data: { action: "change->form#submit" } %>
         </div>
-        <p class="admin-hint">Status updates automatically when changed.</p>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Status updates automatically when changed.</p>
       <% end %>
     </div>
   </section>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Route information</h2>
-        <p class="admin-panel-description">Routing and geocoding results for this address.</p>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route information</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Routing and geocoding results for this address.</p>
       </div>
     </div>
 
-    <div class="admin-panel-body admin-stack admin-stack--tight">
+    <div class="admin-panel-body flex flex-col gap-4">
       <% if @reservation.geocoding_failed? %>
-        <div class="admin-notice admin-notice--danger" role="status">
+        <div class="admin-notice admin-notice--danger border border-line border-l-[3px] border-l-danger-border bg-danger-bg text-ink dark:border-line-dark dark:border-l-danger-border-dark dark:bg-danger-bg-dark dark:text-ink-dark" role="status">
           <div>
             <p class="admin-notice-title">Auto geocoding failed</p>
             <p>The system was unable to geocode this address. Verify the address and try again.</p>
@@ -60,7 +60,7 @@
       <% end %>
 
       <% if @reservation.routing_failed? %>
-        <div class="admin-notice admin-notice--danger" role="status">
+        <div class="admin-notice admin-notice--danger border border-line border-l-[3px] border-l-danger-border bg-danger-bg text-ink dark:border-line-dark dark:border-l-danger-border-dark dark:bg-danger-bg-dark dark:text-ink-dark" role="status">
           <div>
             <p class="admin-notice-title">Auto routing failed</p>
             <p>The system was unable to route this reservation. Verify the coordinates and try again.</p>
@@ -69,33 +69,33 @@
       <% end %>
 
       <dl class="admin-detail-list">
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Assigned route</dt>
-          <dd class="admin-detail-value"><%= @reservation.route&.name || "Unassigned" %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Assigned route</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.route&.name || "Unassigned" %></dd>
         </div>
       </dl>
     </div>
   </section>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
-      <h2 class="admin-panel-title">Contact information</h2>
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Contact information</h2>
     </div>
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Name</dt>
-          <dd class="admin-detail-value"><%= @reservation.name %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Name</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.name %></dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Email</dt>
-          <dd class="admin-detail-value">
-            <%= mail_to @reservation.email, @reservation.email, class: "admin-link" %>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Email</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <%= mail_to @reservation.email, @reservation.email, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
           </dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Mobile</dt>
-          <dd class="admin-detail-value">
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Mobile</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
             <%= @reservation.mobile.present? ? Phonelib.parse(@reservation.mobile).national : "Not provided" %>
           </dd>
         </div>
@@ -103,55 +103,55 @@
     </div>
   </section>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title">Address information</h2>
-        <p class="admin-panel-description">Coordinates are used for routing and driver maps.</p>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Address information</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Coordinates are used for routing and driver maps.</p>
       </div>
       <%= button_to "Geocode Address", geocode_admin_reservation_path(@reservation),
           method: :post,
-          class: "admin-button admin-button--secondary admin-button--small" %>
+          class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
     </div>
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Street</dt>
-          <dd class="admin-detail-value"><%= @reservation.street %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Street</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.street %></dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">City</dt>
-          <dd class="admin-detail-value"><%= @reservation.city %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">City</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.city %></dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">State</dt>
-          <dd class="admin-detail-value"><%= @reservation.state %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">State</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.state %></dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Country</dt>
-          <dd class="admin-detail-value"><%= @reservation.country %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Country</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.country %></dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Latitude</dt>
-          <dd class="admin-detail-value"><%= @reservation.latitude || "Not available" %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Latitude</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.latitude || "Not available" %></dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Longitude</dt>
-          <dd class="admin-detail-value"><%= @reservation.longitude || "Not available" %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Longitude</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.longitude || "Not available" %></dd>
         </div>
       </dl>
     </div>
   </section>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
-      <h2 class="admin-panel-title">Additional information</h2>
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Additional information</h2>
     </div>
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Pickup notes</dt>
-          <dd class="admin-detail-value">
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Pickup notes</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
             <%= @reservation.pickup_notes.presence || "No notes provided" %>
           </dd>
         </div>
@@ -159,9 +159,9 @@
     </div>
   </section>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
-      <h2 class="admin-panel-title">Email history</h2>
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email history</h2>
     </div>
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
@@ -170,15 +170,15 @@
           "Cancellation email" => @reservation.cancelled_reservation_email_sent_at,
           "Missing tree email" => @reservation.missing_tree_email_sent_at
         }.each do |label, sent_at| %>
-          <div class="admin-detail">
-            <dt class="admin-detail-label"><%= label %></dt>
-            <dd class="admin-detail-value">
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= label %></dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark">
               <% if sent_at.present? %>
-                <span class="admin-badge admin-badge--positive">
+                <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">
                   Sent <%= sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
                 </span>
               <% else %>
-                <span class="admin-badge admin-badge--neutral">Not sent</span>
+                <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">Not sent</span>
               <% end %>
             </dd>
           </div>
@@ -188,31 +188,31 @@
   </section>
 
   <% if @reservation.missing_tree_sms_sent_at.present? || @reservation.missing_tree_email_sent_at.present? %>
-    <section class="admin-panel">
-      <div class="admin-panel-header">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
-          <h2 class="admin-panel-title">Missing tree notifications</h2>
-          <p class="admin-panel-description">This reservation was marked as missing and the customer was notified.</p>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Missing tree notifications</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">This reservation was marked as missing and the customer was notified.</p>
         </div>
-        <span class="admin-badge admin-badge--warning">Customer notified</span>
+        <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Customer notified</span>
       </div>
       <div class="admin-panel-body">
         <dl class="admin-detail-list">
           <% if @reservation.missing_tree_sms_sent_at.present? %>
-            <div class="admin-detail">
-              <dt class="admin-detail-label">SMS notification</dt>
-              <dd class="admin-detail-value">
-                <span class="admin-badge admin-badge--info">
+            <div class="admin-detail border-line dark:border-line-dark">
+              <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">SMS notification</dt>
+              <dd class="admin-detail-value text-ink dark:text-ink-dark">
+                <span class="admin-badge admin-badge--info bg-info-bg text-info dark:bg-info-bg-dark dark:text-info-dark">
                   Sent <%= @reservation.missing_tree_sms_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
                 </span>
               </dd>
             </div>
           <% end %>
           <% if @reservation.missing_tree_email_sent_at.present? %>
-            <div class="admin-detail">
-              <dt class="admin-detail-label">Email notification</dt>
-              <dd class="admin-detail-value">
-                <span class="admin-badge admin-badge--positive">
+            <div class="admin-detail border-line dark:border-line-dark">
+              <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Email notification</dt>
+              <dd class="admin-detail-value text-ink dark:text-ink-dark">
+                <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">
                   Sent <%= @reservation.missing_tree_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
                 </span>
               </dd>
@@ -223,30 +223,30 @@
     </section>
   <% end %>
 
-  <section class="admin-panel">
-    <div class="admin-panel-header">
-      <h2 class="admin-panel-title">Timestamps</h2>
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Timestamps</h2>
     </div>
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Created at</dt>
-          <dd class="admin-detail-value"><%= @reservation.created_at.strftime("%B %-d, %Y at %-l:%M %p") %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Created at</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.created_at.strftime("%B %-d, %Y at %-l:%M %p") %></dd>
         </div>
-        <div class="admin-detail">
-          <dt class="admin-detail-label">Updated at</dt>
-          <dd class="admin-detail-value"><%= @reservation.updated_at.strftime("%B %-d, %Y at %-l:%M %p") %></dd>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Updated at</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.updated_at.strftime("%B %-d, %Y at %-l:%M %p") %></dd>
         </div>
       </dl>
     </div>
-    <div class="admin-panel-footer">
+    <div class="admin-panel-footer border-line dark:border-line-dark">
       <%= button_to "Delete Reservation", admin_reservation_path(@reservation),
           method: :delete,
           data: {
             turbo_confirm: "Are you sure you want to delete this reservation? This action cannot be undone.",
             turbo_method: :delete
           },
-          class: "admin-button admin-button--danger" %>
+          class: "admin-button admin-button--danger bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark" %>
     </div>
   </section>
 </div>

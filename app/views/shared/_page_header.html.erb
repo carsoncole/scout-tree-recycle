@@ -1,12 +1,12 @@
 <header class="site-page-header">
   <% if local_assigns[:eyebrow].present? %>
-    <p class="site-eyebrow"><%= eyebrow %></p>
+    <p class="site-eyebrow text-sage-deep dark:text-sage-deep-dark"><%= eyebrow %></p>
   <% end %>
 
-  <h1 class="site-title"><%= title %></h1>
+  <h1 class="site-title text-ink dark:text-ink-dark"><%= title %></h1>
 
   <% if local_assigns[:description].present? %>
-    <p class="site-lede"><%= description %></p>
+    <p class="site-lede text-ink-soft dark:text-ink-soft-dark"><%= description %></p>
   <% end %>
 
   <%= yield if block_given? %>

@@ -17,7 +17,7 @@ test:
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: ep-lingering-grass-bfyzkrkf.c-5.us-west-2.aws.neon.tech/neondb
+  host: ep-lingering-grass-bfyzkrkf.c-5.us-west-2.aws.neon.tech
   username: neondb_owner
   password: <%= Rails.application.credentials.dig(:neon_database, :password) %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>

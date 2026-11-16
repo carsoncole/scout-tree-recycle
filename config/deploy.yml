@@ -7,7 +7,7 @@ image: carsoncole/tree_recycle
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.209
+    - 157.245.186.112
   # job:
   #   hosts:
   #     - 192.168.0.1

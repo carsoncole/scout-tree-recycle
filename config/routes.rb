@@ -80,9 +80,11 @@ Rails.application.routes.draw do
     end
     get "sms/thread/:phone", to: "sms#show", as: :sms_thread
 
-    # Logs
-    delete "logs", to: "logs#destroy_all", as: :destroy_all_logs
-    resources :logs, only: [ :index, :show, :destroy ]
+    # System logs
+    scope path: "system" do
+      delete "logs", to: "logs#destroy_all", as: :destroy_all_logs
+      resources :logs, only: [ :index, :show, :destroy ]
+    end
 
     # Operations
     post "post-event-cleanup", to: "operations#post_event_cleanup"

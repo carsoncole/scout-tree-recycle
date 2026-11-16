@@ -3,58 +3,60 @@
            description: "View application activity and error reports." do %>
   <%= button_to "Delete All Logs", admin_destroy_all_logs_path,
       method: :delete,
-      data: {
-        turbo_confirm: "Are you sure you want to delete all logs? This action cannot be undone.",
-        turbo_method: :delete
-      },
       class: "admin-button admin-button--danger" %>
 <% end %>
 
-<section class="admin-panel">
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th scope="col">Timestamp</th>
-          <th scope="col">Severity</th>
-          <th scope="col">Message</th>
-          <th scope="col">Error type</th>
-          <th scope="col">Environment</th>
-          <th scope="col">Context</th>
-          <th scope="col">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @logs.each do |log| %>
-          <tr>
-            <td><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
-            <td>
-              <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
-            </td>
-            <td>
-              <%= link_to log.message&.truncate(100), admin_log_path(log), class: "admin-link" %>
-            </td>
-            <td><%= log.error_type %></td>
-            <td><%= log.environment %></td>
-            <td>
-              <% if log.context.present? %>
-                <pre class="admin-code"><%= JSON.pretty_generate(log.context) %></pre>
-              <% end %>
-            </td>
-            <td>
-              <span class="<%= admin_handled_badge(log.handled) %>">
-                <%= log.handled ? "Handled" : "Unhandled" %>
-              </span>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-stack">
+    <section class="admin-panel">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Timestamp</th>
+              <th scope="col">Severity</th>
+              <th scope="col">Message</th>
+              <th scope="col">Error type</th>
+              <th scope="col">Environment</th>
+              <th scope="col">Context</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @logs.each do |log| %>
+              <tr>
+                <td><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+                <td>
+                  <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
+                </td>
+                <td>
+                  <%= link_to log.message&.truncate(100), admin_log_path(log), class: "admin-link" %>
+                </td>
+                <td><%= log.error_type %></td>
+                <td><%= log.environment %></td>
+                <td>
+                  <% if log.context.present? %>
+                    <pre class="admin-code"><%= JSON.pretty_generate(log.context) %></pre>
+                  <% end %>
+                </td>
+                <td>
+                  <span class="<%= admin_handled_badge(log.handled) %>">
+                    <%= log.handled ? "Handled" : "Unhandled" %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
+
+      <% if @logs.empty? %>
+        <p class="admin-empty">No log entries have been recorded.</p>
+      <% end %>
+    </section>
   </div>
-
-  <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
-
-  <% if @logs.empty? %>
-    <p class="admin-empty">No log entries have been recorded.</p>
-  <% end %>
-</section>
+</div>

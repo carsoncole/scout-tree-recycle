@@ -17,25 +17,25 @@ test:
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: 192.168.0.195
-  username: tree_recycle
-  password: <%= Rails.application.credentials.dig(:production_db_password) %>
+  host: ep-lingering-grass-bfyzkrkf.c-5.us-west-2.aws.neon.tech/neondb
+  username: neondb_owner
+  password: <%= Rails.application.credentials.dig(:neon_database, :password) %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 production:
   primary: &primary_production
     <<: *default
-    database: tree_recycle_production
-    password: <%= Rails.application.credentials.dig(:production_db_password) %>
+    database: scout_tree_recycle_production
+    password: <%= Rails.application.credentials.dig(:neon_database, :password) %>
   cache:
     <<: *primary_production
-    database: tree_recycle_production_cache
+    database: scout_tree_recycle_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: tree_recycle_production_queue
+    database: scout_tree_recycle_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: tree_recycle_production_cable
+    database: scout_tree_recycle_production_cable
     migrations_paths: db/cable_migrate

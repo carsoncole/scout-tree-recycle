@@ -28,8 +28,9 @@ class Admin::LogsTest < ApplicationSystemTestCase
 
   test "deleting all logs" do
     visit admin_logs_url
-    click_on "Delete All Logs"
-    accept_confirm
+    find("summary", text: "Delete All Logs").click
+    fill_in "Type DELETE to confirm", with: "DELETE"
+    click_on "Confirm Delete All Logs"
     assert_text "All logs have been deleted successfully."
   end
 end

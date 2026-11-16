@@ -1,7 +1,7 @@
 class Admin::LogsController < Admin::BaseController
   def index
     @pagy, @logs = pagy(Log.order(created_at: :desc))
-    Log.update_all(is_viewed: true)
+    Log.where(is_viewed: false).update_all(is_viewed: true)
   end
 
   def show
@@ -15,7 +15,11 @@ class Admin::LogsController < Admin::BaseController
   end
 
   def destroy_all
-    Log.delete_all
-    redirect_to admin_logs_path, notice: "All logs have been deleted successfully."
+    if params[:confirmation].to_s.strip.casecmp?("DELETE")
+      Log.delete_all
+      redirect_to admin_logs_path, notice: "All logs have been deleted successfully."
+    else
+      redirect_to admin_logs_path, alert: "Type DELETE to confirm deletion of all logs."
+    end
   end
 end

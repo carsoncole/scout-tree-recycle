@@ -82,13 +82,7 @@ class Admin::SettingsController < Admin::BaseController
   private
 
   def build_initial_admin_user
-    attrs = admin_user_params
-    if attrs.values.all?(&:blank?)
-      password = SecureRandom.base58(24)
-      User.new(email: "admin@example.com", password: password, password_confirmation: password, role: "admin")
-    else
-      User.new(attrs.merge(role: "admin"))
-    end
+    User.new(admin_user_params.merge(role: "admin"))
   end
 
   def admin_user_params

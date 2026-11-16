@@ -1,3 +1,19 @@
+development:
+  host: localhost
+  adapter: postgresql
+  database: scout-tree-recycle-development
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  encoding: unicode
+  timeout: 5000
+
+test:
+  host: localhost
+  adapter: postgresql
+  database: scout-tree-recycle-test
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  encoding: unicode
+  timeout: 5000
+
 default: &default
   adapter: postgresql
   encoding: unicode
@@ -5,15 +21,6 @@ default: &default
   username: tree_recycle
   password: <%= Rails.application.credentials.dig(:production_db_password) %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
-
-development:
-  <<: *default
-  database: tree_recycle_development
-
-test:
-  <<: *default
-  database: tree_recycle_test
 
 production:
   primary: &primary_production

@@ -15,26 +15,28 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_url
 
     within "nav.admin-settings-nav" do
-      assert_link "Organization", href: "#organization"
-      assert_link "The Event", href: "#event-settings"
-      assert_link "Site Content", href: "#site-content"
-      assert_link "Pickups Portal", href: "#tree-pickups"
-      assert_link "SMS", href: "#sms"
-      assert_link "Email", href: "#email"
-      assert_link "Donations", href: "#donations"
-      assert_link "Location Services", href: "#location-services"
-      assert_link "Operations", href: "#operations"
-      assert_link "Logs", href: "#logs"
-      assert_link "Jobs", href: "#jobs"
-      assert_link "User Management", href: "#user-management"
+      assert_link "The Event", href: admin_settings_path(anchor: "event-settings")
+      assert_link "Organization", href: admin_settings_path(anchor: "organization")
+      assert_link "Site Details", href: admin_settings_path(anchor: "site-details")
+      assert_link "Site Content", href: admin_settings_path(anchor: "site-content")
+      assert_link "Pickups Portal", href: admin_settings_path(anchor: "tree-pickups")
+      assert_link "SMS", href: admin_settings_path(anchor: "sms")
+      assert_link "Email", href: admin_settings_path(anchor: "email")
+      assert_link "Donations", href: admin_settings_path(anchor: "donations")
+      assert_link "Location Services", href: admin_settings_path(anchor: "location-services")
+      assert_link "Operations", href: admin_settings_path(anchor: "operations")
+      assert_link "System", href: admin_settings_path(anchor: "system")
+      assert_link "Data", href: admin_data_path
+      assert_link "Jobs", href: admin_mission_control_jobs_path
+      assert_link "Users", href: admin_users_path
     end
 
-    %w[organization event-settings site-content tree-pickups sms email donations location-services operations logs data jobs user-management].each do |id|
+    %w[organization event-settings site-details site-content tree-pickups sms email donations location-services operations system data jobs user-management].each do |id|
       assert_selector "section##{id}"
     end
 
     titles = all("section.admin-panel:not(#configuration-status) h2.admin-panel-title").map(&:text)
-    assert_equal [ "The Event", "Organization", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "Logs", "Data", "Jobs", "User Management" ], titles
+    assert_equal [ "The Event", "Organization", "Site Details", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "System", "Data", "Jobs", "User Management" ], titles
   end
 
   test "shows configuration status and missing required settings" do
@@ -42,7 +44,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "#configuration-status" do
       assert_text "1 missing"
-      assert_link "Site URL", href: "#organization"
+      assert_link "Site URL", href: "#site-details"
     end
 
     Setting.instance.update(site_url: "https://example.com")
@@ -94,7 +96,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     fill_in "Password", with: "1234567890"
     click_on "Access Pickups"
 
-    assert_selector "h1", text: "Drivers"
+    assert_selector "h1", text: "Pickups"
   end
 
   test "new settings page should show errors if settings are not valid" do
@@ -184,11 +186,15 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "section.admin-panel", text: "Organization" do
       assert_field "Organization Name"
       assert_field "Organization URL"
+      assert_button "Save Organization Settings"
+    end
+
+    within "section#site-details" do
       assert_field "Site URL"
       assert_field "Time Zone"
       assert_field "Default Country"
       assert_field "Default Phone Country"
-      assert_button "Save Organization Settings"
+      assert_button "Save Site Details"
     end
 
     within "section.admin-panel", text: "The Event" do
@@ -203,10 +209,6 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "section.admin-panel", text: "Organization" do
       fill_in "Organization Name", with: "Troop 200"
       fill_in "Organization URL", with: "https://troop200.example.com"
-      fill_in "Site URL", with: "https://trees.example.com"
-      select "UTC", from: "Time Zone"
-      fill_in "Default Country", with: "Canada"
-      fill_in "Default Phone Country", with: "CA"
       click_on "Save Organization Settings"
     end
 
@@ -215,6 +217,22 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     setting = Setting.instance.reload
     assert_equal "Troop 200", setting.organization_name
     assert_equal "https://troop200.example.com", setting.organization_url
+  end
+
+  test "site details panel saves its settings" do
+    visit admin_settings_url
+
+    within "section#site-details" do
+      fill_in "Site URL", with: "https://trees.example.com"
+      select "UTC", from: "Time Zone"
+      fill_in "Default Country", with: "Canada"
+      fill_in "Default Phone Country", with: "CA"
+      click_on "Save Site Details"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    setting = Setting.instance.reload
     assert_equal "https://trees.example.com", setting.site_url
     assert_equal "UTC", setting.time_zone
     assert_equal "Canada", setting.default_country
@@ -462,13 +480,15 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
   test "page links" do
     visit admin_settings_url
-    within "section#logs" do
+    within "section#system" do
       assert_link "System Logs", href: admin_logs_path
     end
     within "section#jobs" do
       assert_link "View Jobs Dashboard", href: admin_mission_control_jobs_path
     end
-    assert_link "Manage Drivers", href: admin_drivers_path
+    within "section#tree-pickups" do
+      assert_link "View drivers", href: admin_drivers_path
+    end
     assert_link "Manage Users", href: admin_users_path
   end
 

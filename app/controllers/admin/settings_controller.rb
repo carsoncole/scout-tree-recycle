@@ -20,6 +20,7 @@ class Admin::SettingsController < Admin::BaseController
       redirect_to admin_settings_path
     else
       @setting = Setting.new
+      @admin_user = User.new unless User.exists?(role: "admin")
     end
   end
 
@@ -27,14 +28,19 @@ class Admin::SettingsController < Admin::BaseController
     return redirect_to admin_settings_path, alert: "Settings already exist." if Setting.exists?
 
     @setting = Setting.new(setting_params)
+    @admin_user = build_initial_admin_user unless User.exists?(role: "admin")
 
-    if @setting.save
-      notice = "Settings saved."
-      unless User.exists?(role: "admin")
-        admin_password = SecureRandom.base58(24)
-        User.create!(email: "admin@example.com", password: admin_password, role: "admin")
-        notice += " Admin user created with email admin@example.com and password: #{admin_password}"
+    setting_valid = @setting.valid?
+    admin_valid = @admin_user.nil? || @admin_user.valid?
+
+    if setting_valid && admin_valid
+      ActiveRecord::Base.transaction do
+        @setting.save!
+        @admin_user&.save!
       end
+
+      notice = "Settings saved."
+      notice += " Admin user #{@admin_user.email} created." if @admin_user
       redirect_to admin_settings_path, notice: notice
     else
       render :new, status: :unprocessable_entity
@@ -74,6 +80,20 @@ class Admin::SettingsController < Admin::BaseController
   end
 
   private
+
+  def build_initial_admin_user
+    attrs = admin_user_params
+    if attrs.values.all?(&:blank?)
+      password = SecureRandom.base58(24)
+      User.new(email: "admin@example.com", password: password, password_confirmation: password, role: "admin")
+    else
+      User.new(attrs.merge(role: "admin"))
+    end
+  end
+
+  def admin_user_params
+    params.fetch(:admin_user, {}).permit(:email, :password, :password_confirmation)
+  end
 
   def setting_params
     params.require(:setting).permit(

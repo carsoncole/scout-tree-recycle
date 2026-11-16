@@ -46,7 +46,6 @@ class Setting < ApplicationRecord
 
   normalizes :phone_default_country, with: ->(country) { country.to_s.strip.upcase.presence }
 
-  validates :organization_name, presence: true
   validates :default_country, presence: true
   validates :phone_default_country, presence: true, length: { is: 2 }
   validates :event_pickup_start, :event_pickup_end, :event_sign_up_deadline, presence: { message: "date and time can't be blank" }

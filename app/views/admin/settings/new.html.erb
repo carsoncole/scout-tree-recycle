@@ -74,6 +74,47 @@
               <% end %>
             </div>
           </div>
+
+          <% unless User.exists?(role: "admin") %>
+            <div class="admin-divider"></div>
+            <div class="admin-stack">
+              <div>
+                <h2 class="admin-section-title">Administrator account</h2>
+                <p class="admin-hint">Create the initial admin user to sign in and manage the application.</p>
+              </div>
+
+              <%= fields_for :admin_user, @admin_user || User.new do |af| %>
+                <div class="admin-field" id="admin_email_section">
+                  <%= af.label :email, "Admin Email", class: "admin-label" %>
+                  <%= af.email_field :email, autocomplete: "username",
+                      class: "admin-input #{'admin-input--error' if @admin_user&.errors[:email].any?}" %>
+                  <% if @admin_user&.errors[:email].any? %>
+                    <p class="admin-error-text"><%= @admin_user.errors[:email].first %></p>
+                  <% end %>
+                </div>
+
+                <div class="admin-field-grid admin-field-grid--two">
+                  <div class="admin-field" id="admin_password_section">
+                    <%= af.label :password, "Admin Password", class: "admin-label" %>
+                    <%= af.password_field :password, autocomplete: "new-password",
+                        class: "admin-input #{'admin-input--error' if @admin_user&.errors[:password].any?}" %>
+                    <% if @admin_user&.errors[:password].any? %>
+                      <p class="admin-error-text"><%= @admin_user.errors[:password].first %></p>
+                    <% end %>
+                  </div>
+
+                  <div class="admin-field" id="admin_password_confirmation_section">
+                    <%= af.label :password_confirmation, "Confirm Admin Password", class: "admin-label" %>
+                    <%= af.password_field :password_confirmation, autocomplete: "new-password",
+                        class: "admin-input #{'admin-input--error' if @admin_user&.errors[:password_confirmation].any?}" %>
+                    <% if @admin_user&.errors[:password_confirmation].any? %>
+                      <p class="admin-error-text"><%= @admin_user.errors[:password_confirmation].first %></p>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </div>
       </div>
 

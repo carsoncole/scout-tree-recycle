@@ -24,9 +24,13 @@ module ActiveSupport
     def sign_in(user = users(:admin))
       session = user.sessions.create!
       Current.session = session
-      request = ActionDispatch::Request.new(Rails.application.env_config)
-      cookies = request.cookie_jar
-      cookies.signed[:session_id] = { value: session.id, httponly: true, same_site: :lax }
+
+      # Build a throwaway request env so the signed cookie jar is not stored in
+      # Rails.application.env_config, which is merged into every test request.
+      request = ActionDispatch::Request.new(Rails.application.env_config.dup)
+      request.cookie_jar.signed[:session_id] = { value: session.id, httponly: true, same_site: :lax }
+
+      cookies[:session_id] = request.cookie_jar[:session_id]
     end
 
     # Completes the donation step and waits for the confirmation page to load.

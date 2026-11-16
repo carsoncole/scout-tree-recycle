@@ -32,7 +32,21 @@ bin/setup
 
 `bin/setup` installs gems, prepares the database, and starts the dev server. Visit `http://localhost:3000`.
 
-On first run with no settings, create them at `/admin/settings/new`; an admin user is created and its password is shown. Optional seed data: `bin/rails db:seed`.
+On first run with no settings, create them at `/admin/settings/new`, including credentials for the initial admin user.
+
+Seed default data (built-in marketing email templates) with:
+
+```sh
+bin/rails db:seed
+```
+
+For optional example development data, load the sample dataset:
+
+```sh
+bin/rails sample_data:load
+```
+
+This task loads example zones, routes, route points, and related sample records (drivers, reservations, and contacts) for **Bainbridge Island, Washington**. It is intended for local development/demo use and can be run manually when you want a realistic starting map and sample pickup data.
 
 Database connection settings live in `config/database.yml`.
 
@@ -89,7 +103,7 @@ SMTP settings are stored in the database and applied to Action Mailer at runtime
 
 #### Marketing email templates
 
-Marketing emails are stored in the database and edited at `/admin/marketing_email_templates` (also linked from `/admin/marketing`). The two built-in campaigns are seeded from `db/email_templates/` and can be restored at any time with **Load Default Templates** or `bin/rails marketing_email_templates:install_defaults`.
+Marketing emails are stored in the database and edited at `/admin/marketing_email_templates` (also linked from `/admin/marketing`). The two built-in campaigns are seeded from `db/email_templates/` and can be restored at any time with **Load Default Templates**, `bin/rails db:seed`, or `bin/rails marketing_email_templates:install_defaults`.
 
 - Templates are rendered with [Liquid](https://shopify.github.io/liquid/), so admins can use variables like `{{ contact.first_name }}` without giving templates access to Ruby.
 - Styles are written in normal `<style>` blocks or classes and are inlined automatically by [premailer-rails](https://github.com/premailer/premailer-rails) when the email is delivered.

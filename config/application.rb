@@ -24,6 +24,10 @@ module TreeRecycle
     # Fallback for console/rake contexts. Requests, jobs, and mailers use the
     # Time Zone configured in /admin/settings.
     config.time_zone = "Pacific Time (US & Canada)"
+
+    # This app does not generate Active Storage variants; disable the processor
+    # so deploys don't require the image_processing gem or image libraries.
+    config.active_storage.variant_processor = :disabled
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

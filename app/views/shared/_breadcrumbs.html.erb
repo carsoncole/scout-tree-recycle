@@ -1,0 +1,19 @@
+<% if items.size > 1 %>
+  <nav class="mb-3 text-[0.82rem]" aria-label="Breadcrumb">
+    <ol class="flex flex-wrap items-center gap-2">
+      <% items.each_with_index do |item, index| %>
+        <% if index.positive? %>
+          <li class="text-muted dark:text-muted-dark" aria-hidden="true">/</li>
+        <% end %>
+        <li>
+          <% if index == items.size - 1 %>
+            <span class="text-ink-soft dark:text-ink-soft-dark" aria-current="page"><%= item[:label] %></span>
+          <% else %>
+            <%= link_to item[:label], item[:path],
+                        class: "text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" %>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </nav>
+<% end %>

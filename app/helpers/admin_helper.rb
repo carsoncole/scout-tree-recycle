@@ -1,4 +1,61 @@
 module AdminHelper
+  ADMIN_BREADCRUMB_TRAILS = {
+    "reservations" => [
+      [ "Reservations", :admin_reservations_path ]
+    ],
+    "donations" => [
+      [ "Donations", :admin_donations_path ]
+    ],
+    "marketing" => [
+      [ "Marketing", :admin_marketing_index_path ]
+    ],
+    "marketing_email_templates" => [
+      [ "Marketing", :admin_marketing_index_path ],
+      [ "Email Templates", :admin_marketing_email_templates_path ]
+    ],
+    "marketing_images" => [
+      [ "Marketing", :admin_marketing_index_path ],
+      [ "Email Images", :admin_marketing_images_path ]
+    ],
+    "contacts" => [
+      [ "Marketing", :admin_marketing_index_path ]
+    ],
+    "sms" => [
+      [ "SMS Messages", :admin_sms_path ]
+    ],
+    "settings" => [
+      [ "Settings", :admin_settings_path ]
+    ],
+    "drivers" => [
+      [ "Settings", :admin_settings_path ],
+      [ "Drivers", :admin_drivers_path ]
+    ],
+    "routes" => [
+      [ "Settings", :admin_settings_path ],
+      [ "Routes", :admin_routes_path ]
+    ],
+    "zones" => [
+      [ "Settings", :admin_settings_path ],
+      [ "Zones", :admin_zones_path ]
+    ],
+    "users" => [
+      [ "Settings", :admin_settings_path ],
+      [ "Users", :admin_users_path ]
+    ],
+    "thanks" => [
+      [ "Settings", :admin_settings_path ],
+      [ "Thanks", :admin_thanks_path ]
+    ],
+    "data" => [
+      [ "Settings", :admin_settings_path ],
+      [ "Data", :admin_data_path ]
+    ],
+    "logs" => [
+      [ "Settings", :admin_settings_path ],
+      [ "System Logs", :admin_logs_path ]
+    ]
+  }.freeze
+
   ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark".freeze
   ADMIN_NAV_ACTIVE_CLASSES = "is-active bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark".freeze
 
@@ -12,6 +69,23 @@ module AdminHelper
 
   def admin_nav_class(active)
     [ ADMIN_NAV_CLASSES, (ADMIN_NAV_ACTIVE_CLASSES if active) ].compact.join(" ")
+  end
+
+  def admin_breadcrumbs(current_title:)
+    return [] unless controller_path.start_with?("admin/")
+
+    trail = ADMIN_BREADCRUMB_TRAILS[controller_name]
+    return [] unless trail
+
+    items = trail.map do |label, path_helper|
+      { label: label, path: public_send(path_helper) }
+    end
+
+    if current_title.present? && current_title.to_s != items.last[:label]
+      items << { label: current_title, path: nil }
+    end
+
+    items
   end
 
   ADMIN_INPUT_CLASSES = "border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark".freeze

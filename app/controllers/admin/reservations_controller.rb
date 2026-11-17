@@ -36,14 +36,7 @@ class Admin::ReservationsController < Admin::BaseController
 
   def update
     if @reservation.update(reservation_params)
-      respond_to do |format|
-        format.turbo_stream do
-          redirect_to edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
-        end
-        format.html do
-          redirect_to edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
-        end
-      end
+      redirect_back fallback_location: edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end

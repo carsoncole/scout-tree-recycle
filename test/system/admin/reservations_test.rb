@@ -79,6 +79,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     end
 
     assert_selector ".flash", text: "Reservation was successfully updated."
+    assert_current_path admin_reservation_path(reservation)
     assert_equal "cancelled", reservation.reload.status
   end
 

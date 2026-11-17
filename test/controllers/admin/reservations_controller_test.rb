@@ -34,6 +34,31 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Reservation was successfully updated.", flash[:notice]
   end
 
+  test "should redirect back to the show page after a status update" do
+    sign_in
+    reservation = reservations(:pending_pickup_1)
+
+    patch admin_reservation_url(reservation),
+          params: { reservation: { status: "cancelled" } },
+          headers: { "HTTP_REFERER" => admin_reservation_url(reservation) }
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "cancelled", reservation.reload.status
+    assert_equal "Reservation was successfully updated.", flash[:notice]
+  end
+
+  test "should redirect back to the edit page after an update from the edit page" do
+    sign_in
+    reservation = reservations(:pending_pickup_1)
+
+    patch admin_reservation_url(reservation),
+          params: { reservation: { name: "New Name" } },
+          headers: { "HTTP_REFERER" => edit_admin_reservation_url(reservation) }
+
+    assert_redirected_to edit_admin_reservation_url(reservation)
+    assert_equal "New Name", reservation.reload.name
+  end
+
   test "should get destroy" do
     sign_in
     delete admin_reservation_url(reservations(:pending_pickup_1))

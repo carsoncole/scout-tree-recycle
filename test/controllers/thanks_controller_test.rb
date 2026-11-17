@@ -28,6 +28,15 @@ class ThanksControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "We are grateful for every supporter of Troop 100."
   end
 
+  test "displays a thank that has no content" do
+    thank = Thank.create!(content: nil, image: "bytes", image_content_type: "image/jpeg")
+
+    get thanks_url
+
+    assert_response :success
+    assert_select "img[src=?]", image_thank_path(thank, v: thank.updated_at.to_i)
+  end
+
   test "serves the stored image with its content type" do
     thank = thanks(:one)
 

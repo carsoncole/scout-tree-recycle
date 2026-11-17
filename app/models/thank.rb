@@ -8,7 +8,6 @@ class Thank < ApplicationRecord
 
   before_validation :store_image_upload
 
-  validates :content, presence: true
   validates :image, presence: true, on: :create
   validates :image_content_type, presence: true
   validate :image_upload_is_valid

@@ -19,11 +19,12 @@ class ThankTest < ActiveSupport::TestCase
     assert build_thank.valid?
   end
 
-  test "requires content" do
-    thank = build_thank(content: "")
+  test "is valid without content" do
+    thank = build_thank(content: nil)
 
-    assert_not thank.valid?
-    assert_includes thank.errors[:content], "can't be blank"
+    assert thank.valid?
+    assert thank.save
+    assert_nil thank.reload.content
   end
 
   test "requires an image on create" do

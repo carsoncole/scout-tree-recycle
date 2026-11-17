@@ -9,7 +9,7 @@ class Admin::ThanksTest < ApplicationSystemTestCase
     visit admin_thanks_url
     click_link "Add thank"
 
-    fill_in "Content", with: "Thanks to the Riverside Garden Club."
+    fill_in "Content (optional)", with: "Thanks to the Riverside Garden Club."
     attach_file "Image", file_fixture("thanks.png")
     click_button "Create Thank"
 
@@ -17,7 +17,7 @@ class Admin::ThanksTest < ApplicationSystemTestCase
     assert_text "Riverside Garden Club"
 
     all(:link, "Edit").first.click
-    fill_in "Content", with: "Thanks to the Riverside Garden Club for their generous support."
+    fill_in "Content (optional)", with: "Thanks to the Riverside Garden Club for their generous support."
     click_button "Update Thank"
 
     assert_text "Thank was successfully updated."

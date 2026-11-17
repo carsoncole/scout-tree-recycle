@@ -50,6 +50,17 @@ class Admin::ThanksControllerTest < ActionDispatch::IntegrationTest
     assert thank.image.present?
   end
 
+  test "creates a thank without content" do
+    assert_difference("Thank.count") do
+      post admin_thanks_url, params: {
+        thank: { image_upload: fixture_file_upload("thanks.png", "image/png") }
+      }
+    end
+
+    assert_redirected_to admin_thanks_url
+    assert_nil Thank.recent.first.content
+  end
+
   test "rejects an unsupported image type" do
     assert_no_difference("Thank.count") do
       post admin_thanks_url, params: {

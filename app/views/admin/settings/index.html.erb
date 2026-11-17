@@ -318,7 +318,7 @@
         <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
           <div class="admin-toolbar">
             <div>
-              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Drivers</h3>
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Drivers <%= render "admin/settings/count_badge", count: @drivers_count, label: "drivers" %></h3>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Manage drivers and access to pickup lists.</p>
             </div>
             <%= link_to "View drivers", admin_drivers_path, class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
@@ -326,7 +326,7 @@
 
           <div class="admin-toolbar admin-field--spaced">
             <div>
-              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Zones</h3>
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Zones <%= render "admin/settings/count_badge", count: @zones_count, label: "zones" %></h3>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Manage geographic zones for pickup routes.</p>
             </div>
             <%= link_to "View zones", admin_zones_path, class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
@@ -334,7 +334,7 @@
 
           <div class="admin-toolbar admin-field--spaced">
             <div>
-              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Routes</h3>
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Routes <%= render "admin/settings/count_badge", count: @routes_count, label: "routes" %></h3>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Manage pickup routes and assignments.</p>
             </div>
             <%= link_to "View routes", admin_routes_path, class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>

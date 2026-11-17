@@ -46,6 +46,18 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should show driver, zone, and route counts in the pickups portal section" do
+    sign_in
+    get admin_settings_path
+    assert_response :success
+
+    assert_select "#tree-pickups" do
+      assert_select ".admin-badge--neutral", text: /#{Driver.count}\s+drivers/, count: 1
+      assert_select ".admin-badge--neutral", text: /#{Zone.count}\s+zones/, count: 1
+      assert_select ".admin-badge--neutral", text: /#{Route.count}\s+routes/, count: 1
+    end
+  end
+
   test "should update settings and display flash message" do
     sign_in
     get admin_settings_path

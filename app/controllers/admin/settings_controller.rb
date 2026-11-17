@@ -13,6 +13,9 @@ class Admin::SettingsController < Admin::BaseController
 
   def index
     @unviewed_logs_count = Log.where(is_viewed: false).count
+    @drivers_count = Driver.count
+    @zones_count = Zone.count
+    @routes_count = Route.count
   end
 
   def new

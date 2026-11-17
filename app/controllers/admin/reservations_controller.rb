@@ -1,5 +1,5 @@
 class Admin::ReservationsController < Admin::BaseController
-  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode, :resend_email ]
+  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode, :route, :assign_route, :resend_email ]
 
   def index
     @reservations = Reservation.includes(:route)
@@ -64,6 +64,24 @@ class Admin::ReservationsController < Admin::BaseController
     end
   end
 
+  def route
+    unless Setting.instance.is_routing_enabled
+      redirect_to admin_reservation_path(@reservation), alert: "Routing is disabled"
+      return
+    end
+
+    @reservation.route_reservation!
+    redirect_to admin_reservation_path(@reservation), notice: "Reservation was queued for routing."
+  end
+
+  def assign_route
+    if @reservation.update(route_params)
+      redirect_to admin_reservation_path(@reservation), notice: "Reservation route was successfully updated."
+    else
+      redirect_to admin_reservation_path(@reservation), alert: "Reservation route could not be updated."
+    end
+  end
+
   def resend_email
     email_config = Reservation::EMAIL_KINDS[params[:kind].to_s]
 
@@ -92,5 +110,9 @@ class Admin::ReservationsController < Admin::BaseController
       :name, :email, :mobile, :street, :city, :state, :country,
       :route_id, :status, :pickup_notes, :latitude, :longitude
     )
+  end
+
+  def route_params
+    params.require(:reservation).permit(:route_id)
   end
 end

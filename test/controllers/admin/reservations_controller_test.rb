@@ -18,6 +18,7 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     sign_in
     get admin_reservation_url(reservations(:pending_pickup_1))
     assert_response :success
+    assert_select "form[action=?] select[name=?]", assign_route_admin_reservation_path(reservations(:pending_pickup_1)), "reservation[route_id]"
   end
 
   test "should get edit" do
@@ -38,6 +39,99 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     delete admin_reservation_url(reservations(:pending_pickup_1))
     assert_redirected_to admin_reservations_url
     assert_equal "Reservation was successfully deleted.", flash[:notice]
+  end
+
+  test "should show a route reservation button" do
+    sign_in
+    reservation = reservations(:pending_pickup_1)
+    get admin_reservation_url(reservation)
+
+    assert_select "form[action=?] button", route_admin_reservation_path(reservation), text: "Route reservation"
+  end
+
+  test "should queue a reservation for routing" do
+    sign_in
+    Setting.instance.update(is_routing_enabled: true)
+    reservation = reservations(:pending_pickup_1)
+
+    assert_enqueued_with(job: RouteReservationJob, args: [ reservation.id ]) do
+      post route_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Reservation was queued for routing.", flash[:notice]
+  end
+
+  test "should not queue a reservation for routing when routing is disabled" do
+    sign_in
+    Setting.instance.update(is_routing_enabled: false)
+    reservation = reservations(:pending_pickup_1)
+
+    assert_no_enqueued_jobs do
+      post route_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Routing is disabled", flash[:alert]
+  end
+
+  test "should indicate when a route was manually assigned" do
+    sign_in
+
+    get admin_reservation_url(reservations(:picked_up_2))
+    assert_select ".admin-badge", text: "Manually assigned"
+
+    get admin_reservation_url(reservations(:pending_pickup_1))
+    assert_select ".admin-badge", text: "Manually assigned", count: 0
+  end
+
+  test "should manually assign a route" do
+    sign_in
+    reservation = reservations(:pending_pickup_1)
+
+    patch assign_route_admin_reservation_url(reservation), params: { reservation: { route_id: routes(:two).id } }
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Reservation route was successfully updated.", flash[:notice]
+    assert_equal routes(:two), reservation.reload.route
+    assert reservation.is_manually_routed?
+  end
+
+  test "should clear a manually assigned route" do
+    sign_in
+    reservation = reservations(:pending_pickup_1)
+
+    patch assign_route_admin_reservation_url(reservation), params: { reservation: { route_id: "" } }
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_nil reservation.reload.route
+    assert_equal "routing", reservation.status
+  end
+
+  test "should route the address again after a manual route is removed" do
+    sign_in
+    Setting.instance.update(is_routing_enabled: true)
+    configure_location_service!
+
+    reservation = reservations(:routing_1)
+
+    patch assign_route_admin_reservation_url(reservation), params: { reservation: { route_id: routes(:two).id } }
+    assert reservation.reload.is_manually_routed?
+
+    patch assign_route_admin_reservation_url(reservation), params: { reservation: { route_id: "" } }
+    assert_nil reservation.reload.route
+    assert_not reservation.is_manually_routed?
+
+    clear_enqueued_jobs
+
+    with_stubbed_geocoding do
+      post route_admin_reservation_url(reservation)
+      perform_enqueued_jobs
+    end
+
+    assert reservation.reload.route.present?
+    assert_not reservation.is_manually_routed?
+    assert reservation.was_automatically_routed?
   end
 
   test "should show send and resend buttons for each email type" do

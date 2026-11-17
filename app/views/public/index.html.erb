@@ -1,4 +1,6 @@
 <% pickup_date = setting.event_pickup_start.strftime("%B %-d, %Y") %>
+<% pickup_day = setting.event_pickup_start.strftime("%A, %B %-d") %>
+<% pickup_start_time = setting.event_pickup_start.strftime("%-l:%M%P") %>
 <% sign_up_deadline = setting.event_sign_up_deadline.strftime("%B %-d, %Y at %-l:%M%P") %>
 <% content_for :title, "Make a Reservation | #{setting&.home_page_header || "Tree Recycle"}" %>
 <% content_for :description, "Schedule a Christmas tree pickup for #{pickup_date}. Sign up by #{sign_up_deadline}." %>
@@ -45,7 +47,7 @@
         <ol class="site-steps site-steps--three">
           <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Reserve a pickup time for your tree.</li>
           <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">We confirm the details by email.</li>
-          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Leave your tree where we can find it.</li>
+          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.</li>
         </ol>
       </section>
     <% end %>

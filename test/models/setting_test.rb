@@ -32,6 +32,15 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal "CA", setting.phone_default_country
   end
 
+  test "email_batch_size is capped by the number of eligible contacts" do
+    setting = Setting.instance
+    setting.update!(email_batch_quantity: 100)
+
+    assert_equal 3, setting.email_batch_size(3)
+    assert_equal 100, setting.email_batch_size(250)
+    assert_equal 0, setting.email_batch_size(0)
+  end
+
   test "applies reasonable defaults when values are blank" do
     setting = Setting.instance
     setting.update(

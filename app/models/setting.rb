@@ -148,6 +148,11 @@ class Setting < ApplicationRecord
     email_from_address.present?
   end
 
+  # Number of marketing emails that will actually be sent for the given number of eligible contacts.
+  def email_batch_size(eligible_count)
+    [ email_batch_quantity.to_i, eligible_count.to_i ].min
+  end
+
   def email_configured?
     missing_email_settings.empty?
   end

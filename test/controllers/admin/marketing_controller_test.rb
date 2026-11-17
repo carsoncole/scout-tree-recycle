@@ -36,6 +36,21 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", admin_settings_path(anchor: "email"), text: "Edit in Settings", count: 2
   end
 
+  test "index asks for confirmation with the number of emails before sending" do
+    Setting.instance.update!(email_batch_quantity: 2)
+    sign_in
+
+    get admin_marketing_index_url
+
+    assert_response :success
+    assert_select "button[data-turbo-confirm=?]",
+      "Send Marketing Email 1 to 2 contacts? Contacts who already received it will be skipped. This cannot be undone.",
+      count: 1
+    assert_select "button[data-turbo-confirm=?]",
+      "Send Marketing Email 2 to 2 contacts? Contacts who already received it will be skipped. This cannot be undone.",
+      count: 1
+  end
+
   test "should send marketing email 1" do
     sign_in
     configure_email!

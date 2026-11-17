@@ -33,6 +33,18 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     assert_selector "section#email", text: "Email"
   end
 
+  test "confirms the number of contacts before sending a marketing email" do
+    visit admin_marketing_index_url
+
+    within "section", text: "Marketing email 2" do
+      message = dismiss_confirm { click_on "Send Marketing Email 2" }
+
+      assert_equal "Send Marketing Email 2 to 3 contacts? Contacts who already received it will be skipped. This cannot be undone.", message
+    end
+
+    assert_current_path admin_marketing_index_path
+  end
+
   test "viewing the available email images" do
     image = MarketingEmailTemplate.available_images.first
     variable = MarketingEmailTemplate.image_variable_for(image)

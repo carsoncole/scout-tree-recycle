@@ -7,6 +7,8 @@ class Admin::MarketingController < Admin::BaseController
 
     setting = Setting.instance
     @email_batch_quantity = setting.email_batch_quantity
+    @marketing_1_batch_size = setting.email_batch_size(@marketing_1_count)
+    @marketing_2_batch_size = setting.email_batch_size(@marketing_2_count)
     if !setting.is_emailing_enabled?
       flash.now[:alert] = "Emailing is disabled. Enable email notifications in Settings to send marketing emails."
     elsif (message = setting.email_configuration_alert(purpose: "sending marketing emails"))
@@ -29,7 +31,7 @@ class Admin::MarketingController < Admin::BaseController
         redirect_to admin_marketing_index_path, alert: "No contacts are eligible for Marketing email 1."
       else
         SendMarketingEmail1Job.perform_later
-        queued_count = [ setting.email_batch_quantity, count_to_be_sent ].min
+        queued_count = setting.email_batch_size(count_to_be_sent)
         redirect_to admin_marketing_index_path, notice: "#{queued_count} of #{count_to_be_sent} marketing #1 emails queued to be sent."
       end
     end
@@ -50,7 +52,7 @@ class Admin::MarketingController < Admin::BaseController
         redirect_to admin_marketing_index_path, alert: "No contacts are eligible for Marketing email 2."
       else
         SendMarketingEmail2Job.perform_later
-        queued_count = [ setting.email_batch_quantity, count_to_be_sent ].min
+        queued_count = setting.email_batch_size(count_to_be_sent)
         redirect_to admin_marketing_index_path, notice: "#{queued_count} of #{count_to_be_sent} marketing #2 emails queued to be sent."
       end
     end

@@ -103,4 +103,12 @@ module AdminHelper
     format = time.year == Time.current.year ? "%b %-d, %-l:%M %p" : "%b %-d, %Y %-l:%M %p"
     time.strftime(format)
   end
+
+  def admin_marketing_send_confirm(name, batch_size)
+    if batch_size.zero?
+      "Send #{name}? No contacts are currently eligible."
+    else
+      "Send #{name} to #{pluralize(batch_size, "contact")}? Contacts who already received it will be skipped. This cannot be undone."
+    end
+  end
 end

@@ -50,7 +50,9 @@
           <% end %>
 
           <div class="flex flex-wrap items-center justify-start gap-3">
-            <%= button_to admin_send_marketing_email_1_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
+            <%= button_to admin_send_marketing_email_1_path,
+                class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark",
+                data: { turbo_confirm: admin_marketing_send_confirm("Marketing Email 1", @marketing_1_batch_size) } do %>
               Send Marketing Email 1
             <% end %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
@@ -102,7 +104,9 @@
           <% end %>
 
           <div class="flex flex-wrap items-center justify-start gap-3">
-            <%= button_to admin_send_marketing_email_2_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
+            <%= button_to admin_send_marketing_email_2_path,
+                class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark",
+                data: { turbo_confirm: admin_marketing_send_confirm("Marketing Email 2", @marketing_2_batch_size) } do %>
               Send Marketing Email 2
             <% end %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">

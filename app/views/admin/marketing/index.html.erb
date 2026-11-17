@@ -57,7 +57,7 @@
             <% end %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
               Batch size: <strong class="text-ink dark:text-ink-dark"><%= pluralize(@email_batch_quantity, "contact") %></strong> per send.
-              <%= link_to "Edit in Settings", admin_settings_path(anchor: "email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+              <%= link_to "Edit in Settings", admin_settings_section_path("email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
             </p>
           </div>
         </div>
@@ -111,7 +111,7 @@
             <% end %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
               Batch size: <strong class="text-ink dark:text-ink-dark"><%= pluralize(@email_batch_quantity, "contact") %></strong> per send.
-              <%= link_to "Edit in Settings", admin_settings_path(anchor: "email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+              <%= link_to "Edit in Settings", admin_settings_section_path("email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
             </p>
           </div>
         </div>

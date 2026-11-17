@@ -1,0 +1,11 @@
+<%= render "admin/shared/page_header",
+           title: @section_metadata[:label],
+           description: @section_metadata[:description] %>
+
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="flex flex-col gap-6">
+    <%= render "admin/settings/sections/#{@section}" %>
+  </div>
+</div>

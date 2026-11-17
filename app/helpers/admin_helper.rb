@@ -59,6 +59,9 @@ module AdminHelper
   ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark".freeze
   ADMIN_NAV_ACTIVE_CLASSES = "is-active bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark".freeze
 
+  ADMIN_SETTINGS_NAV_CLASSES = "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark".freeze
+  ADMIN_SETTINGS_NAV_ACTIVE_CLASSES = "is-active bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark".freeze
+
   ADMIN_BADGE_CLASSES = {
     "neutral" => "bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark",
     "positive" => "bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark",
@@ -69,6 +72,59 @@ module AdminHelper
 
   def admin_nav_class(active)
     [ ADMIN_NAV_CLASSES, (ADMIN_NAV_ACTIVE_CLASSES if active) ].compact.join(" ")
+  end
+
+  def admin_settings_nav_items
+    section_items = Setting::SECTIONS.map do |key, metadata|
+      {
+        key: key,
+        label: metadata[:label],
+        description: metadata[:description],
+        path: admin_settings_section_path(key)
+      }
+    end
+
+    section_items + [
+      {
+        key: "data",
+        label: "Data",
+        description: "Import and export reservation data as CSV.",
+        path: admin_data_path
+      },
+      {
+        key: "jobs",
+        label: "Jobs",
+        description: "Monitor background jobs, queues, and failures.",
+        path: admin_mission_control_jobs_path
+      },
+      {
+        key: "users",
+        label: "Users",
+        description: "Manage system users and their permissions.",
+        path: admin_users_path
+      }
+    ]
+  end
+
+  def admin_settings_active_key
+    case controller_name
+    when "settings"
+      @section.presence || "overview"
+    when "drivers", "zones", "routes"
+      "pickups"
+    when "thanks"
+      "site_content"
+    when "logs"
+      "system"
+    else
+      controller_name
+    end
+  end
+
+  def admin_settings_nav_class(key)
+    classes = [ ADMIN_SETTINGS_NAV_CLASSES ]
+    classes << ADMIN_SETTINGS_NAV_ACTIVE_CLASSES if admin_settings_active_key == key
+    classes.join(" ")
   end
 
   def admin_breadcrumbs(current_title:)

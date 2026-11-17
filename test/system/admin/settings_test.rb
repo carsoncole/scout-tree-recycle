@@ -15,28 +15,31 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_url
 
     within "nav.admin-settings-nav" do
-      assert_link "The Event", href: admin_settings_path(anchor: "event-settings")
-      assert_link "Organization", href: admin_settings_path(anchor: "organization")
-      assert_link "Site Details", href: admin_settings_path(anchor: "site-details")
-      assert_link "Site Content", href: admin_settings_path(anchor: "site-content")
-      assert_link "Pickups Portal", href: admin_settings_path(anchor: "tree-pickups")
-      assert_link "SMS", href: admin_settings_path(anchor: "sms")
-      assert_link "Email", href: admin_settings_path(anchor: "email")
-      assert_link "Donations", href: admin_settings_path(anchor: "donations")
-      assert_link "Location Services", href: admin_settings_path(anchor: "location-services")
-      assert_link "Operations", href: admin_settings_path(anchor: "operations")
-      assert_link "System", href: admin_settings_path(anchor: "system")
+      assert_link "Overview", href: admin_settings_path
+      assert_link "The Event", href: admin_settings_section_path("event")
+      assert_link "Organization", href: admin_settings_section_path("organization")
+      assert_link "Site Details", href: admin_settings_section_path("site_details")
+      assert_link "Site Content", href: admin_settings_section_path("site_content")
+      assert_link "Pickups Portal", href: admin_settings_section_path("pickups")
+      assert_link "SMS", href: admin_settings_section_path("sms")
+      assert_link "Email", href: admin_settings_section_path("email")
+      assert_link "Donations", href: admin_settings_section_path("donations")
+      assert_link "Location Services", href: admin_settings_section_path("location_services")
+      assert_link "Operations", href: admin_settings_section_path("operations")
+      assert_link "System", href: admin_settings_section_path("system")
       assert_link "Data", href: admin_data_path
       assert_link "Jobs", href: admin_mission_control_jobs_path
       assert_link "Users", href: admin_users_path
     end
+  end
 
-    %w[organization event-settings site-details site-content tree-pickups sms email donations location-services operations system data jobs user-management].each do |id|
-      assert_selector "section##{id}"
+  test "each settings section has its own page" do
+    Setting::SECTIONS.each do |section, metadata|
+      visit admin_settings_section_path(section)
+
+      assert_selector "h1", text: metadata[:label]
+      assert_selector "nav.admin-settings-nav"
     end
-
-    titles = all("section.admin-panel:not(#configuration-status) h2.admin-panel-title").map(&:text)
-    assert_equal [ "The Event", "Organization", "Site Details", "Site Content", "Pickups Portal", "SMS", "Email", "Donations", "Location Services", "Operations", "System", "Data", "Jobs", "User Management" ], titles
   end
 
   test "shows configuration status and missing required settings" do
@@ -44,7 +47,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "#configuration-status" do
       assert_text "1 missing"
-      assert_link "Site URL", href: "#site-details"
+      assert_link "Site URL", href: admin_settings_section_path("site_details")
     end
 
     Setting.instance.update(site_url: "https://example.com")
@@ -57,7 +60,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "blank default city and state are reported as missing" do
-    visit admin_settings_url
+    visit admin_settings_section_path("event")
 
     within "section.admin-panel", text: "The Event" do
       fill_in "Default City", with: ""
@@ -67,9 +70,11 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     assert_text "Settings were successfully updated"
 
+    visit admin_settings_url
+
     within "#configuration-status" do
-      assert_link "Default City", href: "#event-settings"
-      assert_link "Default State", href: "#event-settings"
+      assert_link "Default City", href: admin_settings_section_path("event")
+      assert_link "Default State", href: admin_settings_section_path("event")
     end
   end
 
@@ -142,7 +147,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   # end
 
   test "routing toggle saves immediately" do
-    visit admin_settings_url
+    visit admin_settings_section_path("location_services")
 
     initial = Setting.instance.reload.is_routing_enabled
 
@@ -155,7 +160,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "reservations toggle lives in The Event panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("event")
 
     within "section.admin-panel", text: "The Event" do
       assert_selector "#reservations-toggle"
@@ -168,7 +173,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "reservations toggle saves immediately" do
-    visit admin_settings_url
+    visit admin_settings_section_path("event")
 
     initial = Setting.instance.reload.is_reservations_open
 
@@ -181,13 +186,15 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "organization settings live in the Organization panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("organization")
 
     within "section.admin-panel", text: "Organization" do
       assert_field "Organization Name"
       assert_field "Organization URL"
       assert_button "Save Organization Settings"
     end
+
+    visit admin_settings_section_path("site_details")
 
     within "section#site-details" do
       assert_field "Site URL"
@@ -197,6 +204,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_button "Save Site Details"
     end
 
+    visit admin_settings_section_path("event")
+
     within "section.admin-panel", text: "The Event" do
       assert_no_field "Organization Name"
       assert_no_field "Organization URL"
@@ -204,7 +213,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "organization panel saves its settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("organization")
 
     within "section.admin-panel", text: "Organization" do
       fill_in "Organization Name", with: "Troop 200"
@@ -220,7 +229,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "site details panel saves its settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("site_details")
 
     within "section#site-details" do
       fill_in "Site URL", with: "https://trees.example.com"
@@ -240,7 +249,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "event contacts describe that fields are optional" do
-    visit admin_settings_url
+    visit admin_settings_section_path("event")
 
     within "section.admin-panel", text: "The Event" do
       assert_text "All fields are optional. Any information provided here will be displayed on the public site so customers can reach the event organizers."
@@ -248,7 +257,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "pickups portal settings live in the Pickups Portal panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("pickups")
 
     within "section.admin-panel", text: "Pickups Portal" do
       assert_selector "#pickups-toggle"
@@ -261,7 +270,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "pickups portal toggle saves immediately" do
-    visit admin_settings_url
+    visit admin_settings_section_path("pickups")
 
     initial = Setting.instance.reload.is_pickups_site_enabled
 
@@ -274,7 +283,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "sms settings live in the SMS panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("sms")
 
     within "section#sms" do
       assert_selector "#sms-toggle"
@@ -292,7 +301,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "sms panel saves credentials" do
-    visit admin_settings_url
+    visit admin_settings_section_path("sms")
 
     within "section#sms" do
       fill_in "Account SID", with: "AC123456"
@@ -316,7 +325,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "sms toggle saves immediately" do
-    visit admin_settings_url
+    visit admin_settings_section_path("sms")
 
     initial = Setting.instance.reload.is_sms_enabled
 
@@ -329,7 +338,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "email settings live in the Email panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("email")
 
     within "section#email" do
       assert_selector "#emailing-toggle"
@@ -348,7 +357,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "email panel saves settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("email")
 
     within "section#email" do
       fill_in "From Address", with: "Troop 100 <troop100@example.com>"
@@ -377,7 +386,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "email toggle saves immediately" do
-    visit admin_settings_url
+    visit admin_settings_section_path("email")
 
     initial = Setting.instance.reload.is_emailing_enabled
 
@@ -390,7 +399,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "donations settings live in the Donations panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("donations")
 
     within "section#donations" do
       assert_selector "#donations-toggle"
@@ -404,7 +413,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "donations panel saves settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("donations")
 
     within "section#donations" do
       fill_in "Secret Key", with: "sk_test_123"
@@ -420,7 +429,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "donations toggle saves immediately" do
-    visit admin_settings_url
+    visit admin_settings_section_path("donations")
 
     initial = Setting.instance.reload.is_donations_enabled
 
@@ -433,7 +442,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "location services settings live in the Location Services panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("location_services")
 
     within "section#location-services" do
       assert_selector "#routing-toggle"
@@ -447,7 +456,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "location services panel saves settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("location_services")
 
     within "section#location-services" do
       fill_in "Access Key ID", with: "AKIATEST"
@@ -467,7 +476,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "operations panel saves retention settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("operations")
 
     within "section#operations" do
       fill_in "Retention (Months)", with: "36"
@@ -479,21 +488,23 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "page links" do
-    visit admin_settings_url
+    visit admin_settings_section_path("system")
     within "section#system" do
       assert_link "System Logs", href: admin_logs_path
     end
-    within "section#jobs" do
-      assert_link "View Jobs Dashboard", href: admin_mission_control_jobs_path
-    end
+
+    visit admin_settings_section_path("pickups")
     within "section#tree-pickups" do
       assert_link "View drivers", href: admin_drivers_path
     end
-    assert_link "Manage Users", href: admin_users_path
+
+    visit admin_settings_url
+    assert_link "Jobs", href: admin_mission_control_jobs_path
+    assert_link "Users", href: admin_users_path
   end
 
   test "site content settings live in the Site Content panel" do
-    visit admin_settings_url
+    visit admin_settings_section_path("site_content")
 
     within "section.admin-panel", text: "Site Content" do
       assert_field "Header/Tab Title"
@@ -503,6 +514,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_button "Save Site Content"
     end
 
+    visit admin_settings_section_path("event")
+
     within "section.admin-panel", text: "The Event" do
       assert_no_field "Header/Tab Title"
       assert_no_field "About"
@@ -511,7 +524,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "site content panel saves its settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("site_content")
 
     within "section.admin-panel", text: "Site Content" do
       fill_in "Header/Tab Title", with: "Home Page Header"
@@ -529,7 +542,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   test "site content panel updates the home page image" do
     image = MarketingEmailTemplate.available_images.first
 
-    visit admin_settings_url
+    visit admin_settings_section_path("site_content")
     within "section.admin-panel", text: "Site Content" do
       select image, from: "Home Page Image"
       click_on "Save Site Content"
@@ -539,12 +552,12 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal image, Setting.instance.reload.home_page_image
 
     visit root_url
-    src = find("img.site-hero-image")[:src]
+    src = find("img.site-home-image")[:src]
     assert_includes src, File.basename(image, ".*")
   end
 
   test "update event settings" do
-    visit admin_settings_url
+    visit admin_settings_section_path("event")
 
     within "section.admin-panel", text: "The Event" do
       fill_in "Reservations Closed Message", with: "Reservations Closed Message"
@@ -568,7 +581,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     original_perform_deliveries = ActionMailer::Base.perform_deliveries
     ActionMailer::Base.perform_deliveries = false
 
-    visit admin_settings_url
+    visit admin_settings_section_path("email")
 
     within "section#email" do
       fill_in "Send Test Email To", with: "qa@example.com"
@@ -585,7 +598,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   test "email settings panel warns when smtp settings are incomplete" do
     Setting.instance.update!(smtp_address: nil, smtp_port: nil)
 
-    visit admin_settings_url
+    visit admin_settings_section_path("email")
 
     within "section#email" do
       fill_in "Send Test Email To", with: "qa@example.com"

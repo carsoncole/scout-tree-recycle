@@ -48,7 +48,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
 
   test "should show driver, zone, and route counts in the pickups portal section" do
     sign_in
-    get admin_settings_path
+    get admin_settings_section_path("pickups")
     assert_response :success
 
     assert_select "#tree-pickups" do
@@ -56,6 +56,28 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       assert_select ".admin-badge--neutral", text: /#{Zone.count}\s+zones/, count: 1
       assert_select ".admin-badge--neutral", text: /#{Route.count}\s+routes/, count: 1
     end
+  end
+
+  test "should get each settings section" do
+    sign_in
+
+    Setting::SECTIONS.each_key do |section|
+      get admin_settings_section_path(section)
+      assert_response :success
+      assert_select "h1", text: Setting::SECTIONS.fetch(section)[:label]
+    end
+  end
+
+  test "should update settings and return to the submitted section" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: { default_city: "New Town" },
+      section: "event"
+    }
+
+    assert_redirected_to admin_settings_section_path("event")
+    assert_equal "New Town", Setting.first.reload.default_city
   end
 
   test "should update settings and display flash message" do
@@ -243,7 +265,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
 
     post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "admin@example.com" }
 
-    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_redirected_to admin_settings_section_path("email")
     assert_equal "Test email sent to admin@example.com.", flash[:notice]
   ensure
     ActionMailer::Base.perform_deliveries = original_perform_deliveries
@@ -259,7 +281,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "admin@example.com" }
     end
 
-    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_redirected_to admin_settings_section_path("email")
     assert_equal Setting.first.email_configuration_alert(purpose: "sending a test email"), flash[:alert]
   end
 
@@ -271,7 +293,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "" }
     end
 
-    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_redirected_to admin_settings_section_path("email")
     assert_equal "Enter a valid email address to receive the test message.", flash[:alert]
   end
 
@@ -283,7 +305,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "not-an-email" }
     end
 
-    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_redirected_to admin_settings_section_path("email")
     assert_equal "Enter a valid email address to receive the test message.", flash[:alert]
   end
 
@@ -295,7 +317,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "admin@example.com" }
     end
 
-    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_redirected_to admin_settings_section_path("email")
     assert_equal "You are not authorized to test email settings.", flash[:alert]
   end
 

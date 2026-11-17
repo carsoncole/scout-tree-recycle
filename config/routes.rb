@@ -54,6 +54,8 @@ Rails.application.routes.draw do
         post :send_test_email
       end
     end
+    get "settings/:section", to: "settings#show", as: :settings_section,
+        constraints: { section: /event|organization|site_details|site_content|pickups|sms|email|donations|location_services|operations|system/ }
     scope path: "settings" do
       resources :drivers, except: [ :show ]
       resource :data, only: [ :show ], controller: "data" do

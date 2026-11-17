@@ -29,7 +29,7 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
       click_on "Edit in Settings"
     end
 
-    assert_current_path admin_settings_path
+    assert_current_path admin_settings_section_path("email")
     assert_selector "section#email", text: "Email"
   end
 

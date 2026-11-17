@@ -1,18 +1,16 @@
 <nav class="admin-settings-nav border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" aria-label="Settings sections">
   <ul class="admin-settings-nav-list">
-    <li><%= link_to "The Event", admin_settings_path(anchor: "event-settings"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Organization", admin_settings_path(anchor: "organization"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Site Details", admin_settings_path(anchor: "site-details"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Site Content", admin_settings_path(anchor: "site-content"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Pickups Portal", admin_settings_path(anchor: "tree-pickups"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "SMS", admin_settings_path(anchor: "sms"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Email", admin_settings_path(anchor: "email"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Donations", admin_settings_path(anchor: "donations"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Location Services", admin_settings_path(anchor: "location-services"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Operations", admin_settings_path(anchor: "operations"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "System", admin_settings_path(anchor: "system"), class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Data", admin_data_path, class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Jobs", "/admin/jobs", class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
-    <li><%= link_to "Users", admin_users_path, class: "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark" %></li>
+    <li>
+      <%= link_to "Overview", admin_settings_path,
+          class: admin_settings_nav_class("overview"),
+          aria: { current: ("page" if admin_settings_active_key == "overview") } %>
+    </li>
+    <% admin_settings_nav_items.each do |item| %>
+      <li>
+        <%= link_to item[:label], item[:path],
+            class: admin_settings_nav_class(item[:key]),
+            aria: { current: ("page" if admin_settings_active_key == item[:key]) } %>
+      </li>
+    <% end %>
   </ul>
 </nav>

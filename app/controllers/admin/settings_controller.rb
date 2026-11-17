@@ -1,6 +1,8 @@
 class Admin::SettingsController < Admin::BaseController
   allow_unauthenticated_access only: [ :new, :create ]
 
+  before_action :set_section, only: [ :show, :update ]
+
   TOGGLEABLE_SETTINGS = %w[
     is_reservations_open
     is_emailing_enabled
@@ -12,10 +14,9 @@ class Admin::SettingsController < Admin::BaseController
   ].freeze
 
   def index
-    @unviewed_logs_count = Log.where(is_viewed: false).count
-    @drivers_count = Driver.count
-    @zones_count = Zone.count
-    @routes_count = Route.count
+  end
+
+  def show
   end
 
   def new
@@ -55,10 +56,10 @@ class Admin::SettingsController < Admin::BaseController
       restoring_thank_you_message = params[:restore_default].present? && params[:return_to] == "admin_thanks"
       attributes = restoring_thank_you_message ? setting_params.merge(thank_you_message: Setting::DEFAULT_THANK_YOU_MESSAGE) : setting_params
 
-      if Setting.instance.update(attributes)
+      if @setting.update(attributes)
         redirect_to settings_redirect_path, notice: "Settings were successfully updated."
       else
-        render :index, status: :unprocessable_entity
+        render :show, status: :unprocessable_entity
       end
     else
       redirect_to admin_settings_path, alert: "You are not authorized to update settings."
@@ -67,25 +68,25 @@ class Admin::SettingsController < Admin::BaseController
 
   def send_test_email
     unless Current.user.admin?
-      return redirect_to admin_settings_path(anchor: "email"), alert: "You are not authorized to test email settings."
+      return redirect_to admin_settings_section_path("email"), alert: "You are not authorized to test email settings."
     end
 
     recipient = params[:test_email_address].to_s.strip
 
     if recipient.blank? || !recipient.match?(URI::MailTo::EMAIL_REGEXP)
-      return redirect_to admin_settings_path(anchor: "email"), alert: "Enter a valid email address to receive the test message."
+      return redirect_to admin_settings_section_path("email"), alert: "Enter a valid email address to receive the test message."
     end
 
     if (message = Setting.instance.email_configuration_alert(purpose: "sending a test email"))
-      return redirect_to admin_settings_path(anchor: "email"), alert: message
+      return redirect_to admin_settings_section_path("email"), alert: message
     end
 
     SettingsMailer.test_email(recipient).deliver_now
 
-    redirect_to admin_settings_path(anchor: "email"), notice: "Test email sent to #{recipient}."
+    redirect_to admin_settings_section_path("email"), notice: "Test email sent to #{recipient}."
   rescue StandardError => e
     Rails.error.report(e, handled: true, severity: :warning, context: { email: recipient })
-    redirect_to admin_settings_path(anchor: "email"), alert: "Test email could not be sent: #{e.message}"
+    redirect_to admin_settings_section_path("email"), alert: "Test email could not be sent: #{e.message}"
   end
 
   def toggle
@@ -110,8 +111,37 @@ class Admin::SettingsController < Admin::BaseController
 
   private
 
+  def set_section
+    @section = params[:section].presence || "event"
+
+    unless Setting::SECTIONS.key?(@section)
+      return redirect_to admin_settings_path, alert: "Unknown settings section."
+    end
+
+    @section_metadata = Setting::SECTIONS.fetch(@section)
+    @setting = Setting.instance
+    load_section_data
+  end
+
+  def load_section_data
+    case @section
+    when "pickups"
+      @drivers_count = Driver.count
+      @zones_count = Zone.count
+      @routes_count = Route.count
+    when "system"
+      @unviewed_logs_count = Log.where(is_viewed: false).count
+    end
+  end
+
   def settings_redirect_path
-    params[:return_to] == "admin_thanks" ? admin_thanks_path : admin_settings_path
+    return admin_thanks_path if params[:return_to] == "admin_thanks"
+
+    if params[:section].present? && Setting::SECTIONS.key?(@section)
+      admin_settings_section_path(@section)
+    else
+      admin_settings_path
+    end
   end
 
   def build_initial_admin_user

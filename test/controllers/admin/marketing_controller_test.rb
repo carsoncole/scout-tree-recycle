@@ -33,7 +33,7 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "p", text: /Batch size: 42 contacts per send/, count: 2
-    assert_select "a[href=?]", admin_settings_path(anchor: "email"), text: "Edit in Settings", count: 2
+    assert_select "a[href=?]", admin_settings_section_path("email"), text: "Edit in Settings", count: 2
   end
 
   test "index asks for confirmation with the number of emails before sending" do

@@ -1,0 +1,137 @@
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="email" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Send notifications and marketing messages through SMTP.</p>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
+      <%= hidden_field_tag :section, "email" %>
+
+      <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
+        <div class="admin-toggle-list">
+          <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
+            <div class="admin-toggle-copy" data-toggle-copy>
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Enable Email</h3>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Send email notifications and marketing messages.</p>
+            </div>
+            <div class="admin-toggle-control" data-toggle-control>
+              <label class="admin-switch" id="emailing-toggle" aria-label="Enable email">
+                <%= check_box_tag "setting[is_emailing_enabled]", "1", setting.is_emailing_enabled,
+                    class: "admin-switch-input peer",
+                    data: {
+                      testid: "emailing-toggle",
+                      toggle_target: "toggle",
+                      setting: "is_emailing_enabled"
+                    } %>
+                <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-form-section border-line dark:border-line-dark">
+        <div class="admin-toolbar">
+          <div>
+            <%= label_tag "setting[email_from_address]", "From Address", class: "admin-section-title text-ink dark:text-ink-dark" %>
+            <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">The address recipients see in the From field.</p>
+          </div>
+
+          <div class="admin-field admin-field--short admin-toolbar-field">
+            <%= text_field_tag "setting[email_from_address]", setting.email_from_address, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "Anytown Tree Recycle <example@example.com>" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-form-section border-line dark:border-line-dark">
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">SMTP server</h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Outgoing mail server details, stored in the application database.</p>
+
+        <div class="admin-field-grid admin-field-grid--two">
+          <div class="admin-field">
+            <%= label_tag "setting[smtp_address]", "SMTP Address", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= text_field_tag "setting[smtp_address]", setting.smtp_address, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "smtp.gmail.com" %>
+          </div>
+          <div class="admin-field">
+            <%= label_tag "setting[smtp_port]", "Port", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= number_field_tag "setting[smtp_port]", setting.smtp_port, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", min: 1, step: 1, placeholder: "587" %>
+          </div>
+          <div class="admin-field">
+            <%= label_tag "setting[smtp_user_name]", "Username", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= text_field_tag "setting[smtp_user_name]", setting.smtp_user_name, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", autocomplete: "off" %>
+          </div>
+          <div class="admin-field">
+            <%= label_tag "setting[smtp_password]", "Password", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= password_field_tag "setting[smtp_password]", setting.smtp_password, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", autocomplete: "new-password" %>
+          </div>
+          <div class="admin-field">
+            <%= label_tag "setting[smtp_authentication]", "Authentication", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= select_tag "setting[smtp_authentication]",
+                options_for_select([ [ "Plain", "plain" ], [ "Login", "login" ], [ "CRAM-MD5", "cram_md5" ] ], setting.smtp_authentication),
+                class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+          </div>
+          <div class="admin-field">
+            <%= label_tag "setting[smtp_encryption]", "Encryption", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= select_tag "setting[smtp_encryption]",
+                options_for_select([ [ "STARTTLS (recommended)", "starttls" ], [ "TLS", "tls" ], [ "None", "none" ] ], setting.smtp_encryption),
+                class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Most providers, including Gmail, use STARTTLS on port 587.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-form-section border-line dark:border-line-dark">
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">Marketing</h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Controls batch size and how soon the second marketing email can follow the first for the same person.</p>
+
+        <div class="admin-toolbar admin-field--spaced">
+          <div>
+            <%= label_tag "setting[email_batch_quantity]", "Email Batch Quantity", class: "admin-label text-ink dark:text-ink-dark" %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Number of emails to send in each batch.</p>
+          </div>
+
+          <div class="admin-field admin-field--short admin-toolbar-field">
+            <%= number_field_tag "setting[email_batch_quantity]", setting.email_batch_quantity, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", min: 1, step: 1 %>
+          </div>
+        </div>
+
+        <div class="admin-toolbar admin-field--spaced">
+          <div>
+            <%= label_tag "setting[marketing_email_cooldown_days]", "Days Between Marketing Emails", class: "admin-label text-ink dark:text-ink-dark" %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Set to 0 to allow both emails immediately.</p>
+          </div>
+
+          <div class="admin-field admin-field--short admin-toolbar-field">
+            <%= number_field_tag "setting[marketing_email_cooldown_days]", setting.marketing_email_cooldown_days, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", min: 0, step: 1 %>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-end gap-3">
+        <%= submit_tag "Save Email Settings", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+      </div>
+    <% end %>
+
+    <div class="admin-form-section admin-form-section--spaced border-line dark:border-line-dark">
+      <h3 class="admin-section-title text-ink dark:text-ink-dark">Test SMTP settings</h3>
+      <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Send a test message using the saved settings to confirm email delivery works. Save any changes above before testing.</p>
+
+      <%= form_tag send_test_email_admin_setting_path(setting), method: :post, class: "admin-form" do %>
+        <div class="admin-toolbar">
+          <div class="admin-field admin-field--medium admin-toolbar-field">
+            <%= label_tag :test_email_address, "Send Test Email To", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= email_field_tag :test_email_address, Current.user.email, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "you@example.com", required: true, autocomplete: "email" %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The test message is sent immediately through the SMTP server above.</p>
+          </div>
+
+          <div>
+            <%= submit_tag "Send Test Email", class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

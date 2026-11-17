@@ -1,0 +1,40 @@
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="system" data-controller="toggle" data-toggle-url="<%= toggle_admin_setting_path(setting) %>">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">System</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Review system errors and application events.</p>
+    </div>
+    <%= link_to admin_logs_path, class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" do %>
+      System Logs
+      <% if @unviewed_logs_count.to_i.positive? %>
+        <span class="admin-nav-badge bg-ink text-surface dark:bg-ink-dark dark:text-page-dark"><%= @unviewed_logs_count %></span>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="admin-panel-body">
+    <div class="admin-toggle-list">
+      <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
+        <div class="admin-toggle-copy" data-toggle-copy>
+          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Send error messages to admins</h3>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Admins will receive email notifications when system errors are logged.</p>
+        </div>
+        <div class="admin-toggle-control" data-toggle-control>
+          <label class="admin-switch" id="log-notifications-toggle" aria-label="Send error messages to admins">
+            <%= check_box_tag "setting[is_log_notifications_enabled]", "1", setting.is_log_notifications_enabled,
+                class: "admin-switch-input peer",
+                disabled: !setting.is_emailing_enabled?,
+                data: {
+                  testid: "log-notifications-toggle",
+                  toggle_target: "toggle",
+                  setting: "is_log_notifications_enabled"
+                } %>
+            <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <% unless setting.is_emailing_enabled? %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Enable and configure Email to send error notifications to admins.</p>
+    <% end %>
+  </div>
+</section>

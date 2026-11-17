@@ -3,7 +3,7 @@ require "application_system_test_case"
 class Admin::OperationsTest < ApplicationSystemTestCase
   test "migration as an admin user" do
     sign_in_as(users(:admin), true)
-    visit admin_settings_url
+    visit admin_settings_section_path("operations")
     accept_confirm do
       click_button "Migrate"
     end
@@ -17,7 +17,7 @@ class Admin::OperationsTest < ApplicationSystemTestCase
 
   test "migration as a non-admin user" do
     sign_in_as(users(:user), true)
-    visit admin_settings_url
+    visit admin_settings_section_path("operations")
 
     accept_confirm do
       click_button "Migrate"

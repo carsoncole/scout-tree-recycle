@@ -22,14 +22,61 @@ class Setting < ApplicationRecord
   DEFAULT_RESERVATIONS_CLOSED_MESSAGE = "Stay tuned for when we open reservations again."
   DEFAULT_HOME_PAGE_IMAGE = "fleur-de-lis-2024-logo-4c-bc.png"
 
+  SECTIONS = {
+    "event" => {
+      label: "The Event",
+      description: "Public copy, pickup windows, reservation availability, and contact information."
+    },
+    "organization" => {
+      label: "Organization",
+      description: "Organization name and website."
+    },
+    "site_details" => {
+      label: "Site Details",
+      description: "Site address, time zone, and default country used throughout the app."
+    },
+    "site_content" => {
+      label: "Site Content",
+      description: "Headline, home page image, and supporting copy shown on the public site."
+    },
+    "pickups" => {
+      label: "Pickups Portal",
+      description: "Enable the driver portal and manage driver access."
+    },
+    "sms" => {
+      label: "SMS",
+      description: "Send and receive text messages through Twilio."
+    },
+    "email" => {
+      label: "Email",
+      description: "Send notifications and marketing messages through SMTP."
+    },
+    "donations" => {
+      label: "Donations",
+      description: "Accept online donations through Stripe."
+    },
+    "location_services" => {
+      label: "Location Services",
+      description: "Geocode reservation and route addresses with Amazon Location Service."
+    },
+    "operations" => {
+      label: "Operations",
+      description: "Retention and end-of-season data cleanup."
+    },
+    "system" => {
+      label: "System",
+      description: "Review system errors and application events."
+    }
+  }.freeze
+
   REQUIRED_SETTINGS = [
     { attribute: :organization_name, label: "Organization Name", section: "organization" },
-    { attribute: :site_url, label: "Site URL", section: "site-details" },
-    { attribute: :default_city, label: "Default City", section: "event-settings" },
-    { attribute: :default_state, label: "Default State", section: "event-settings" },
-    { attribute: :event_pickup_start, label: "Event Pickup Start", section: "event-settings" },
-    { attribute: :event_pickup_end, label: "Event Pickup End", section: "event-settings" },
-    { attribute: :event_sign_up_deadline, label: "Sign Up Deadline", section: "event-settings" }
+    { attribute: :site_url, label: "Site URL", section: "site_details" },
+    { attribute: :default_city, label: "Default City", section: "event" },
+    { attribute: :default_state, label: "Default State", section: "event" },
+    { attribute: :event_pickup_start, label: "Event Pickup Start", section: "event" },
+    { attribute: :event_pickup_end, label: "Event Pickup End", section: "event" },
+    { attribute: :event_sign_up_deadline, label: "Sign Up Deadline", section: "event" }
   ].freeze
 
   REQUIRED_EMAIL_SETTINGS = [
@@ -116,14 +163,14 @@ class Setting < ApplicationRecord
     end
 
     if is_routing_enabled?
-      missing << { attribute: :aws_access_key_id, label: "AWS Access Key ID", section: "location-services" } if aws_access_key_id.blank?
-      missing << { attribute: :aws_secret_access_key, label: "AWS Secret Access Key", section: "location-services" } if aws_secret_access_key.blank?
-      missing << { attribute: :aws_region, label: "AWS Region", section: "location-services" } if aws_region.blank?
-      missing << { attribute: :aws_location_index_name, label: "AWS Place Index Name", section: "location-services" } if aws_location_index_name.blank?
+      missing << { attribute: :aws_access_key_id, label: "AWS Access Key ID", section: "location_services" } if aws_access_key_id.blank?
+      missing << { attribute: :aws_secret_access_key, label: "AWS Secret Access Key", section: "location_services" } if aws_secret_access_key.blank?
+      missing << { attribute: :aws_region, label: "AWS Region", section: "location_services" } if aws_region.blank?
+      missing << { attribute: :aws_location_index_name, label: "AWS Place Index Name", section: "location_services" } if aws_location_index_name.blank?
     end
 
     if is_pickups_site_enabled? && driver_secret_key.blank?
-      missing << { attribute: :driver_secret_key, label: "Pickups Portal Password", section: "tree-pickups" }
+      missing << { attribute: :driver_secret_key, label: "Pickups Portal Password", section: "pickups" }
     end
 
     missing

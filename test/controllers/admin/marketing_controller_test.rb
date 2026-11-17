@@ -5,6 +5,7 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     sign_in
     get admin_marketing_index_url
     assert_response :success
+    assert_select "input[type='email'][value=?]", users(:admin).email, count: 2
   end
 
   test "should get index with disabled emailing" do

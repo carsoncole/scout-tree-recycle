@@ -4,7 +4,10 @@
 # Marketing email templates (built-in defaults)
 MarketingEmailTemplate.install_defaults!
 
-puts "\nInstalled default marketing email templates."
+# Reservation email templates (built-in defaults)
+ReservationEmailTemplate.install_defaults!
+
+puts "\nInstalled default marketing and reservation email templates."
 puts "For example Bainbridge Island, Washington zones/routes and sample records, run: bin/rails sample_data:load"
 puts "\n"
 

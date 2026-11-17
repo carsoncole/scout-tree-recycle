@@ -1,0 +1,81 @@
+<style>
+  .email-heading {
+    margin: 20px auto 70px;
+    color: #2d3748;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 40px;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .email-subheading {
+    margin: 0 0 20px;
+    color: #2d3748;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .email-text {
+    margin: 0 0 20px;
+    color: #2d3748;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .email-address-row {
+    margin: 0 0 30px;
+  }
+
+  .email-address {
+    display: inline-block;
+    padding: 12px 15px;
+    border: 1px solid #ce1126;
+    border-radius: 2px;
+    background-color: #ce1126;
+    color: #ffffff;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .email-sign-off {
+    margin: 0 0 50px;
+    color: #2d3748;
+    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+</style>
+
+<h1 class="email-heading">Tree pick-up cancelled</h1>
+
+{% if reservation.has_name %}
+  <h2 class="email-subheading">Dear {{ reservation.name | escape }},</h2>
+{% endif %}
+
+<p class="email-text">
+  This email is to confirm that your tree pickup reservation for {{ event.pickup_start_month_day_year }} has been cancelled.
+</p>
+
+<table class="email-address-row" role="presentation" width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center">
+      <span class="email-address">{{ reservation.street | escape }}</span>
+    </td>
+  </tr>
+</table>
+
+<p class="email-text">
+  If you would like to make a new reservation, you can do so at any time by visiting our website.
+</p>
+
+<p class="email-sign-off">
+  Thank You,<br>
+  {{ setting.organization_name }}
+</p>

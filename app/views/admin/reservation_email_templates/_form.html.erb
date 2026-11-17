@@ -1,0 +1,123 @@
+<%= form_with(model: [ :admin, template ], class: "flex flex-col gap-6") do |f| %>
+  <%= render "shared/form_errors", object: template %>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Template details</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">The name is the identifier used by the mailer. It cannot be changed.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-form">
+        <div class="admin-field">
+          <%= f.label :name, class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= f.text_field :name, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", readonly: true, spellcheck: false, autocomplete: "off" %>
+        </div>
+
+        <div class="admin-field">
+          <%= f.label :description, class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= f.text_area :description, rows: 2, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "What is this email for?" %>
+        </div>
+
+        <div class="admin-field">
+          <%= f.label :subject, class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= f.text_field :subject, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Liquid variables work here too, for example <code>{{ event.pickup_start_short }}</code>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Top logo</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">The logo is displayed above the body content. Choose an image from the email image library.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-form">
+        <div class="admin-field-grid admin-field-grid--two">
+          <div class="admin-field">
+            <%= f.label :logo_image, "Logo image", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= f.select :logo_image,
+                options_for_select([ [ "Default logo", "" ] ] + EmailImageLibrary.available_images.map { |filename| [ filename, filename ] }, template.logo_image),
+                {},
+                class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark" %>
+          </div>
+
+          <div class="admin-field">
+            <%= f.label :logo_width, "Logo width (px)", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= f.number_field :logo_width, min: 20, max: 600, step: 1, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+          </div>
+        </div>
+
+        <div class="admin-field">
+          <%= f.label :logo_alt, "Logo alt text", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= f.text_field :logo_alt, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark", placeholder: "Tree Recycling Event" %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown when images are blocked or by screen readers.</p>
+        </div>
+
+        <div class="admin-panel bg-stone text-center dark:bg-stone-dark">
+          <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo preview" %>" class="h-auto max-w-full" style="max-width: <%= [ template.logo_width.to_i, 300 ].min %>px;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Main body content</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Write the body as an HTML fragment; the mailer adds the logo, document wrapper, and footer. Add a <code>&lt;style&gt;</code> block or use classes; styles are inlined automatically at send time.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-form">
+        <div class="admin-field">
+          <%= f.text_area :body_html,
+              rows: 28,
+              class: "admin-textarea admin-code-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
+              spellcheck: false,
+              data: { email_template_editor_target: "field" } %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Use Liquid tags such as <code>{{ reservation.name }}</code> and <code>{% if reservation.has_name %}...{% endif %}</code>. When inserting reservation-provided values into HTML, add the <code>escape</code> filter (for example <code>{{ reservation.name | escape }}</code>).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Plain-text body</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Optional, but recommended. If left blank, a plain-text version is generated from the HTML when the email is sent.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-form">
+        <div class="admin-field">
+          <%= f.text_area :body_text,
+              rows: 12,
+              class: "admin-textarea admin-code-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
+              spellcheck: false,
+              data: { email_template_editor_target: "field" } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-panel-footer border-line dark:border-line-dark">
+      <%= link_to "Cancel", admin_reservation_email_templates_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+      <%= link_to "Preview Draft",
+          preview_admin_reservation_email_template_path(template, source: "draft"),
+          class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
+          target: "_blank",
+          rel: "noopener" %>
+      <%= f.submit "Save Draft", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+    </div>
+  </section>
+<% end %>

@@ -1,0 +1,112 @@
+new_reservation_email:
+  name: new_reservation_email
+  description: Confirmation sent when a reservation is scheduled for tree pickup.
+  subject: "Your tree pickup is confirmed"
+  logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  logo_width: 140
+  logo_alt: Tree Recycling Event
+  body_html: |
+    <style>
+      .test-heading { color: #123456; font-size: 32px; }
+    </style>
+    <h1 class="test-heading">Tree pick-up scheduled</h1>
+    {% if reservation.has_name %}<p>Dear {{ reservation.name | escape }},</p>{% endif %}
+    <p>This email is to confirm that we will be picking up your tree on {{ event.pickup_start_month_day_year }}.</p>
+    <p>{{ reservation.street | escape }}</p>
+    <p>We will collect your tree between {{ event.pickup_start_time_compact }} and {{ event.pickup_end_time_compact }}.</p>
+    <p>We suggest a donation of {{ setting.suggested_donation_currency }} for {{ setting.organization_name }}.</p>
+    <p><a href="{{ urls.donation }}">donate online</a></p>
+    <p><a href="{{ urls.edit_reservation }}">make a change</a></p>
+  body_text: |
+    Tree pick-up scheduled
+    {% if reservation.has_name %}Dear {{ reservation.name | escape }},{% endif %}
+    We will collect your tree between {{ event.pickup_start_time_compact }} and {{ event.pickup_end_time_compact }}.
+    Donate online: {{ urls.donation }}
+    Make a change: {{ urls.edit_reservation }}
+  published_subject: "Your tree pickup is confirmed"
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  published_logo_width: 140
+  published_logo_alt: Tree Recycling Event
+  published_body_html: |
+    <style>
+      .test-heading { color: #123456; font-size: 32px; }
+    </style>
+    <h1 class="test-heading">Tree pick-up scheduled</h1>
+    {% if reservation.has_name %}<p>Dear {{ reservation.name | escape }},</p>{% endif %}
+    <p>This email is to confirm that we will be picking up your tree on {{ event.pickup_start_month_day_year }}.</p>
+    <p>{{ reservation.street | escape }}</p>
+    <p>We will collect your tree between {{ event.pickup_start_time_compact }} and {{ event.pickup_end_time_compact }}.</p>
+    <p>We suggest a donation of {{ setting.suggested_donation_currency }} for {{ setting.organization_name }}.</p>
+    <p><a href="{{ urls.donation }}">donate online</a></p>
+    <p><a href="{{ urls.edit_reservation }}">make a change</a></p>
+  published_body_text: |
+    Tree pick-up scheduled
+    {% if reservation.has_name %}Dear {{ reservation.name | escape }},{% endif %}
+    We will collect your tree between {{ event.pickup_start_time_compact }} and {{ event.pickup_end_time_compact }}.
+    Donate online: {{ urls.donation }}
+    Make a change: {{ urls.edit_reservation }}
+  published_at: "2026-01-01 00:00:00"
+
+cancelled_reservation_email:
+  name: cancelled_reservation_email
+  description: Sent when a tree pickup reservation is cancelled.
+  subject: "Your tree pickup reservation has been cancelled"
+  logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  logo_width: 140
+  logo_alt: Tree Recycling Event
+  body_html: |
+    <h1>Tree pick-up cancelled</h1>
+    <p>This email is to confirm that your tree pickup reservation for {{ event.pickup_start_month_day_year }} has been cancelled.</p>
+    <p>{{ reservation.street | escape }}</p>
+  body_text: |
+    Tree pick-up cancelled
+    This email is to confirm that your tree pickup reservation for {{ event.pickup_start_month_day_year }} has been cancelled.
+  published_subject: "Your tree pickup reservation has been cancelled"
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  published_logo_width: 140
+  published_logo_alt: Tree Recycling Event
+  published_body_html: |
+    <h1>Tree pick-up cancelled</h1>
+    <p>This email is to confirm that your tree pickup reservation for {{ event.pickup_start_month_day_year }} has been cancelled.</p>
+    <p>{{ reservation.street | escape }}</p>
+  published_body_text: |
+    Tree pick-up cancelled
+    This email is to confirm that your tree pickup reservation for {{ event.pickup_start_month_day_year }} has been cancelled.
+  published_at: "2026-01-01 00:00:00"
+
+missing_tree_email:
+  name: missing_tree_email
+  description: Sent when a tree cannot be found. Includes the first notice and follow-up variants.
+  subject: "{% if reservation.missing_tree_follow_up %}Follow-up: We still cannot find your tree{% else %}We could not find your tree{% endif %}"
+  logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  logo_width: 250
+  logo_alt: Tree Recycling Event
+  body_html: |
+    <h1>{% if reservation.missing_tree_follow_up %}Tree Not Found - Follow Up{% else %}Tree Not Found{% endif %}</h1>
+    {% if reservation.has_name %}<p>Hi {{ reservation.name | escape }},</p>{% endif %}
+    <p>{% if reservation.missing_tree_follow_up %}We visited again today but still could not locate your Christmas tree.{% else %}We visited your address today but could not locate your Christmas tree.{% endif %}</p>
+    <p>Address: {{ reservation.street | escape }}<br>Date: {{ reservation.updated_at_date }}</p>
+    {% if reservation.pickup_notes != blank %}<p><strong>Your Notes:</strong> {{ reservation.pickup_notes | escape }}</p>{% endif %}
+  body_text: |
+    {% if reservation.missing_tree_follow_up %}Tree Not Found - Follow Up{% else %}Tree Not Found{% endif %}
+    {% if reservation.has_name %}Hi {{ reservation.name | escape }},{% endif %}
+    Address: {{ reservation.street | escape }}
+    Date: {{ reservation.updated_at_date }}
+    {% if reservation.pickup_notes != blank %}Your Notes: {{ reservation.pickup_notes | escape }}{% endif %}
+  published_subject: "{% if reservation.missing_tree_follow_up %}Follow-up: We still cannot find your tree{% else %}We could not find your tree{% endif %}"
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  published_logo_width: 250
+  published_logo_alt: Tree Recycling Event
+  published_body_html: |
+    <h1>{% if reservation.missing_tree_follow_up %}Tree Not Found - Follow Up{% else %}Tree Not Found{% endif %}</h1>
+    {% if reservation.has_name %}<p>Hi {{ reservation.name | escape }},</p>{% endif %}
+    <p>{% if reservation.missing_tree_follow_up %}We visited again today but still could not locate your Christmas tree.{% else %}We visited your address today but could not locate your Christmas tree.{% endif %}</p>
+    <p>Address: {{ reservation.street | escape }}<br>Date: {{ reservation.updated_at_date }}</p>
+    {% if reservation.pickup_notes != blank %}<p><strong>Your Notes:</strong> {{ reservation.pickup_notes | escape }}</p>{% endif %}
+  published_body_text: |
+    {% if reservation.missing_tree_follow_up %}Tree Not Found - Follow Up{% else %}Tree Not Found{% endif %}
+    {% if reservation.has_name %}Hi {{ reservation.name | escape }},{% endif %}
+    Address: {{ reservation.street | escape }}
+    Date: {{ reservation.updated_at_date }}
+    {% if reservation.pickup_notes != blank %}Your Notes: {{ reservation.pickup_notes | escape }}{% endif %}
+  published_at: "2026-01-01 00:00:00"

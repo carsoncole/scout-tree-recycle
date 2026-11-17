@@ -1,0 +1,12 @@
+Tree pick-up cancelled
+
+{% if reservation.has_name %}Dear {{ reservation.name | escape }},{% endif %}
+
+This email is to confirm that your tree pickup reservation for {{ event.pickup_start_month_day_year }} has been cancelled.
+
+Address: {{ reservation.street | escape }}
+
+If you would like to make a new reservation, you can do so at any time by visiting our website: {{ urls.home }}
+
+Thank You,
+{{ setting.organization_name }}

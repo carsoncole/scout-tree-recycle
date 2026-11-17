@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -108,6 +108,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["route_id"], name: "index_points_on_route_id"
+  end
+
+  create_table "reservation_email_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.string "subject", null: false
+    t.string "logo_image"
+    t.integer "logo_width", default: 140, null: false
+    t.string "logo_alt"
+    t.text "body_html", null: false
+    t.text "body_text"
+    t.string "published_subject"
+    t.string "published_logo_image"
+    t.integer "published_logo_width"
+    t.string "published_logo_alt"
+    t.text "published_body_html"
+    t.text "published_body_text"
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_reservation_email_templates_on_name", unique: true
   end
 
   create_table "reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

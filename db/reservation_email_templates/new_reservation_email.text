@@ -1,0 +1,30 @@
+Tree pick-up scheduled
+
+{% if reservation.has_name %}Dear {{ reservation.name | escape }},{% endif %}
+
+This email is to confirm that we will be picking up your tree on {{ event.pickup_start_month_day_year }}.
+
+Address: {{ reservation.street | escape }}
+
+On the Day of Collection
+
+Remove all decorations and tinsel from your tree. Before {{ event.pickup_start_time_compact }} on the morning of {{ event.pickup_start_short }}, place your tree in a visible location at the curb. We will collect your tree between {{ event.pickup_start_time_compact }} and {{ event.pickup_end_time_compact }} and recycle it into mulch. We cannot take wreaths, flocked trees, or artificial trees.
+
+Regarding Donations
+
+Tree recycling is both a community service and a fundraising event for {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }} for the collection service. You may donate online at any time: {{ urls.donation }}
+
+If you elect to donate on the day of collection, we accept checks or cash.
+
+- make checks payable to '{{ setting.organization_name }}'
+- place your donation in an envelope
+- place that envelope in a baggie
+- secure the baggie to your tree
+
+Making Changes
+
+You may make a change or cancel your reservation at any time: {{ urls.edit_reservation }}
+If you have any questions, please contact us: {{ urls.contact }}
+
+Thank You,
+{{ setting.organization_name }}

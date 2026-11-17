@@ -125,6 +125,20 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :reservation_email_templates, only: [ :index, :edit, :update ] do
+      member do
+        get :preview
+        post :send_test
+        patch :publish
+        patch :unpublish
+        post :restore_default
+      end
+
+      collection do
+        post :install_defaults
+      end
+    end
+
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
 

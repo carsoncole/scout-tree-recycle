@@ -13,6 +13,10 @@ module AdminHelper
       [ "Marketing", :admin_marketing_index_path ],
       [ "Email Templates", :admin_marketing_email_templates_path ]
     ],
+    "reservation_email_templates" => [
+      [ "Marketing", :admin_marketing_index_path ],
+      [ "Reservation Emails", :admin_reservation_email_templates_path ]
+    ],
     "marketing_images" => [
       [ "Marketing", :admin_marketing_index_path ],
       [ "Email Images", :admin_marketing_images_path ]
@@ -217,10 +221,10 @@ module AdminHelper
     time.strftime(format)
   end
 
-  # Prefills the test-email recipient with the configured contact address,
-  # falling back to the signed-in admin.
+  # Prefills the test-email recipient with the signed-in admin's address,
+  # falling back to the configured contact address.
   def admin_test_email_recipient
-    Setting.instance.contact_email.presence || Current.user&.email
+    Current.user&.email.presence || Setting.instance&.contact_email
   end
 
   def admin_marketing_send_confirm(name, batch_size)

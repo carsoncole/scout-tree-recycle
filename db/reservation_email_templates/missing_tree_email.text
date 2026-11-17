@@ -1,0 +1,24 @@
+{% if reservation.missing_tree_follow_up %}🌲 Tree Not Found - Follow Up 🌲{% else %}🌲 Tree Not Found 🌲{% endif %}
+
+{% if reservation.has_name %}Hi {{ reservation.name | escape }},{% endif %}
+
+{% if reservation.missing_tree_follow_up %}We wanted to follow up regarding your tree recycling pickup. Our team visited your address again today but unfortunately, we still could not locate your Christmas tree.{% else %}We wanted to let you know that our team visited your address today for your scheduled tree pickup, but unfortunately, we could not locate your Christmas tree.{% endif %}
+
+Pickup Details
+
+Address: {{ reservation.street | escape }}
+Date: {{ reservation.updated_at_date }}
+{% if reservation.pickup_notes != blank %}Your Notes: {{ reservation.pickup_notes | escape }}{% endif %}
+
+If you still have your tree and would like us to attempt another pickup, please contact us as soon as possible. We want to make sure we can help you recycle your tree properly.
+
+Need Another Pickup?
+
+Contact us to schedule a new pickup time.
+
+If you still have your tree or have any questions, just reply to this email and we'll be happy to help!
+
+Thank you for participating in our tree recycling program. We appreciate your support for {{ setting.organization_name }} and environmental initiatives! 🌟
+
+Best regards,
+{{ setting.organization_name }}

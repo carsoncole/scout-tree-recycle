@@ -1,0 +1,79 @@
+<%= render "admin/shared/page_header",
+           title: "Reservation Emails",
+           description: "Edit the logo and body of the emails sent by ReservationsMailer. Changes are saved as drafts until you publish them." do %>
+  <%= link_to "Back to Marketing", admin_marketing_index_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= button_to "Load Default Templates",
+      install_defaults_admin_reservation_email_templates_path,
+      class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
+      data: { turbo_confirm: "Load the built-in default content? Existing templates will be refreshed as drafts, but published emails will not change until you publish them." } %>
+<% end %>
+
+<% if @missing_default_names.any? %>
+  <div class="admin-notice admin-notice--warning admin-notice--spaced border border-line border-l-[3px] border-l-warning bg-warning-bg text-ink dark:border-line-dark dark:border-l-warning-dark dark:bg-warning-bg-dark dark:text-ink-dark" role="note">
+    <div>
+      <p class="admin-notice-title">Reservation templates are missing</p>
+      <p><%= @missing_default_names.map { |name| name.humanize }.to_sentence %> can be loaded from the built-in defaults. Use “Load Default Templates” above to create them.</p>
+    </div>
+  </div>
+<% end %>
+
+<div class="admin-notice admin-notice--spaced border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" role="note">
+  <div>
+    <p><strong>How reservation emails work:</strong> The logo, subject, and HTML body are editable. The footer is added automatically. Publishing copies the current draft to the live version, so edits do not go out until you choose to publish. If a template is not published, its email will not send.</p>
+  </div>
+</div>
+
+<div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+  <% ReservationEmailTemplate::NAMES.each do |name| %>
+    <% template = @templates[name] %>
+    <% title = name.humanize %>
+    <% description = template&.description.presence || "Built-in reservation email template." %>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <div>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark"><%= title %></h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= description %></p>
+        </div>
+        <div class="admin-table-inline">
+          <% if template.nil? %>
+            <span class="admin-badge admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark">Template missing</span>
+          <% elsif template.published? && template.draft_changes? %>
+            <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Published with changes</span>
+          <% elsif template.published? %>
+            <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">Published</span>
+          <% else %>
+            <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Draft - not sending</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="admin-panel-body">
+        <div class="flex flex-col gap-4">
+          <% if template.present? %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Subject:</strong> <%= template.preview_subject %></p>
+
+            <% unless template.published? %>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">This email will not send until the template is published.</p>
+            <% end %>
+
+            <div class="flex flex-wrap items-center justify-start gap-3">
+              <%= link_to "Edit Template", edit_admin_reservation_email_template_path(template), class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+              <%= link_to "Preview",
+                  preview_admin_reservation_email_template_path(template, source: template.published? ? "published" : "draft"),
+                  class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
+                  target: "_blank",
+                  rel: "noopener" %>
+            </div>
+
+            <%= render "test_email_form", template: template, reservations: @reservations %>
+          <% else %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The default template has not been loaded into the database yet.</p>
+            <%= button_to "Load Default Templates",
+                install_defaults_admin_reservation_email_templates_path,
+                class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+</div>

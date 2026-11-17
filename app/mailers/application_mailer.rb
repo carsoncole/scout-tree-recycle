@@ -4,25 +4,39 @@ class ApplicationMailer < ActionMailer::Base
 
   LOGO_FILENAME = "fleur-de-lis-2024-logo-4c-bc.png"
 
-  helper_method :email_logo_tag
+  helper_method :email_logo_tag, :email_logo_src
 
   before_action :apply_site_url
   before_action :apply_email_settings
   before_action :configure_phonelib
   around_action :use_setting_time_zone
 
-  def email_logo_tag(width: 140, alt: nil, style: nil)
-    attachments.inline[LOGO_FILENAME] ||= File.binread(Rails.root.join("app/assets/images", LOGO_FILENAME))
-
+  def email_logo_tag(width: 140, alt: nil, style: nil, filename: LOGO_FILENAME)
     attributes = []
     attributes << %(alt="#{ERB::Util.html_escape(alt)}") if alt.present?
     attributes << %(style="#{ERB::Util.html_escape(style)}") if style.present?
     extra = attributes.empty? ? "" : " #{attributes.join(" ")}"
 
-    %(<img src="#{ERB::Util.html_escape(attachments[LOGO_FILENAME].url)}" width="#{width.to_i}"#{extra}>).html_safe
+    %(<img src="#{ERB::Util.html_escape(email_logo_src(filename: filename))}" width="#{width.to_i}"#{extra}>).html_safe
+  end
+
+  # Attaches the logo inline and returns its CID URL. Unknown or blank
+  # filenames fall back to the built-in logo.
+  def email_logo_src(filename: LOGO_FILENAME)
+    filename = safe_logo_filename(filename)
+    attachments.inline[filename] ||= File.binread(Rails.root.join("app/assets/images", filename))
+    attachments[filename].url
   end
 
   private
+
+  def safe_logo_filename(filename)
+    return LOGO_FILENAME if filename.blank?
+    return LOGO_FILENAME unless filename.to_s == File.basename(filename.to_s)
+    return LOGO_FILENAME unless File.file?(Rails.root.join("app/assets/images", filename))
+
+    filename
+  end
 
   def configure_phonelib
     Setting.instance&.apply_phone_default_country!

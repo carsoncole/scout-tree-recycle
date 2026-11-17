@@ -1,0 +1,21 @@
+<table role="presentation" style="width:100%; border:0; border-collapse: collapse;">
+  <tr>
+    <td style="width:100%; padding:0; border:0;">
+      <table role="presentation" style="max-width:800px; margin-left:auto; margin-right:auto; border-collapse: collapse;">
+        <tr>
+          <td style="text-align:left; padding:0; border:0;">
+            <% if logo_src.present? %>
+              <div style="text-align:center; margin-left:auto; margin-right:auto; margin-top:16px; margin-bottom:0;">
+                <img src="<%= logo_src %>" width="<%= logo_width.to_i %>" alt="<%= logo_alt %>" style="max-width:100%; height:auto;">
+              </div>
+            <% end %>
+
+            <%= raw body_html %>
+
+            <%= render "shared/mailer_footer" %>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,29 @@
+# Built-in reservation email templates. The migration seeds these, and admins
+# can reload them with "Load Default Templates" or the reservation_email_templates
+# rake task. HTML and text bodies live in the sibling files.
+new_reservation_email:
+  description: "Confirmation sent when a reservation is scheduled for tree pickup."
+  subject: "Your tree pickup is confirmed"
+  logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  logo_width: 140
+  logo_alt: "Tree Recycling Event"
+  html_file: new_reservation_email.html
+  text_file: new_reservation_email.text
+
+cancelled_reservation_email:
+  description: "Sent when a tree pickup reservation is cancelled."
+  subject: "Your tree pickup reservation has been cancelled"
+  logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  logo_width: 140
+  logo_alt: "Tree Recycling Event"
+  html_file: cancelled_reservation_email.html
+  text_file: cancelled_reservation_email.text
+
+missing_tree_email:
+  description: "Sent when a tree cannot be found. Includes the first notice and follow-up variants."
+  subject: "{% if reservation.missing_tree_follow_up %}Follow-up: We still cannot find your tree{% else %}We could not find your tree{% endif %}"
+  logo_image: fleur-de-lis-2024-logo-4c-bc.png
+  logo_width: 250
+  logo_alt: "Tree Recycling Event"
+  html_file: missing_tree_email.html
+  text_file: missing_tree_email.text

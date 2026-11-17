@@ -34,7 +34,7 @@ bin/setup
 
 On first run with no settings, create them at `/admin/settings/new`, including credentials for the initial admin user.
 
-Seed default data (built-in marketing email templates) with:
+Seed default data (built-in marketing and reservation email templates) with:
 
 ```sh
 bin/rails db:seed
@@ -111,6 +111,15 @@ Marketing emails are stored in the database and edited at `/admin/marketing_emai
 - Each template page shows the available variables, a preview using a real contact, and a **Send Test Email** button. A plain-text version is optional; if it is blank, one is generated from the HTML at send time.
 - The **View Email Images** page lists files directly in `app/assets/images` along with the Liquid variable generated from each filename.
 - Marketing sends and test sends require the **From Address**, **SMTP Address**, and **SMTP Port** in Settings. If any are missing, sending is blocked and the page lists what still needs to be configured.
+
+#### Reservation email templates
+
+The confirmation, cancellation, and missing-tree emails sent by `ReservationsMailer` are also database-backed and edited at `/admin/reservation_email_templates` (linked from `/admin/marketing`). Their built-in content lives in `db/reservation_email_templates/` and can be restored with **Load Default Templates**, `bin/rails db:seed`, or `bin/rails reservation_email_templates:install_defaults`.
+
+- Each template has an editable **top logo** (chosen from the same image library as marketing emails) plus logo width/alt text, subject, HTML body, and optional plain-text body. The mailer adds the document wrapper and footer.
+- The three canonical templates are `new_reservation_email`, `cancelled_reservation_email`, and `missing_tree_email`. The missing-tree template uses `{% if reservation.missing_tree_follow_up %}` to switch between the first notice and the follow-up.
+- Reservation templates use the same Liquid, CSS inlining, draft/publish, preview, and send-test workflow as marketing templates.
+- Reservation emails only send while their template is published. If a template is unpublished or missing, the mailer skips the send and leaves the reservation's email timestamps untouched.
 
 ### Amazon Location Service (geocoding and routing)
 

@@ -51,6 +51,100 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
       count: 1
   end
 
+  test "index offers a send test email form for each marketing email" do
+    sign_in
+
+    get admin_marketing_index_url
+
+    assert_response :success
+    assert_select "form[action=?]", admin_send_marketing_email_test_path, count: 2
+    assert_select "input[type=hidden][name=template_name][value=?]", "marketing_email_1", count: 1
+    assert_select "input[type=hidden][name=template_name][value=?]", "marketing_email_2", count: 1
+  end
+
+  test "sends a test marketing email to the requested address" do
+    configure_email!
+    sign_in
+    original_perform_deliveries = ActionMailer::Base.perform_deliveries
+    ActionMailer::Base.perform_deliveries = false
+
+    post admin_send_marketing_email_test_url, params: {
+      template_name: "marketing_email_1",
+      email: "qa@example.com",
+      contact_id: contacts(:full).id
+    }
+
+    assert_redirected_to admin_marketing_index_url
+    assert_equal "Test email sent to qa@example.com.", flash[:notice]
+    assert_nil contacts(:full).reload.marketing_1_email_sent_at
+  ensure
+    ActionMailer::Base.perform_deliveries = original_perform_deliveries
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.smtp_settings = {}
+  end
+
+  test "does not send a test marketing email without a recipient" do
+    configure_email!
+    sign_in
+
+    assert_no_emails do
+      post admin_send_marketing_email_test_url, params: {
+        template_name: "marketing_email_1",
+        email: " "
+      }
+    end
+
+    assert_redirected_to admin_marketing_index_url
+    assert_equal "Enter an email address for the test message.", flash[:alert]
+  end
+
+  test "does not send a test marketing email when the template is unpublished" do
+    configure_email!
+    marketing_email_templates(:marketing_email_1).unpublish!
+    sign_in
+
+    assert_no_emails do
+      post admin_send_marketing_email_test_url, params: {
+        template_name: "marketing_email_1",
+        email: "qa@example.com"
+      }
+    end
+
+    assert_redirected_to admin_marketing_index_url
+    assert_equal "Marketing email 1 is not published. Edit the template and publish it before sending a test.", flash[:alert]
+  end
+
+  test "does not send a test marketing email for an unknown template" do
+    configure_email!
+    sign_in
+
+    assert_no_emails do
+      post admin_send_marketing_email_test_url, params: {
+        template_name: "weekly_reminder",
+        email: "qa@example.com"
+      }
+    end
+
+    assert_redirected_to admin_marketing_index_url
+    assert_equal "Choose a marketing email before sending a test.", flash[:alert]
+  end
+
+  test "does not send a test marketing email when email settings are incomplete" do
+    configure_email!
+    Setting.instance.update!(email_from_address: nil)
+    sign_in
+
+    assert_no_emails do
+      post admin_send_marketing_email_test_url, params: {
+        template_name: "marketing_email_1",
+        email: "qa@example.com"
+      }
+    end
+
+    assert_redirected_to admin_marketing_index_url
+    assert_equal Setting.instance.email_configuration_alert(purpose: "sending a test email"), flash[:alert]
+  end
+
   test "should send marketing email 1" do
     sign_in
     configure_email!

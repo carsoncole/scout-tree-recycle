@@ -238,4 +238,24 @@ class MarketingMailerTest < ActionMailer::TestCase
     assert_match "Draft body for Susan Banks", mail.body.encoded
     assert_nil contact.reload.marketing_1_email_sent_at
   end
+
+  test "test email sends the published version to the requested address" do
+    Setting.instance.update(is_emailing_enabled: false)
+    template = marketing_email_templates(:marketing_email_1)
+    template.update!(subject: "Draft subject", body_html: "<p>Draft body for {{ contact.name }}</p>")
+    contact = contacts(:full)
+
+    mail = MarketingMailer.with(
+      template_id: template.id,
+      contact_id: contact.id,
+      email: "qa@example.com",
+      source: "published"
+    ).test_email
+
+    assert_equal [ "qa@example.com" ], mail.to
+    assert_equal "[TEST] Tree recycling January 6. Register today.", mail.subject
+    assert_match "Support Troop 100! - Tree Recycling", mail.body.encoded
+    assert_no_match "Draft body", mail.body.encoded
+    assert_nil contact.reload.marketing_1_email_sent_at
+  end
 end

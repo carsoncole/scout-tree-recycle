@@ -60,6 +60,10 @@
               <%= link_to "Edit in Settings", admin_settings_section_path("email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
             </p>
           </div>
+
+          <% if template_1.present? %>
+            <%= render "test_email_form", template: template_1, contacts: @contacts %>
+          <% end %>
         </div>
       </div>
     </section>
@@ -114,6 +118,10 @@
               <%= link_to "Edit in Settings", admin_settings_section_path("email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
             </p>
           </div>
+
+          <% if template_2.present? %>
+            <%= render "test_email_form", template: template_2, contacts: @contacts %>
+          <% end %>
         </div>
       </div>
     </section>

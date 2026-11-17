@@ -217,6 +217,12 @@ module AdminHelper
     time.strftime(format)
   end
 
+  # Prefills the test-email recipient with the configured contact address,
+  # falling back to the signed-in admin.
+  def admin_test_email_recipient
+    Setting.instance.contact_email.presence || Current.user&.email
+  end
+
   def admin_marketing_send_confirm(name, batch_size)
     if batch_size.zero?
       "Send #{name}? No contacts are currently eligible."

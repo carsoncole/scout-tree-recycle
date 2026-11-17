@@ -45,6 +45,26 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     assert_current_path admin_marketing_index_path
   end
 
+  test "sending a test email from the marketing page" do
+    configure_email!
+    original_perform_deliveries = ActionMailer::Base.perform_deliveries
+    ActionMailer::Base.perform_deliveries = false
+
+    visit admin_marketing_index_url
+
+    within "section", text: "Marketing email 1" do
+      find("summary", text: "Send test email").click
+      fill_in "Send to", with: "qa@example.com"
+      click_on "Send Test Email"
+    end
+
+    assert_text "Test email sent to qa@example.com."
+  ensure
+    ActionMailer::Base.perform_deliveries = original_perform_deliveries
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.smtp_settings = {}
+  end
+
   test "viewing the available email images" do
     image = MarketingEmailTemplate.available_images.first
     variable = MarketingEmailTemplate.image_variable_for(image)

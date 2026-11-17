@@ -57,4 +57,61 @@ class Admin::MarketingController < Admin::BaseController
       end
     end
   end
+
+  # Sends the published marketing email to an admin address so they can see
+  # exactly what contacts will receive. Test sends do not mark contacts as sent.
+  def send_test
+    template = marketing_email_template(params[:template_name])
+    unless template
+      redirect_to admin_marketing_index_path, alert: "Choose a marketing email before sending a test."
+      return
+    end
+
+    email = params[:email].to_s.strip
+    if email.blank?
+      redirect_to admin_marketing_index_path, alert: "Enter an email address for the test message."
+      return
+    end
+
+    if (message = Setting.instance.email_configuration_alert(purpose: "sending a test email"))
+      redirect_to admin_marketing_index_path, alert: message
+      return
+    end
+
+    unless template.published?
+      redirect_to admin_marketing_index_path, alert: "#{template.name.humanize} is not published. Edit the template and publish it before sending a test."
+      return
+    end
+
+    contact = find_contact(params[:contact_id]) || MarketingEmailTemplate.sample_contact
+
+    MarketingMailer.with(
+      template_id: template.id,
+      contact_id: contact.id,
+      email: email,
+      source: :published
+    ).test_email.deliver_now
+
+    redirect_to admin_marketing_index_path, notice: "Test email sent to #{email}."
+  rescue StandardError => e
+    Rails.error.report(e, handled: true, severity: :warning, context: { template_name: params[:template_name], email: params[:email] })
+    redirect_to admin_marketing_index_path, alert: "Test email could not be sent: #{e.message}"
+  end
+
+  private
+
+  def marketing_email_template(name)
+    name = name.to_s
+    return unless MarketingEmailTemplate::MARKETING_EMAIL_NAMES.include?(name)
+
+    MarketingEmailTemplate.find_by(name: name)
+  end
+
+  def find_contact(id)
+    return if id.blank?
+
+    Contact.find_by(id: id)
+  rescue ActiveRecord::StatementInvalid
+    nil
+  end
 end

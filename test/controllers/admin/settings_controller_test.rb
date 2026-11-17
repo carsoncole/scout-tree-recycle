@@ -87,6 +87,34 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Follow-up custom", setting.missing_tree_sms_follow_up_message
   end
 
+  test "should update the thank you message and return to the thanks page" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: { thank_you_message: "Custom thank you message" },
+      return_to: "admin_thanks"
+    }
+
+    assert_redirected_to admin_thanks_path
+    assert_equal "Custom thank you message", Setting.first.reload.thank_you_message
+  end
+
+  test "should restore the default thank you message" do
+    sign_in
+    setting = Setting.first
+    setting.update!(thank_you_message: "Custom thank you message")
+
+    patch admin_setting_path(setting), params: {
+      setting: { thank_you_message: "Custom thank you message" },
+      return_to: "admin_thanks",
+      restore_default: "1"
+    }
+
+    assert_redirected_to admin_thanks_path
+    setting.reload
+    assert_equal Setting::DEFAULT_THANK_YOU_MESSAGE, setting.thank_you_message
+  end
+
   test "should update the home page image" do
     sign_in
     image = MarketingEmailTemplate.available_images.first
@@ -193,6 +221,70 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "smtp-password", setting.smtp_password
     assert_equal "plain", setting.smtp_authentication
     assert_equal "starttls", setting.smtp_encryption
+  end
+
+  test "should send a test email using the saved smtp settings" do
+    sign_in
+    configure_email!
+    original_perform_deliveries = ActionMailer::Base.perform_deliveries
+    ActionMailer::Base.perform_deliveries = false
+
+    post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "admin@example.com" }
+
+    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_equal "Test email sent to admin@example.com.", flash[:notice]
+  ensure
+    ActionMailer::Base.perform_deliveries = original_perform_deliveries
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.smtp_settings = {}
+  end
+
+  test "should not send a test email when smtp settings are incomplete" do
+    sign_in
+    Setting.first.update!(smtp_address: nil, smtp_port: nil)
+
+    assert_no_emails do
+      post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "admin@example.com" }
+    end
+
+    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_equal Setting.first.email_configuration_alert(purpose: "sending a test email"), flash[:alert]
+  end
+
+  test "should reject a blank test email address" do
+    sign_in
+    configure_email!
+
+    assert_no_emails do
+      post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "" }
+    end
+
+    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_equal "Enter a valid email address to receive the test message.", flash[:alert]
+  end
+
+  test "should reject an invalid test email address" do
+    sign_in
+    configure_email!
+
+    assert_no_emails do
+      post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "not-an-email" }
+    end
+
+    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_equal "Enter a valid email address to receive the test message.", flash[:alert]
+  end
+
+  test "non-admin users cannot send a test email" do
+    sign_in users(:user)
+    configure_email!
+
+    assert_no_emails do
+      post send_test_email_admin_setting_path(Setting.first), params: { test_email_address: "admin@example.com" }
+    end
+
+    assert_redirected_to admin_settings_path(anchor: "email")
+    assert_equal "You are not authorized to test email settings.", flash[:alert]
   end
 
   test "should toggle an allowed setting" do

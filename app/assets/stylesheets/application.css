@@ -647,6 +647,20 @@
   margin-top: 0;
 }
 
+.site-section + .site-section {
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--site-line);
+}
+
+.site-section > :first-child {
+  margin-top: 0;
+}
+
+.site-section > :last-child {
+  margin-bottom: 0;
+}
+
 .site-details {
   display: grid;
   margin: 0;

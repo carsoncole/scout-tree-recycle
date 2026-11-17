@@ -592,6 +592,25 @@
             <%= submit_tag "Save Email Settings", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
           </div>
         <% end %>
+
+        <div class="admin-form-section admin-form-section--spaced border-line dark:border-line-dark">
+          <h3 class="admin-section-title text-ink dark:text-ink-dark">Test SMTP settings</h3>
+          <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Send a test message using the saved settings to confirm email delivery works. Save any changes above before testing.</p>
+
+          <%= form_tag send_test_email_admin_setting_path(setting), method: :post, class: "admin-form" do %>
+            <div class="admin-toolbar">
+              <div class="admin-field admin-field--medium admin-toolbar-field">
+                <%= label_tag :test_email_address, "Send Test Email To", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= email_field_tag :test_email_address, Current.user.email, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "you@example.com", required: true, autocomplete: "email" %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The test message is sent immediately through the SMTP server above.</p>
+              </div>
+
+              <div>
+                <%= submit_tag "Send Test Email", class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </section>
 

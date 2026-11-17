@@ -1,12 +1,6 @@
-<% organization_name = setting&.organization_name.presence || "Our troop" %>
-<% supporter_label = @thanks.one? ? "supporter" : "supporters" %>
-<% intro = if @thanks.any?
-     "#{organization_name} would like to extend a special thank you to the following #{supporter_label}."
-   else
-     "We are grateful for every supporter of #{organization_name}."
-   end %>
+<% thank_you_message = setting&.thank_you_message %>
 <% content_for :title, "Thank You | #{setting&.home_page_header || "Tree Recycle"}" %>
-<% content_for :description, intro %>
+<% content_for :description, thank_you_message if thank_you_message.present? %>
 
 <section class="site-page">
   <div class="site-container site-container--medium">
@@ -17,7 +11,7 @@
     <%= render "shared/page_header",
                eyebrow: "With gratitude",
                title: "Thank You",
-               description: intro %>
+               description: thank_you_message %>
 
     <% if @thanks.any? %>
       <ul class="mt-10 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-3">

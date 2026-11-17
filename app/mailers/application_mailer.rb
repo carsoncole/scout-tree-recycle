@@ -2,10 +2,25 @@ class ApplicationMailer < ActionMailer::Base
   include ApplicationHelper
   layout "mailer"
 
+  LOGO_FILENAME = "fleur-de-lis-2024-logo-4c-bc.png"
+
+  helper_method :email_logo_tag
+
   before_action :apply_site_url
   before_action :apply_email_settings
   before_action :configure_phonelib
   around_action :use_setting_time_zone
+
+  def email_logo_tag(width: 140, alt: nil, style: nil)
+    attachments.inline[LOGO_FILENAME] ||= File.binread(Rails.root.join("app/assets/images", LOGO_FILENAME))
+
+    attributes = []
+    attributes << %(alt="#{ERB::Util.html_escape(alt)}") if alt.present?
+    attributes << %(style="#{ERB::Util.html_escape(style)}") if style.present?
+    extra = attributes.empty? ? "" : " #{attributes.join(" ")}"
+
+    %(<img src="#{ERB::Util.html_escape(attachments[LOGO_FILENAME].url)}" width="#{width.to_i}"#{extra}>).html_safe
+  end
 
   private
 

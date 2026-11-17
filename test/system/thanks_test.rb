@@ -5,8 +5,18 @@ class ThanksTest < ApplicationSystemTestCase
     visit thanks_url
 
     assert_selector "h1", text: "Thank You"
-    assert_text "Troop 100 would like to extend a special thank you to the following supporter."
+    assert_text Setting::DEFAULT_THANK_YOU_MESSAGE
     assert_text thanks(:one).content
     assert_selector "img[alt='Supporter logo']"
+  end
+
+  test "public page omits the message when it is cleared" do
+    Setting.instance.update!(thank_you_message: "")
+
+    visit thanks_url
+
+    assert_selector "h1", text: "Thank You"
+    assert_no_text Setting::DEFAULT_THANK_YOU_MESSAGE
+    assert_text thanks(:one).content
   end
 end

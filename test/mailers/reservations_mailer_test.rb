@@ -33,14 +33,16 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal [ reservation.email ], email.to
     assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup is confirmed", email.subject
-    assert_match "Tree pick-up scheduled", email.body.encoded
-    assert_match Setting.instance.organization_name, email.body.encoded
-    assert_match "3:00pm", email.body.encoded
-    assert_match "$#{Setting.instance.suggested_donation_amount}", email.body.encoded
-    assert_match "/reservations/#{reservation.id}/edit", email.body.encoded
-    assert_match "/reservations/#{reservation.id}/donations/new", email.body.encoded
-    assert_no_match "FIX", email.body.encoded
-    assert_no_match "8am", email.body.encoded
+    body = readable_mail_body(email)
+    assert_match "Tree pick-up scheduled", body
+    assert_match Setting.instance.organization_name, body
+    assert_match "3:00pm", body
+    assert_match "$#{Setting.instance.suggested_donation_amount}", body
+    assert_match "/reservations/#{reservation.id}/edit", body
+    assert_match "/reservations/#{reservation.id}/donations/new", body
+    assert_no_match "FIX", body
+    assert_no_match "8am", body
+    assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)
   end
 
   test "sends cancellation reservation email once cancelled" do
@@ -64,9 +66,11 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_equal [ reservation.email ], email.to
     assert_equal [ "example@example.com" ], email.from
     assert_equal "Your tree pickup reservation has been cancelled", email.subject
-    assert_match "Tree pick-up cancelled", email.body.encoded
-    assert_match Setting.instance.organization_name, email.body.encoded
-    assert_no_match "Bainbridge", email.body.encoded
+    body = readable_mail_body(email)
+    assert_match "Tree pick-up cancelled", body
+    assert_match Setting.instance.organization_name, body
+    assert_no_match "Bainbridge", body
+    assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)
   end
 
   test "not sending more than one confirmation email" do
@@ -164,5 +168,11 @@ class ReservationsMailerTest < ActionMailer::TestCase
       reservation.cancelled!
       assert_equal ActionMailer::Base.deliveries.last.subject, "Your tree pickup reservation has been cancelled"
     end
+  end
+
+  private
+
+  def readable_mail_body(email)
+    [ email.text_part, email.html_part ].compact.map { |part| part.body.decoded }.join("\n").presence || email.body.decoded
   end
 end

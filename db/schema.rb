@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_16_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -234,6 +234,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_16_000002) do
     t.string "phone_default_country", default: "US"
     t.string "home_page_image", default: "fleur-de-lis-2024-logo-4c-bc.png", null: false
     t.boolean "is_log_notifications_enabled", default: true, null: false
+    t.text "thank_you_message", default: "We want to say thank you to our community and to the supporters who make this fundraiser possible. Their generosity supports our Scouting program and the environment."
   end
 
   create_table "sms", force: :cascade do |t|

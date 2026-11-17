@@ -49,14 +49,40 @@ class Admin::SettingsController < Admin::BaseController
 
   def update
     if Current.user.admin?
-      if Setting.instance.update(setting_params)
-        redirect_to admin_settings_path, notice: "Settings were successfully updated."
+      restoring_thank_you_message = params[:restore_default].present? && params[:return_to] == "admin_thanks"
+      attributes = restoring_thank_you_message ? setting_params.merge(thank_you_message: Setting::DEFAULT_THANK_YOU_MESSAGE) : setting_params
+
+      if Setting.instance.update(attributes)
+        redirect_to settings_redirect_path, notice: "Settings were successfully updated."
       else
         render :index, status: :unprocessable_entity
       end
     else
       redirect_to admin_settings_path, alert: "You are not authorized to update settings."
     end
+  end
+
+  def send_test_email
+    unless Current.user.admin?
+      return redirect_to admin_settings_path(anchor: "email"), alert: "You are not authorized to test email settings."
+    end
+
+    recipient = params[:test_email_address].to_s.strip
+
+    if recipient.blank? || !recipient.match?(URI::MailTo::EMAIL_REGEXP)
+      return redirect_to admin_settings_path(anchor: "email"), alert: "Enter a valid email address to receive the test message."
+    end
+
+    if (message = Setting.instance.email_configuration_alert(purpose: "sending a test email"))
+      return redirect_to admin_settings_path(anchor: "email"), alert: message
+    end
+
+    SettingsMailer.test_email(recipient).deliver_now
+
+    redirect_to admin_settings_path(anchor: "email"), notice: "Test email sent to #{recipient}."
+  rescue StandardError => e
+    Rails.error.report(e, handled: true, severity: :warning, context: { email: recipient })
+    redirect_to admin_settings_path(anchor: "email"), alert: "Test email could not be sent: #{e.message}"
   end
 
   def toggle
@@ -80,6 +106,10 @@ class Admin::SettingsController < Admin::BaseController
   end
 
   private
+
+  def settings_redirect_path
+    params[:return_to] == "admin_thanks" ? admin_thanks_path : admin_settings_path
+  end
 
   def build_initial_admin_user
     User.new(admin_user_params.merge(role: "admin"))
@@ -108,6 +138,7 @@ class Admin::SettingsController < Admin::BaseController
       :default_state,
       :about_event_description,
       :on_day_of_pickup_instructions,
+      :thank_you_message,
       :is_reservations_open,
       :is_emailing_enabled,
       :is_log_notifications_enabled,

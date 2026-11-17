@@ -15,46 +15,60 @@
                description: setting.about_event_description_text %>
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
-      <h2 class="text-ink dark:text-ink-dark"><%= setting.organization_name %></h2>
+      <section class="site-section border-line dark:border-line-dark">
+        <h2 class="text-ink dark:text-ink-dark"><%= setting.organization_name %></h2>
 
-      <% if setting.organization_url.present? %>
-        <p>
-          <%= link_to "Learn more", setting.organization_url, target: "_blank", rel: "noopener", class: "site-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
-        </p>
+        <% if setting.organization_url.present? %>
+          <p>
+            <%= link_to "Learn more", setting.organization_url, target: "_blank", rel: "noopener", class: "site-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+          </p>
+        <% end %>
+      </section>
+
+      <% if @thanks_available && setting.thank_you_message.present? %>
+        <section class="site-section border-line dark:border-line-dark">
+          <h3 class="text-ink dark:text-ink-dark">Thank you</h3>
+          <p><%= setting.thank_you_message %></p>
+          <p>
+            <%= link_to "See our thanks", thanks_path, class: "site-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+          </p>
+        </section>
       <% end %>
 
-      <div class="site-callout border-line dark:border-line-dark">
+      <section class="site-section border-line dark:border-line-dark">
         <h3 class="text-ink dark:text-ink-dark">On day of pickup instructions</h3>
         <p><%= setting.pickup_instructions_text %></p>
-      </div>
 
-      <h4 class="text-ink dark:text-ink-dark">Date of pick-up</h4>
-      <p><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></p>
+        <h4 class="text-ink dark:text-ink-dark">Date of pick-up</h4>
+        <p><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></p>
 
-      <h4 class="text-ink dark:text-ink-dark">Your tree should be ready for pickup:</h4>
-      <p><%= setting.event_pickup_start.strftime("%l:%M%P") %> - <%= setting.event_pickup_end.strftime("%l:%M%P") %></p>
+        <h4 class="text-ink dark:text-ink-dark">Your tree should be ready for pickup:</h4>
+        <p><%= setting.event_pickup_start.strftime("%l:%M%P") %> - <%= setting.event_pickup_end.strftime("%l:%M%P") %></p>
+      </section>
 
       <% contact_name = setting.contact_name.presence %>
       <% contact_methods = [setting.contact_email.presence, setting.contact_phone.presence].compact %>
       <% contact_sms = setting.contact_sms.presence %>
 
       <% if contact_name || contact_methods.any? || contact_sms %>
-        <h4 class="text-ink dark:text-ink-dark">Questions?</h4>
-        <p>
-          <% if contact_methods.any? %>
-            Contact <%= contact_name || "us" %> at <%= contact_methods.join(" or ") %>.
-          <% elsif contact_name %>
-            Contact <%= contact_name %>.
-          <% end %>
-
-          <% if contact_sms %>
-            <% if contact_name || contact_methods.any? %>
-              You can also text us at <%= contact_sms %>.
-            <% else %>
-              Text us at <%= contact_sms %>.
+        <section class="site-section border-line dark:border-line-dark">
+          <h4 class="text-ink dark:text-ink-dark">Questions?</h4>
+          <p>
+            <% if contact_methods.any? %>
+              Contact <%= contact_name || "us" %> at <%= contact_methods.join(" or ") %>.
+            <% elsif contact_name %>
+              Contact <%= contact_name %>.
             <% end %>
-          <% end %>
-        </p>
+
+            <% if contact_sms %>
+              <% if contact_name || contact_methods.any? %>
+                You can also text us at <%= contact_sms %>.
+              <% else %>
+                Text us at <%= contact_sms %>.
+              <% end %>
+            <% end %>
+          </p>
+        </section>
       <% end %>
     </div>
   </div>

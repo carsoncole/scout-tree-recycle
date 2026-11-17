@@ -18,6 +18,7 @@ class Setting < ApplicationRecord
   DEFAULT_RETENTION_MONTHS = 24
   DEFAULT_ABOUT_EVENT_DESCRIPTION = "Tree Recycle is a community event where we collect trees and recycle them into mulch. This is our primary fundraiser for the year and all proceeds go to the Troop."
   DEFAULT_PICKUP_INSTRUCTIONS = "To prepare your tree for pick-up, remove all decorations and tinsel from your tree. Prior to pickup, place your tree in a visible location at the curb or where you indicated to us in your reservation. Your tree will be collected and recycled into mulch. We cannot take wreaths, flocked trees, or artificial trees. If we can not find your tree, we will try contacting you by SMS or phone call to make arrangements to attempt another pick-up."
+  DEFAULT_THANK_YOU_MESSAGE = "We want to say thank you to our community and to the supporters who make this fundraiser possible. Their generosity supports our Scouting program and the environment."
   DEFAULT_RESERVATIONS_CLOSED_MESSAGE = "Stay tuned for when we open reservations again."
   DEFAULT_HOME_PAGE_IMAGE = "fleur-de-lis-2024-logo-4c-bc.png"
 

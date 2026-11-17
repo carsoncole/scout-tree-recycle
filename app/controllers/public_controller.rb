@@ -14,6 +14,7 @@ class PublicController < ApplicationController
   end
 
   def about
+    @thanks_available = Thank.exists?
   end
 
   def privacy

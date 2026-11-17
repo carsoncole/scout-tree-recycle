@@ -5,6 +5,53 @@ class Admin::ThanksTest < ApplicationSystemTestCase
     sign_in_as users(:admin), true
   end
 
+  test "updates the thank you message shown on public pages" do
+    visit admin_thanks_url
+
+    within "section", text: "Thank You Message" do
+      fill_in "Message", with: "Custom thanks to our community."
+      click_on "Save Thank You Message"
+    end
+
+    assert_text "Settings were successfully updated."
+    assert_field "Message", with: "Custom thanks to our community."
+
+    visit about_url
+    assert_text "Custom thanks to our community."
+
+    visit thanks_url
+    assert_text "Custom thanks to our community."
+
+    visit admin_thanks_url
+    within "section", text: "Thank You Message" do
+      click_on "Restore default text"
+    end
+
+    assert_field "Message", with: Setting::DEFAULT_THANK_YOU_MESSAGE
+
+    visit about_url
+    assert_text Setting::DEFAULT_THANK_YOU_MESSAGE
+    assert_no_text "Custom thanks to our community."
+  end
+
+  test "clearing the thank you message hides it from public pages" do
+    visit admin_thanks_url
+
+    within "section", text: "Thank You Message" do
+      fill_in "Message", with: ""
+      click_on "Save Thank You Message"
+    end
+
+    assert_field "Message", with: ""
+
+    visit about_url
+    assert_no_selector "h3", text: "Thank you"
+    assert_no_link "See our thanks"
+
+    visit thanks_url
+    assert_no_text Setting::DEFAULT_THANK_YOU_MESSAGE
+  end
+
   test "creates, edits, and deletes a thank" do
     visit admin_thanks_url
     click_link "Add thank"

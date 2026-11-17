@@ -562,4 +562,36 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_field "Contact Phone", with: "Contact Phone"
     assert_field "Contact Email", with: "email@example.com"
   end
+
+  test "sends a test email from the email settings panel" do
+    configure_email!
+    original_perform_deliveries = ActionMailer::Base.perform_deliveries
+    ActionMailer::Base.perform_deliveries = false
+
+    visit admin_settings_url
+
+    within "section#email" do
+      fill_in "Send Test Email To", with: "qa@example.com"
+      click_on "Send Test Email"
+    end
+
+    assert_text "Test email sent to qa@example.com."
+  ensure
+    ActionMailer::Base.perform_deliveries = original_perform_deliveries
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.smtp_settings = {}
+  end
+
+  test "email settings panel warns when smtp settings are incomplete" do
+    Setting.instance.update!(smtp_address: nil, smtp_port: nil)
+
+    visit admin_settings_url
+
+    within "section#email" do
+      fill_in "Send Test Email To", with: "qa@example.com"
+      click_on "Send Test Email"
+    end
+
+    assert_text Setting.instance.email_configuration_alert(purpose: "sending a test email")
+  end
 end

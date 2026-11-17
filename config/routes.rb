@@ -48,6 +48,7 @@ Rails.application.routes.draw do
     resources :settings, only: [ :index, :new, :create, :update ] do
       member do
         patch :toggle
+        post :send_test_email
       end
     end
     scope path: "settings" do

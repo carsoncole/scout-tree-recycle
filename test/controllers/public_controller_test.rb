@@ -11,6 +11,41 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
+    test "should display the configured thank you message on about" do
+      Setting.instance.update!(thank_you_message: "Custom thanks from #{Setting.instance.organization_name}.")
+
+      get about_url
+
+      assert_response :success
+      assert_includes response.body, "Custom thanks from Troop 100."
+    end
+
+    test "should link to thanks when thanks exist" do
+      get about_url
+
+      assert_select "a[href=?]", thanks_path, text: "See our thanks"
+    end
+
+    test "should not link to thanks when none exist" do
+      Thank.delete_all
+
+      get about_url
+
+      assert_response :success
+      assert_select "a[href=?]", thanks_path, text: "See our thanks", count: 0
+    end
+
+    test "should hide the thank you section when the message is cleared" do
+      Setting.instance.update!(thank_you_message: "")
+
+      get about_url
+
+      assert_response :success
+      assert_select "h3", text: "Thank you", count: 0
+      assert_select "a[href=?]", thanks_path, text: "See our thanks", count: 0
+      assert_not_includes response.body, Setting::DEFAULT_THANK_YOU_MESSAGE
+    end
+
     test "should get privacy" do
       get privacy_url
       assert_response :success

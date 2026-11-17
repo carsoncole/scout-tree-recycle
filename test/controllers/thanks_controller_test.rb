@@ -1,31 +1,42 @@
 require "test_helper"
 
 class ThanksControllerTest < ActionDispatch::IntegrationTest
-  test "shows the public page with a singular thank you" do
+  test "shows the public page with the default thank you message" do
     get thanks_url
 
     assert_response :success
     assert_select "h1", text: "Thank You"
-    assert_includes response.body, "Troop 100 would like to extend a special thank you to the following supporter."
+    assert_includes response.body, Setting::DEFAULT_THANK_YOU_MESSAGE
     assert_includes response.body, thanks(:one).content
   end
 
-  test "uses plural wording when there are multiple supporters" do
-    Thank.create!(content: "Thanks to the Riverside Garden Club.", image: "bytes", image_content_type: "image/jpeg")
+  test "shows the configured thank you message" do
+    Setting.instance.update!(thank_you_message: "Custom thanks to our supporters.")
 
     get thanks_url
 
     assert_response :success
-    assert_includes response.body, "the following supporters."
+    assert_includes response.body, "Custom thanks to our supporters."
+    assert_not_includes response.body, Setting::DEFAULT_THANK_YOU_MESSAGE
   end
 
-  test "shows an empty state when there are no thanks" do
+  test "shows the default message when there are no thanks" do
     Thank.delete_all
 
     get thanks_url
 
     assert_response :success
-    assert_includes response.body, "We are grateful for every supporter of Troop 100."
+    assert_includes response.body, Setting::DEFAULT_THANK_YOU_MESSAGE
+  end
+
+  test "omits the thank you message when it is cleared" do
+    Setting.instance.update!(thank_you_message: "")
+
+    get thanks_url
+
+    assert_response :success
+    assert_select "h1", text: "Thank You"
+    assert_not_includes response.body, Setting::DEFAULT_THANK_YOU_MESSAGE
   end
 
   test "displays a thank that has no content" do

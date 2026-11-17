@@ -119,4 +119,32 @@ class AboutsTest < ApplicationSystemTestCase
     visit about_url
     assert_link "Learn more", href: "https://example.com"
   end
+
+  test "should display the configured thank you message" do
+    Setting.instance.update!(thank_you_message: "Custom thanks to our community.")
+
+    visit about_url
+
+    assert_text "Custom thanks to our community."
+  end
+
+  test "should hide the thank you section when the message is cleared" do
+    Setting.instance.update!(thank_you_message: "")
+
+    visit about_url
+
+    assert_no_selector "h3", text: "Thank you"
+    assert_no_link "See our thanks"
+  end
+
+  test "should link to thanks only when thanks exist" do
+    visit about_url
+
+    assert_link "See our thanks", href: thanks_path
+
+    Thank.delete_all
+    visit about_url
+
+    assert_no_link "See our thanks"
+  end
 end

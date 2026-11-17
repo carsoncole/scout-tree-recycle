@@ -46,6 +46,7 @@ class SettingTest < ActiveSupport::TestCase
     setting.update(
       home_page_header: "",
       about_event_description: "",
+      thank_you_message: "",
       on_day_of_pickup_instructions: "",
       reservations_closed_message: "",
       time_zone: "",
@@ -63,6 +64,7 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.on_day_of_pickup_instructions.blank?
     assert setting.reservations_closed_message.blank?
     assert_equal Setting::DEFAULT_ABOUT_EVENT_DESCRIPTION, setting.about_event_description_text
+    assert setting.thank_you_message.blank?
     assert_equal Setting::DEFAULT_PICKUP_INSTRUCTIONS, setting.pickup_instructions_text
     assert_equal Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE, setting.reservations_closed_message_text
     assert_equal Setting::DEFAULT_TIME_ZONE, setting.time_zone
@@ -73,6 +75,15 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal Setting::DEFAULT_EMAIL_BATCH_QUANTITY, setting.email_batch_quantity
     assert_equal Setting::DEFAULT_MARKETING_COOLDOWN_DAYS, setting.marketing_email_cooldown_days
     assert_equal Setting::DEFAULT_RETENTION_MONTHS, setting.contact_retention_months
+  end
+
+  test "thank_you_message defaults to the built-in message and can be cleared" do
+    assert_equal Setting::DEFAULT_THANK_YOU_MESSAGE, Setting.new.thank_you_message
+
+    setting = Setting.instance
+    setting.update!(thank_you_message: "")
+
+    assert setting.thank_you_message.blank?
   end
 
   test "missing_required_settings reports core and enabled integration settings" do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_220247) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -164,6 +164,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_000002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "missing_tree_sms_sent_at"
+    t.boolean "is_missing_tree_notifications_enabled", default: true, null: false
     t.index ["created_at"], name: "index_reservations_on_created_at"
     t.index ["email"], name: "index_reservations_on_email"
     t.index ["mobile", "status"], name: "index_reservations_on_mobile_and_status"

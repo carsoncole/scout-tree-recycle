@@ -101,7 +101,8 @@ class Admin::ReservationsController < Admin::BaseController
   def reservation_params
     params.require(:reservation).permit(
       :name, :email, :mobile, :street, :city, :state, :country,
-      :route_id, :status, :pickup_notes, :latitude, :longitude
+      :route_id, :status, :pickup_notes, :latitude, :longitude,
+      :is_missing_tree_notifications_enabled
     )
   end
 

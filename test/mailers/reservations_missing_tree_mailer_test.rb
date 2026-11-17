@@ -10,7 +10,7 @@ class ReservationsMissingTreeMailerTest < ActionMailer::TestCase
     perform_enqueued_jobs do
     reservation.missing!
     end
-    
+
     email = ActionMailer::Base.deliveries.last
     assert_equal "We could not find your tree", email.subject
     assert reservation.reload.missing_tree_email_sent_at.present?
@@ -32,6 +32,17 @@ class ReservationsMissingTreeMailerTest < ActionMailer::TestCase
       reservation.missing!
     end
     assert_not reservation.reload.missing_tree_email_sent_at
+  end
+
+  test "does not send missing tree email when notifications are disabled" do
+    reservation = reservations(:pending_pickup_no_mobile)
+    reservation.update!(is_missing_tree_notifications_enabled: false)
+
+    assert_enqueued_emails 0 do
+      reservation.missing!
+    end
+
+    assert_nil reservation.reload.missing_tree_email_sent_at
   end
 
   test "sends missing tree email and includes pickup notes when present" do
@@ -60,7 +71,7 @@ class ReservationsMissingTreeMailerTest < ActionMailer::TestCase
     reservation = reservations(:missing_1)
     reservation.update_column(:missing_tree_email_sent_at, nil)
     ReservationsMailer.with(reservation_id: reservation.id).missing_tree_email.deliver_now
-    
+
     assert reservation.reload.missing_tree_email_sent_at.present?
   end
 end

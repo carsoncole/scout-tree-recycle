@@ -229,16 +229,57 @@
     </div>
   </section>
 
-  <% if @reservation.missing_tree_sms_sent_at.present? || @reservation.missing_tree_email_sent_at.present? %>
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Missing tree notifications</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">This reservation was marked as missing and the customer was notified.</p>
-        </div>
-        <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Customer notified</span>
+  <% missing_tree_notified = @reservation.missing_tree_sms_sent_at.present? || @reservation.missing_tree_email_sent_at.present? %>
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Missing tree notifications</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
+          <% if missing_tree_notified %>
+            This reservation was marked as missing and the customer was notified.
+          <% elsif @reservation.is_missing_tree_notifications_enabled? %>
+            Automated email and text notifications are sent when this reservation is marked missing.
+          <% else %>
+            Automated email and text notifications are disabled for this reservation.
+          <% end %>
+        </p>
       </div>
-      <div class="admin-panel-body">
+      <div class="flex flex-wrap items-center gap-2">
+        <% if missing_tree_notified %>
+          <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Customer notified</span>
+        <% end %>
+        <% unless @reservation.is_missing_tree_notifications_enabled? %>
+          <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">Notifications disabled</span>
+        <% end %>
+      </div>
+    </div>
+    <div class="admin-panel-body flex flex-col gap-4">
+      <div class="admin-toggle-list">
+        <div class="admin-toggle-row border-line dark:border-line-dark">
+          <div class="admin-toggle-copy">
+            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Automated notifications</h3>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+              <% if @reservation.is_missing_tree_notifications_enabled? %>
+                Send an email and/or text message when this reservation is marked missing.
+              <% else %>
+                Automated missing tree notifications are disabled for this reservation.
+              <% end %>
+            </p>
+          </div>
+          <div class="admin-toggle-control">
+            <%= form_with model: [:admin, @reservation], local: false, data: { controller: "form" } do |form| %>
+              <label class="admin-switch" id="missing-tree-notifications-toggle" aria-label="Enable automated missing tree notifications">
+                <%= form.check_box :is_missing_tree_notifications_enabled,
+                    { class: "admin-switch-input peer",
+                      data: { testid: "missing-tree-notifications-toggle", action: "change->form#submit" } }, "1", "0" %>
+                <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <% if missing_tree_notified %>
         <dl class="admin-detail-list">
           <% if @reservation.missing_tree_sms_sent_at.present? %>
             <div class="admin-detail border-line dark:border-line-dark">
@@ -261,9 +302,9 @@
             </div>
           <% end %>
         </dl>
-      </div>
-    </section>
-  <% end %>
+      <% end %>
+    </div>
+  </section>
 
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">

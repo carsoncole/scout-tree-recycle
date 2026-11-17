@@ -145,8 +145,8 @@ class Reservation < ApplicationRecord
   after_commit :route_reservation!, if: ->(obj) { obj.routing? && obj.routing_status == "Pending" && Setting.instance&.is_routing_enabled? && !obj.importing }
 
   # missing tree reminder
-  after_commit :send_missing_sms!, if: ->(obj) { obj.missing? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
-  after_commit :send_missing_email!, if: ->(obj) { obj.missing? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
+  after_commit :send_missing_sms!, if: ->(obj) { obj.missing? && obj.is_missing_tree_notifications_enabled? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
+  after_commit :send_missing_email!, if: ->(obj) { obj.missing? && obj.is_missing_tree_notifications_enabled? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
 
   # class methods
   def self.open?
@@ -293,6 +293,7 @@ class Reservation < ApplicationRecord
   end
 
   def send_missing_sms!
+    return unless is_missing_tree_notifications_enabled?
     return if self.mobile.blank?
     setting = Setting.instance
     message = if self.missing_tree_sms_sent_at.blank?
@@ -311,6 +312,7 @@ class Reservation < ApplicationRecord
   end
 
   def send_missing_email!(override = false)
+    return unless is_missing_tree_notifications_enabled?
     return if self.mobile.present?
     ReservationsMailer.with(reservation_id: self.id).missing_tree_email.deliver_later
   end

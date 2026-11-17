@@ -68,4 +68,17 @@ class SmsMissingTreeTest < ActiveSupport::TestCase
     end
     assert_not reservation.reload.missing_tree_sms_sent_at
   end
+
+  test "does not send missing tree sms when notifications are disabled" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update!(is_missing_tree_notifications_enabled: false)
+
+    assert_no_difference "Sms.count" do
+      perform_enqueued_jobs do
+        reservation.missing!
+      end
+    end
+
+    assert_nil reservation.reload.missing_tree_sms_sent_at
+  end
 end

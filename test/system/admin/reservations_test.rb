@@ -83,6 +83,25 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_equal "cancelled", reservation.reload.status
   end
 
+  test "toggling automated missing tree notifications" do
+    reservation = reservations(:pending_pickup_1)
+    visit admin_reservation_url(reservation)
+
+    within "section", text: "Missing tree notifications" do
+      find("#missing-tree-notifications-toggle").click
+      assert_text "Notifications disabled"
+    end
+
+    assert_not reservation.reload.is_missing_tree_notifications_enabled?
+
+    within "section", text: "Missing tree notifications" do
+      find("#missing-tree-notifications-toggle").click
+      assert_no_text "Notifications disabled"
+    end
+
+    assert reservation.reload.is_missing_tree_notifications_enabled?
+  end
+
   test "delete button works" do
     visit admin_reservations_url
     first_row = page.find("table tbody tr", text: "icky.jones@example.com")

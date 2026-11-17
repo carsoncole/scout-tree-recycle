@@ -19,6 +19,7 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     get admin_reservation_url(reservations(:pending_pickup_1))
     assert_response :success
     assert_select "form[action=?] select[name=?]", assign_route_admin_reservation_path(reservations(:pending_pickup_1)), "reservation[route_id]"
+    assert_select "input[type=checkbox][name=?]", "reservation[is_missing_tree_notifications_enabled]"
   end
 
   test "should get edit" do
@@ -57,6 +58,24 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to edit_admin_reservation_url(reservation)
     assert_equal "New Name", reservation.reload.name
+  end
+
+  test "should toggle automated missing tree notifications" do
+    sign_in
+    reservation = reservations(:pending_pickup_1)
+
+    patch admin_reservation_url(reservation),
+          params: { reservation: { is_missing_tree_notifications_enabled: "0" } },
+          headers: { "HTTP_REFERER" => admin_reservation_url(reservation) }
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_not reservation.reload.is_missing_tree_notifications_enabled?
+
+    patch admin_reservation_url(reservation),
+          params: { reservation: { is_missing_tree_notifications_enabled: "1" } },
+          headers: { "HTTP_REFERER" => admin_reservation_url(reservation) }
+
+    assert reservation.reload.is_missing_tree_notifications_enabled?
   end
 
   test "should get destroy" do

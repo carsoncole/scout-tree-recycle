@@ -20,9 +20,9 @@
     </div>
 
     <div class="admin-panel-body">
-      <%= form_with model: [:admin, @reservation], local: false, class: "admin-field-grid admin-field-grid--two",
+      <%= form_with model: [:admin, @reservation], local: false, class: "admin-field-grid",
                     data: { controller: "form" } do |form| %>
-        <div class="admin-field">
+        <div class="admin-field admin-field--short">
           <%= form.label :status, "Update status", class: "admin-label text-ink dark:text-ink-dark" %>
           <%= form.select :status,
               options_for_select([

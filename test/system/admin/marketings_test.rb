@@ -18,6 +18,21 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     assert_text "Sent only once per contact. Contacts who already received Marketing email 2 are skipped"
   end
 
+  test "index shows the email batch size with a link to settings" do
+    Setting.instance.update!(email_batch_quantity: 42)
+
+    visit admin_marketing_index_url
+
+    assert_text "Batch size: 42 contacts per send.", count: 2
+
+    within "section", text: "Marketing email 1" do
+      click_on "Edit in Settings"
+    end
+
+    assert_current_path admin_settings_path
+    assert_selector "section#email", text: "Email"
+  end
+
   test "viewing the available email images" do
     image = MarketingEmailTemplate.available_images.first
     variable = MarketingEmailTemplate.image_variable_for(image)

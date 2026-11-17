@@ -25,6 +25,17 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     assert_equal Setting.instance.email_configuration_alert(purpose: "sending marketing emails"), flash[:alert]
   end
 
+  test "index shows the email batch size with a link to edit it in settings" do
+    Setting.instance.update!(email_batch_quantity: 42)
+    sign_in
+
+    get admin_marketing_index_url
+
+    assert_response :success
+    assert_select "p", text: /Batch size: 42 contacts per send/, count: 2
+    assert_select "a[href=?]", admin_settings_path(anchor: "email"), text: "Edit in Settings", count: 2
+  end
+
   test "should send marketing email 1" do
     sign_in
     configure_email!

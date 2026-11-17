@@ -49,9 +49,15 @@
                 class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
           <% end %>
 
-          <%= button_to admin_send_marketing_email_1_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
-            Send Marketing Email 1
-          <% end %>
+          <div class="flex flex-wrap items-center justify-start gap-3">
+            <%= button_to admin_send_marketing_email_1_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
+              Send Marketing Email 1
+            <% end %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+              Batch size: <strong class="text-ink dark:text-ink-dark"><%= pluralize(@email_batch_quantity, "contact") %></strong> per send.
+              <%= link_to "Edit in Settings", admin_settings_path(anchor: "email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -95,9 +101,15 @@
                 class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
           <% end %>
 
-          <%= button_to admin_send_marketing_email_2_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
-            Send Marketing Email 2
-          <% end %>
+          <div class="flex flex-wrap items-center justify-start gap-3">
+            <%= button_to admin_send_marketing_email_2_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
+              Send Marketing Email 2
+            <% end %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+              Batch size: <strong class="text-ink dark:text-ink-dark"><%= pluralize(@email_batch_quantity, "contact") %></strong> per send.
+              <%= link_to "Edit in Settings", admin_settings_path(anchor: "email"), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+            </p>
+          </div>
         </div>
       </div>
     </section>

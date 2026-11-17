@@ -111,4 +111,12 @@ module AdminHelper
       "Send #{name} to #{pluralize(batch_size, "contact")}? Contacts who already received it will be skipped. This cannot be undone."
     end
   end
+
+  def admin_resend_email_confirm(label, sent_at, email)
+    if sent_at.present?
+      "This #{label.downcase} was already sent to #{email} on #{sent_at.strftime("%B %-d, %Y at %-l:%M %p")}. Are you sure you want to send it again?"
+    else
+      "Send the #{label.downcase} to #{email}?"
+    end
+  end
 end

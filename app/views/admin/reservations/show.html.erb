@@ -161,25 +161,32 @@
 
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">
-      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email history</h2>
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email history</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Send or resend emails to the customer. Resending updates the sent date below.</p>
+      </div>
     </div>
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
-        <% {
-          "Confirmation email" => @reservation.confirmed_reservation_email_sent_at,
-          "Cancellation email" => @reservation.cancelled_reservation_email_sent_at,
-          "Missing tree email" => @reservation.missing_tree_email_sent_at
-        }.each do |label, sent_at| %>
+        <% Reservation::EMAIL_KINDS.each do |kind, config| %>
+          <% sent_at = @reservation.public_send(config[:sent_at]) %>
           <div class="admin-detail border-line dark:border-line-dark">
-            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= label %></dt>
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= config[:label] %></dt>
             <dd class="admin-detail-value text-ink dark:text-ink-dark">
-              <% if sent_at.present? %>
-                <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">
-                  Sent <%= sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
-                </span>
-              <% else %>
-                <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">Not sent</span>
-              <% end %>
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <% if sent_at.present? %>
+                  <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">
+                    Sent <%= sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+                  </span>
+                <% else %>
+                  <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">Not sent</span>
+                <% end %>
+                <%= button_to sent_at.present? ? "Resend" : "Send",
+                    resend_email_admin_reservation_path(@reservation),
+                    params: { kind: kind },
+                    data: { turbo_confirm: admin_resend_email_confirm(config[:label], sent_at, @reservation.email) },
+                    class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+              </div>
             </dd>
           </div>
         <% end %>

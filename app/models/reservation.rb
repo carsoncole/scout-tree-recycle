@@ -44,6 +44,25 @@ class Reservation < ApplicationRecord
   DEFAULT_MISSING_TREE_SMS = "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
   DEFAULT_MISSING_TREE_SMS_FOLLOW_UP = "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
 
+  # Emails admins can send (or resend) from a reservation's email history.
+  EMAIL_KINDS = {
+    "confirmation" => {
+      label: "Confirmation email",
+      sent_at: :confirmed_reservation_email_sent_at,
+      mailer: :new_reservation_email
+    },
+    "cancellation" => {
+      label: "Cancellation email",
+      sent_at: :cancelled_reservation_email_sent_at,
+      mailer: :cancelled_reservation_email
+    },
+    "missing_tree" => {
+      label: "Missing tree email",
+      sent_at: :missing_tree_email_sent_at,
+      mailer: :missing_tree_email
+    }
+  }.freeze
+
   belongs_to :route, optional: true, counter_cache: true
   has_one :zone, through: :route
   has_many :donations, dependent: :nullify
@@ -174,6 +193,13 @@ class Reservation < ApplicationRecord
 
   def send_cancelled_reservation_email!
     ReservationsMailer.with(reservation_id: id).cancelled_reservation_email.deliver_later
+  end
+
+  def resend_email!(kind)
+    config = EMAIL_KINDS[kind.to_s]
+    raise ArgumentError, "Unknown email kind: #{kind}" unless config
+
+    ReservationsMailer.with(reservation_id: id).public_send(config[:mailer], force: true).deliver_later
   end
 
   def self.migrate_reservations!

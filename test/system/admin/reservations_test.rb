@@ -33,7 +33,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     click_link "Needs Routing"
 
     assert_equal 1, page.all("table").count
-    table = page.find('table.needs-routing')
+    table = page.find("table.needs-routing")
 
     reservation_count = table.all("tbody tr").count
     assert_equal 4, reservation_count
@@ -59,11 +59,36 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
   test "delete button works" do
     visit admin_reservations_url
     first_row = page.find("table tbody tr", text: "icky.jones@example.com")
-    
+
     accept_confirm do
       first_row.click_button("Delete")
     end
-    
+
     assert_selector ".flash", text: "Reservation was successfully deleted."
+  end
+
+  test "resend email confirmation warns when the email was already sent" do
+    reservation = reservations(:pending_pickup_1)
+    visit admin_reservation_url(reservation)
+
+    within "section", text: "Email history" do
+      message = dismiss_confirm { click_button "Resend" }
+      assert_match "This confirmation email was already sent to #{reservation.email}", message
+      assert_match "Are you sure you want to send it again?", message
+    end
+
+    assert_current_path admin_reservation_path(reservation)
+  end
+
+  test "resend email confirmation sends the email" do
+    Setting.instance.update(is_emailing_enabled: true)
+    reservation = reservations(:pending_pickup_1)
+    visit admin_reservation_url(reservation)
+
+    within "section", text: "Email history" do
+      accept_confirm { click_button "Resend" }
+    end
+
+    assert_selector ".flash", text: "Confirmation email was queued for delivery to #{reservation.email}."
   end
 end

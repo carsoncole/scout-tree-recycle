@@ -1,5 +1,5 @@
 class Admin::ReservationsController < Admin::BaseController
-  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode ]
+  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode, :resend_email ]
 
   def index
     @reservations = Reservation.includes(:route)
@@ -62,6 +62,23 @@ class Admin::ReservationsController < Admin::BaseController
     else
       redirect_back fallback_location: admin_reservation_path(@reservation), alert: "Routing is disabled"
     end
+  end
+
+  def resend_email
+    email_config = Reservation::EMAIL_KINDS[params[:kind].to_s]
+
+    unless email_config
+      redirect_to admin_reservation_path(@reservation), alert: "Unknown email type."
+      return
+    end
+
+    unless Setting.instance.is_emailing_enabled?
+      redirect_to admin_reservation_path(@reservation), alert: "Emailing is disabled. Enable it in Settings before sending emails."
+      return
+    end
+
+    @reservation.resend_email!(params[:kind])
+    redirect_to admin_reservation_path(@reservation), notice: "#{email_config[:label]} was queued for delivery to #{@reservation.email}."
   end
 
   private

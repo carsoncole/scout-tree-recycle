@@ -43,6 +43,7 @@ Rails.application.routes.draw do
     resources :reservations, except: [ :new, :create ] do
       member do
         post :geocode
+        post :resend_email
       end
     end
     resources :settings, only: [ :index, :new, :create, :update ] do

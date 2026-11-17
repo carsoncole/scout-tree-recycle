@@ -7,9 +7,9 @@ class ReservationsMailer < ApplicationMailer
     @reservation = Reservation.find(params[:reservation_id])
   end
 
-  def new_reservation_email
+  def new_reservation_email(force: false)
     return unless Setting.instance.is_emailing_enabled?
-    return if @reservation.confirmed_reservation_email_sent_at?
+    return if !force && @reservation.confirmed_reservation_email_sent_at?
     @event_pickup_start = setting.event_pickup_start.in_time_zone(setting.time_zone)
     @event_pickup_end = setting.event_pickup_end.in_time_zone(setting.time_zone)
     @setting = setting
@@ -18,8 +18,8 @@ class ReservationsMailer < ApplicationMailer
     @reservation.update(confirmed_reservation_email_sent_at: Time.current)
   end
 
-  def cancelled_reservation_email
-    return if @reservation.cancelled_reservation_email_sent_at?
+  def cancelled_reservation_email(force: false)
+    return if !force && @reservation.cancelled_reservation_email_sent_at?
     @event_pickup_start = setting.event_pickup_start.in_time_zone(setting.time_zone)
     @event_pickup_end = setting.event_pickup_end.in_time_zone(setting.time_zone)
     @setting = setting
@@ -28,7 +28,7 @@ class ReservationsMailer < ApplicationMailer
     @reservation.update(cancelled_reservation_email_sent_at: Time.current)
   end
 
-  def missing_tree_email
+  def missing_tree_email(force: false)
     return unless setting.is_emailing_enabled
     @setting = setting
     subject = @reservation.missing_tree_email_sent_at.present? ?

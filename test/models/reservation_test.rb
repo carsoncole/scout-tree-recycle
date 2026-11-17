@@ -315,4 +315,19 @@ class ReservationTest < ActiveSupport::TestCase
     reservation.update(latitude: nil, longitude: nil)
     assert_not reservation.is_manually_geocoded
   end
+
+  test "resend_email! enqueues the requested email" do
+    Setting.instance.update(is_emailing_enabled: true)
+    reservation = reservations(:pending_pickup_1)
+
+    assert_enqueued_jobs 1, only: ActionMailer::MailDeliveryJob do
+      reservation.resend_email!("confirmation")
+    end
+  end
+
+  test "resend_email! raises for an unknown email kind" do
+    assert_raises(ArgumentError) do
+      reservations(:pending_pickup_1).resend_email!("unknown")
+    end
+  end
 end

@@ -132,6 +132,56 @@ class ReservationsMailerTest < ActionMailer::TestCase
     end
   end
 
+  test "force resends a confirmation email that was already sent" do
+    reservation = reservations(:pending_pickup_1)
+    original_sent_at = reservation.confirmed_reservation_email_sent_at
+    email = ReservationsMailer.with(reservation_id: reservation.id).new_reservation_email(force: true)
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal "Your tree pickup is confirmed", email.subject
+    assert_operator reservation.reload.confirmed_reservation_email_sent_at, :>, original_sent_at
+  end
+
+  test "force resends a cancellation email that was already sent" do
+    reservation = reservations(:cancelled_1)
+    original_sent_at = reservation.cancelled_reservation_email_sent_at
+    email = ReservationsMailer.with(reservation_id: reservation.id).cancelled_reservation_email(force: true)
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal "Your tree pickup reservation has been cancelled", email.subject
+    assert_operator reservation.reload.cancelled_reservation_email_sent_at, :>, original_sent_at
+  end
+
+  test "force resends a missing tree email as a follow-up" do
+    reservation = reservations(:missing_1)
+    reservation.update_column(:missing_tree_email_sent_at, 1.day.ago)
+    email = ReservationsMailer.with(reservation_id: reservation.id).missing_tree_email(force: true)
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal "Follow-up: We still cannot find your tree", email.subject
+    assert reservation.reload.missing_tree_email_sent_at.present?
+  end
+
+  test "resend_email! delivers a confirmation email that was already sent" do
+    reservation = reservations(:pending_pickup_1)
+    original_sent_at = reservation.confirmed_reservation_email_sent_at
+
+    assert_emails 1 do
+      perform_enqueued_jobs { reservation.resend_email!("confirmation") }
+    end
+
+    assert_operator reservation.reload.confirmed_reservation_email_sent_at, :>, original_sent_at
+  end
+
   test "mailers for all statuses" do
     reservation = Reservation.new(status: :reservation_form, email: "test99@example.com", name: "Test User", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", mobile: "123-456-7890", pickup_notes: "Pickup notes")
 

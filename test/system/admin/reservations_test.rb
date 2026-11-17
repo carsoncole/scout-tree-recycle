@@ -56,6 +56,32 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_text "steven.wonder@example.com"
   end
 
+  test "changing status requires confirmation" do
+    reservation = reservations(:pending_pickup_1)
+    visit admin_reservation_url(reservation)
+
+    within "section", text: "Status" do
+      message = dismiss_confirm { select "Missing", from: "Update status" }
+
+      assert_match "Selecting Missing will generate a missing tree email and/or text message", message
+    end
+
+    assert_field "Update status", with: "pending_pickup"
+    assert_equal "pending_pickup", reservation.reload.status
+  end
+
+  test "confirming a status change updates the status" do
+    reservation = reservations(:pending_pickup_1)
+    visit admin_reservation_url(reservation)
+
+    within "section", text: "Status" do
+      accept_confirm { select "Cancelled", from: "Update status" }
+    end
+
+    assert_selector ".flash", text: "Reservation was successfully updated."
+    assert_equal "cancelled", reservation.reload.status
+  end
+
   test "delete button works" do
     visit admin_reservations_url
     first_row = page.find("table tbody tr", text: "icky.jones@example.com")

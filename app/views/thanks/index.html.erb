@@ -1,0 +1,40 @@
+<% organization_name = setting&.organization_name.presence || "Our troop" %>
+<% supporter_label = @thanks.one? ? "supporter" : "supporters" %>
+<% intro = if @thanks.any?
+     "#{organization_name} would like to extend a special thank you to the following #{supporter_label}."
+   else
+     "We are grateful for every supporter of #{organization_name}."
+   end %>
+<% content_for :title, "Thank You | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :description, intro %>
+
+<section class="site-page">
+  <div class="site-container site-container--medium">
+    <%= link_to root_path, class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+      <span aria-hidden="true">←</span> Back to Home
+    <% end %>
+
+    <%= render "shared/page_header",
+               eyebrow: "With gratitude",
+               title: "Thank You",
+               description: intro %>
+
+    <% if @thanks.any? %>
+      <ul class="mt-10 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-3">
+        <% @thanks.each do |thank| %>
+          <li class="flex flex-col overflow-hidden rounded-lg border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+            <div class="flex h-40 items-center justify-center border-b border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
+              <%= image_tag image_thank_path(thank, v: thank.updated_at.to_i),
+                            alt: "Supporter logo",
+                            loading: "lazy",
+                            class: "max-h-full max-w-full object-contain" %>
+            </div>
+            <div class="site-prose p-5 text-ink-soft dark:text-ink-soft-dark">
+              <%= simple_format(thank.content, class: "m-0") %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</section>

@@ -1,0 +1,11 @@
+<%= render "admin/shared/page_header",
+           title: "Edit Thank",
+           description: "Update the supporter's image or message." %>
+
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="admin-container--narrow admin-container--flush">
+    <%= render "form", thank: @thank %>
+  </div>
+</div>

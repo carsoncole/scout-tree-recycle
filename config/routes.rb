@@ -5,6 +5,12 @@ Rails.application.routes.draw do
   get "privacy", to: "public#privacy"
   get "credits", to: "public#credits"
 
+  resources :thanks, only: [ :index ] do
+    member do
+      get :image
+    end
+  end
+
   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
 
   resources :reservations, only: [ :create, :update, :edit, :destroy ] do
@@ -51,6 +57,7 @@ Rails.application.routes.draw do
         get :export
       end
       resources :users, except: [ :show ]
+      resources :thanks, except: [ :show ]
       resources :routes do
         resources :points, only: [ :create, :destroy ]
         member do

@@ -4,7 +4,16 @@ class ErrorLogSubscriber
   MAX_STRING_LENGTH = 5_000
   REPORTING_KEY = :error_log_subscriber_reporting
 
+  # `bin/rails runner` failures are console/operator errors, not application
+  # errors. Rails reports them with this source; they are already printed to
+  # the operator's terminal, so recording them in the admin System Log and
+  # emailing every admin creates false alarms (for example, a one-off script
+  # calling a view helper outside a request).
+  IGNORED_SOURCES = %w[application.runner.railties].freeze
+
   def report(error, handled:, severity:, context:, source: nil)
+    return if IGNORED_SOURCES.include?(source.to_s)
+
     # Guard against a report triggered while this subscriber is already
     # writing a Log (for example, a failing notification email). Without it
     # an error raised while logging can report itself again, recursively.

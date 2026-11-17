@@ -210,23 +210,6 @@ module AdminHelper
     end
   end
 
-  def admin_external_link_icon
-    tag.svg(
-      viewBox: "0 0 24 24",
-      fill: "none",
-      stroke: "currentColor",
-      "stroke-width": 1.8,
-      class: "size-3 shrink-0",
-      aria: { hidden: true }
-    ) do
-      tag.path(
-        d: "M7 17 17 7M9 7h8v8",
-        "stroke-linecap": "round",
-        "stroke-linejoin": "round"
-      )
-    end
-  end
-
   # Shows the year only for sends from previous years to keep table cells compact.
   def admin_marketing_sent_at(time)
     time = time.in_time_zone

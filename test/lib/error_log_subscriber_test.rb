@@ -39,6 +39,30 @@ class ErrorLogSubscriberTest < ActiveSupport::TestCase
     end
   end
 
+  test "does not record errors raised by rails runner" do
+    assert_no_difference -> { Log.count } do
+      ErrorLogSubscriber.new.report(
+        RuntimeError.new("console-only failure"),
+        handled: false,
+        severity: :error,
+        context: {},
+        source: "application.runner.railties"
+      )
+    end
+  end
+
+  test "records errors from application runtime sources" do
+    assert_difference -> { Log.count }, 1 do
+      ErrorLogSubscriber.new.report(
+        RuntimeError.new("web failure"),
+        handled: false,
+        severity: :error,
+        context: {},
+        source: "application.action_dispatch"
+      )
+    end
+  end
+
   test "does not raise when writing the log fails with a system stack error" do
     subscriber = ErrorLogSubscriber.new
     original_create = Log.method(:create)

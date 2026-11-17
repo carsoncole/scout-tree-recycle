@@ -16,13 +16,20 @@
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
       <section class="site-section border-line dark:border-line-dark">
-        <h2 class="text-ink dark:text-ink-dark"><%= setting.organization_name %></h2>
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <h2 class="m-0 text-ink dark:text-ink-dark"><%= setting.organization_name %></h2>
 
-        <% if setting.organization_url.present? %>
-          <p>
-            <%= link_to "Learn more", setting.organization_url, target: "_blank", rel: "noopener", class: "site-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
-          </p>
-        <% end %>
+          <% if setting.organization_url.present? %>
+            <%= link_to setting.organization_url,
+                target: "_blank",
+                rel: "noopener",
+                title: "Visit #{setting.organization_name} website (opens in a new tab)",
+                class: "site-link inline-flex items-center gap-1.5 text-sm font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" do %>
+              Visit website
+              <%= external_link_icon(css_class: "size-3.5 shrink-0") %>
+            <% end %>
+          <% end %>
+        </div>
       </section>
 
       <% if @thanks_available && setting.thank_you_message.present? %>

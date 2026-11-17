@@ -3,6 +3,23 @@ module ApplicationHelper
     @setting ||= Setting.instance
   end
 
+  def external_link_icon(css_class: "size-3 shrink-0")
+    tag.svg(
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": 1.8,
+      class: css_class,
+      aria: { hidden: true }
+    ) do
+      tag.path(
+        d: "M7 17 17 7M9 7h8v8",
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round"
+      )
+    end
+  end
+
   def surround_text(text, prefix = "", suffix = "")
     return "" if text.blank?
 

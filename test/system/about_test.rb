@@ -105,19 +105,21 @@ class AboutsTest < ApplicationSystemTestCase
     assert_text "10:00am - 3:00pm"
   end
 
-  test "should display organization url" do
+  test "should display organization url as an external link next to the name" do
     setting = Setting.instance
     setting.organization_url = nil
     setting.save
 
     visit about_url
-    assert_no_link "Learn more"
+    assert_no_link "Visit website"
 
     setting.organization_url = "https://example.com"
     setting.save
 
     visit about_url
-    assert_link "Learn more", href: "https://example.com"
+    assert_link "Visit website", href: "https://example.com"
+    assert_selector "a[href='https://example.com'][target='_blank'][rel='noopener'] svg"
+    assert_no_selector "h2 a[href='https://example.com']"
   end
 
   test "should display the configured thank you message" do

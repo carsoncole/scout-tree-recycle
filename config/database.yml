@@ -27,6 +27,7 @@ production:
     <<: *default
     database: scout_tree_recycle_production
     password: <%= Rails.application.credentials.dig(:neon_database, :password) %>
+  # not used - we are going with :memory_store
   cache:
     <<: *primary_production
     database: scout_tree_recycle_production_cache

@@ -52,17 +52,14 @@ class ApplicationMailer < ActionMailer::Base
     setting = Setting.instance
     return if setting&.site_url.blank?
 
-    site_url = setting.site_url.strip
-    site_url = "https://#{site_url}" unless site_url.match?(%r{\Ahttps?://}i)
-    uri = URI.parse(site_url)
-    return if uri.host.blank?
-
-    options = { host: uri.host, protocol: uri.scheme }
-    options[:port] = uri.port if uri.port && uri.port != uri.default_port
-    ActionMailer::Base.default_url_options = options
-  rescue URI::InvalidURIError => e
-    Rails.logger.warn("Invalid site URL configured: #{setting&.site_url}")
-    Rails.error.report(e, handled: true, severity: :warning, context: { site_url: setting&.site_url })
+    options = setting.site_url_options
+    if options.any?
+      ActionMailer::Base.default_url_options = options
+    else
+      error = URI::InvalidURIError.new("Invalid site URL configured: #{setting.site_url}")
+      Rails.logger.warn(error.message)
+      Rails.error.report(error, handled: true, severity: :warning, context: { site_url: setting.site_url })
+    end
   end
 
   def apply_email_settings

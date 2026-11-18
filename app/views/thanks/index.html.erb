@@ -1,6 +1,6 @@
 <% thank_you_message = setting&.thank_you_message %>
-<% content_for :title, "Thank You | #{setting&.home_page_header || "Tree Recycle"}" %>
-<% content_for :description, thank_you_message if thank_you_message.present? %>
+<% content_for :title, "Thank You | #{default_page_name}" %>
+<% content_for :description, thank_you_message.presence || "Thanks to the supporters who make #{default_page_name} possible." %>
 
 <section class="site-page">
   <div class="site-container site-container--medium">
@@ -31,6 +31,8 @@
           </li>
         <% end %>
       </ul>
+    <% else %>
+      <p class="site-lede mt-10 text-ink-soft dark:text-ink-soft-dark">Supporters will be listed here soon.</p>
     <% end %>
   </div>
 </section>

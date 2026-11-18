@@ -1,6 +1,5 @@
-<% page_name = setting&.organization_name.presence || setting&.home_page_header.presence || "Tree Recycle" %>
-<% content_for :title, "Privacy Policy | #{setting&.home_page_header || page_name}" %>
-<% content_for :description, "How #{page_name} handles your information." %>
+<% content_for :title, "Privacy Policy | #{default_page_name}" %>
+<% content_for :description, "How #{default_page_name} handles your information." %>
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
@@ -10,30 +9,25 @@
 
     <%= render "shared/page_header",
                eyebrow: "Your information",
-               title: "Privacy Policy" %>
+               title: "Privacy Policy",
+               description: "We are committed to protecting your privacy and handling your data with transparency and care." %>
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
-      <h2 class="text-ink dark:text-ink-dark">Our Commitment to Privacy</h2>
-      <p>
-        We are committed to protecting your privacy and handling your data with
-        transparency and care. Here’s how we handle your information:
-      </p>
-
-      <h3 class="text-ink dark:text-ink-dark">Data Usage</h3>
+      <h2 class="text-ink dark:text-ink-dark">Data Usage</h2>
       <p>
         Your personal data will only be used for the purposes of our tree
         recycling fundraiser. This includes processing your reservation and
         coordinating the pickup of your tree.
       </p>
 
-      <h3 class="text-ink dark:text-ink-dark">Email Notifications</h3>
+      <h2 class="text-ink dark:text-ink-dark">Email Notifications</h2>
       <p>
         We may send you email notifications about subsequent tree recycling
         events. These emails will help you stay informed about future
         opportunities to participate in our fundraiser.
       </p>
 
-      <h3 class="text-ink dark:text-ink-dark">Your Control</h3>
+      <h2 class="text-ink dark:text-ink-dark">Your Control</h2>
       <p>
         You can unsubscribe from our marketing emails at any time. If you choose
         to unsubscribe, we will completely remove your data from our system.

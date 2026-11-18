@@ -80,4 +80,6 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :test
 
   config.active_job.queue_adapter = :async
+
+  config.hosts << "d8e3-2602-fec2-5381-e600-558f-61ce-8665-fed5.ngrok-free.app"
 end

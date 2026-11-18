@@ -3,6 +3,10 @@ module ApplicationHelper
     @setting ||= Setting.instance
   end
 
+  def default_page_name
+    setting&.organization_name.presence || setting&.home_page_header.presence || "Tree Recycle"
+  end
+
   def external_link_icon(css_class: "size-3 shrink-0")
     tag.svg(
       viewBox: "0 0 24 24",

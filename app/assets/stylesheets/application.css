@@ -749,8 +749,16 @@
   font-size: 0.97rem;
 }
 
-.site-step::before {
-  display: inline-flex;
+/*
+ * The counter lives on a dedicated chip element rather than on .site-step
+ * itself. Tailwind's before:/after: variant utilities emit
+ * `content: var(--tw-content)` on any pseudo-element they style, which
+ * (being in the utilities layer) would override a counter() declared here
+ * and blank out the number. No utility targets this pseudo, so the counter
+ * is safe.
+ */
+.site-step-chip {
+  display: flex;
   width: 1.85rem;
   height: 1.85rem;
   align-items: center;
@@ -760,6 +768,9 @@
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.site-step-chip::before {
   content: counter(site-step, decimal-leading-zero);
   counter-increment: site-step;
 }
@@ -903,8 +914,8 @@
 }
 
 .site-footer a:hover {
-  color: var(--site-ink);
-  border-bottom-color: var(--site-line-strong);
+  color: var(--site-sage-soft);
+  border-bottom-color: rgb(231 236 220 / 0.4);
 }
 
 @media (min-width: 640px) {

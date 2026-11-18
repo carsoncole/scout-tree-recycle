@@ -72,9 +72,18 @@
     <section class="site-section border-line dark:border-line-dark" aria-labelledby="pickup-steps">
       <h2 id="pickup-steps" class="site-subtitle text-ink dark:text-ink-dark">How pickup works</h2>
       <ol class="site-steps site-steps--three">
-        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">Reserve a pickup time for your tree.</li>
-        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">We confirm the details by email.</li>
-        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.</li>
+        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+          Reserve a pickup time for your tree.
+        </li>
+        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+          We confirm the details by email.
+        </li>
+        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+          Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.
+        </li>
       </ol>
     </section>
   </div>

@@ -1,5 +1,3 @@
-require "uri"
-
 # Builds the Liquid assigns shared by all admin-editable email templates.
 # Including renderers provide domain_assigns (and may extend url_assigns).
 module EmailTemplateAssigns
@@ -95,21 +93,6 @@ module EmailTemplateAssigns
   end
 
   def url_options
-    @url_options ||= site_url_options.presence || ActionMailer::Base.default_url_options.symbolize_keys.presence || { host: "localhost", port: 3000 }
-  end
-
-  def site_url_options
-    site_url = setting.site_url.to_s.strip
-    return {} if site_url.blank?
-
-    site_url = "https://#{site_url}" unless site_url.match?(%r{\Ahttps?://}i)
-    uri = URI.parse(site_url)
-    return {} if uri.host.blank?
-
-    options = { host: uri.host, protocol: uri.scheme }
-    options[:port] = uri.port if uri.port && uri.port != uri.default_port
-    options
-  rescue URI::InvalidURIError
-    {}
+    @url_options ||= setting.site_url_options.presence || ActionMailer::Base.default_url_options.symbolize_keys.presence || { host: "localhost", port: 3000 }
   end
 end

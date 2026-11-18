@@ -57,8 +57,8 @@
             <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Set this URL as the webhook endpoint in Stripe so completed donations are recorded.</p>
           </div>
 
-          <div class="admin-field admin-field--medium admin-toolbar-field">
-            <%= text_field_tag :stripe_webhook_url, api_v1_stripe_webhook_url, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", readonly: true %>
+          <div class="admin-field admin-toolbar-field">
+            <%= text_area_tag :stripe_webhook_url, api_v1_stripe_webhook_url(**setting.site_url_options), rows: 2, class: "admin-textarea admin-code-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", readonly: true %>
           </div>
         </div>
       </div>

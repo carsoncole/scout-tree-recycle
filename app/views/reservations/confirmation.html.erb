@@ -63,12 +63,19 @@
     <section class="site-section border-line dark:border-line-dark" aria-labelledby="before-pickup">
       <h2 id="before-pickup" class="site-subtitle text-ink dark:text-ink-dark">Before pickup</h2>
       <ol class="site-steps">
-        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">You'll receive a confirmation email shortly.</li>
-        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">
+        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+          You'll receive a confirmation email shortly.
+        </li>
+        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
           Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %>
           on <%= setting.event_pickup_start.strftime("%A, %B %-e") %>.
         </li>
-        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">Remove all decorations and tinsel from your tree.</li>
+        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+          Remove all decorations and tinsel from your tree.
+        </li>
       </ol>
     </section>
 

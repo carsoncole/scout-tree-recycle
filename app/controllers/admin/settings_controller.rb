@@ -171,6 +171,8 @@ class Admin::SettingsController < Admin::BaseController
       :default_state,
       :about_event_description,
       :on_day_of_pickup_instructions,
+      :donations_page_content,
+      :donations_page_how_to_donate,
       :thank_you_message,
       :is_reservations_open,
       :is_emailing_enabled,

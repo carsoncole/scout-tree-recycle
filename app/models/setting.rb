@@ -20,6 +20,8 @@ class Setting < ApplicationRecord
   DEFAULT_PICKUP_INSTRUCTIONS = "To prepare your tree for pick-up, remove all decorations and tinsel from your tree. Prior to pickup, place your tree in a visible location at the curb or where you indicated to us in your reservation. Your tree will be collected and recycled into mulch. We cannot take wreaths, flocked trees, or artificial trees. If we can not find your tree, we will try contacting you by SMS or phone call to make arrangements to attempt another pick-up."
   DEFAULT_THANK_YOU_MESSAGE = "We want to say thank you to our community and to the supporters who make this fundraiser possible. Their generosity supports our Scouting program and the environment."
   DEFAULT_RESERVATIONS_CLOSED_MESSAGE = "Stay tuned for when we open reservations again."
+  DEFAULT_DONATIONS_PAGE_CONTENT = "Thank you for your interest in supporting our organization. Your generosity helps us continue our work of environmental stewardship and community service."
+  DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE = "If you would like to make a donation, you can leave cash or a check in a ziplock bag with your tree on the day of pickup. Our volunteers will collect it along with your tree.\n\nYour support makes a real difference in our community and helps us continue this annual fundraiser."
   DEFAULT_HOME_PAGE_IMAGE = "tree-4c-bc.png"
 
   SECTIONS = {
@@ -88,6 +90,8 @@ class Setting < ApplicationRecord
   attribute :on_day_of_pickup_instructions, :string, default: DEFAULT_PICKUP_INSTRUCTIONS
   attribute :about_event_description, :string, default: DEFAULT_ABOUT_EVENT_DESCRIPTION
   attribute :reservations_closed_message, :string, default: DEFAULT_RESERVATIONS_CLOSED_MESSAGE
+  attribute :donations_page_content, :string, default: DEFAULT_DONATIONS_PAGE_CONTENT
+  attribute :donations_page_how_to_donate, :string, default: DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE
   attribute :time_zone, :string, default: DEFAULT_TIME_ZONE
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
   attribute :is_log_notifications_enabled, :boolean, default: true
@@ -130,6 +134,14 @@ class Setting < ApplicationRecord
 
   def reservations_closed_message_text
     reservations_closed_message.presence || DEFAULT_RESERVATIONS_CLOSED_MESSAGE
+  end
+
+  def donations_page_content_text
+    donations_page_content.presence || DEFAULT_DONATIONS_PAGE_CONTENT
+  end
+
+  def donations_page_how_to_donate_text
+    donations_page_how_to_donate.presence || DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE
   end
 
   def home_page_image_name

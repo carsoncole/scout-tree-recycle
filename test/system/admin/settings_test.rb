@@ -511,6 +511,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "Home Page Image"
       assert_field "About"
       assert_field "On Day of Pickup Instructions"
+      assert_field "Initial Content"
+      assert_field "How to Donate"
       assert_button "Save Site Content"
     end
 
@@ -520,6 +522,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_no_field "Header/Tab Title"
       assert_no_field "About"
       assert_no_field "On Day of Pickup Instructions"
+      assert_no_field "Initial Content"
+      assert_no_field "How to Donate"
     end
   end
 
@@ -530,6 +534,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Header/Tab Title", with: "Home Page Header"
       fill_in "About", with: "About Event Description"
       fill_in "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
+      fill_in "Initial Content", with: "Donations intro copy"
+      fill_in "How to Donate", with: "How to donate copy"
       click_on "Save Site Content"
     end
 
@@ -537,6 +543,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_field "Header/Tab Title", with: "Home Page Header"
     assert_field "About", with: "About Event Description"
     assert_field "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
+    assert_field "Initial Content", with: "Donations intro copy"
+    assert_field "How to Donate", with: "How to donate copy"
   end
 
   test "site content panel updates the home page image" do

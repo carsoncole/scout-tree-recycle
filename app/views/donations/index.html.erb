@@ -9,23 +9,11 @@
                description: "Support our mission." %>
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
-      <p>
-        Thank you for your interest in supporting <%= setting.organization_name %>.
-        Your generosity helps us continue our work of environmental stewardship
-        and community service.
-      </p>
+      <%= simple_format setting.donations_page_content_text %>
 
       <div class="site-callout border-line dark:border-line-dark">
         <h2 class="text-ink dark:text-ink-dark">How to Donate</h2>
-        <p>
-          If you would like to make a donation, you can leave cash or a check in a
-          ziplock bag with your tree on the day of pickup. Our volunteers will
-          collect it along with your tree.
-        </p>
-        <p class="mb-0">
-          Your support makes a real difference in our community and helps us
-          continue this annual fundraiser.
-        </p>
+        <%= simple_format setting.donations_page_how_to_donate_text, class: "last:mb-0" %>
       </div>
     </div>
 

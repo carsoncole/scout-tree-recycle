@@ -58,6 +58,23 @@
         </div>
       </div>
 
+      <div class="admin-form-section border-line dark:border-line-dark">
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">Donations page</h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Copy shown on the public donations page when online donations are disabled.</p>
+
+        <div class="admin-field admin-field--spaced">
+          <%= label_tag "setting[donations_page_content]", "Initial Content", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= text_area_tag "setting[donations_page_content]", setting.donations_page_content, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_DONATIONS_PAGE_CONTENT %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default content.</p>
+        </div>
+
+        <div class="admin-field admin-field--spaced">
+          <%= label_tag "setting[donations_page_how_to_donate]", "How to Donate", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= text_area_tag "setting[donations_page_how_to_donate]", setting.donations_page_how_to_donate, rows: 4, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown under the How to Donate heading. Leave blank to use the default content.</p>
+        </div>
+      </div>
+
       <div class="flex flex-wrap items-center justify-end gap-3">
         <%= submit_tag "Save Site Content", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
       </div>

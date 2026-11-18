@@ -159,6 +159,23 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal image, Setting.first.reload.home_page_image
   end
 
+  test "should update donations page content" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        donations_page_content: "Custom donations intro",
+        donations_page_how_to_donate: "Custom how to donate copy"
+      },
+      section: "site_content"
+    }
+
+    assert_redirected_to admin_settings_section_path("site_content")
+    setting = Setting.first.reload
+    assert_equal "Custom donations intro", setting.donations_page_content
+    assert_equal "Custom how to donate copy", setting.donations_page_how_to_donate
+  end
+
   test "should update site and organization settings" do
     sign_in
 

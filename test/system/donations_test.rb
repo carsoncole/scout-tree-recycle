@@ -22,6 +22,21 @@ class DonationsTest < ApplicationSystemTestCase
     make_system_reservation
     assert_selector "h1", text: "Donations"
     assert_text "Support our mission"
+    assert_text Setting::DEFAULT_DONATIONS_PAGE_CONTENT
+    assert_selector "h2", text: "How to Donate"
+    assert_text "leave cash or a check in a ziplock bag with your tree on the day of pickup"
+  end
+
+  test "new donation page shows custom donations page content" do
+    Setting.instance.update(
+      is_donations_enabled: false,
+      donations_page_content: "Custom donations intro copy",
+      donations_page_how_to_donate: "Custom how to donate copy"
+    )
+    make_system_reservation
+    assert_selector "h2", text: "How to Donate"
+    assert_text "Custom donations intro copy"
+    assert_text "Custom how to donate copy"
   end
 
   test "donating at pickup" do

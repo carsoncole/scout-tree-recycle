@@ -49,6 +49,8 @@ class SettingTest < ActiveSupport::TestCase
       thank_you_message: "",
       on_day_of_pickup_instructions: "",
       reservations_closed_message: "",
+      donations_page_content: "",
+      donations_page_how_to_donate: "",
       time_zone: "",
       default_country: "",
       phone_default_country: "",
@@ -67,6 +69,10 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.thank_you_message.blank?
     assert_equal Setting::DEFAULT_PICKUP_INSTRUCTIONS, setting.pickup_instructions_text
     assert_equal Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE, setting.reservations_closed_message_text
+    assert setting.donations_page_content.blank?
+    assert setting.donations_page_how_to_donate.blank?
+    assert_equal Setting::DEFAULT_DONATIONS_PAGE_CONTENT, setting.donations_page_content_text
+    assert_equal Setting::DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE, setting.donations_page_how_to_donate_text
     assert_equal Setting::DEFAULT_TIME_ZONE, setting.time_zone
     assert_equal Setting::DEFAULT_COUNTRY, setting.default_country
     assert_equal Setting::DEFAULT_PHONE_COUNTRY, setting.phone_default_country

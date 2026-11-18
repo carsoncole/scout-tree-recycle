@@ -1,6 +1,14 @@
 require "test_helper"
 
 class DonationsControllerTest < ActionDispatch::IntegrationTest
+  test "should render unsupported browser page instead of raising for legacy browsers" do
+    get reservation_donations_url(reservations(:donation_1)),
+        headers: { "User-Agent" => "Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0" }
+
+    assert_response :not_acceptable
+    assert_match "Your browser is not supported", response.body
+  end
+
   test "should get index" do
     get reservation_donations_url(reservations(:donation_1))
     assert_response :success

@@ -441,6 +441,22 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal !initial, Setting.instance.reload.is_donations_enabled
   end
 
+  test "webhook URLs use the configured Site URL" do
+    Setting.instance.update(site_url: "https://trees.example.com")
+
+    visit admin_settings_section_path("donations")
+
+    within "section#donations" do
+      assert_field "Webhook URL", with: "https://trees.example.com/api/v1/stripe-webhook"
+    end
+
+    visit admin_settings_section_path("sms")
+
+    within "section#sms" do
+      assert_field "Webhook URL", with: "https://trees.example.com/api/v1/sms/reply"
+    end
+  end
+
   test "location services settings live in the Location Services panel" do
     visit admin_settings_section_path("location_services")
 
@@ -513,6 +529,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "On Day of Pickup Instructions"
       assert_field "Initial Content"
       assert_field "How to Donate"
+      assert_field "New Donations Page Content"
+      assert_text "Markdown supported"
       assert_button "Save Site Content"
     end
 
@@ -524,6 +542,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_no_field "On Day of Pickup Instructions"
       assert_no_field "Initial Content"
       assert_no_field "How to Donate"
+      assert_no_field "New Donations Page Content"
     end
   end
 
@@ -536,6 +555,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
       fill_in "Initial Content", with: "Donations intro copy"
       fill_in "How to Donate", with: "How to donate copy"
+      fill_in "New Donations Page Content", with: "New donations page copy"
       click_on "Save Site Content"
     end
 
@@ -545,6 +565,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_field "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
     assert_field "Initial Content", with: "Donations intro copy"
     assert_field "How to Donate", with: "How to donate copy"
+    assert_field "New Donations Page Content", with: "New donations page copy"
   end
 
   test "site content panel updates the home page image" do

@@ -165,7 +165,8 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     patch admin_setting_path(Setting.first), params: {
       setting: {
         donations_page_content: "Custom donations intro",
-        donations_page_how_to_donate: "Custom how to donate copy"
+        donations_page_how_to_donate: "Custom how to donate copy",
+        donations_new_page_content: "Custom new page content"
       },
       section: "site_content"
     }
@@ -174,6 +175,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     setting = Setting.first.reload
     assert_equal "Custom donations intro", setting.donations_page_content
     assert_equal "Custom how to donate copy", setting.donations_page_how_to_donate
+    assert_equal "Custom new page content", setting.donations_new_page_content
   end
 
   test "should update site and organization settings" do

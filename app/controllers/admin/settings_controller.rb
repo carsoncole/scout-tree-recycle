@@ -173,6 +173,7 @@ class Admin::SettingsController < Admin::BaseController
       :on_day_of_pickup_instructions,
       :donations_page_content,
       :donations_page_how_to_donate,
+      :donations_new_page_content,
       :thank_you_message,
       :is_reservations_open,
       :is_emailing_enabled,

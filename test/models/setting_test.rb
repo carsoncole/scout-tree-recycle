@@ -51,6 +51,7 @@ class SettingTest < ActiveSupport::TestCase
       reservations_closed_message: "",
       donations_page_content: "",
       donations_page_how_to_donate: "",
+      donations_new_page_content: "",
       time_zone: "",
       default_country: "",
       phone_default_country: "",
@@ -71,8 +72,10 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE, setting.reservations_closed_message_text
     assert setting.donations_page_content.blank?
     assert setting.donations_page_how_to_donate.blank?
+    assert setting.donations_new_page_content.blank?
     assert_equal Setting::DEFAULT_DONATIONS_PAGE_CONTENT, setting.donations_page_content_text
     assert_equal Setting::DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE, setting.donations_page_how_to_donate_text
+    assert_equal Setting::DEFAULT_DONATIONS_NEW_PAGE_CONTENT, setting.donations_new_page_content_text
     assert_equal Setting::DEFAULT_TIME_ZONE, setting.time_zone
     assert_equal Setting::DEFAULT_COUNTRY, setting.default_country
     assert_equal Setting::DEFAULT_PHONE_COUNTRY, setting.phone_default_country
@@ -236,5 +239,37 @@ class SettingTest < ActiveSupport::TestCase
       aws_location_index_name: "tree_recycle"
     )
     assert setting.location_service_configured?
+  end
+
+  test "site_url_options is empty without a configured site url" do
+    setting = Setting.instance
+    setting.update(site_url: "")
+
+    assert_equal({}, setting.site_url_options)
+  end
+
+  test "site_url_options parses scheme, host, and non-default port" do
+    setting = Setting.instance
+    setting.update(site_url: "https://trees.example.com:8443")
+
+    assert_equal({ host: "trees.example.com", protocol: "https", port: 8443 }, setting.site_url_options)
+  end
+
+  test "site_url_options assumes https and uses no port for default ports" do
+    setting = Setting.instance
+    setting.update(site_url: "trees.example.com")
+
+    assert_equal({ host: "trees.example.com", protocol: "https", port: nil }, setting.site_url_options)
+
+    setting.update(site_url: "http://trees.example.com")
+
+    assert_equal({ host: "trees.example.com", protocol: "http", port: nil }, setting.site_url_options)
+  end
+
+  test "site_url_options is empty for an invalid site url" do
+    setting = Setting.instance
+    setting.update(site_url: "https://exa mple.com")
+
+    assert_equal({}, setting.site_url_options)
   end
 end

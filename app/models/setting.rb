@@ -22,6 +22,7 @@ class Setting < ApplicationRecord
   DEFAULT_RESERVATIONS_CLOSED_MESSAGE = "Stay tuned for when we open reservations again."
   DEFAULT_DONATIONS_PAGE_CONTENT = "Thank you for your interest in supporting our organization. Your generosity helps us continue our work of environmental stewardship and community service."
   DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE = "If you would like to make a donation, you can leave cash or a check in a ziplock bag with your tree on the day of pickup. Our volunteers will collect it along with your tree.\n\nYour support makes a real difference in our community and helps us continue this annual fundraiser."
+  DEFAULT_DONATIONS_NEW_PAGE_CONTENT = "Our tree pickup service is free, but it's also our biggest fundraiser of the year. Every donation goes straight to our organization and helps our members take part in:\n\n- Summer camps and outdoor adventures\n- Leadership and team-building activities\n- Community service projects"
   DEFAULT_HOME_PAGE_IMAGE = "tree-4c-bc.png"
 
   SECTIONS = {
@@ -92,6 +93,7 @@ class Setting < ApplicationRecord
   attribute :reservations_closed_message, :string, default: DEFAULT_RESERVATIONS_CLOSED_MESSAGE
   attribute :donations_page_content, :string, default: DEFAULT_DONATIONS_PAGE_CONTENT
   attribute :donations_page_how_to_donate, :string, default: DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE
+  attribute :donations_new_page_content, :string, default: DEFAULT_DONATIONS_NEW_PAGE_CONTENT
   attribute :time_zone, :string, default: DEFAULT_TIME_ZONE
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
   attribute :is_log_notifications_enabled, :boolean, default: true
@@ -142,6 +144,10 @@ class Setting < ApplicationRecord
 
   def donations_page_how_to_donate_text
     donations_page_how_to_donate.presence || DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE
+  end
+
+  def donations_new_page_content_text
+    donations_new_page_content.presence || DEFAULT_DONATIONS_NEW_PAGE_CONTENT
   end
 
   def home_page_image_name
@@ -198,6 +204,26 @@ class Setting < ApplicationRecord
 
   def apply_phone_default_country!
     Phonelib.default_country = phone_default_country.presence || "US"
+  end
+
+  # URL options derived from the configured Site URL, used to build public
+  # links (mailer URLs, webhook endpoints). Returns {} when no valid host is
+  # configured so callers fall back to the Rails default URL options. The
+  # :port key is always set (nil for default ports) so route helpers render
+  # exactly this host instead of merging the current request's port.
+  def site_url_options
+    url = site_url.to_s.strip
+    return {} if url.blank?
+
+    url = "https://#{url}" unless url.match?(%r{\Ahttps?://}i)
+    uri = URI.parse(url)
+    return {} if uri.host.blank?
+
+    options = { host: uri.host, protocol: uri.scheme, port: nil }
+    options[:port] = uri.port if uri.port && uri.port != uri.default_port
+    options
+  rescue URI::InvalidURIError
+    {}
   end
 
   def missing_email_settings

@@ -15,6 +15,23 @@ class DonationsTest < ApplicationSystemTestCase
     assert_button "Donate at Pickup"
 
     assert_button "Continue without donation"
+
+    assert_text "Our tree pickup service is free, but it's also our biggest fundraiser of the year. Every donation goes straight to our organization and helps our members take part in:"
+    assert_selector "li", text: "Summer camps and outdoor adventures"
+    assert_selector "li", text: "Community service projects"
+    assert_text "A donation of $25 or whatever you can give makes a real difference."
+  end
+
+  test "new donation page renders custom markdown content" do
+    Setting.instance.update(
+      donations_new_page_content: "**Bold pitch** for [our site](https://example.com)\n\n- First benefit\n- Second benefit"
+    )
+    make_system_reservation
+
+    assert_selector "strong", text: "Bold pitch"
+    assert_link "our site", href: "https://example.com"
+    assert_selector "li", text: "First benefit"
+    assert_selector "li", text: "Second benefit"
   end
 
   test "new donation page with donations disabled" do

@@ -9,11 +9,11 @@
                description: "Support our mission." %>
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
-      <%= simple_format setting.donations_page_content_text %>
+      <%= basic_markdown setting.donations_page_content_text %>
 
       <div class="site-callout border-line dark:border-line-dark">
         <h2 class="text-ink dark:text-ink-dark">How to Donate</h2>
-        <%= simple_format setting.donations_page_how_to_donate_text, class: "last:mb-0" %>
+        <%= basic_markdown setting.donations_page_how_to_donate_text, class: "last:mb-0" %>
       </div>
     </div>
 

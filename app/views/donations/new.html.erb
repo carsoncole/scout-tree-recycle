@@ -10,15 +10,8 @@
                description: "Complete your reservation by choosing a donation option." %>
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
-      <p>
-        Our tree pickup service is free, but it's also our biggest fundraiser of the year.
-        Every donation goes straight to <%= setting.organization_name %> and helps Scouts take part in:
-      </p>
-      <ul>
-        <li>Summer camps and outdoor adventures</li>
-        <li>Leadership and team-building activities</li>
-        <li>Community service projects</li>
-      </ul>
+      <%= basic_markdown setting.donations_new_page_content_text %>
+
       <p class="mb-0">
         A donation of <strong class="font-semibold text-ink dark:text-ink-dark"><%= suggested_donation %></strong>
         or whatever you can give makes a real difference.

@@ -18,9 +18,9 @@ Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of
 
 ## Keeping a quiet site inexpensive
 
-The fundraiser is busy for about six weeks, from late November through early January. The rest of the year the public site gets an occasional visit and reservations are closed.
+This app is typically used for a fundraiser that runs about six weeks. A Christmas tree pickup is often late November through early January, with the site much quieter the rest of the year.
 
-I've used [Neon](https://neon.com) in production because I wanted to use as little resources as possible when the site is not busy, which is most of the year. After a few minutes with no queries, Neon suspends its compute and uses none until the next request starts it again, usually in under a second. The data stays in storage. That fit this app once the pieces that poll all the time were moved off the application database.
+I've used [Neon](https://neon.com) in production because I wanted to use as little resources as possible when the site is not busy, which is most of the year. After a few minutes with no queries, Neon suspends its compute and uses none until the next request starts it again, usually in under a second. The data stays in storage. That fit this app once the pieces that poll all the time were moved off the application database. The application is configured for this approach, but you can still use any PostgresSQL, and there are instructions below on how to revert the code back if you want.
 
 | Data | Where it lives | Why |
 |------|----------------|-----|
@@ -38,6 +38,51 @@ Kamal checks `/up`. That health check does not query Postgres, so the app can st
 Anything that queries the primary database on a timer will keep it active. With Neon, the compute then never suspends. Recurring Solid Queue tasks in `config/recurring.yml` are commented out for that reason. A job that only touches SQLite is fine to run all year.
 
 Development and test use local PostgreSQL. Jobs and cable run in-process with the async adapters there. `bin/setup` needs PostgreSQL.
+
+### Using PostgreSQL for cache, queue, and cable
+
+The usual Rails 8 production setup keeps Solid Cache, Solid Queue, and Solid Cable on the same PostgreSQL server as the application data, each in its own database. This repo points queue and cable at SQLite files and keeps the cache in memory, so a host such as Neon can suspend. To go back to that usual setup, deploy the following and create the three databases on your PostgreSQL server. `db:prepare` loads `db/cache_schema.rb`, `db/queue_schema.rb`, and `db/cable_schema.rb` into them. Jobs still sitting in the SQLite queue file are not copied over.
+
+In `config/database.yml`, give `cache`, `queue`, and `cable` the same connection settings as `primary`, with their own database names:
+
+```yaml
+production:
+  primary: &primary_production
+    <<: *default
+    database: tree_recycle_production
+  cache:
+    <<: *primary_production
+    database: tree_recycle_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: tree_recycle_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: tree_recycle_production_cable
+    migrations_paths: db/cable_migrate
+```
+
+In `config/environments/production.rb`, use the database cache:
+
+```ruby
+config.cache_store = :solid_cache_store
+```
+
+Leave `config.active_job.queue_adapter = :solid_queue` and `config.solid_queue.connects_to = { database: { writing: :queue } }`.
+
+In `config/cache.yml`, point production at the cache database:
+
+```yaml
+production:
+  database: cache
+  <<: *default
+```
+
+`config/cable.yml` can stay on `solid_cable` with `writing: cable`. Once that database is PostgreSQL, cable polling goes there. Leave the Solid Queue plugin in `config/puma.rb` and `SOLID_QUEUE_IN_PUMA` in `config/deploy.yml`.
+
+Queue and cable then poll PostgreSQL continuously, so that server stays active. On Neon, the compute does not suspend.
 
 ## Structure
 

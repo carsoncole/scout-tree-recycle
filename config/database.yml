@@ -27,16 +27,19 @@ production:
     <<: *default
     database: scout_tree_recycle_production
     password: <%= Rails.application.credentials.dig(:neon_database, :password) %>
-  # not used - we are going with :memory_store
-  cache:
-    <<: *primary_production
-    database: scout_tree_recycle_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: scout_tree_recycle_production_queue
+    # Drop idle connections before Neon suspends the compute.
+    idle_timeout: 60
+  queue: &sqlite
+    adapter: sqlite3
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    timeout: 5000
+    database: storage/production_queue.sqlite3
     migrations_paths: db/queue_migrate
+    pragmas:
+      foreign_keys: true
+      journal_mode: wal
+      synchronous: normal
   cable:
-    <<: *primary_production
-    database: scout_tree_recycle_production_cable
+    <<: *sqlite
+    database: storage/production_cable.sqlite3
     migrations_paths: db/cable_migrate

@@ -8,16 +8,12 @@ development:
 test:
   adapter: test
 
-# Idle mode: async stays inside the Puma process and does not poll Postgres.
-# Solid Cable polls about 10 times a second once any admin SMS page is open,
-# which keeps the Neon compute awake. Switch back for the reservation season:
-#
-# production:
-#   adapter: solid_cable
-#   connects_to:
-#     database:
-#       writing: cable
-#   polling_interval: 0.1.seconds
-#   message_retention: 1.day
+# Solid Cable uses the SQLite cable database on the Kamal volume.
+# Polling stays on that file and does not wake Neon.
 production:
-  adapter: async
+  adapter: solid_cable
+  connects_to:
+    database:
+      writing: cable
+  polling_interval: 0.1.seconds
+  message_retention: 1.day

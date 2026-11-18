@@ -47,17 +47,11 @@ Rails.application.configure do
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
-  # Replace the default in-process memory cache store with a durable alternative.
-  # using memory_store vs solid_cache_store to avoid constantly pinging db
-  # during low activity we want the db to go dormant
+  # In-process cache. One web process, and this avoids a Solid Cache database.
   config.cache_store = :memory_store
 
-  # Replace the default in-process and non-durable queuing backend for Active Job.
-  # queue_adapter settings to reduce db consumption (if needed)
-  # :async when reservations closed;
-  # :solid_queue when reservations are open
-  config.active_job.queue_adapter =  :async #:solid_queue
-
+  # Solid Queue stores jobs in SQLite (see database.yml), not Neon.
+  config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Ignore bad email addresses and do not raise email delivery errors.

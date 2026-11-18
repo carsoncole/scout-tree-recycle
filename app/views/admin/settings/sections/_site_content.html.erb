@@ -80,6 +80,12 @@
           <%= text_area_tag "setting[donations_new_page_content]", setting.donations_new_page_content, rows: 8, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_DONATIONS_NEW_PAGE_CONTENT %>
           <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default content. Supports basic markdown — see Markdown supported above.</p>
         </div>
+
+        <div class="admin-field admin-field--spaced">
+          <%= label_tag "setting[donations_success_page_content]", "Donation Success Content", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= text_area_tag "setting[donations_success_page_content]", setting.donations_success_page_content, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown on the donation thank-you page after giving online. Leave blank to use the default content. Supports basic markdown — see Markdown supported above.</p>
+        </div>
       </div>
 
       <div class="flex flex-wrap items-center justify-end gap-3">

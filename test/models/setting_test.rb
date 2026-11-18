@@ -52,6 +52,7 @@ class SettingTest < ActiveSupport::TestCase
       donations_page_content: "",
       donations_page_how_to_donate: "",
       donations_new_page_content: "",
+      donations_success_page_content: "",
       time_zone: "",
       default_country: "",
       phone_default_country: "",
@@ -73,9 +74,11 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.donations_page_content.blank?
     assert setting.donations_page_how_to_donate.blank?
     assert setting.donations_new_page_content.blank?
+    assert setting.donations_success_page_content.blank?
     assert_equal Setting::DEFAULT_DONATIONS_PAGE_CONTENT, setting.donations_page_content_text
     assert_equal Setting::DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE, setting.donations_page_how_to_donate_text
     assert_equal Setting::DEFAULT_DONATIONS_NEW_PAGE_CONTENT, setting.donations_new_page_content_text
+    assert_equal Setting::DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT, setting.donations_success_page_content_text
     assert_equal Setting::DEFAULT_TIME_ZONE, setting.time_zone
     assert_equal Setting::DEFAULT_COUNTRY, setting.default_country
     assert_equal Setting::DEFAULT_PHONE_COUNTRY, setting.phone_default_country

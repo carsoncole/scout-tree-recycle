@@ -23,6 +23,7 @@ class Setting < ApplicationRecord
   DEFAULT_DONATIONS_PAGE_CONTENT = "Thank you for your interest in supporting our organization. Your generosity helps us continue our work of environmental stewardship and community service."
   DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE = "If you would like to make a donation, you can leave cash or a check in a ziplock bag with your tree on the day of pickup. Our volunteers will collect it along with your tree.\n\nYour support makes a real difference in our community and helps us continue this annual fundraiser."
   DEFAULT_DONATIONS_NEW_PAGE_CONTENT = "Our tree pickup service is free, but it's also our biggest fundraiser of the year. Every donation goes straight to our organization and helps our members take part in:\n\n- Summer camps and outdoor adventures\n- Leadership and team-building activities\n- Community service projects"
+  DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT = "Thanks to you, our organization can keep adventuring, leading, and giving back to the community. We'll put your donation to good use."
   DEFAULT_HOME_PAGE_IMAGE = "tree-4c-bc.png"
 
   SECTIONS = {
@@ -94,6 +95,7 @@ class Setting < ApplicationRecord
   attribute :donations_page_content, :string, default: DEFAULT_DONATIONS_PAGE_CONTENT
   attribute :donations_page_how_to_donate, :string, default: DEFAULT_DONATIONS_PAGE_HOW_TO_DONATE
   attribute :donations_new_page_content, :string, default: DEFAULT_DONATIONS_NEW_PAGE_CONTENT
+  attribute :donations_success_page_content, :string, default: DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT
   attribute :time_zone, :string, default: DEFAULT_TIME_ZONE
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
   attribute :is_log_notifications_enabled, :boolean, default: true
@@ -148,6 +150,10 @@ class Setting < ApplicationRecord
 
   def donations_new_page_content_text
     donations_new_page_content.presence || DEFAULT_DONATIONS_NEW_PAGE_CONTENT
+  end
+
+  def donations_success_page_content_text
+    donations_success_page_content.presence || DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT
   end
 
   def home_page_image_name

@@ -34,6 +34,25 @@ class DonationsTest < ApplicationSystemTestCase
     assert_selector "li", text: "Second benefit"
   end
 
+  test "donation success page shows default content" do
+    visit success_path
+
+    assert_selector "h1", text: "Thank you for your donation"
+    assert_text "Thanks to you, our organization can keep adventuring, leading, and giving back to the community. We'll put your donation to good use."
+  end
+
+  test "donation success page renders custom markdown content" do
+    Setting.instance.update(
+      donations_success_page_content: "**Thanks a bunch!**\n\n- First priority\n- Second priority"
+    )
+    visit reservation_success_path(reservations(:donation_1))
+
+    assert_selector "strong", text: "Thanks a bunch!"
+    assert_selector "li", text: "First priority"
+    assert_selector "li", text: "Second priority"
+    assert_link "View your reservation"
+  end
+
   test "new donation page with donations disabled" do
     Setting.instance.update(is_donations_enabled: false)
     make_system_reservation

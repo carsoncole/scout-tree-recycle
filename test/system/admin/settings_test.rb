@@ -530,6 +530,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "Initial Content"
       assert_field "How to Donate"
       assert_field "New Donations Page Content"
+      assert_field "Donation Success Content"
       assert_text "Markdown supported"
       assert_button "Save Site Content"
     end
@@ -543,6 +544,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_no_field "Initial Content"
       assert_no_field "How to Donate"
       assert_no_field "New Donations Page Content"
+      assert_no_field "Donation Success Content"
     end
   end
 
@@ -556,6 +558,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Initial Content", with: "Donations intro copy"
       fill_in "How to Donate", with: "How to donate copy"
       fill_in "New Donations Page Content", with: "New donations page copy"
+      fill_in "Donation Success Content", with: "Donation success copy"
       click_on "Save Site Content"
     end
 
@@ -566,6 +569,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_field "Initial Content", with: "Donations intro copy"
     assert_field "How to Donate", with: "How to donate copy"
     assert_field "New Donations Page Content", with: "New donations page copy"
+    assert_field "Donation Success Content", with: "Donation success copy"
   end
 
   test "site content panel updates the home page image" do

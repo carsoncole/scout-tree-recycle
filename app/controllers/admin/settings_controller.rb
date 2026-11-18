@@ -174,6 +174,7 @@ class Admin::SettingsController < Admin::BaseController
       :donations_page_content,
       :donations_page_how_to_donate,
       :donations_new_page_content,
+      :donations_success_page_content,
       :thank_you_message,
       :is_reservations_open,
       :is_emailing_enabled,

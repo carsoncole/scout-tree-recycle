@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_18_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_18_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -260,6 +260,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_18_000002) do
     t.text "donations_page_content"
     t.text "donations_page_how_to_donate"
     t.text "donations_new_page_content"
+    t.text "donations_success_page_content"
   end
 
   create_table "sms", force: :cascade do |t|

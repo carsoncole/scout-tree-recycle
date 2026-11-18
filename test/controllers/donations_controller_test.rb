@@ -19,6 +19,11 @@ class DonationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get success" do
+    get reservation_success_url(reservations(:donation_1))
+    assert_response :success
+  end
+
   test "should get cash or check" do
     post reservation_cash_or_check_url(reservations(:donation_1))
     assert_redirected_to reservation_confirmation_url(reservations(:donation_1))

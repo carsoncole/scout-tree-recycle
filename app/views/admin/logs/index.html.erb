@@ -27,39 +27,44 @@
   <div class="flex flex-col gap-6">
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-table-wrap">
-        <table class="admin-table text-ink dark:text-ink-dark">
+        <table class="admin-table table-fixed text-ink dark:text-ink-dark">
           <thead>
             <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Timestamp</th>
-              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Severity</th>
-              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Message</th>
-              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Error type</th>
-              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Environment</th>
-              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Context</th>
-              <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Status</th>
+              <th scope="col" class="w-[10.5rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Timestamp</th>
+              <th scope="col" class="w-24 border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Severity</th>
+              <th scope="col" class="w-[20rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Message</th>
+              <th scope="col" class="w-[12rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Error type</th>
+              <th scope="col" class="w-[8rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Environment</th>
+              <th scope="col" class="w-[24rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Context</th>
+              <th scope="col" class="w-[6.5rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Status</th>
+              <th scope="col" class="w-[6rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
             </tr>
           </thead>
           <tbody>
             <% @logs.each do |log| %>
               <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
-                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark"><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark">
                   <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
                 </td>
                 <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
-                  <%= link_to log.message&.truncate(100), admin_log_path(log), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                  <span class="block truncate" title="<%= log.message %>"><%= log.message %></span>
                 </td>
                 <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= log.error_type %></td>
-                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= log.environment %></td>
+                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark"><%= log.environment %></td>
                 <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
-                  <% if log.context.present? %>
-                    <pre class="admin-code bg-stone text-ink dark:bg-stone-dark dark:text-ink-dark"><%= JSON.pretty_generate(log.context) %></pre>
+                  <% context_json = admin_log_context_json(log) %>
+                  <% if context_json.present? %>
+                    <code class="block truncate font-mono text-[0.8rem] text-ink-soft dark:text-ink-soft-dark" title="<%= context_json %>"><%= context_json %></code>
                   <% end %>
                 </td>
-                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark">
                   <span class="<%= admin_handled_badge(log.handled) %>">
                     <%= log.handled ? "Handled" : "Unhandled" %>
                   </span>
+                </td>
+                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark">
+                  <%= link_to "View", admin_log_path(log), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
                 </td>
               </tr>
             <% end %>

@@ -197,6 +197,14 @@ module AdminHelper
     admin_badge_class(handled ? "positive" : "danger")
   end
 
+  # Compact one-line JSON for a log's context so index table cells stay
+  # scannable. Full pretty-printed context lives on the log's show page.
+  def admin_log_context_json(log)
+    return if log.context.blank?
+
+    log.context.is_a?(String) ? log.context : JSON.generate(log.context)
+  end
+
   def admin_trash_icon
     tag.svg(
       viewBox: "0 0 24 24",

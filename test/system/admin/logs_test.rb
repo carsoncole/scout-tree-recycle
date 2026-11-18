@@ -18,12 +18,27 @@ class Admin::LogsTest < ApplicationSystemTestCase
     assert_text "ArgumentError"
   end
 
+  test "context renders as a compact one-line preview instead of a JSON block" do
+    visit admin_logs_url
+
+    assert_selector "td code[title]", text: /admin@example.com/
+    assert_no_selector "td pre"
+  end
+
   test "deleting a log" do
     visit admin_logs_url
-    click_on "missing keyword"
+    within "tr", text: "missing keyword" do
+      click_on "View"
+    end
     click_on "Delete Log"
     accept_confirm
     assert_text "Log has been deleted successfully."
+  end
+
+  test "each row links to the log's show page" do
+    visit admin_logs_url
+
+    assert_selector "tbody a", exact_text: "View", count: Log.count
   end
 
   test "deleting all logs" do

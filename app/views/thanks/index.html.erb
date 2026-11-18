@@ -16,7 +16,7 @@
     <% if @thanks.any? %>
       <ul class="mt-10 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-3">
         <% @thanks.each do |thank| %>
-          <li class="flex flex-col overflow-hidden rounded-lg border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+          <li class="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-transform duration-150 hover:-translate-y-0.5 dark:border-line-dark dark:bg-surface-dark">
             <div class="flex h-40 items-center justify-center border-b border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
               <%= image_tag image_thank_path(thank, v: thank.updated_at.to_i),
                             alt: "Supporter logo",

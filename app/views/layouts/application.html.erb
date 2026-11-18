@@ -4,8 +4,8 @@
     <title><%= content_for(:title) || Setting.instance&.home_page_header.presence || "Tree Recycle" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="<%= content_for?(:description) ? yield(:description) : setting&.about_event_description_text %>">
-    <meta name="theme-color" content="#516b58">
-    <meta name="theme-color" content="#171915" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#4c6a57">
+    <meta name="theme-color" content="#171a14" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>

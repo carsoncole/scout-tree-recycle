@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_220247) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_221000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -254,7 +254,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_220247) do
     t.text "missing_tree_sms_message", default: "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
     t.text "missing_tree_sms_follow_up_message", default: "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
     t.string "phone_default_country", default: "US"
-    t.string "home_page_image", default: "fleur-de-lis-2024-logo-4c-bc.png", null: false
+    t.string "home_page_image", default: "tree-4c-bc.png", null: false
     t.boolean "is_log_notifications_enabled", default: true, null: false
     t.text "thank_you_message", default: "We want to say thank you to our community and to the supporters who make this fundraiser possible. Their generosity supports our Scouting program and the environment."
   end

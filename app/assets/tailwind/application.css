@@ -8,19 +8,23 @@
  * recipes documented in app/views/AGENTS.md.
  */
 @theme {
+  --font-sans: "Figtree", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+
   /* Light */
-  --color-page: #f4f3ed;
-  --color-surface: #fbfaf5;
-  --color-ink: #252721;
-  --color-ink-soft: #5d625a;
-  --color-muted: #7c8178;
-  --color-line: #dfded5;
-  --color-line-strong: #c9c9bf;
-  --color-stone: #ece9e1;
-  --color-cool: #eef0eb;
-  --color-sage: #516b58;
-  --color-sage-deep: #405645;
-  --color-sage-soft: #e6ece4;
+  --color-page: #f6f3ea;
+  --color-surface: #fefdfa;
+  --color-ink: #262a20;
+  --color-ink-soft: #5c6155;
+  --color-muted: #7e8273;
+  --color-line: #e3dfd2;
+  --color-line-strong: #c8c4b2;
+  --color-stone: #edeade;
+  --color-cool: #eef0e6;
+  --color-sage: #4c6a57;
+  --color-sage-deep: #3a5342;
+  --color-sage-soft: #e7ecdc;
+  --color-fir: #2f4a39;
   --color-danger: #8a443c;
   --color-danger-border: #a2544a;
   --color-danger-bg: #f6e9e6;
@@ -38,18 +42,19 @@
   --color-danger-row: #f7eae7;
 
   /* Dark */
-  --color-page-dark: #171915;
-  --color-surface-dark: #22241e;
-  --color-ink-dark: #e7e5dc;
-  --color-ink-soft-dark: #b0aea4;
-  --color-muted-dark: #8a8980;
-  --color-line-dark: #33352e;
-  --color-line-strong-dark: #44463f;
-  --color-stone-dark: #2a2c26;
-  --color-cool-dark: #24261f;
-  --color-sage-dark: #8fb39a;
-  --color-sage-deep-dark: #a8c9b2;
-  --color-sage-soft-dark: #2a342d;
+  --color-page-dark: #171a14;
+  --color-surface-dark: #20241c;
+  --color-ink-dark: #e9e6da;
+  --color-ink-soft-dark: #b2b0a3;
+  --color-muted-dark: #8b8a7e;
+  --color-line-dark: #33362b;
+  --color-line-strong-dark: #454838;
+  --color-stone-dark: #2a2d22;
+  --color-cool-dark: #23261c;
+  --color-sage-dark: #93b897;
+  --color-sage-deep-dark: #aacdb0;
+  --color-sage-soft-dark: #2a352c;
+  --color-fir-dark: #26382c;
   --color-danger-dark: #e0958d;
   --color-danger-border-dark: #d17a70;
   --color-danger-bg-dark: #3a2826;

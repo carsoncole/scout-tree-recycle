@@ -1,6 +1,6 @@
-<header class="site-header border-b border-line bg-page dark:border-line-dark dark:bg-page-dark">
+<header class="site-header border-b border-line bg-page/85 dark:border-line-dark dark:bg-page-dark/85">
   <div class="site-header-inner">
-    <%= link_to(setting&.home_page_header.presence || "Tree Recycle", root_path, class: "site-wordmark text-ink hover:text-sage-deep dark:text-ink-dark dark:hover:text-sage-deep-dark") %>
+    <%= link_to(setting&.organization_name.presence || setting&.home_page_header.presence || "Tree Recycle", root_path, class: "site-wordmark text-ink hover:text-sage-deep dark:text-ink-dark dark:hover:text-sage-deep-dark") %>
 
     <nav class="site-nav" aria-label="Primary">
       <%= link_to "About", about_path, class: "site-nav-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>

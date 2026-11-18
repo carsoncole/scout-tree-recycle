@@ -46,6 +46,16 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       assert_not_includes response.body, Setting::DEFAULT_THANK_YOU_MESSAGE
     end
 
+    test "should display the organization name in the site header" do
+      Setting.instance.update!(organization_name: "Troop 200", home_page_header: "Holiday Tree Recycle")
+
+      get root_url
+
+      assert_response :success
+      assert_select ".site-wordmark", text: "Troop 200"
+      assert_select ".site-wordmark", text: "Holiday Tree Recycle", count: 0
+    end
+
     test "should get privacy" do
       get privacy_url
       assert_response :success

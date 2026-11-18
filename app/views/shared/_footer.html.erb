@@ -1,18 +1,18 @@
-<footer class="site-footer border-line dark:border-line-dark">
-  <div class="site-footer-inner text-muted dark:text-muted-dark">
+<footer class="site-footer border-t border-fir bg-fir dark:border-fir-dark dark:bg-fir-dark">
+  <div class="site-footer-inner text-sage-soft/85">
     <p>
-      <%= render "shared/scouting_america_logo", logo_class: "site-footer-logo", picture_class: "site-footer-logo-picture", alt: "Scouting America" %>
+      <%= render "shared/scouting_america_logo", logo_class: "site-footer-logo", picture_class: "site-footer-logo-picture", alt: "Scouting America", reversed: true %>
       <% if setting&.organization_url.present? %>
-        <%= link_to(setting.organization_name.presence || "Tree Recycle", setting.organization_url, target: "_blank", rel: "noopener", class: "dark:text-sage-deep-dark dark:hover:text-ink-dark") %>
+        <%= link_to(setting.organization_name.presence || "Tree Recycle", setting.organization_url, target: "_blank", rel: "noopener", class: "font-semibold text-surface hover:text-sage-soft") %>
       <% else %>
-        <span class="dark:text-ink-soft-dark"><%= setting&.organization_name.presence || "Tree Recycle" %></span>
+        <span class="font-semibold text-surface"><%= setting&.organization_name.presence || "Tree Recycle" %></span>
       <% end %>
     </p>
 
     <nav class="site-footer-links" aria-label="Footer">
-      <%= link_to "About this app", credits_path, class: "dark:text-muted-dark dark:hover:text-ink-dark" %>
-      <%= link_to "Thank You", thanks_path, class: "dark:text-muted-dark dark:hover:text-ink-dark" %>
-      <%= link_to "Privacy Policy", privacy_path, class: "dark:text-muted-dark dark:hover:text-ink-dark" %>
+      <%= link_to "About this app", credits_path, class: "hover:text-surface" %>
+      <%= link_to "Thank You", thanks_path, class: "hover:text-surface" %>
+      <%= link_to "Privacy Policy", privacy_path, class: "hover:text-surface" %>
     </nav>
   </div>
 </footer>

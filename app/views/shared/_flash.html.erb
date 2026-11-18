@@ -2,8 +2,8 @@
   <% next if message.blank? %>
 
   <div class="flash" data-controller="dismissible">
-    <div class="site-notice site-notice--<%= type %> dark:border-line-dark dark:bg-sage-soft-dark dark:text-ink-dark dark:border-l-sage-dark" role="<%= type.to_s == "notice" ? "status" : "alert" %>">
-      <p class="site-notice-text text-ink dark:text-ink-dark"><%= message %></p>
+    <div class="site-notice site-notice--<%= type %> dark:border-line-dark dark:text-ink-dark <%= type.to_s == "notice" ? "dark:bg-sage-soft-dark dark:border-l-sage-dark" : "dark:bg-stone-dark dark:border-l-ink-soft-dark" %>" role="<%= type.to_s == "notice" ? "status" : "alert" %>">
+      <p class="site-notice-text text-ink"><%= message %></p>
       <button type="button"
               class="site-notice-dismiss text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark"
               aria-label="Dismiss message"

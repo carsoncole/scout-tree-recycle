@@ -26,9 +26,12 @@
     </div>
 
     <div class="donation-options">
-      <div class="site-choice-grid site-choice-grid--two border-line dark:border-line-dark">
-        <section class="site-choice border-line dark:border-line-dark" aria-labelledby="donate-online">
-          <h2 id="donate-online" class="text-ink dark:text-ink-dark">Donate Online</h2>
+      <div class="site-choice-grid site-choice-grid--two site-choice-grid--cards">
+        <section class="site-choice site-choice--card rounded-2xl border border-sage bg-sage-soft/40 dark:border-sage-dark dark:bg-sage-soft-dark/40" aria-labelledby="donate-online">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="donate-online" class="text-ink dark:text-ink-dark">Donate Online</h2>
+            <span class="inline-flex items-center rounded-full bg-sage px-3 py-1 text-xs font-bold uppercase tracking-[0.08em] text-surface dark:bg-sage-dark dark:text-page-dark">Suggested <%= suggested_donation %></span>
+          </div>
           <p class="text-ink-soft dark:text-ink-soft-dark">Quick, secure, and convenient.</p>
           <%= form_with url: reservation_donations_path(@reservation),
                         method: :post,
@@ -38,7 +41,7 @@
           <% end %>
         </section>
 
-        <section class="site-choice border-line dark:border-line-dark" aria-labelledby="donate-pickup">
+        <section class="site-choice site-choice--card rounded-2xl border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" aria-labelledby="donate-pickup">
           <h2 id="donate-pickup" class="text-ink dark:text-ink-dark">Donate at Pickup</h2>
           <p class="text-ink-soft dark:text-ink-soft-dark">Leave cash or a check with your tree.</p>
           <%= form_with url: reservation_cash_or_check_path(reservation_id: @reservation.id),
@@ -50,7 +53,7 @@
         </section>
       </div>
 
-      <section class="site-choice border-line dark:border-line-dark" aria-labelledby="no-donation">
+      <section class="site-choice site-choice--quiet border-t border-line text-center dark:border-line-dark" aria-labelledby="no-donation">
         <h2 id="no-donation" class="text-ink dark:text-ink-dark">Continue without a donation</h2>
         <p class="text-ink-soft dark:text-ink-soft-dark">You can still reserve a tree pickup. Donations are always optional.</p>
         <%= form_with url: reservation_no_donation_path(reservation_id: @reservation.id),

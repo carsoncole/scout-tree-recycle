@@ -3,17 +3,16 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <div class="site-confirmation-mark border border-line-strong bg-sage-soft text-sage-deep dark:border-line-strong-dark dark:bg-sage-soft-dark dark:text-sage-deep-dark" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="9"></circle>
+    <div class="site-confirmation-mark bg-sage text-surface ring-4 ring-sage-soft dark:bg-sage-dark dark:text-page-dark dark:ring-sage-soft-dark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="m8.5 12.3 2.3 2.3 4.8-5"></path>
       </svg>
     </div>
 
     <%= render "shared/page_header",
-               eyebrow: "You’re all set",
+               eyebrow: "You're all set",
                title: "Reservation Confirmed",
-               description: "Thank you, #{@reservation.name}. We’ll take it from here." %>
+               description: "Thank you, #{@reservation.name}. We'll take it from here." %>
 
     <section class="site-section border-line dark:border-line-dark" aria-labelledby="reservation-details">
       <h2 id="reservation-details" class="site-subtitle text-ink dark:text-ink-dark">Reservation details</h2>
@@ -47,7 +46,7 @@
             <dt class="site-detail-label dark:text-muted-dark">Mobile</dt>
             <dd class="site-detail-value dark:text-ink-dark">
               <%= Phonelib.parse(@reservation.mobile).national %>
-              <span class="site-detail-note text-ink-soft dark:text-ink-soft-dark">We’ll only message this number if we can’t find your tree.</span>
+              <span class="site-detail-note text-ink-soft dark:text-ink-soft-dark">We'll only message this number if we can't find your tree.</span>
             </dd>
           </div>
         <% end %>
@@ -64,12 +63,12 @@
     <section class="site-section border-line dark:border-line-dark" aria-labelledby="before-pickup">
       <h2 id="before-pickup" class="site-subtitle text-ink dark:text-ink-dark">Before pickup</h2>
       <ol class="site-steps">
-        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">You’ll receive a confirmation email shortly.</li>
-        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">
+        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">You'll receive a confirmation email shortly.</li>
+        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">
           Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %>
           on <%= setting.event_pickup_start.strftime("%A, %B %-e") %>.
         </li>
-        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Remove all decorations and tinsel from your tree.</li>
+        <li class="site-step text-ink-soft border-line before:bg-sage-soft before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:bg-sage-soft-dark dark:before:text-sage-deep-dark">Remove all decorations and tinsel from your tree.</li>
       </ol>
     </section>
 

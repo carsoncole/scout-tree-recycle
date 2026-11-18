@@ -1,4 +1,8 @@
 <picture class="<%= picture_class %>">
-  <source srcset="<%= image_path("fleur-de-lis-2024-logo-reversed-bc.png") %>" media="(prefers-color-scheme: dark)">
-  <%= image_tag "fleur-de-lis-2024-logo-4c-bc.png", alt: alt, class: logo_class %>
+  <% if local_assigns[:reversed] %>
+    <%= image_tag "fleur-de-lis-2024-logo-reversed-bc.png", alt: alt, class: logo_class %>
+  <% else %>
+    <source srcset="<%= image_path("fleur-de-lis-2024-logo-reversed-bc.png") %>" media="(prefers-color-scheme: dark)">
+    <%= image_tag "fleur-de-lis-2024-logo-4c-bc.png", alt: alt, class: logo_class %>
+  <% end %>
 </picture>

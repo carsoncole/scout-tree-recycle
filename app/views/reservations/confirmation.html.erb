@@ -38,7 +38,17 @@
 
         <div class="site-detail border-line dark:border-line-dark">
           <dt class="site-detail-label dark:text-muted-dark">Email</dt>
-          <dd class="site-detail-value dark:text-ink-dark"><%= @reservation.email %></dd>
+          <dd class="site-detail-value dark:text-ink-dark">
+            <%= @reservation.email %>
+            <% if @reservation.mobile.blank? %>
+              <span class="site-detail-note text-ink-soft dark:text-ink-soft-dark">We’ll email you here if we can’t find your tree.</span>
+              <span class="site-detail-note text-sage-deep dark:text-sage-deep-dark">
+                A mobile number is really helpful — if we can’t find your tree, a quick text reaches you faster than email. You can
+                <%= link_to "add one", edit_reservation_path(@reservation), class: "font-medium underline decoration-sage-soft underline-offset-4 hover:decoration-sage dark:decoration-sage-soft-dark dark:hover:decoration-sage-dark" %>
+                when you edit your reservation.
+              </span>
+            <% end %>
+          </dd>
         </div>
 
         <% if @reservation.mobile.present? %>
@@ -65,16 +75,16 @@
       <ol class="site-steps">
         <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
           <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
-          You'll receive a confirmation email shortly.
+          You will receive a confirmation email shortly.
+        </li>
+        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+          Remove all the decorations and tinsel from your tree.
         </li>
         <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
           <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
           Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %>
           on <%= setting.event_pickup_start.strftime("%A, %B %-e") %>.
-        </li>
-        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
-          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
-          Remove all decorations and tinsel from your tree.
         </li>
       </ol>
     </section>

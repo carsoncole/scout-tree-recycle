@@ -51,7 +51,11 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = :solid_queue
+  # queue_adapter settings to reduce db consumption (if needed)
+  # :async when reservations closed;
+  # :solid_queue when reservations are open
+  config.active_job.queue_adapter =  :async #:solid_queue
+
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Ignore bad email addresses and do not raise email delivery errors.

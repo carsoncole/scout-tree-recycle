@@ -32,26 +32,15 @@ registry:
     - KAMAL_REGISTRY_PASSWORD
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
+# Idle mode: do not set SOLID_QUEUE_IN_PUMA. config/puma.rb only starts Solid Queue
+# when it is set, and that supervisor polls Postgres continuously. Set it when
+# reservations open, and uncomment the solid_queue plugin in config/puma.rb in the
+# same deploy. Other commented keys that belong under clear: JOB_CONCURRENCY,
+# WEB_CONCURRENCY, DB_HOST, RAILS_LOG_LEVEL.
 env:
   secret:
     - RAILS_MASTER_KEY
-  clear:
-    # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
-    # When you start using multiple servers, you should split out job processing to a dedicated machine.
-    SOLID_QUEUE_IN_PUMA: true
-
-    # Set number of processes dedicated to Solid Queue (default: 1)
-    # JOB_CONCURRENCY: 3
-
-    # Set number of cores available to the application on each server (default: 1).
-    # WEB_CONCURRENCY: 2
-
-    # Match this to any external database server to configure Active Record correctly
-    # Use tree_recycle-db for a db accessory server on same machine via local kamal docker network.
-    # DB_HOST: 192.168.0.2
-
-    # Log everything from Rails
-    # RAILS_LOG_LEVEL: debug
+  clear: {}
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.

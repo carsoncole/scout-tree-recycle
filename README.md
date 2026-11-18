@@ -7,7 +7,7 @@ Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of
 ## Stack
 
 - Ruby 3.4 / Rails 8.1
-- PostgreSQL for application data. Development and test use a local server. Production uses a hosted Postgres that can suspend, such as [Neon](https://neon.com).
+- PostgreSQL for application data. Development and test use a local server.
 - SQLite for [Solid Queue](https://github.com/rails/solid_queue) and [Solid Cable](https://github.com/rails/solid_cable) in production
 - An in-memory cache in production (`memory_store`)
 - Puma, one process, with the Solid Queue supervisor inside that process
@@ -18,24 +18,26 @@ Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of
 
 ## Keeping a quiet site inexpensive
 
-The fundraiser is busy for about six weeks, from late November through early January. The rest of the year the public site gets an occasional visit and reservations are closed. Production is arranged so one small server and a database that bills for active time can carry that.
+The fundraiser is busy for about six weeks, from late November through early January. The rest of the year the public site gets an occasional visit and reservations are closed.
+
+I've used [Neon](https://neon.com) in production because I wanted to use as little resources as possible when the site is not busy, which is most of the year. After a few minutes with no queries, Neon suspends its compute and uses none until the next request starts it again, usually in under a second. The data stays in storage. That fit this app once the pieces that poll all the time were moved off the application database.
 
 | Data | Where it lives | Why |
 |------|----------------|-----|
-| Reservations, donations, users, settings, SMS history | PostgreSQL. This deployment uses Neon. | This is the data that has to last. After a few minutes with no queries, Neon suspends the compute and keeps the data in storage. The next request starts the compute again, usually in under a second. Storage is billed all year. Compute is billed while the database is awake. |
-| Background jobs (mail, SMS, geocoding) | `storage/production_queue.sqlite3` on the Kamal volume `tree_recycle_storage` | Solid Queue polls several times a second. Those polls stay on the droplet's disk, so they do not keep Neon awake. A `kamal deploy` keeps the file. Replacing the droplet drops only jobs that had not finished. |
+| Reservations, donations, users, settings, SMS history | PostgreSQL | This is the data that has to last. |
+| Background jobs (mail, SMS, geocoding) | `storage/production_queue.sqlite3` on the Kamal volume `tree_recycle_storage` | Solid Queue polls several times a second. Those polls stay on the server's disk. A `kamal deploy` keeps the file. Replacing the server drops only jobs that had not finished. |
 | Live admin updates (Solid Cable) | `storage/production_cable.sqlite3` on the same volume | An open Admin SMS page subscribes to Action Cable. That traffic stays on SQLite too. |
 | Fragment cache | Memory inside the Puma process | One process does not need a shared cache. A restart clears it. |
 
-`config/database.yml` sets `idle_timeout: 60` on the primary connection. Rails closes unused Postgres connections before Neon suspends, and the next request opens a new one.
+`config/database.yml` sets `idle_timeout: 60` on the primary connection. Rails closes unused Postgres connections, and the next request opens a new one. With Neon, that lets the compute suspend.
 
 Leave `WEB_CONCURRENCY` unset. Puma stays a single process and shares the SQLite files with Solid Queue (`SOLID_QUEUE_IN_PUMA`). The files use WAL mode so the web process and the forked worker can both write. A second Puma worker, or a separate job server, needs a shared database for the queue and cable. SQLite on this volume is local to the one web container.
 
-Kamal checks `/up`. That health check does not query Postgres, so the app can stay up while Neon sleeps. A page view, a webhook, or a job that reads application data wakes Neon. After about five minutes of quiet, the compute suspends again. An Admin SMS tab left open does not prevent that.
+Kamal checks `/up`. That health check does not query Postgres, so the app can stay up while the database is idle. A page view, a webhook, or a job that reads application data wakes it. With Neon, about five minutes of quiet suspends the compute, and it uses no compute until the next request. An Admin SMS tab left open does not prevent that.
 
-Anything that queries the primary database on a timer will keep the compute awake. Recurring Solid Queue tasks in `config/recurring.yml` are commented out for that reason. A job that only touches SQLite is fine to run all year.
+Anything that queries the primary database on a timer will keep it active. With Neon, the compute then never suspends. Recurring Solid Queue tasks in `config/recurring.yml` are commented out for that reason. A job that only touches SQLite is fine to run all year.
 
-Development and test do not use this split. They use local PostgreSQL, and jobs and cable run in-process with the async adapters. `bin/setup` does not need Neon or SQLite.
+Development and test use local PostgreSQL. Jobs and cable run in-process with the async adapters there. `bin/setup` needs PostgreSQL.
 
 ## Structure
 
@@ -159,7 +161,7 @@ Deploy as one Docker container with Kamal. Configure `config/deploy.yml` and `.k
 
 You need:
 
-- A PostgreSQL database that can suspend when idle. Neon is the one this app is set up for. Put the host, database name, and username in `config/database.yml`, and the password in Rails credentials under `neon_database.password` (`bin/rails credentials:edit`).
+- A PostgreSQL database. Set the host, database name, and username in `config/database.yml`. The password is read from Rails credentials at `neon_database.password` (`bin/rails credentials:edit`).
 - A container registry, and `KAMAL_REGISTRY_PASSWORD` in `.kamal/secrets`.
 - `RAILS_MASTER_KEY` available to the container (also in `.kamal/secrets`). Kamal passes it through as a secret env var.
 

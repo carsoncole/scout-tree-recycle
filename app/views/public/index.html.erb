@@ -1,7 +1,9 @@
+<% pickup_full_date = setting.event_pickup_start.strftime("%A, %B %-d, %Y") %>
 <% pickup_date = setting.event_pickup_start.strftime("%B %-d, %Y") %>
 <% pickup_day = setting.event_pickup_start.strftime("%A, %B %-d") %>
 <% pickup_start_time = setting.event_pickup_start.strftime("%-l:%M%P") %>
 <% sign_up_deadline = setting.event_sign_up_deadline.strftime("%B %-d, %Y at %-l:%M%P") %>
+<% service_area = [ setting.default_city, setting.default_state ].compact_blank.join(", ") %>
 <% content_for :title, "Make a Reservation | #{setting&.home_page_header || "Tree Recycle"}" %>
 <% content_for :description, "Schedule a Christmas tree pickup for #{pickup_date}. Sign up by #{sign_up_deadline}." %>
 
@@ -17,39 +19,60 @@
           </div>
         </div>
         <p class="site-lede text-ink-soft dark:text-ink-soft-dark">
-          Schedule your tree pickup for <strong class="font-semibold text-ink dark:text-ink-dark"><%= pickup_date %></strong>.
+          Schedule your tree pickup for <strong class="font-semibold text-ink dark:text-ink-dark"><%= pickup_date %></strong> and we'll take it off your hands.
         </p>
-        <p class="site-home-service-area text-ink-soft dark:text-ink-soft-dark">
-          Pickup in <%= [ setting.default_city, setting.default_state ].compact_blank.join(", ") %>.
-        </p>
-        <p class="site-deadline-badge bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
-          <span class="site-deadline-badge-label">Sign up by</span>
-          <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
-        </p>
+        <% if service_area.present? %>
+          <p class="site-home-service-area text-ink-soft dark:text-ink-soft-dark">Pickup in <%= service_area %>.</p>
+        <% end %>
+
+        <div class="mt-6 flex max-w-md flex-col gap-3 rounded-xl border border-line bg-surface p-5 dark:border-line-dark dark:bg-surface-dark">
+          <p class="m-0 text-xs font-bold uppercase tracking-[0.14em] text-sage-deep dark:text-sage-deep-dark">This year's pickup</p>
+          <p class="m-0 text-lg font-semibold text-ink dark:text-ink-dark">
+            <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_full_date %></time>
+          </p>
+          <p class="m-0 text-ink-soft dark:text-ink-soft-dark">
+            Pickups start at
+            <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_start_time %></time>.
+          </p>
+          <p class="site-deadline-badge m-0 bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
+            <span class="site-deadline-badge-label">Sign up by</span>
+            <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
+          </p>
+          <%= link_to "Learn more about the pickup", about_path,
+                      class: "text-sm font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" %>
+        </div>
       </div>
 
       <% if setting.is_reservations_open %>
         <div class="site-home-form border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
           <h2 class="site-home-form-title text-ink dark:text-ink-dark">Reserve your pickup</h2>
+          <p class="mt-0 mb-4 text-sm text-ink-soft dark:text-ink-soft-dark">It only takes a minute. We'll confirm the details by email.</p>
           <%= render "reservations/form" %>
         </div>
       <% else %>
-        <div class="site-home-closed border-y border-line dark:border-line-dark">
-          <h2 class="site-subtitle text-ink dark:text-ink-dark">Reservations are closed</h2>
+        <div class="site-home-form border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+          <p class="m-0">
+            <span class="inline-flex items-center rounded-full bg-warning-badge px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Reservations closed</span>
+          </p>
+          <h2 class="site-subtitle mt-3 mb-2 text-ink dark:text-ink-dark">We're not taking reservations right now</h2>
           <p class="m-0 max-w-[34rem] text-ink-soft dark:text-ink-soft-dark"><%= setting.reservations_closed_message_text %></p>
+          <p class="mt-5 border-t border-line pt-5 text-sm text-ink-soft dark:border-line-dark dark:text-ink-soft-dark">
+            When reservations open, this is the page to reserve your tree.
+            <%= link_to "Read about how the pickup works", about_path,
+                        class: "font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" %>
+            in the meantime.
+          </p>
         </div>
       <% end %>
     </div>
 
-    <% if setting.is_reservations_open %>
-      <section class="site-section border-line dark:border-line-dark" aria-labelledby="pickup-steps">
-        <h2 id="pickup-steps" class="site-subtitle text-ink dark:text-ink-dark">How pickup works</h2>
-        <ol class="site-steps site-steps--three">
-          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Reserve a pickup time for your tree.</li>
-          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">We confirm the details by email.</li>
-          <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.</li>
-        </ol>
-      </section>
-    <% end %>
+    <section class="site-section border-line dark:border-line-dark" aria-labelledby="pickup-steps">
+      <h2 id="pickup-steps" class="site-subtitle text-ink dark:text-ink-dark">How pickup works</h2>
+      <ol class="site-steps site-steps--three">
+        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Reserve a pickup time for your tree.</li>
+        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">We confirm the details by email.</li>
+        <li class="site-step text-ink-soft border-line before:text-sage-deep dark:text-ink-soft-dark dark:border-line-dark dark:before:text-sage-deep-dark">Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.</li>
+      </ol>
+    </section>
   </div>
 </section>

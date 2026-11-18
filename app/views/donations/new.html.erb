@@ -1,3 +1,4 @@
+<% suggested_donation = number_to_currency(setting.suggested_donation_amount, precision: 0) %>
 <% content_for :title, "Support #{setting.organization_name} | #{setting&.home_page_header || "Tree Recycle"}" %>
 <% content_for :description, "Choose how you would like to support the tree pickup fundraiser." %>
 
@@ -10,14 +11,18 @@
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
       <p>
-        Our tree pickup service is free, but your donation makes a real difference.
-        Your support helps <%= setting.organization_name %> take part in:
+        Our tree pickup service is free, but it's also our biggest fundraiser of the year.
+        Every donation goes straight to <%= setting.organization_name %> and helps Scouts take part in:
       </p>
       <ul>
         <li>Summer camps and outdoor adventures</li>
         <li>Leadership and team-building activities</li>
         <li>Community service projects</li>
       </ul>
+      <p class="mb-0">
+        A donation of <strong class="font-semibold text-ink dark:text-ink-dark"><%= suggested_donation %></strong>
+        or whatever you can give makes a real difference.
+      </p>
     </div>
 
     <div class="donation-options">

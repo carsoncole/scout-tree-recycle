@@ -1,13 +1,32 @@
 <% content_for :title, "Thank You | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :description, "Thank you for supporting the tree recycling fundraiser." %>
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
+    <div class="site-confirmation-mark border border-line-strong bg-sage-soft text-sage-deep dark:border-line-strong-dark dark:bg-sage-soft-dark dark:text-sage-deep-dark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="m8.5 12.3 2.3 2.3 4.8-5"></path>
+      </svg>
+    </div>
+
     <%= render "shared/page_header",
                eyebrow: "With appreciation",
-               title: "Thank you",
+               title: "Thank you for your donation",
                description: "Your support helps make this community tree pickup possible." %>
 
+    <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
+      <p>
+        Thanks to you, <%= setting.organization_name %> can keep adventuring, leading, and
+        giving back to the community. We'll put your donation to good use.
+      </p>
+    </div>
+
     <div class="flex flex-wrap items-center gap-4">
+      <% if @reservation %>
+        <%= link_to "View your reservation", reservation_confirmation_path(@reservation),
+                    class: "site-button site-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+      <% end %>
       <%= link_to "Back to home", root_path, class: "site-button site-button--quiet text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
     </div>
   </div>

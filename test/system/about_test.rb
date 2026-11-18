@@ -1,11 +1,23 @@
 require "application_system_test_case"
 
-class AboutsTest < ApplicationSystemTestCase
+class AboutTest < ApplicationSystemTestCase
   test "visiting the index" do
     visit about_url
 
     assert_selector "h1", text: "About"
     assert_selector "img[alt='Scouting America']"
+    assert_text /this year's pickup/i
+    assert_text Setting.instance.event_pickup_start.strftime("%A, %B %-d, %Y")
+    assert_selector ".site-deadline-badge", text: /sign up by/i
+    assert_link "Reserve your pickup", href: root_path(anchor: "reserve")
+  end
+
+  test "about shows a closed note instead of the reserve link when reservations are closed" do
+    Setting.instance.update(is_reservations_open: false)
+    visit about_url
+
+    assert_text "Reservations are closed right now"
+    assert_no_link "Reserve your pickup"
   end
 
   test "should display contact info" do
@@ -102,7 +114,8 @@ class AboutsTest < ApplicationSystemTestCase
     setting.save
 
     visit about_url
-    assert_text "10:00am - 3:00pm"
+
+    assert_text "Pickups start at 10:00am."
   end
 
   test "should display organization url as an external link next to the name" do

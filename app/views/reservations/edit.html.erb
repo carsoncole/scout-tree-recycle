@@ -3,6 +3,10 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
+    <%= link_to reservation_confirmation_path(@reservation), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+      <span aria-hidden="true">←</span> Back to your reservation
+    <% end %>
+
     <%= render "shared/page_header",
                eyebrow: "Your reservation",
                title: "Edit Reservation",

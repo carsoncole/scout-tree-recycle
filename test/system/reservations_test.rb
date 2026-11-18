@@ -117,6 +117,19 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "Reservation updated."
   end
 
+  test "root shows the closed notice when reservations are closed" do
+    Setting.instance.update(is_reservations_open: false)
+    visit root_url
+
+    assert_selector "h1", text: "Make a Reservation"
+    assert_text "We're not taking reservations right now"
+    assert_text Setting.instance.reservations_closed_message_text
+    assert_text /this year's pickup/i
+    assert_selector ".site-deadline-badge", text: /sign up by/i
+    assert_no_selector "form#new_reservation"
+    assert_link "Read about how the pickup works", href: about_path
+  end
+
   test "editing a reservation when reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
     visit edit_reservation_path(reservations(:pending_pickup_1))

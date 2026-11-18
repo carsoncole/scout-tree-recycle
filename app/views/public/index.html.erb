@@ -11,8 +11,11 @@
   <div class="site-container site-container--wide">
     <div class="site-home-layout <%= "site-home-layout--closed" unless setting.is_reservations_open %>">
       <div class="site-home-intro">
-        <div class="site-home-heading">
+        <div class="site-home-art rounded-3xl bg-sage-soft dark:bg-sage-soft-dark">
           <%= image_tag setting.home_page_image_name, alt: "Recycle Your Tree", class: "site-home-image" %>
+        </div>
+
+        <div class="site-home-heading">
           <div>
             <p class="site-eyebrow text-sage-deep dark:text-sage-deep-dark">Holiday tree pickup</p>
             <h1 class="site-title text-ink dark:text-ink-dark">Make a Reservation</h1>

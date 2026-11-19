@@ -1,81 +1,40 @@
 <%= render "admin/shared/page_header",
            title: "Pickups",
-           description: "Routes grouped by zone with reservation status counts." %>
+           description: "Overall pickup status by zone: counts, routes, and plotted reservations." %>
 
-<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-  <header class="admin-panel-header border-line dark:border-line-dark">
-    <div>
-      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Routes by zone</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Reservation counts for routes with trees pending pickup, picked up, or missing.</p>
-    </div>
-  </header>
+<div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.88rem] text-ink-soft dark:text-ink-soft-dark">
+  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-green-600"></span>Pending</span>
+  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-gray-500"></span>Picked</span>
+  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-red-600"></span>Missing</span>
+  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-blue-500/70"></span>Route area</span>
+</div>
 
-  <div class="admin-table-wrap">
-    <table class="admin-table text-ink dark:text-ink-dark">
-      <thead>
-        <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Zone / Route</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Pending</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Picked</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Missing</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @zones.each do |zone| %>
-          <% zone_pending = zone.routes.sum { |route| @reservation_counts.fetch([route.id, "pending_pickup"], 0) } %>
-          <% zone_picked_up = zone.routes.sum { |route| @reservation_counts.fetch([route.id, "picked_up"], 0) } %>
-          <% zone_missing = zone.routes.sum { |route| @reservation_counts.fetch([route.id, "missing"], 0) } %>
-          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <th scope="row" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark"><%= zone.name %></th>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= zone_pending %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= zone_picked_up %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= zone_missing %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= zone_pending + zone_picked_up + zone_missing %></td>
-          </tr>
-          <% zone.routes.ordered.each do |route| %>
-            <% pending = @reservation_counts.fetch([route.id, "pending_pickup"], 0) %>
-            <% picked_up = @reservation_counts.fetch([route.id, "picked_up"], 0) %>
-            <% missing = @reservation_counts.fetch([route.id, "missing"], 0) %>
-            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= pending %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= picked_up %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= missing %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= pending + picked_up + missing %></td>
-            </tr>
-          <% end %>
-        <% end %>
+<div class="mt-6 flex flex-col gap-6">
+  <%= render "pickups/drivers/all_zones_overview",
+        routes: @all_routes,
+        reservations: @all_reservations,
+        status_counts: @status_counts,
+        coordinate_less_counts: @coordinate_less_counts %>
 
-        <% if @unzoned_routes.any? %>
-          <% unzoned_pending = @unzoned_routes.sum { |route| @reservation_counts.fetch([route.id, "pending_pickup"], 0) } %>
-          <% unzoned_picked_up = @unzoned_routes.sum { |route| @reservation_counts.fetch([route.id, "picked_up"], 0) } %>
-          <% unzoned_missing = @unzoned_routes.sum { |route| @reservation_counts.fetch([route.id, "missing"], 0) } %>
-          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <th scope="row" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">No Zone</th>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= unzoned_pending %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= unzoned_picked_up %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= unzoned_missing %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= unzoned_pending + unzoned_picked_up + unzoned_missing %></td>
-          </tr>
-          <% @unzoned_routes.each do |route| %>
-            <% pending = @reservation_counts.fetch([route.id, "pending_pickup"], 0) %>
-            <% picked_up = @reservation_counts.fetch([route.id, "picked_up"], 0) %>
-            <% missing = @reservation_counts.fetch([route.id, "missing"], 0) %>
-            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= pending %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= picked_up %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= missing %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= pending + picked_up + missing %></td>
-            </tr>
-          <% end %>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+  <% @zones.each do |zone| %>
+    <%= render "pickups/drivers/zone_overview",
+          zone: zone,
+          routes: zone.routes,
+          reservations: @reservations_by_zone_id[zone.id] || [],
+          status_counts: @status_counts,
+          coordinate_less_counts: @coordinate_less_counts %>
+  <% end %>
+
+  <% if @unzoned_routes.any? %>
+    <%= render "pickups/drivers/zone_overview",
+          zone: nil,
+          routes: @unzoned_routes,
+          reservations: @unzoned_reservations,
+          status_counts: @status_counts,
+          coordinate_less_counts: @coordinate_less_counts %>
+  <% end %>
 
   <% if @zones.empty? && @unzoned_routes.empty? %>
-    <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No routes have been created yet.</p>
+    <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No zones or routes have been created yet.</p>
   <% end %>
-</section>
+</div>

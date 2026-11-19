@@ -23,8 +23,10 @@
             <span class="admin-brand-link text-ink hover:text-sage-deep dark:text-ink-dark dark:hover:text-sage-deep-dark">Tree Pickups</span>
           <% end %>
 
-          <%= link_to "Routes", pickups_root_path,
-                      class: admin_nav_class(controller_name == "routes" || (controller_name == "drivers" && action_name == "home")) %>
+          <%= link_to "Overview", pickups_root_path,
+                      class: admin_nav_class(controller_name == "drivers" && action_name == "home") %>
+          <%= link_to "Routes", pickups_routes_path,
+                      class: admin_nav_class(controller_name == "routes") %>
           <%= link_to "Drivers", pickups_drivers_path,
                       class: admin_nav_class(controller_name == "drivers" && action_name != "home") %>
           <%= link_to "Zones", pickups_zones_path,

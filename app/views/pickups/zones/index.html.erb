@@ -4,11 +4,11 @@
 
 <div class="flex flex-col gap-6">
   <% @zones.each do |zone| %>
-    <%= render "pickups/zones/zone", name: zone.name, routes: zone.routes, reservation_counts: @reservation_counts %>
+    <%= render "pickups/zones/zone", zone: zone, routes: zone.routes, reservation_counts: @reservation_counts %>
   <% end %>
 
   <% if @unzoned_routes.any? %>
-    <%= render "pickups/zones/zone", name: "No Zone", routes: @unzoned_routes, reservation_counts: @reservation_counts %>
+    <%= render "pickups/zones/zone", zone: nil, routes: @unzoned_routes, reservation_counts: @reservation_counts %>
   <% end %>
 
   <% if @zones.empty? && @unzoned_routes.empty? %>

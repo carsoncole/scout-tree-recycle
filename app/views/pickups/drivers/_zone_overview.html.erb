@@ -1,0 +1,76 @@
+<%# locals: (zone:, routes:, reservations:, status_counts:, coordinate_less_counts:) %>
+<% name = zone ? zone.name : "No Zone" %>
+<% totals = pickup_status_totals(routes, status_counts) %>
+<% route_polygons = routes.flat_map { |route| route_boundary_polygon(route) } %>
+<% markers = pickups_overview_map_markers(reservations) %>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+  <header class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">
+        <% zone_target = zone ? pickups_zone_path(zone) : pickups_zones_path(anchor: pickups_zone_anchor(zone)) %>
+        <%= link_to name, zone_target, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+      </h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= pluralize(routes.size, "route") %></p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 text-[0.8rem]">
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
+        <span class="size-2 rounded-full bg-green-600"></span>Pending <%= totals["pending_pickup"] %>
+      </span>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
+        <span class="size-2 rounded-full bg-gray-500"></span>Picked <%= totals["picked_up"] %>
+      </span>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
+        <span class="size-2 rounded-full bg-red-600"></span>Missing <%= totals["missing"] %>
+      </span>
+      <span class="inline-flex items-center rounded-full bg-stone px-2.5 py-1 font-medium text-ink dark:bg-stone-dark dark:text-ink-dark">Total <%= totals["total"] %></span>
+    </div>
+  </header>
+
+  <% if routes.any? %>
+    <div class="admin-panel-body admin-panel-body--tight">
+      <% if route_polygons.any? || markers.any? %>
+        <%= render "shared/map",
+              polygons: route_polygons,
+              markers: markers,
+              height_class: "h-80",
+              empty_message: "No map data available for #{name}." %>
+        <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">Blue outlines are route areas. Dots show reservations by status.</p>
+      <% else %>
+        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundaries or pickup locations with coordinates are available for <%= name %>.</p>
+      <% end %>
+      <% missing_coordinates = routes.sum { |route| coordinate_less_counts.fetch(route.id, 0) } %>
+      <% if missing_coordinates.positive? %>
+        <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(missing_coordinates, "reservation") %> in <%= name %> do not have coordinates and are not shown on the map.</p>
+      <% end %>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table text-ink dark:text-ink-dark">
+        <thead>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Route</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Pending</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Picked</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Missing</th>
+            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% routes.each do |route| %>
+            <% route_totals = pickup_status_totals([route], status_counts) %>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["pending_pickup"] %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["picked_up"] %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["missing"] %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["total"] %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No routes in this zone.</p>
+  <% end %>
+</section>

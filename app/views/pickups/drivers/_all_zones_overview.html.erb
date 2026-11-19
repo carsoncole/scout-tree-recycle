@@ -1,0 +1,42 @@
+<%# locals: (routes:, reservations:, status_counts:, coordinate_less_counts:) %>
+<% totals = pickup_status_totals(routes, status_counts) %>
+<% route_polygons = routes.flat_map { |route| route_boundary_polygon(route) } %>
+<% markers = pickups_overview_map_markers(reservations) %>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+  <header class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">All Zones</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Every route and plotted reservation across all zones.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 text-[0.8rem]">
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
+        <span class="size-2 rounded-full bg-green-600"></span>Pending <%= totals["pending_pickup"] %>
+      </span>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
+        <span class="size-2 rounded-full bg-gray-500"></span>Picked <%= totals["picked_up"] %>
+      </span>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
+        <span class="size-2 rounded-full bg-red-600"></span>Missing <%= totals["missing"] %>
+      </span>
+      <span class="inline-flex items-center rounded-full bg-stone px-2.5 py-1 font-medium text-ink dark:bg-stone-dark dark:text-ink-dark">Total <%= totals["total"] %></span>
+    </div>
+  </header>
+
+  <div class="admin-panel-body admin-panel-body--tight">
+    <% if route_polygons.any? || markers.any? %>
+      <%= render "shared/map",
+            polygons: route_polygons,
+            markers: markers,
+            height_class: "h-96",
+            empty_message: "No map data available." %>
+      <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">Blue outlines are route areas. Dots show reservations by status.</p>
+    <% else %>
+      <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundaries or pickup locations with coordinates are available yet.</p>
+    <% end %>
+    <% missing_coordinates = coordinate_less_counts.values.sum %>
+    <% if missing_coordinates.positive? %>
+      <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(missing_coordinates, "reservation") %> do not have coordinates and are not shown on the map.</p>
+    <% end %>
+  </div>
+</section>

@@ -113,7 +113,11 @@ class Reservation < ApplicationRecord
   validates :status, inclusion: { in: statuses.keys }
   validates :mobile, phone: { possible: true, allow_blank: true }
 
+  # Statuses counted on the pickups overview and driver route pages.
+  PICKUP_OVERVIEW_STATUSES = %w[pending_pickup picked_up missing].freeze
+
   scope :completed, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
+  scope :pickup_overview, -> { where(status: PICKUP_OVERVIEW_STATUSES) }
   scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   scope :migratable, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled", "imported" ]) }
   scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }

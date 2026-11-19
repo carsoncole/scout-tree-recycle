@@ -18,12 +18,13 @@ class Pickups::DriversTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Drivers"
   end
 
-  test "pickups nav links to routes, drivers, and zones" do
+  test "pickups nav links to overview, routes, drivers, and zones" do
     visit pickups_root_url
     fill_in "Password", with: "secret"
     click_on "Access Pickups"
 
     within "nav.admin-nav--pickups" do
+      assert_link "Overview"
       assert_link "Routes"
       assert_link "Drivers"
       assert_link "Zones"
@@ -32,9 +33,83 @@ class Pickups::DriversTest < ApplicationSystemTestCase
       assert_no_text "Driver portal"
     end
 
+    click_on "Routes"
+
+    assert_selector "h1", text: "Routes"
+    assert_current_path pickups_routes_path
+
+    click_on "Overview"
+
+    assert_selector "h1", text: "Pickups"
+
     click_on "Zones"
 
     assert_selector "h1", text: "Zones"
+  end
+
+  test "overview shows each zone with counts, a color key, and maps" do
+    visit pickups_root_url
+    fill_in "Password", with: "secret"
+    click_on "Access Pickups"
+
+    assert_selector "h1", text: "Pickups"
+    assert_text "Pending"
+    assert_text "Picked"
+    assert_text "Missing"
+    assert_selector ".admin-panel-title", text: "All Zones"
+    assert_selector ".admin-panel-title", text: "Zone 1"
+    assert_selector ".admin-panel-title", text: "Zone 2"
+    assert_selector ".admin-panel-title", text: "Zone 3"
+    assert_selector "th", text: "TOTAL", minimum: 3
+    assert_selector "[data-controller='map']", minimum: 1
+  end
+
+  test "overview zone titles link to the zone page" do
+    visit pickups_root_url
+    fill_in "Password", with: "secret"
+    click_on "Access Pickups"
+
+    zone_link = find("h2.admin-panel-title a", text: "Zone 2")
+    assert_equal pickups_zone_url(zones(:two)), zone_link["href"]
+
+    zone_link.click
+
+    assert_selector "h1", text: "Zone: Zone 2"
+
+    visit pickups_root_url
+    no_zone_link = find("h2.admin-panel-title a", text: "No Zone")
+    assert_equal pickups_zones_url(anchor: "no-zone"), no_zone_link["href"]
+  end
+
+  test "zone page shows zone information, routes, drivers, and a map" do
+    visit pickups_root_url
+    fill_in "Password", with: "secret"
+    click_on "Access Pickups"
+
+    click_on "Zone 1"
+
+    assert_selector "h1", text: "Zone: Zone 1"
+    assert_text "Zone information"
+    assert_text "Zone map"
+    assert_text "Routes"
+    assert_text "Drivers"
+    assert_text "3 routes"
+    assert_text "2 drivers"
+    assert_text "Lower Manhattan"
+    assert_text "Jack Wallace"
+    assert_text "John Doe"
+    assert_selector "[data-controller='map']", count: 1
+  end
+
+  test "zones page zone titles link to the zone page" do
+    visit pickups_root_url
+    fill_in "Password", with: "secret"
+    click_on "Access Pickups"
+    click_on "Zones"
+
+    click_on "Zone 2"
+
+    assert_selector "h1", text: "Zone: Zone 2"
   end
 
   test "visiting the root with invalid password" do

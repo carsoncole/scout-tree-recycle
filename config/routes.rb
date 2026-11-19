@@ -156,8 +156,8 @@ Rails.application.routes.draw do
     root to: "drivers#home"
     get "unauthorized", to: "drivers#unauthorized"
     resources :drivers, only: [ :index ]
-    resources :zones, only: [ :index ]
-    resources :routes, only: [ :show ] do
+    resources :zones, only: [ :index, :show ]
+    resources :routes, only: [ :index, :show ] do
       resources :reservations, only: [ :update ]
     end
     get "driver_pickup_lists", to: "drivers#driver_pickup_lists"

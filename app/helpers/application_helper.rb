@@ -55,7 +55,8 @@ module ApplicationHelper
   end
 
   def route_boundary_polygon(route)
-    points = route.points.order(:order).filter_map do |point|
+    # sort in Ruby so preloaded points (includes(:points)) are reused.
+    points = route.points.sort_by(&:order).filter_map do |point|
       next if point.latitude.blank? || point.longitude.blank?
 
       { lat: point.latitude.to_f, lng: point.longitude.to_f }
@@ -64,6 +65,32 @@ module ApplicationHelper
     return [] if points.length <= 3
 
     [ { points: points, label: "#{route.name} boundary" } ]
+  end
+
+  # Single source of truth for pickup status colors on the pickups maps,
+  # matching the legend on the pickups overview. Used for both the
+  # interactive route map markers and the per-zone overview markers.
+  PICKUP_STATUS_COLORS = {
+    "pending_pickup" => "#16a34a",
+    "picked_up" => "#6b7280",
+    "missing" => "#dc2626"
+  }.freeze
+
+  def pickup_status_color(status)
+    PICKUP_STATUS_COLORS.fetch(status.to_s, "#2563eb")
+  end
+
+  # Pending / picked / missing / total counts for a set of routes, built from
+  # a grouped { [route_id, status] => count } query.
+  def pickup_status_totals(routes, status_counts)
+    totals = Reservation::PICKUP_OVERVIEW_STATUSES.index_with(0)
+    Array(routes).each do |route|
+      totals.each_key do |status|
+        totals[status] += status_counts.fetch([ route.id, status ], 0)
+      end
+    end
+    totals["total"] = totals.values.sum
+    totals
   end
 
   def reservation_map_markers(reservations)
@@ -89,12 +116,6 @@ module ApplicationHelper
       next if reservation.latitude.blank? || reservation.longitude.blank?
 
       address = [ reservation.street, reservation.unit.presence, reservation.city, reservation.state ].compact_blank.join(", ")
-      color = case reservation.status.to_s
-      when "pending_pickup" then "#16a34a"
-      when "missing" then "#dc2626"
-      when "picked_up" then "#6b7280"
-      else "#2563eb"
-      end
 
       {
         id: reservation.id,
@@ -104,8 +125,36 @@ module ApplicationHelper
         status_label: reservation.status.to_s.titleize,
         address: address,
         pickup_notes: reservation.pickup_notes.to_s,
-        color: color,
+        color: pickup_status_color(reservation.status),
         update_url: pickups_route_reservation_path(route, reservation)
+      }
+    end
+  end
+
+  # Anchor identifying a zone panel, so zone titles on the pickups overview
+  # can deep-link to the matching zone section on the zones page. Unzoned
+  # routes share the "no-zone" anchor.
+  def pickups_zone_anchor(zone)
+    zone ? dom_id(zone) : "no-zone"
+  end
+
+  # Non-interactive markers for the pickups overview maps: colored by status
+  # with a popup showing the address and current status.
+  def pickups_overview_map_markers(reservations)
+    Array(reservations).filter_map do |reservation|
+      next if reservation.latitude.blank? || reservation.longitude.blank?
+
+      color = pickup_status_color(reservation.status)
+      address = [ reservation.street, reservation.unit.presence, reservation.city, reservation.state ].compact_blank.join(", ")
+
+      {
+        id: reservation.id,
+        lat: reservation.latitude.to_f,
+        lng: reservation.longitude.to_f,
+        status: reservation.status.to_s,
+        color: color,
+        fillColor: color,
+        popup: "#{address} (#{reservation.status.to_s.titleize})"
       }
     end
   end

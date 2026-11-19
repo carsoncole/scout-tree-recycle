@@ -134,4 +134,37 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
 
     assert_selector ".flash", text: "Confirmation email was queued for delivery to #{reservation.email}."
   end
+
+  test "show page displays the reservation's logs" do
+    reservation = reservations(:routing_1)
+    visit admin_reservation_url(reservation)
+
+    within "section", text: "Reservation logs" do
+      assert_text "Reservation status changed: donation → routing — Icky Jones (icky.jones@example.com)"
+      click_link "View", match: :first
+    end
+
+    assert_selector "h1", text: "Log Details"
+  end
+
+  test "show page links to all reservation logs when there are more than ten" do
+    reservation = reservations(:routing_1)
+    11.times { |i| reservation.logs.create!(log_type: "reservation", severity: "info", message: "System log entry #{i}") }
+
+    visit admin_reservation_url(reservation)
+
+    within "section", text: "Reservation logs" do
+      assert_text "System log entry 10"
+      assert_no_text "System log entry 0"
+      click_link "View all reservation logs"
+    end
+
+    assert_current_path admin_logs_path(reservation_id: reservation)
+    assert_selector "h1", text: "System Logs"
+    assert_text "System log entry 10"
+    click_link "Back to reservation"
+
+    assert_current_path admin_reservation_path(reservation)
+    assert_selector "h1", text: "Reservation Details"
+  end
 end

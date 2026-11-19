@@ -19,6 +19,29 @@ class LogsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match error_log.message, response.body
   end
 
+  test "filters logs by reservation" do
+    sign_in
+    reservation = reservations(:routing_1)
+
+    get admin_logs_url(reservation_id: reservation.id)
+
+    assert_response :success
+    assert_match logs(:reservation_status_change).message, response.body
+    assert_no_match logs(:one).message, response.body
+    assert_no_match logs(:pending_pickup_1_status_change).message, response.body
+    assert_match "Back to reservation", response.body
+  end
+
+  test "filters logs by reservation and type" do
+    sign_in
+    reservation = reservations(:routing_1)
+
+    get admin_logs_url(reservation_id: reservation.id, type: "error")
+
+    assert_response :success
+    assert_no_match logs(:reservation_status_change).message, response.body
+  end
+
   test "should get show" do
     sign_in
     get admin_log_url(logs(:one))

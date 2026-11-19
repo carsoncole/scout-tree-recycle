@@ -22,6 +22,29 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type=checkbox][name=?]", "reservation[is_missing_tree_notifications_enabled]"
   end
 
+  test "should get show with the reservation's logs" do
+    sign_in
+    get admin_reservation_url(reservations(:routing_1))
+
+    assert_response :success
+    assert_match logs(:reservation_status_change).message, response.body
+    assert_select "section h2", text: "Reservation logs"
+    assert_select "a[href=?]", admin_log_path(logs(:reservation_status_change)), text: "View"
+  end
+
+  test "should link to all logs when the reservation has more than ten logs" do
+    sign_in
+    reservation = reservations(:routing_1)
+    11.times { |i| reservation.logs.create!(log_type: "reservation", severity: "info", message: "Log entry #{i}") }
+
+    get admin_reservation_url(reservation)
+
+    assert_response :success
+    assert_match "Log entry 10", response.body
+    assert_no_match "Log entry 0", response.body
+    assert_select "a[href=?]", admin_logs_path(reservation_id: reservation.id), text: "View all reservation logs"
+  end
+
   test "should get edit" do
     sign_in
     get edit_admin_reservation_url(reservations(:pending_pickup_1))

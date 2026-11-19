@@ -29,6 +29,8 @@ class Admin::ReservationsController < Admin::BaseController
   end
 
   def show
+    @reservation_logs = @reservation.logs.recent_first.limit(10)
+    @has_more_reservation_logs = @reservation.logs.count > @reservation_logs.length
   end
 
   def edit

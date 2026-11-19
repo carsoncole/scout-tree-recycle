@@ -309,6 +309,62 @@
 
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Reservation logs</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
+          <% if @has_more_reservation_logs %>
+            Showing the 10 most recent entries for this reservation.
+          <% else %>
+            Activity recorded for this reservation.
+          <% end %>
+        </p>
+      </div>
+      <% if @has_more_reservation_logs %>
+        <%= link_to "View all reservation logs", admin_logs_path(reservation_id: @reservation.id),
+            class: admin_button_class(variant: :secondary, size: :small) %>
+      <% end %>
+    </div>
+
+    <div class="admin-panel-body">
+      <% if @reservation_logs.any? %>
+        <div class="admin-table-wrap">
+          <table class="admin-table min-w-[40rem] text-ink dark:text-ink-dark">
+            <thead>
+              <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Timestamp</th>
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Type</th>
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Severity</th>
+                <th scope="col" class="<%= admin_th_class %>">Message</th>
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @reservation_logs.each do |log| %>
+                <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                  <td class="<%= admin_td_class %> whitespace-nowrap"><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+                  <td class="<%= admin_td_class %> whitespace-nowrap"><%= log.log_type&.humanize %></td>
+                  <td class="<%= admin_td_class %> whitespace-nowrap">
+                    <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
+                  </td>
+                  <td class="<%= admin_td_class %> max-w-xl">
+                    <span class="block truncate" title="<%= log.message %>"><%= log.message %></span>
+                  </td>
+                  <td class="<%= admin_td_class %> whitespace-nowrap">
+                    <%= link_to "View", admin_log_path(log), class: admin_link_class %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <%= render "admin/shared/empty_state", message: "No log entries have been recorded for this reservation." %>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Timestamps</h2>
     </div>
     <div class="admin-panel-body">

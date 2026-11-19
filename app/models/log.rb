@@ -10,6 +10,8 @@ class Log < ApplicationRecord
   validates :log_type, inclusion: { in: TYPES }
 
   scope :of_type, ->(type) { where(log_type: type) if type.present? }
+  scope :for_reservation, ->(reservation_id) { where(reservation_id:) if reservation_id.present? }
+  scope :recent_first, -> { order(created_at: :desc) }
 
   attr_accessor :skip_notification
 

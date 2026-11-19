@@ -5,6 +5,22 @@ class LogTest < ActiveSupport::TestCase
     assert logs(:one).valid?
   end
 
+  test "for_reservation returns only that reservation's logs and ignores blank ids" do
+    reservation = reservations(:routing_1)
+
+    reservation_logs = Log.for_reservation(reservation.id)
+
+    assert_includes reservation_logs, logs(:reservation_status_change)
+    assert_not_includes reservation_logs, logs(:one)
+    assert_includes Log.for_reservation(nil), logs(:one)
+    assert_includes Log.for_reservation(""), logs(:one)
+  end
+
+  test "recent_first orders the newest log first" do
+    assert_equal logs(:pending_pickup_1_status_change), Log.recent_first.first
+    assert_equal logs(:one), Log.recent_first.last
+  end
+
   test "enqueues a notification when email is configured" do
     configure_email!
 

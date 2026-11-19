@@ -118,6 +118,19 @@ class Reservation < ApplicationRecord
 
   scope :completed, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   scope :pickup_overview, -> { where(status: PICKUP_OVERVIEW_STATUSES) }
+  # Admin search across contact and address columns. Matches a
+  # case-insensitive substring of name, email, street, street name, or city.
+  scope :search, ->(query) {
+    next if query.blank?
+
+    pattern = "%#{query.to_s.strip}%"
+    where(
+      "reservations.name ILIKE :pattern OR reservations.email ILIKE :pattern OR " \
+      "reservations.street ILIKE :pattern OR reservations.street_name ILIKE :pattern OR " \
+      "reservations.city ILIKE :pattern",
+      pattern: pattern
+    )
+  }
   scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   scope :migratable, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled", "imported" ]) }
   scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }
@@ -129,6 +142,17 @@ class Reservation < ApplicationRecord
     or(Reservation.routing.where(longitude: nil)).
     or(Reservation.routing.where(route_id: nil))
   }
+
+  # Pickup reservations grouped by route for the operational pickups pages.
+  # Returns an ordered array of [route, reservations] pairs, sorted by route
+  # name. Unrouted reservations, if any, are grouped under nil and listed last.
+  def self.pickup_overview_by_route
+    grouped = pickup_overview.includes(route: :zone).order(:street_name, :house_number).group_by(&:route)
+
+    grouped.keys.compact.sort_by(&:name)
+      .map { |route| [ route, grouped[route] ] }
+      .concat(grouped[nil] ? [ [ nil, grouped[nil] ] ] : [])
+  end
 
   # data normalization
   normalizes :email, with: ->(e) { e.strip.downcase }

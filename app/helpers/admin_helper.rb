@@ -1,7 +1,7 @@
 module AdminHelper
   # Top-nav groups. Each entry is [label, [controller names]].
   ADMIN_NAV_GROUPS = {
-    "Operations" => %w[reservations donations sms],
+    "Operations" => %w[reservations pickups donations sms],
     "Content" => %w[marketing marketing_email_templates marketing_images reservation_email_templates contacts],
     "System" => %w[settings configuration drivers routes zones users thanks logs data]
   }.freeze

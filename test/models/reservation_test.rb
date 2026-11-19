@@ -333,6 +333,50 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 4, Reservation.routing_ready.count
   end
 
+  test "search matches name, email, street, and city case-insensitively" do
+    assert_includes Reservation.search("mary"), reservations(:pending_pickup_1)
+    assert_includes Reservation.search("MARY.JONES@EXAMPLE.COM"), reservations(:pending_pickup_1)
+    assert_includes Reservation.search("Broadway"), reservations(:pending_pickup_1)
+    assert_includes Reservation.search("new york"), reservations(:pending_pickup_1)
+    assert_empty Reservation.search("no-such-reservation")
+  end
+
+  test "search with a blank query returns all reservations" do
+    assert_equal Reservation.all.count, Reservation.search("").count
+    assert_equal Reservation.all.count, Reservation.search("   ").count
+    assert_equal Reservation.all.count, Reservation.search(nil).count
+  end
+
+  test "search combines with other scopes" do
+    assert_includes Reservation.pickup_overview.search("jones"), reservations(:pending_pickup_1)
+    assert_includes Reservation.pickup_overview.search("jones"), reservations(:picked_up_1)
+    assert_not_includes Reservation.pickup_overview.search("jones"), reservations(:cancelled_1)
+    assert_empty Reservation.where(status: "picked_up").search("susan")
+  end
+
+  test "pickup_overview_by_route groups pickup reservations by route in route-name order" do
+    by_route = Reservation.pickup_overview_by_route
+
+    assert_equal [ "Lower Manhattan", "Route 2", "Route 4" ], by_route.map { |route, _reservations| route&.name }
+
+    groups = by_route.to_h { |route, reservations| [ route&.name, reservations ] }
+    assert_equal [ "Bill Carson", "Bob Jones", "Mack Gilbert", "Mary Jones" ].sort,
+                 groups["Lower Manhattan"].map(&:name).sort
+    assert_equal [ "Susan Banks" ], groups["Route 2"].map(&:name)
+    assert_equal [ "Sammy Kopeke" ], groups["Route 4"].map(&:name)
+    assert_nil groups[nil]
+  end
+
+  test "pickup_overview_by_route only includes pending, picked up, and missing reservations" do
+    statuses = Reservation.pickup_overview_by_route
+                          .flat_map { |_route, reservations| reservations.map(&:status) }
+                          .uniq
+
+    assert_equal %w[missing pending_pickup picked_up].sort, statuses.sort
+    assert_equal Reservation.pickup_overview.count,
+                 Reservation.pickup_overview_by_route.sum { |_route, reservations| reservations.size }
+  end
+
   test "reset_geocoding and status to routing when address is changed" do
     reservation = reservations(:pending_pickup_1)
     reservation.update(street: "1 East 161st St")

@@ -1,0 +1,73 @@
+<%= content_for :title, "Pickups" %>
+<%= render "admin/shared/page_header",
+           title: "Pickups",
+           description: "Operational overview of tree pickups — pending, picked up, and missing reservations by route and zone." do %>
+  <%= link_to "PDF Report", admin_pickups_report_path(format: :pdf),
+              class: admin_button_class(variant: :secondary),
+              data: { turbo: false } %>
+<% end %>
+
+<div class="flex flex-col gap-6">
+  <div class="admin-toolbar">
+    <div class="admin-filter-group border border-line-strong bg-surface dark:border-line-strong-dark dark:bg-surface-dark" role="group" aria-label="Filter pickups">
+      <%= link_to "All", admin_pickups_path(q: params[:q]), class: admin_filter_class(params[:status].nil?) %>
+      <%= link_to "Pending Pickup", admin_pickups_path(status: "pending_pickup", q: params[:q]), class: admin_filter_class(params[:status] == "pending_pickup") %>
+      <%= link_to "Picked Up", admin_pickups_path(status: "picked_up", q: params[:q]), class: admin_filter_class(params[:status] == "picked_up") %>
+      <%= link_to "Missing", admin_pickups_path(status: "missing", q: params[:q]), class: admin_filter_class(params[:status] == "missing") %>
+    </div>
+
+    <%= form_with url: admin_pickups_path, method: :get, class: "flex max-w-sm items-center gap-2" do |form| %>
+      <%= form.hidden_field :status, value: params[:status] if params[:status].present? %>
+      <%= form.label :q, "Search pickups", class: "sr-only" %>
+      <%= form.text_field :q, value: params[:q], placeholder: "Search name, email, or address", class: admin_input_class %>
+      <%= form.submit "Search", class: admin_button_class(variant: "secondary") %>
+    <% end %>
+  </div>
+
+  <% if @reservations.any? %>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-table-wrap">
+        <table class="admin-table text-ink dark:text-ink-dark">
+          <thead>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <th scope="col" class="<%= admin_th_class %>">Name</th>
+              <th scope="col" class="<%= admin_th_class %>">Street Address</th>
+              <th scope="col" class="<%= admin_th_class %>">Status</th>
+              <th scope="col" class="<%= admin_th_class %>">Route / Zone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @reservations.each do |reservation| %>
+              <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                <td class="<%= admin_td_class %>">
+                  <%= link_to reservation.name, admin_reservation_path(reservation), class: admin_link_class %>
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <%= reservation.street %>
+                  <% if reservation.pickup_notes.present? %>
+                    <br>
+                    <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark">Notes: <%= reservation.pickup_notes %></span>
+                  <% end %>
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <span class="<%= admin_reservation_status_badge(reservation.status) %>">
+                    <%= reservation.status.titleize %>
+                  </span>
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <% if reservation.route %>
+                    <%= reservation.route.name_with_zone %>
+                  <% else %>
+                    <span class="text-muted dark:text-muted-dark">No route</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% else %>
+    <%= render "admin/shared/empty_state", message: params[:q].present? ? "No reservations match your search." : "No pending, picked up, or missing reservations." %>
+  <% end %>
+</div>

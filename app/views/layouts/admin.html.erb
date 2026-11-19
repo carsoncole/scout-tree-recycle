@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <title><%= content_for(:title) || "#{Setting.instance&.home_page_header.presence || "Tree Recycle"} Admin" %></title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#f6f3ea">
     <meta name="theme-color" content="#171a14" media="(prefers-color-scheme: dark)">
@@ -41,6 +42,8 @@
               <span class="admin-nav-group-label text-muted dark:text-muted-dark">Operations</span>
               <%= link_to "Reservations", admin_reservations_path,
                           class: admin_nav_class(controller_name == "reservations") %>
+              <%= link_to "Pickups", admin_pickups_path,
+                          class: admin_nav_class(controller_name == "pickups") %>
               <%= link_to "Donations", admin_donations_path,
                           class: admin_nav_class(controller_name == "donations") %>
               <%= link_to admin_sms_path, class: admin_nav_class(controller_name == "sms") do %>

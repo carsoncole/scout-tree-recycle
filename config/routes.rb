@@ -81,6 +81,10 @@ Rails.application.routes.draw do
     end
     resources :donations, only: [ :index, :show, :destroy ]
 
+    # Pickups (operational overview and driver backup report)
+    resources :pickups, only: [ :index ]
+    get "pickups/report", to: "pickups#report", as: :pickups_report
+
     # SMS
     resources :sms, only: [ :index, :create ] do
       collection do

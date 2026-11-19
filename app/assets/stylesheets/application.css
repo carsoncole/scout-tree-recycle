@@ -1167,20 +1167,70 @@
   flex: none;
 }
 
-.admin-account-user {
-  display: none;
-  max-width: 16rem;
-  overflow: hidden;
-  font-size: 0.82rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .admin-account-link {
   font-size: 0.86rem;
   text-decoration: none;
   white-space: nowrap;
   transition: color var(--site-transition);
+}
+
+.admin-user-menu {
+  position: relative;
+}
+
+.admin-user-menu__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.86rem;
+  list-style: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--site-transition);
+}
+
+.admin-user-menu__summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-user-menu__summary::marker {
+  content: "";
+}
+
+.admin-user-menu__email {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-user-menu__chevron {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+.admin-user-menu__panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 50;
+  min-width: 12rem;
+  padding: 0.25rem;
+  border-radius: var(--site-radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.admin-user-menu__item {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: calc(var(--site-radius) - 2px);
+  font-size: 0.88rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--site-transition),
+    color var(--site-transition);
 }
 
 .admin-shell {
@@ -2545,8 +2595,8 @@
     margin-left: 0;
   }
 
-  .admin-account-user {
-    display: inline;
+  .admin-user-menu__email {
+    max-width: 16rem;
   }
 }
 

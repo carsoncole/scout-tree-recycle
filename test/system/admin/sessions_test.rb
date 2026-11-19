@@ -17,6 +17,7 @@ class Admin::SessionsTest < ApplicationSystemTestCase
     fill_in "Password", with: "password123456789"
     click_button "Sign in"
     assert_text "Reservations"
+    find(".admin-user-menu__summary").click
     click_link "Log out"
     assert_text "Sign in to your account"
   end

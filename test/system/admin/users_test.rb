@@ -63,6 +63,7 @@ class Admin::UsersTest < ApplicationSystemTestCase
     click_button "Update User"
 
     assert_text "User was successfully updated."
+    find(".admin-user-menu__summary").click
     click_link "Log out"
 
     fill_in "Email", with: "test191@example.com"

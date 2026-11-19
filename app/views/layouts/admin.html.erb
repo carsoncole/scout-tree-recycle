@@ -93,8 +93,17 @@
 
           <div class="admin-account">
             <% if Current.user %>
-              <span class="admin-account-user text-ink-soft dark:text-ink-soft-dark"><%= Current.user.email %></span>
-              <%= link_to "Log out", admin_session_path, data: { turbo_method: :delete }, class: "admin-account-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
+              <details class="admin-user-menu">
+                <summary class="admin-user-menu__summary text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark">
+                  <span class="admin-user-menu__email"><%= Current.user.email %></span>
+                  <svg class="admin-user-menu__chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                  </svg>
+                </summary>
+                <div class="admin-user-menu__panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+                  <%= link_to "Log out", admin_session_path, data: { turbo_method: :delete }, class: "admin-user-menu__item text-ink-soft hover:bg-stone hover:text-ink dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark" %>
+                </div>
+              </details>
             <% else %>
               <%= link_to "Log in", new_admin_session_path, class: "admin-account-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
             <% end %>

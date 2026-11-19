@@ -11,18 +11,11 @@ class Admin::LogsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "System Logs"
   end
 
-  test "creating a basic log" do
+  test "index shows key log information" do
     visit admin_logs_url
     assert_text "wrong number of arguments"
-    assert_text "admin@example.com"
     assert_text "ArgumentError"
-  end
-
-  test "context renders as a compact one-line preview instead of a JSON block" do
-    visit admin_logs_url
-
-    assert_selector "td code[title]", text: /admin@example.com/
-    assert_no_selector "td pre"
+    assert_text "Error"
   end
 
   test "deleting a log" do

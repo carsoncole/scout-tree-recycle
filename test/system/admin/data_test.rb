@@ -13,6 +13,17 @@ class Admin::DataTest < ApplicationSystemTestCase
     assert_link "System Logs"
   end
 
+  test "viewing the database settings section" do
+    visit admin_data_url
+    assert_text "Database settings"
+    assert_text "postgresql"
+    assert_text ActiveRecord::Base.connection_db_config.database
+
+    if (password = ActiveRecord::Base.connection_db_config.configuration_hash[:password])
+      assert_no_text password
+    end
+  end
+
   test "importing a csv" do
     visit admin_data_url
     attach_file "CSV file", Rails.root.join("test/fixtures/files/reservations_import.csv")

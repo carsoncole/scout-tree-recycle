@@ -1,6 +1,7 @@
 class Admin::DataController < Admin::BaseController
   def show
     @setting = Setting.instance
+    @database_overview = DatabaseOverview.new
   end
 
   def import

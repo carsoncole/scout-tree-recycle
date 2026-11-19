@@ -14,6 +14,15 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     assert_match "Export reservations", response.body
   end
 
+  test "should show database settings for the current environment" do
+    sign_in
+    get admin_data_url
+    assert_response :success
+    assert_match "Database settings", response.body
+    assert_match ActiveRecord::Base.connection_db_config.database, response.body
+    assert_match "Adapter", response.body
+  end
+
   test "should export reservations as csv" do
     sign_in
     get export_admin_data_url(format: :csv)

@@ -143,11 +143,14 @@ class Reservation < ApplicationRecord
     or(Reservation.routing.where(route_id: nil))
   }
 
+  # Orders reservations by street address for the operational pickups pages.
+  scope :ordered_by_street_address, -> { order(:street) }
+
   # Pending pickup reservations grouped by route for the driver report.
   # Returns an ordered array of [route, reservations] pairs, sorted by route
   # name. Unrouted reservations, if any, are grouped under nil and listed last.
   def self.pending_pickups_by_route
-    grouped = pending_pickup.includes(route: [ :zone, :drivers, :points ]).order(:street_name, :house_number).group_by(&:route)
+    grouped = pending_pickup.includes(route: [ :zone, :drivers, :points ]).ordered_by_street_address.group_by(&:route)
 
     grouped.keys.compact.sort_by(&:name)
       .map { |route| [ route, grouped[route] ] }

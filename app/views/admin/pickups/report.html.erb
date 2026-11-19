@@ -30,6 +30,7 @@
             Mark each tree as <strong>picked</strong> or <strong>missing</strong> below, then update
             its pickup status on the website at
             <strong><%= pickups_root_url %></strong> as soon as possible.
+            Check <strong>Not updated online</strong> for each tree you still need to enter.
           </p>
         </div>
       </div>
@@ -42,6 +43,7 @@
               <th scope="col" class="<%= admin_th_class %>">Street Address</th>
               <th scope="col" class="<%= admin_th_class %>">Picked</th>
               <th scope="col" class="<%= admin_th_class %>">Missing</th>
+              <th scope="col" class="<%= admin_th_class %>">Not Updated Online</th>
             </tr>
           </thead>
           <tbody>
@@ -62,6 +64,10 @@
                 <td class="<%= admin_td_class %>">
                   <input type="checkbox" class="admin-pickup-check accent-sage dark:accent-sage-dark"
                          aria-label="Mark <%= reservation.name %> as missing">
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <input type="checkbox" class="admin-pickup-check accent-sage dark:accent-sage-dark"
+                         aria-label="Mark <%= reservation.name %> as not updated online">
                 </td>
               </tr>
             <% end %>

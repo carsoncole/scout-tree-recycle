@@ -1,6 +1,6 @@
 class Admin::PickupsController < Admin::BaseController
   def index
-    @reservations = Reservation.pickup_overview.includes(:route).order("routes.name", :name)
+    @reservations = Reservation.pickup_overview.includes(:route).ordered_by_street_address
     @reservations = @reservations.where(status: params[:status]) if params[:status].present?
     @reservations = @reservations.search(params[:q]) if params[:q].present?
   end

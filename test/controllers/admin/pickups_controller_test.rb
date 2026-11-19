@@ -56,6 +56,14 @@ class Admin::PickupsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a", text: "Missing", href: admin_pickups_path(status: "missing")
   end
 
+  test "index orders reservations by street address" do
+    sign_in
+    get admin_pickups_url
+    body = @response.body
+
+    assert body.index("Susan Banks") < body.index("Mary Jones") # 1 World Trade Center before 770 Broadway
+  end
+
   test "index shows notes on a second line under the street address without the city" do
     sign_in
     get admin_pickups_url
@@ -87,12 +95,13 @@ class Admin::PickupsControllerTest < ActionDispatch::IntegrationTest
     assert_match "h-[840px]", @response.body # large map for more detail
   end
 
-  test "report shows picked and missing checkboxes for each pending pickup" do
+  test "report shows picked, missing, and online-update checkboxes for each pending pickup" do
     sign_in
     get admin_pickups_report_url
-    assert_select "input[type='checkbox']", count: Reservation.pending_pickup.count * 2
+    assert_select "input[type='checkbox']", count: Reservation.pending_pickup.count * 3
     assert_select "input[type='checkbox'][aria-label='Mark Mary Jones as picked']", count: 1
     assert_select "input[type='checkbox'][aria-label='Mark Mary Jones as missing']", count: 1
+    assert_select "input[type='checkbox'][aria-label='Mark Mary Jones as not updated online']", count: 1
   end
 
   test "report lists route drivers with their mobile numbers" do

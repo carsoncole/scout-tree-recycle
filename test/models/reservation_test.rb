@@ -375,6 +375,24 @@ class ReservationTest < ActiveSupport::TestCase
                  by_route.sum { |_route, reservations| reservations.size }
   end
 
+  test "ordered_by_street_address sorts by the street string" do
+    route = routes(:one)
+    [ "10 Winslow St", "7 Winslow St", "2 Winslow St", "1 Broadway" ].each_with_index do |street, i|
+      Reservation.create!(
+        name: "Address Order #{i}",
+        email: "address.order#{i}@example.com",
+        street: street,
+        city: "New York", state: "NY", country: "United States",
+        status: :pending_pickup,
+        route: route
+      )
+    end
+
+    streets = Reservation.pending_pickup.ordered_by_street_address.where(route: route).pluck(:street)
+
+    assert_equal [ "1 Broadway", "10 Winslow St", "2 Winslow St", "7 Winslow St", "770 Broadway", "770 Broadway" ], streets
+  end
+
   test "reset_geocoding and status to routing when address is changed" do
     reservation = reservations(:pending_pickup_1)
     reservation.update(street: "1 East 161st St")

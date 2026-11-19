@@ -503,8 +503,7 @@
 
 .site-button:focus-visible,
 .site-input:focus-visible,
-.site-textarea:focus-visible,
-.site-notice-dismiss:focus-visible {
+.site-textarea:focus-visible {
   outline: 2px solid var(--site-ink);
   outline-offset: 3px;
 }
@@ -577,26 +576,19 @@
   margin-top: 0.25rem;
 }
 
+/* Colors for notices are applied with Tailwind utilities (light + dark:)
+   in app/views/shared/_flash.html.erb; see the recipes in
+   app/views/AGENTS.md. Only layout and shape live here. */
 .site-notice {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
   padding: 1rem 1.15rem;
-  border: 1px solid var(--site-line);
-  border-left: 3px solid var(--site-sage);
   border-radius: 0 var(--site-radius) var(--site-radius) 0;
-  background: var(--site-sage-soft);
-}
-
-.site-notice--alert,
-.site-notice--error {
-  border-left-color: var(--site-ink-soft);
-  background: var(--site-stone);
 }
 
 .site-notice-text {
   margin: 0;
-  color: var(--site-ink);
   font-size: 0.95rem;
   line-height: 1.55;
 }
@@ -607,14 +599,9 @@
   padding: 0.05rem 0.25rem;
   border: 0;
   background: transparent;
-  color: var(--site-ink-soft);
   font-size: 1.35rem;
   line-height: 1;
   cursor: pointer;
-}
-
-.site-notice-dismiss:hover {
-  color: var(--site-ink);
 }
 
 .site-prose {

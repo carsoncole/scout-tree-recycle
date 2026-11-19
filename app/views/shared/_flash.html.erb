@@ -1,11 +1,18 @@
+<%# Import row errors are rendered in detail by admin/data/show.html.erb. %>
 <% flash.each do |type, message| %>
   <% next if message.blank? %>
-
+  <% next if type.to_s == "import_errors" %>
+  <%
+    is_notice = type.to_s == "notice"
+    styles = is_notice ?
+      "border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" :
+      "border border-line border-l-[3px] border-l-ink-soft bg-stone text-ink dark:border-line-dark dark:border-l-ink-soft-dark dark:bg-stone-dark dark:text-ink-dark"
+  %>
   <div class="flash" data-controller="dismissible">
-    <div class="site-notice site-notice--<%= type %> dark:border-line-dark dark:text-ink-dark <%= type.to_s == "notice" ? "dark:bg-sage-soft-dark dark:border-l-sage-dark" : "dark:bg-stone-dark dark:border-l-ink-soft-dark" %>" role="<%= type.to_s == "notice" ? "status" : "alert" %>">
-      <p class="site-notice-text text-ink"><%= message %></p>
+    <div class="site-notice <%= styles %>" role="<%= is_notice ? "status" : "alert" %>">
+      <p class="site-notice-text text-ink dark:text-ink-dark"><%= message %></p>
       <button type="button"
-              class="site-notice-dismiss text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark"
+              class="site-notice-dismiss text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-ink-dark"
               aria-label="Dismiss message"
               data-action="dismissible#dismiss">&times;</button>
     </div>

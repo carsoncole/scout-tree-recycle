@@ -3,7 +3,7 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <%= link_to reservation_confirmation_path(@reservation), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+    <%= link_to reservation_confirmation_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
       <span aria-hidden="true">←</span> Back to your reservation
     <% end %>
 

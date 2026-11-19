@@ -38,8 +38,8 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_match Setting.instance.organization_name, body
     assert_match "3:00pm", body
     assert_match "$#{Setting.instance.suggested_donation_amount}", body
-    assert_match "/reservations/#{reservation.id}/edit", body
-    assert_match "/reservations/#{reservation.id}/donations/new", body
+    assert_includes body, "/reservations/#{reservation.public_token}/edit"
+    assert_includes body, "/reservations/#{reservation.public_token}/donations/new"
     assert_no_match "FIX", body
     assert_no_match "8am", body
     assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)

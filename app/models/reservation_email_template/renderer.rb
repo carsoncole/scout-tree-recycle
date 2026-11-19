@@ -54,7 +54,9 @@ class ReservationEmailTemplate
     end
 
     def reservation_identifier
-      reservation.id.presence || "sample-reservation"
+      return "sample-reservation" unless reservation&.id
+
+      reservation.public_token
     end
 
     def reservation_name

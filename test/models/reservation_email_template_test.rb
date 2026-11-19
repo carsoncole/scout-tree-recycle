@@ -76,8 +76,8 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     assert_includes body, "Tree pick-up scheduled"
     assert_includes body, "Dear Mary Jones"
     assert_includes body, "3:00pm"
-    assert_includes body, "/reservations/#{@reservation.id}/edit"
-    assert_includes body, "/reservations/#{@reservation.id}/donations/new"
+    assert_includes body, "/reservations/#{@reservation.public_token}/edit"
+    assert_includes body, "/reservations/#{@reservation.public_token}/donations/new"
     assert_includes body, "Troop 100"
   end
 
@@ -182,7 +182,8 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     assert_includes body, "Tree pick-up scheduled"
     assert_includes body, "3:00pm"
     assert_includes body, "donate online"
-    assert_includes body, "/reservations/#{@reservation.id}/edit"
+    assert_includes body, "/reservations/#{@reservation.public_token}/edit"
+    assert_not_includes body, "/reservations/#{@reservation.id}/edit"
     assert_equal "Your tree pickup is confirmed", template.render_subject(@assigns, source: :published)
   end
 

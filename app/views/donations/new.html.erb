@@ -26,7 +26,7 @@
             <span class="inline-flex items-center rounded-full bg-sage px-3 py-1 text-xs font-bold uppercase tracking-[0.08em] text-surface dark:bg-sage-dark dark:text-page-dark">Suggested <%= suggested_donation %></span>
           </div>
           <p class="text-ink-soft dark:text-ink-soft-dark">Quick, secure, and convenient.</p>
-          <%= form_with url: reservation_donations_path(@reservation),
+          <%= form_with url: reservation_donations_path(@reservation.public_token),
                         method: :post,
                         data: { turbo: false },
                         class: "site-form" do |form| %>
@@ -37,7 +37,7 @@
         <section class="site-choice site-choice--card rounded-2xl border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" aria-labelledby="donate-pickup">
           <h2 id="donate-pickup" class="text-ink dark:text-ink-dark">Donate at Pickup</h2>
           <p class="text-ink-soft dark:text-ink-soft-dark">Leave cash or a check with your tree.</p>
-          <%= form_with url: reservation_cash_or_check_path(reservation_id: @reservation.id),
+          <%= form_with url: reservation_cash_or_check_path(reservation_id: @reservation.public_token),
                         method: :post,
                         data: { turbo: false },
                         class: "site-form" do |form| %>
@@ -49,7 +49,7 @@
       <section class="site-choice site-choice--quiet border-t border-line text-center dark:border-line-dark" aria-labelledby="no-donation">
         <h2 id="no-donation" class="text-ink dark:text-ink-dark">Continue without a donation</h2>
         <p class="text-ink-soft dark:text-ink-soft-dark">You can still reserve a tree pickup. Donations are always optional.</p>
-        <%= form_with url: reservation_no_donation_path(reservation_id: @reservation.id),
+        <%= form_with url: reservation_no_donation_path(reservation_id: @reservation.public_token),
                       method: :post,
                       data: { turbo: false },
                       class: "site-form" do |form| %>

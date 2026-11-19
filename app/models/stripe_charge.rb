@@ -38,6 +38,14 @@ class StripeCharge
         customer_name: @stripe_event.customer_details&.name,
         stripe_payment_intent_id: @stripe_event.payment_intent
         )
+
+      # Confirm the reservation once payment succeeds so the confirmation
+      # email and routing kick off from the webhook rather than a page
+      # load. Only reservations still in the donation step are advanced,
+      # so cancelled or already confirmed reservations are left alone.
+      if reservation && @stripe_event.payment_status == "paid" && reservation.donation?
+        reservation.routing!
+      end
     end
 
     def payment_intent

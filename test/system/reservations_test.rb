@@ -132,7 +132,7 @@ class ReservationsTest < ApplicationSystemTestCase
 
   test "editing a reservation when reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
-    visit edit_reservation_path(reservations(:pending_pickup_1))
+    visit edit_reservation_path(reservations(:pending_pickup_1).public_token)
     assert_text "Reservations are CLOSED and not changeable."
   end
 end

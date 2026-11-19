@@ -9,6 +9,18 @@ class ReservationTest < ActiveSupport::TestCase
     assert @reservation.valid?
   end
 
+  test "public token is stable and round-trips through find_by_public_token!" do
+    token = @reservation.public_token
+
+    assert_equal token, @reservation.reload.public_token
+    assert_equal @reservation, Reservation.find_by_public_token!(token)
+  end
+
+  test "find_by_public_token! rejects guessable ids and invalid tokens" do
+    assert_raises(ActiveRecord::RecordNotFound) { Reservation.find_by_public_token!(@reservation.id.to_s) }
+    assert_raises(ActiveRecord::RecordNotFound) { Reservation.find_by_public_token!("not-a-real-token") }
+  end
+
   test "imported status is valid and reports routing status" do
     reservation = Reservation.new(name: "Imported", street: "1 Main", city: "New York", state: "NY", country: "United States", email: "imported.status@example.com", status: "imported")
     assert reservation.valid?

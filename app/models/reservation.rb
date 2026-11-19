@@ -70,6 +70,12 @@ class Reservation < ApplicationRecord
   enum :status, { reservation_form: 0, address_verification: 1, donation: 2, routing: 3, pending_pickup: 4, picked_up: 5, missing: 6, cancelled: 7, imported: 8 }, default: :reservation_form
   enum :donation_type, { online_donation: 1, cash_or_check_donation: 2, no_donation: 3 }
 
+  # Signed, unguessable token for the reservation holder's public pages
+  # (address verification, donation, confirmation, edit, and cancel). Emailed
+  # links and flow redirects carry this token instead of the record id so
+  # public pages cannot be reached by guessing ids.
+  generates_token_for :public_access
+
   attribute :city, :string, default: -> { Setting.instance.default_city }
   attribute :state, :string, default: -> { Setting.instance.default_state }
   attribute :country, :string, default: -> { Setting.instance&.default_country.presence || "United States" }
@@ -153,6 +159,13 @@ class Reservation < ApplicationRecord
     Setting.instance&.is_reservations_open? || false
   end
 
+  # Finds a reservation from a public URL token. Raises RecordNotFound for
+  # invalid tokens and for guessable ids, so the public flow pages can only
+  # be reached with a token from the reservation email or a flow redirect.
+  def self.find_by_public_token!(token)
+    find_by_token_for(:public_access, token.to_s) or raise ActiveRecord::RecordNotFound
+  end
+
   def verify_address!
     nil
   end
@@ -200,6 +213,11 @@ class Reservation < ApplicationRecord
     raise ArgumentError, "Unknown email kind: #{kind}" unless config
 
     ReservationsMailer.with(reservation_id: id).public_send(config[:mailer], force: true).deliver_later
+  end
+
+  # Stable signed token used to build the reservation holder's public URLs.
+  def public_token
+    @public_token ||= generate_token_for(:public_access)
   end
 
   def self.migrate_reservations!

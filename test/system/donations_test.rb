@@ -45,7 +45,7 @@ class DonationsTest < ApplicationSystemTestCase
     Setting.instance.update(
       donations_success_page_content: "**Thanks a bunch!**\n\n- First priority\n- Second priority"
     )
-    visit reservation_success_path(reservations(:donation_1))
+    visit reservation_success_path(reservations(:donation_1).public_token)
 
     assert_selector "strong", text: "Thanks a bunch!"
     assert_selector "li", text: "First priority"
@@ -89,8 +89,13 @@ class DonationsTest < ApplicationSystemTestCase
 
   test "confirming with donations disabled" do
     Setting.instance.update(is_donations_enabled: false)
-    make_system_reservation
-    click_link "Confirm Your Tree Pickup Reservation"
+    email = Faker::Internet.email
+    make_system_reservation(email)
+    click_button "Confirm Your Tree Pickup Reservation"
     assert_selector "h1", text: "Reservation Confirmed"
+
+    reservation = Reservation.find_by(email: email)
+    assert_equal "routing", reservation.reload.status
+    assert_equal "no_donation", reservation.donation_type
   end
 end

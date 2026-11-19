@@ -44,7 +44,7 @@
               <span class="site-detail-note text-ink-soft dark:text-ink-soft-dark">We’ll email you here if we can’t find your tree.</span>
               <span class="site-detail-note text-sage-deep dark:text-sage-deep-dark">
                 A mobile number is really helpful — if we can’t find your tree, a quick text reaches you faster than email. You can
-                <%= link_to "add one", edit_reservation_path(@reservation), class: "font-medium underline decoration-sage-soft underline-offset-4 hover:decoration-sage dark:decoration-sage-soft-dark dark:hover:decoration-sage-dark" %>
+                <%= link_to "add one", edit_reservation_path(@reservation.public_token), class: "font-medium underline decoration-sage-soft underline-offset-4 hover:decoration-sage dark:decoration-sage-soft-dark dark:hover:decoration-sage-dark" %>
                 when you edit your reservation.
               </span>
             <% end %>
@@ -90,7 +90,7 @@
     </section>
 
     <div class="flex flex-wrap items-center gap-4">
-      <%= link_to "Edit Reservation", edit_reservation_path(@reservation), class: "site-button site-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+      <%= link_to "Edit Reservation", edit_reservation_path(@reservation.public_token), class: "site-button site-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
       <%= link_to "Back to home", root_path, class: "site-button site-button--quiet text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
     </div>
   </div>

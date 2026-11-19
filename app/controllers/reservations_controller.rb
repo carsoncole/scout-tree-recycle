@@ -8,8 +8,12 @@ class ReservationsController < ApplicationController
     if !Reservation.open?
       redirect_to root_url, alert: "Reservations are CLOSED."
     elsif @reservation.save
-      @reservation.address_verification!
-      redirect_to reservation_address_verification_url(@reservation)
+      # Address verification is not implemented yet (see
+      # AddressVerificationController), so completed reservations move
+      # straight to the donation step here. The address_verification GET
+      # only forwards to the donation pages and must not change state.
+      @reservation.donation!
+      redirect_to reservation_address_verification_url(@reservation.public_token)
     else
       if @reservation.errors[:email].include? "has already been taken"
         redirect_to root_url, alert: "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received."
@@ -26,16 +30,22 @@ class ReservationsController < ApplicationController
   end
 
   def update
-    if Reservation.open?
-      @reservation.update(reservation_params)
-      redirect_to reservation_confirmation_path(@reservation), notice: "Reservation updated."
-    else
+    unless Reservation.open?
       redirect_to root_path, alert: "Reservations are CLOSED and not changeable."
+      return
+    end
+
+    if @reservation.update(reservation_params)
+      redirect_to reservation_confirmation_path(@reservation.public_token), notice: "Reservation updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   def confirmation
-    @reservation.routing!
+    # Read-only summary of a completed reservation. The routing status
+    # transition happens on the actions that land here: cash_or_check,
+    # no_donation, and the Stripe webhook for online payments.
   end
 
   def destroy # cancel
@@ -46,11 +56,7 @@ class ReservationsController < ApplicationController
   private
 
   def set_reservation
-    if params[:id]
-      @reservation = Reservation.find(params[:id])
-    elsif params[:reservation_id]
-      @reservation = Reservation.find(params[:reservation_id])
-    end
+    @reservation = Reservation.find_by_public_token!(params[:id] || params[:reservation_id])
   end
 
   def reservation_params

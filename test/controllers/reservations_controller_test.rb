@@ -13,7 +13,17 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
       post reservations_url, params: { reservation: { name: "John Doe", email: "johnnie@example.com", street: "123 Main St" } }
     end
     @reservation = Reservation.find_by(email: "johnnie@example.com")
-    assert_redirected_to reservation_address_verification_url(@reservation)
+    assert_redirected_to reservation_address_verification_url(@reservation.public_token)
+    assert_equal "donation", @reservation.reload.status
+  end
+
+  test "confirmation page does not change reservation status" do
+    @reservation = reservations(:donation_1)
+
+    get reservation_confirmation_url(@reservation.public_token)
+
+    assert_response :success
+    assert_equal "donation", @reservation.reload.status
   end
 
   test "should not create reservation if email is already taken" do
@@ -24,36 +34,55 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
 
   test "should edit reservation" do
     @reservation = reservations(:pending_pickup_1)
-    get edit_reservation_url(@reservation)
+    get edit_reservation_url(@reservation.public_token)
     assert_response :success
   end
 
   test "should not allow editing if reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
     @reservation = reservations(:pending_pickup_1)
-    get edit_reservation_url(@reservation)
+    get edit_reservation_url(@reservation.public_token)
     assert_redirected_to root_url
     assert_equal "Reservations are CLOSED and not changeable.", flash[:alert]
   end
 
+  test "should not find reservation by guessable id" do
+    @reservation = reservations(:pending_pickup_1)
+
+    get edit_reservation_url(id: @reservation.id)
+
+    assert_response :not_found
+  end
+
   test "should update reservation" do
     @reservation = reservations(:pending_pickup_1)
-    patch reservation_url(@reservation), params: { reservation: { street: "123 Doodle St" } }
-    assert_redirected_to reservation_confirmation_url(@reservation)
+    patch reservation_url(@reservation.public_token), params: { reservation: { street: "123 Doodle St" } }
+    assert_redirected_to reservation_confirmation_url(@reservation.public_token)
     assert_equal "Reservation updated.", flash[:notice]
+  end
+
+  test "should not update reservation with invalid details" do
+    @reservation = reservations(:pending_pickup_1)
+    original_email = @reservation.email
+
+    patch reservation_url(@reservation.public_token), params: { reservation: { email: "" } }
+
+    assert_response :unprocessable_entity
+    assert_select ".site-form-errors", text: /Please check the details below/
+    assert_equal original_email, @reservation.reload.email
   end
 
   test "should not allow updating if reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
     @reservation = reservations(:pending_pickup_1)
-    patch reservation_url(@reservation), params: { reservation: { street: "123 Doodle St" } }
+    patch reservation_url(@reservation.public_token), params: { reservation: { street: "123 Doodle St" } }
     assert_redirected_to root_url
     assert_equal "Reservations are CLOSED and not changeable.", flash[:alert]
   end
 
   test "should destroy reservation" do
     @reservation = reservations(:pending_pickup_1)
-    delete reservation_url(@reservation)
+    delete reservation_url(@reservation.public_token)
     assert_redirected_to root_url
     assert_equal "Your tree pickup has been cancelled.", flash[:notice]
     assert_equal "cancelled", @reservation.reload.status

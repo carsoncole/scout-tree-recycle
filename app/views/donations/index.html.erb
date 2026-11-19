@@ -18,7 +18,10 @@
     </div>
 
     <div class="flex flex-wrap items-center gap-4">
-      <%= link_to "Confirm Your Tree Pickup Reservation", reservation_confirmation_path(@reservation), class: "site-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+      <%# POSTs to no_donation, which completes the reservation (donation_type + routing) before redirecting to the read-only confirmation page. %>
+      <%= button_to "Confirm Your Tree Pickup Reservation",
+                    reservation_no_donation_path(reservation_id: @reservation.public_token),
+                    class: "site-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
     </div>
   </div>
 </section>

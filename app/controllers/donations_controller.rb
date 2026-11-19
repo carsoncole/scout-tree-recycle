@@ -21,8 +21,8 @@ class DonationsController < ApplicationController
       client_reference_id: @reservation.id,
       metadata: { reservation_id: @reservation.id },
       customer_email: @reservation.email,
-      success_url: reservation_success_url(@reservation),
-      cancel_url: new_reservation_donation_url(@reservation)
+      success_url: reservation_success_url(@reservation.public_token),
+      cancel_url: new_reservation_donation_url(@reservation.public_token)
     })
     redirect_to @session.url, allow_other_host: true
   end
@@ -42,17 +42,19 @@ class DonationsController < ApplicationController
 
   def cash_or_check
     @reservation.cash_or_check_donation!
-    redirect_to reservation_confirmation_url(@reservation)
+    @reservation.routing!
+    redirect_to reservation_confirmation_url(@reservation.public_token)
   end
 
   def no_donation
     @reservation.no_donation!
-    redirect_to reservation_confirmation_url(@reservation)
+    @reservation.routing!
+    redirect_to reservation_confirmation_url(@reservation.public_token)
   end
 
   def success
     if params[:reservation_id] || params[:id]
-      @reservation = Reservation.find(params[:reservation_id] || params[:id])
+      @reservation = Reservation.find_by_public_token!(params[:reservation_id] || params[:id])
     end
     @driver = params[:driver] == "true"
     flash[:notice] = "Thank you! Your donation is greatly appreciated and goes a long way towards supporting #{Setting.instance&.organization_name.presence || 'our organization'}."
@@ -68,6 +70,6 @@ class DonationsController < ApplicationController
   end
 
   def set_reservation
-    @reservation = Reservation.find(params[:reservation_id] || params[:id])
+    @reservation = Reservation.find_by_public_token!(params[:reservation_id] || params[:id])
   end
 end

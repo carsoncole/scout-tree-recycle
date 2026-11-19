@@ -20,7 +20,7 @@
 
     <div class="flex flex-wrap items-center gap-4">
       <% if @reservation %>
-        <%= link_to "View your reservation", reservation_confirmation_path(@reservation),
+        <%= link_to "View your reservation", reservation_confirmation_path(@reservation.public_token),
                     class: "site-button site-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
       <% end %>
       <%= link_to "Back to home", root_path, class: "site-button site-button--quiet text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>

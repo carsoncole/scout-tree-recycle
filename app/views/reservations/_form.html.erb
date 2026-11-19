@@ -1,4 +1,5 @@
-<%= form_with model: @reservation, class: "site-form" do |f| %>
+<% form_url = @reservation.persisted? ? reservation_path(@reservation.public_token) : reservations_path %>
+<%= form_with model: @reservation, url: form_url, class: "site-form" do |f| %>
   <%= render "shared/form_errors", object: @reservation %>
 
   <div class="flex flex-col gap-[0.45rem]">
@@ -68,7 +69,7 @@
 <% if @reservation.persisted? && (@reservation.routing? || @reservation.pending_pickup?) %>
   <div class="site-section border-line dark:border-line-dark">
     <%= button_to "Cancel Reservation",
-                  reservation_path(@reservation),
+                  reservation_path(@reservation.public_token),
                   method: :delete,
                   data: {
                     turbo_confirm: "Are you sure you want to cancel your reservation? This action cannot be undone.",

@@ -7,6 +7,18 @@ class LogsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "filters logs by type" do
+    sign_in
+    error_log = Log.create!(log_type: "error", severity: "error", message: "Boom", error_type: "RuntimeError")
+    config_log = Log.create!(log_type: "configuration", severity: "info", message: "Settings updated: default_city")
+
+    get admin_logs_url(type: "configuration")
+
+    assert_response :success
+    assert_match config_log.message, response.body
+    assert_no_match error_log.message, response.body
+  end
+
   test "should get show" do
     sign_in
     get admin_log_url(logs(:one))

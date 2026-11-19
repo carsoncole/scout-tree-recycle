@@ -1,6 +1,7 @@
 one:
   message: wrong number of arguments (given 1, expected 0)
   error_type: ArgumentError
+  log_type: error
   backtrace: [\"/path/to/file.rb:123:in `method_name'\"]
   environment: test
   context: "{\"user\" => \"admin@example.com\"}"
@@ -13,9 +14,10 @@ one:
 two:
   message: "missing keyword: :user_id"
   error_type: ArgumentError
+  log_type: error
   backtrace: [\"/path/to/file.rb:123:in `method_name'\"]
   environment: test
-  context: 
+  context:
   handled: false
   severity: error
   is_viewed: true

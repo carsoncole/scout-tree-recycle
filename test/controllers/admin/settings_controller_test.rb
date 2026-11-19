@@ -80,6 +80,51 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "New Town", Setting.first.reload.default_city
   end
 
+  test "creates a configuration log when settings are updated" do
+    sign_in users(:admin)
+    setting = Setting.first
+
+    assert_difference -> { Log.where(log_type: "configuration").count }, 1 do
+      patch admin_setting_path(setting), params: {
+        setting: { default_city: "New Town" },
+        section: "event"
+      }
+    end
+
+    log = Log.where(log_type: "configuration").order(:created_at).last
+    assert_equal "info", log.severity
+    assert_includes log.message, "default_city"
+    assert_equal users(:admin).email, log.context["user"]
+    assert_equal [ "New York", "New Town" ], log.context.dig("changes", "default_city")
+  end
+
+  test "creates a configuration log when a setting is toggled" do
+    sign_in users(:admin)
+    setting = Setting.first
+
+    assert_difference -> { Log.where(log_type: "configuration").count }, 1 do
+      patch toggle_admin_setting_path(setting), params: { setting: "is_sms_enabled", value: true }, as: :json
+    end
+
+    assert_response :success
+    log = Log.where(log_type: "configuration").order(:created_at).last
+    assert_includes log.message, "is_sms_enabled"
+    assert_equal users(:admin).email, log.context["user"]
+  end
+
+  test "masks sensitive values in configuration logs" do
+    sign_in users(:admin)
+    setting = Setting.first
+
+    patch admin_setting_path(setting), params: {
+      setting: { smtp_password: "super-secret" },
+      section: "email"
+    }
+
+    log = Log.where(log_type: "configuration").order(:created_at).last
+    assert_equal [ "[FILTERED]", "[FILTERED]" ], log.context.dig("changes", "smtp_password")
+  end
+
   test "should update settings and display flash message" do
     sign_in
     get admin_settings_path

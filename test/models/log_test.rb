@@ -13,6 +13,14 @@ class LogTest < ActiveSupport::TestCase
     end
   end
 
+  test "does not enqueue a notification for non-error log types" do
+    configure_email!
+
+    assert_no_enqueued_jobs only: LogNotificationJob do
+      Log.create!(log_type: "configuration", message: "Settings updated: default_city", severity: "info")
+    end
+  end
+
   test "does not enqueue a notification when email settings are incomplete" do
     configure_email!
     Setting.instance.update!(email_from_address: nil)

@@ -18,6 +18,10 @@
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
         <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Type</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @log.log_type&.humanize || "N/A" %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Message</dt>
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @log.message %></dd>
         </div>

@@ -76,6 +76,7 @@ class ContactCsvImport
     end
 
     Log.create(
+      log_type: "system",
       message: "Contact import completed: imported #{@imported}, skipped #{@skipped}, failed #{@failed}.",
       error_type: "ContactCsvImport",
       severity: "info",
@@ -100,6 +101,7 @@ class ContactCsvImport
 
   def failure(message)
     Log.create(
+      log_type: "error",
       message: "Contact import failed: #{message}",
       error_type: "ContactCsvImport",
       severity: "error",
@@ -132,6 +134,7 @@ class ContactCsvImport
 
   def log_failure(row_number, email, errors)
     Log.create(
+      log_type: "error",
       message: "Contact import failed for row #{row_number} (#{email.presence || "no email"}): #{errors.join(", ")}",
       error_type: "ContactCsvImport",
       severity: "error",

@@ -74,6 +74,14 @@ class Admin::DataController < Admin::BaseController
     end
 
     DataMailer.reservations_export_email(recipient).deliver_now
+    Log.create(
+      log_type: "system",
+      message: "Reservations CSV export emailed to #{recipient}.",
+      severity: "info",
+      handled: true,
+      skip_notification: true,
+      context: { recipient: recipient, user: Current.user&.email }
+    )
     redirect_to admin_data_path, notice: "Reservations CSV emailed to #{recipient}."
   rescue StandardError => e
     Rails.error.report(e, handled: true, severity: :warning, context: { email: recipient })

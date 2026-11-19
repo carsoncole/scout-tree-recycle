@@ -23,6 +23,7 @@ class ErrorLogSubscriber
       Log.create(
         message: truncate(error.message),
         error_type: error.class.name,
+        log_type: "error",
         context: sanitize_context(context),
         backtrace: truncate(Array(error.backtrace).join("\n")),
         environment: Rails.env,

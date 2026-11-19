@@ -19,6 +19,7 @@ class ErrorLogSubscriberTest < ActiveSupport::TestCase
 
     log = Log.order(:created_at).last
     assert_equal "RuntimeError", log.error_type
+    assert_equal "error", log.log_type
     assert_equal "boom", log.message
     assert_equal "Object", log.context["controller"]
     assert_equal({ "ids" => [ 1, 2 ] }, log.context["nested"])

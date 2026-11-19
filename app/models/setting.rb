@@ -94,6 +94,14 @@ class Setting < ApplicationRecord
     { attribute: :smtp_port, label: "SMTP Port", section: "email" }
   ].freeze
 
+  SENSITIVE_SETTING_ATTRIBUTES = %w[
+    twilio_auth_token
+    smtp_password
+    stripe_secret_key
+    aws_secret_access_key
+    driver_secret_key
+  ].freeze
+
   attribute :on_day_of_pickup_instructions, :string, default: DEFAULT_PICKUP_INSTRUCTIONS
   attribute :about_event_description, :string, default: DEFAULT_ABOUT_EVENT_DESCRIPTION
   attribute :reservations_closed_message, :string, default: DEFAULT_RESERVATIONS_CLOSED_MESSAGE
@@ -123,6 +131,7 @@ class Setting < ApplicationRecord
   validate :home_page_image_is_available
 
   before_validation :apply_defaults
+  after_update_commit :log_configuration_changes
 
   def apply_defaults
     self.home_page_header = "#{organization_name.strip} Tree Recycle" if organization_name.present? && home_page_header.blank?
@@ -375,6 +384,34 @@ class Setting < ApplicationRecord
   end
 
   private
+
+  def log_configuration_changes
+    changes = saved_changes.except("updated_at")
+    return if changes.empty?
+
+    Log.create(
+      log_type: "configuration",
+      severity: "info",
+      handled: true,
+      message: "Settings updated: #{changes.keys.sort.join(', ')}",
+      context: {
+        user: Current.user&.email,
+        changes: sanitized_setting_changes(changes)
+      }
+    )
+  rescue StandardError => e
+    Rails.logger.error("Settings change could not be logged: #{e.class}: #{e.message}")
+  end
+
+  def sanitized_setting_changes(changes)
+    changes.each_with_object({}) do |(attribute, (before, after)), result|
+      if SENSITIVE_SETTING_ATTRIBUTES.include?(attribute.to_s)
+        result[attribute] = [ "[FILTERED]", "[FILTERED]" ]
+      else
+        result[attribute] = [ before, after ]
+      end
+    end
+  end
 
   # The lookup memoizes its AWS client. Drop it so a region or key change
   # is used on the next search instead of the client built at boot.

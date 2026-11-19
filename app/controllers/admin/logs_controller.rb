@@ -1,6 +1,10 @@
 class Admin::LogsController < Admin::BaseController
   def index
-    @pagy, @logs = pagy(Log.order(created_at: :desc))
+    @selected_log_type = params[:type].presence
+    scope = Log.order(created_at: :desc)
+    scope = scope.of_type(@selected_log_type) if Log::TYPES.include?(@selected_log_type)
+
+    @pagy, @logs = pagy(scope)
     Log.where(is_viewed: false).update_all(is_viewed: true)
   end
 

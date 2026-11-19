@@ -13,6 +13,7 @@ class ReservationsExportScheduleJob < ApplicationJob
     setting.mark_reservations_export_sent!
 
     Log.create(
+      log_type: "system",
       message: "Scheduled reservations CSV export emailed to #{recipient}.",
       error_type: "ReservationsExportScheduleJob",
       severity: "info",

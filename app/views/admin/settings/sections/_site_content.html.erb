@@ -4,7 +4,6 @@
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Site Content</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Headline, home page image, and supporting copy shown on the public site.</p>
     </div>
-    <%= link_to "Manage Thanks", admin_thanks_path, class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
   </div>
 
   <div class="admin-panel-body">
@@ -25,8 +24,18 @@
       </div>
 
       <div class="admin-form-section border-line dark:border-line-dark">
-        <h3 class="admin-section-title text-ink dark:text-ink-dark">Home page image</h3>
-        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Choose the image shown at the top of the public home page. It is displayed at a fixed size.</p>
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <h3 class="admin-section-title text-ink dark:text-ink-dark">Make a Reservation</h3>
+          <%= link_to root_path,
+              target: "_blank",
+              rel: "noopener",
+              title: "Open the Make a Reservation page (opens in a new tab)",
+              class: "admin-link inline-flex items-center gap-1.5 text-sm font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" do %>
+            View page
+            <%= external_link_icon(css_class: "size-3.5 shrink-0") %>
+          <% end %>
+        </div>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">The public home page, where neighbors reserve their tree pickup. The image below appears at the top of the page.</p>
 
         <div class="admin-field admin-field--spaced">
           <%= label_tag "setting[home_page_image]", "Home Page Image", class: "admin-label text-ink dark:text-ink-dark" %>
@@ -42,31 +51,41 @@
       </div>
 
       <div class="admin-form-section border-line dark:border-line-dark">
-        <h3 class="admin-section-title text-ink dark:text-ink-dark">Page copy</h3>
-        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Supporting copy shown on the public site.</p>
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <h3 class="admin-section-title text-ink dark:text-ink-dark">About</h3>
+          <%= link_to about_path,
+              target: "_blank",
+              rel: "noopener",
+              title: "Open the About page (opens in a new tab)",
+              class: "admin-link inline-flex items-center gap-1.5 text-sm font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" do %>
+            View page
+            <%= external_link_icon(css_class: "size-3.5 shrink-0") %>
+          <% end %>
+        </div>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Copy shown on the public About page.</p>
 
         <div class="admin-field admin-field--spaced">
-          <%= label_tag "setting[about_event_description]", "About", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= label_tag "setting[about_event_description]", "Description", class: "admin-label text-ink dark:text-ink-dark" %>
           <%= text_area_tag "setting[about_event_description]", setting.about_event_description, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_ABOUT_EVENT_DESCRIPTION %>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default description.</p>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The lede at the top of the About page. Leave blank to use the default description.</p>
         </div>
 
         <div class="admin-field admin-field--spaced">
           <%= label_tag "setting[on_day_of_pickup_instructions]", "On Day of Pickup Instructions", class: "admin-label text-ink dark:text-ink-dark" %>
           <%= text_area_tag "setting[on_day_of_pickup_instructions]", setting.on_day_of_pickup_instructions, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_PICKUP_INSTRUCTIONS %>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default instructions.</p>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown on the About page under On day of pickup. Leave blank to use the default instructions.</p>
         </div>
       </div>
 
       <div class="admin-form-section border-line dark:border-line-dark">
-        <h3 class="admin-section-title text-ink dark:text-ink-dark">Donations page</h3>
-        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Copy shown on the public donations pages.</p>
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">Donations</h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Copy shown on the donation pages of the reservation flow — after a neighbor reserves their tree, before pickup is confirmed.</p>
         <%= render "admin/settings/markdown_help" %>
 
         <div class="admin-field admin-field--spaced">
           <%= label_tag "setting[donations_page_content]", "Initial Content", class: "admin-label text-ink dark:text-ink-dark" %>
           <%= text_area_tag "setting[donations_page_content]", setting.donations_page_content, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_DONATIONS_PAGE_CONTENT %>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default content. Supports basic markdown — see Markdown supported above.</p>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown at the top of the Donations page when online giving is unavailable. Leave blank to use the default content. Supports basic markdown — see Markdown supported above.</p>
         </div>
 
         <div class="admin-field admin-field--spaced">
@@ -78,13 +97,33 @@
         <div class="admin-field admin-field--spaced">
           <%= label_tag "setting[donations_new_page_content]", "New Donations Page Content", class: "admin-label text-ink dark:text-ink-dark" %>
           <%= text_area_tag "setting[donations_new_page_content]", setting.donations_new_page_content, rows: 8, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_DONATIONS_NEW_PAGE_CONTENT %>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default content. Supports basic markdown — see Markdown supported above.</p>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown on the page where neighbors choose a donation option after reserving. Leave blank to use the default content. Supports basic markdown — see Markdown supported above.</p>
         </div>
 
         <div class="admin-field admin-field--spaced">
           <%= label_tag "setting[donations_success_page_content]", "Donation Success Content", class: "admin-label text-ink dark:text-ink-dark" %>
           <%= text_area_tag "setting[donations_success_page_content]", setting.donations_success_page_content, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT %>
           <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown on the donation thank-you page after giving online. Leave blank to use the default content. Supports basic markdown — see Markdown supported above.</p>
+        </div>
+      </div>
+
+      <div class="admin-form-section border-line dark:border-line-dark">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <h3 class="admin-section-title text-ink dark:text-ink-dark">Thank You</h3>
+          <%= link_to thanks_path,
+              target: "_blank",
+              rel: "noopener",
+              title: "Open the Thank You page (opens in a new tab)",
+              class: "admin-link inline-flex items-center gap-1.5 text-sm font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" do %>
+            View page
+            <%= external_link_icon(css_class: "size-3.5 shrink-0") %>
+          <% end %>
+        </div>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Supporter cards and the thank-you message shown on the public Thank You page.</p>
+
+        <div class="admin-field--spaced flex flex-wrap items-center gap-3">
+          <%= link_to "Add thank", new_admin_thank_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+          <%= link_to "Manage Thanks", admin_thanks_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
         </div>
       </div>
 

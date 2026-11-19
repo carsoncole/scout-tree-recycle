@@ -525,13 +525,18 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "section.admin-panel", text: "Site Content" do
       assert_field "Header/Tab Title"
       assert_field "Home Page Image"
-      assert_field "About"
+      assert_field "Description"
       assert_field "On Day of Pickup Instructions"
       assert_field "Initial Content"
       assert_field "How to Donate"
       assert_field "New Donations Page Content"
       assert_field "Donation Success Content"
       assert_text "Markdown supported"
+      assert_selector "a[href='/'][target='_blank'][rel='noopener']", text: "View page"
+      assert_selector "a[href='/about'][target='_blank'][rel='noopener']", text: "View page"
+      assert_selector "a[href='/thanks'][target='_blank'][rel='noopener']", text: "View page"
+      assert_link "Add thank", href: new_admin_thank_path
+      assert_link "Manage Thanks", href: admin_thanks_path
       assert_button "Save Site Content"
     end
 
@@ -539,7 +544,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "section.admin-panel", text: "The Event" do
       assert_no_field "Header/Tab Title"
-      assert_no_field "About"
+      assert_no_field "Description"
       assert_no_field "On Day of Pickup Instructions"
       assert_no_field "Initial Content"
       assert_no_field "How to Donate"
@@ -553,7 +558,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "section.admin-panel", text: "Site Content" do
       fill_in "Header/Tab Title", with: "Home Page Header"
-      fill_in "About", with: "About Event Description"
+      fill_in "Description", with: "About Event Description"
       fill_in "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
       fill_in "Initial Content", with: "Donations intro copy"
       fill_in "How to Donate", with: "How to donate copy"
@@ -564,7 +569,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     assert_text "Settings were successfully updated"
     assert_field "Header/Tab Title", with: "Home Page Header"
-    assert_field "About", with: "About Event Description"
+    assert_field "Description", with: "About Event Description"
     assert_field "On Day of Pickup Instructions", with: "On Day of Pickup Instructions do this"
     assert_field "Initial Content", with: "Donations intro copy"
     assert_field "How to Donate", with: "How to donate copy"

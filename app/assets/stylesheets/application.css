@@ -762,6 +762,48 @@
   counter-increment: site-step;
 }
 
+/*
+ * Compact Reserve -> Donate -> Confirmed progress bar shown across the
+ * reservation flow pages. Structure only; colors are Tailwind utilities
+ * in shared/_flow_steps.html.erb.
+ */
+.site-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.site-flow-step {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.site-flow-chip {
+  display: flex;
+  width: 1.55rem;
+  height: 1.55rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex: none;
+}
+
+.site-flow-chip svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
 .site-choice-grid {
   display: grid;
   margin-top: 2.5rem;

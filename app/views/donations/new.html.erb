@@ -4,6 +4,8 @@
 
 <section class="site-page">
   <div class="site-container site-container--medium">
+    <%= render "shared/flow_steps", current: 2 %>
+
     <%= render "shared/page_header",
                eyebrow: "One last step",
                title: "Support #{setting.organization_name}",

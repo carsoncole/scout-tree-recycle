@@ -30,6 +30,7 @@ Semantic Tailwind tokens live in `app/assets/tailwind/application.css` via `@the
 | Primary accent | `sage` | `sage-dark` |
 | Deep accent (links) | `sage-deep` | `sage-deep-dark` |
 | Accent soft fill | `sage-soft` | `sage-soft-dark` |
+| Deep fir (footer, pickup panel) | `fir` | `fir-dark` |
 | Danger text | `danger` | `danger-dark` |
 | Danger border | `danger-border` | `danger-border-dark` |
 | Danger background | `danger-bg` / `danger-bg-strong` | `danger-bg-dark` / `danger-bg-strong-dark` |
@@ -88,11 +89,17 @@ Use these exact class strings (light + `dark:`) together:
 | Nav link (active) | `bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark` |
 | Filter (active) | `bg-sage text-surface dark:bg-sage-dark dark:text-page-dark` |
 | Pagination link (current) | `border-sage bg-sage text-surface dark:border-sage-dark dark:bg-sage-dark dark:text-page-dark` |
+| Fir panel/footer | `bg-fir dark:bg-fir-dark` |
+| Fir panel label | `text-sage-soft` |
+| Fir panel soft text | `text-sage-soft/90` |
+| Fir panel strong text/link | `text-surface` |
+| Fir panel link (underline) | `text-surface underline decoration-sage-soft/40 underline-offset-4 hover:decoration-sage-soft` |
 | Focus visible | `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-ink-dark` |
 
 ### Rules of thumb
 
 - Every element that sets a light color should set its `dark:` counterpart from the table above.
+- Exception: on `fir` backgrounds only the panel itself switches (`bg-fir dark:bg-fir-dark`). Its text tokens (`text-sage-soft`, `text-sage-soft/90`, `text-surface`) read on both, so they stay the same in both modes.
 - Prefer semantic tokens (`bg-surface`, `text-ink`) over arbitrary hex values.
 - Pseudo-elements cannot take utilities directly; use Tailwind variants such as `after:bg-surface dark:after:bg-surface-dark`.
 - For repeated markup (table cells, form fields), it is fine to repeat the recipe strings or expose small helpers that return them. Do not reintroduce color rules in `app/assets/stylesheets/application.css`.

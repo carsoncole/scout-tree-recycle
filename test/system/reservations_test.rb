@@ -10,6 +10,8 @@ class ReservationsTest < ApplicationSystemTestCase
 
     assert_title "Make a Reservation | #{Setting.instance.home_page_header}"
     assert_selector "h1", text: "Make a Reservation"
+    assert_link "About", href: about_path
+    assert_link "Thank You", href: thanks_path
     assert_selector "img[alt='Recycle Your Tree']"
     assert_text "Schedule your tree pickup for " + Setting.instance.event_pickup_start.strftime("%B %-d, %Y")
     assert_selector ".site-deadline-badge", text: /sign up by/i
@@ -87,6 +89,14 @@ class ReservationsTest < ApplicationSystemTestCase
     click_link_or_button "Cancel Reservation"
     accept_confirm
     assert_text "Your tree pickup has been cancelled."
+  end
+
+  test "confirmation page shows cancel only for active reservations" do
+    visit reservation_confirmation_path(reservations(:pending_pickup_1).public_token)
+    assert_button "Cancel Reservation"
+
+    visit reservation_confirmation_path(reservations(:cancelled_1).public_token)
+    assert_no_button "Cancel Reservation"
   end
 
   test "cannot create reservation with duplicate email" do

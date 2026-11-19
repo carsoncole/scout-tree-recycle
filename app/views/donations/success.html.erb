@@ -3,6 +3,12 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
+    <%# Only the reservation flow's Stripe return shows the progress bar;
+        the standalone donation thank-you (no reservation) has no flow. %>
+    <% if @reservation %>
+      <%= render "shared/flow_steps", completed: true %>
+    <% end %>
+
     <div class="site-confirmation-mark bg-sage text-surface ring-4 ring-sage-soft dark:bg-sage-dark dark:text-page-dark dark:ring-sage-soft-dark" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="m8.5 12.3 2.3 2.3 4.8-5"></path>

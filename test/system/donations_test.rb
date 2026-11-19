@@ -16,6 +16,11 @@ class DonationsTest < ApplicationSystemTestCase
 
     assert_button "Continue without donation"
 
+    assert_selector ".site-flow", count: 1
+    assert_selector ".site-flow-step[aria-current='step']", text: "Donate"
+    assert_selector ".site-flow-step", text: "Reserve"
+    assert_selector ".site-flow-step", text: "Confirmed"
+
     assert_text "Our tree pickup service is free, but it's also our biggest fundraiser of the year. Every donation goes straight to our organization and helps our members take part in:"
     assert_selector "li", text: "Summer camps and outdoor adventures"
     assert_selector "li", text: "Community service projects"
@@ -38,6 +43,7 @@ class DonationsTest < ApplicationSystemTestCase
     visit success_path
 
     assert_selector "h1", text: "Thank you for your donation"
+    assert_no_selector ".site-flow"
     assert_text "Thanks to you, our organization can keep adventuring, leading, and giving back to the community. We'll put your donation to good use."
   end
 
@@ -51,6 +57,9 @@ class DonationsTest < ApplicationSystemTestCase
     assert_selector "li", text: "First priority"
     assert_selector "li", text: "Second priority"
     assert_link "View your reservation"
+    assert_selector ".site-flow", count: 1
+    assert_selector ".site-flow-chip", count: 3
+    assert_no_selector ".site-flow-step[aria-current='step']"
   end
 
   test "new donation page with donations disabled" do
@@ -79,6 +88,18 @@ class DonationsTest < ApplicationSystemTestCase
     make_system_reservation
     complete_donation
     assert_selector "h1", text: "Reservation Confirmed"
+    assert_selector ".site-flow-chip", count: 3
+    assert_no_selector ".site-flow-step[aria-current='step']"
+  end
+
+  test "cancelling a reservation from the confirmation page" do
+    make_system_reservation
+    complete_donation
+    assert_text "Reservation Confirmed"
+
+    click_link_or_button "Cancel Reservation"
+    accept_confirm
+    assert_text "Your tree pickup has been cancelled."
   end
 
   test "continue without donation" do

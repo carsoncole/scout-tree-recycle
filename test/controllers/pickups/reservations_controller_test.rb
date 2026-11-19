@@ -46,6 +46,29 @@ class Pickups::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "reservation show lists that pickup's activity only" do
+    get pickups_route_reservation_url(@route, @reservation)
+    assert_response :success
+    assert_match(/routing → pending_pickup — Mary Jones \(mary\.jones@example\.com\)/, @response.body)
+    # Another reservation's activity is not included.
+    assert_no_match(/Icky Jones/, @response.body)
+  end
+
+  test "reservation show lists an empty activity state" do
+    get pickups_route_reservation_url(@route, reservations(:pending_pickup_no_mobile))
+    assert_response :success
+    assert_match(/No activity recorded for this pickup yet/, @response.body)
+  end
+
+  test "turbo stream update includes the status change in the pickup activity" do
+    patch pickups_route_reservation_url(@route, @reservation),
+          params: { reservation: { status: "picked_up" } },
+          headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :success
+    assert_match(/pending_pickup → picked_up — Mary Jones/, response.body)
+  end
+
   test "should update reservation status to picked up" do
     patch pickups_route_reservation_url(@route, @reservation), params: { reservation: { status: "picked_up" } }
     assert_redirected_to pickups_route_url(@route)

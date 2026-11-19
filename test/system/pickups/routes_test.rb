@@ -74,32 +74,29 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_selector "#route_status_badge", text: "1 pickup pending"
   end
 
-  test "driver can view route activity over the map and jump to a stop" do
+  test "driver can view a pickup's activity from its details dialog" do
     sign_in_driver
 
     click_on @route.name, match: :first
     assert_selector "#route_status_badge", text: "2 pickups pending"
 
-    click_on "Activity"
-    assert_selector "dialog[open] turbo-frame#pickup_route_activity"
-    within "dialog[open] turbo-frame#pickup_route_activity" do
+    reservation = reservations(:pending_pickup_1)
+    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    assert_selector "dialog[open]"
+
+    within "dialog[open]" do
+      # Activity starts collapsed so the status buttons stay prominent.
+      assert_no_text "routing → pending_pickup"
+      find("summary", text: "Activity").click
       assert_text "routing → pending_pickup — Mary Jones (mary.jones@example.com)"
-    end
-    # The map stays on the page behind the dialog.
-    assert_selector "[data-controller='map'] .pickup-marker-hit", count: 2
 
-    # Tapping an entry opens that stop's details over the activity list.
-    within "dialog[open] turbo-frame#pickup_route_activity" do
-      click_on "routing → pending_pickup — Mary Jones (mary.jones@example.com)"
+      # Making a change appends it to the pickup's activity (the section
+      # re-renders collapsed after the Turbo Stream replace).
+      click_on "Picked"
+      assert_text "Pickup marked Picked Up."
+      find("summary", text: "Activity").click
+      assert_text "pending_pickup → picked_up — Mary Jones (mary.jones@example.com)"
     end
-    assert_selector "dialog[open] #pickup_reservation_dialog"
-    assert_text "770 Broadway"
-
-    # Closing the pickup details returns to the activity list.
-    find("dialog[open] turbo-frame#pickup_reservation_dialog")
-      .find(:xpath, "ancestor::dialog")
-      .find("button[aria-label='Close']").click
-    assert_selector "dialog[open] turbo-frame#pickup_route_activity"
   end
 
   test "routes page shows a pickup status indicator for each route" do

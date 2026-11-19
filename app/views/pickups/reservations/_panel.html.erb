@@ -1,4 +1,4 @@
-<%# locals: (route:, reservation:, error: nil, notice: nil) %>
+<%# locals: (route:, reservation:, activity_logs:, error: nil, notice: nil) %>
 <%# Pickup details for the route map dialog (also shown standalone on the
    reservation show page). %>
 <% color = pickup_status_color(reservation.status) %>
@@ -72,4 +72,20 @@
     </div>
     <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">Marking a pickup missing notifies the resident with a missing-tree message.</p>
   <% end %>
+
+  <details class="border-t border-line pt-3 dark:border-line-dark">
+    <summary class="cursor-pointer select-none text-[0.9rem] font-semibold text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark">Activity</summary>
+    <% if activity_logs.any? %>
+      <ul class="m-0 mt-3 flex list-none flex-col gap-2.5 p-0">
+        <% activity_logs.each do |log| %>
+          <li>
+            <p class="m-0 text-[0.85rem] leading-[1.45] text-ink dark:text-ink-dark"><%= log.message %></p>
+            <p class="m-0 mt-0.5 text-[0.78rem] text-ink-soft dark:text-ink-soft-dark"><%= time_ago_in_words(log.created_at) %> ago</p>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="m-0 mt-3 text-[0.85rem] text-ink-soft dark:text-ink-soft-dark">No activity recorded for this pickup yet.</p>
+    <% end %>
+  </details>
 </div>

@@ -35,7 +35,7 @@ reservation_status_change:
   created_at: 2021-01-01 12:02:00
   updated_at: 2021-01-01 12:02:00
 
-route_one_status_change:
+pending_pickup_1_status_change:
   message: "Reservation status changed: routing → pending_pickup — Mary Jones (mary.jones@example.com)"
   log_type: reservation
   environment: test

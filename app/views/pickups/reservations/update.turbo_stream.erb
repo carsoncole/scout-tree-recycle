@@ -1,5 +1,5 @@
 <%= turbo_stream.replace dom_id(@reservation, :panel) do %>
-  <%= render "pickups/reservations/panel", route: @route, reservation: @reservation, notice: flash.now[:notice] %>
+  <%= render "pickups/reservations/panel", route: @route, reservation: @reservation, activity_logs: @activity_logs, notice: flash.now[:notice] %>
 <% end %>
 <%= turbo_stream.replace "route_status_badge" do %>
   <%= render "pickups/routes/status_badge", pending_count: @route.pending_pickup_count, id: "route_status_badge" %>

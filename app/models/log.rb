@@ -1,5 +1,7 @@
 class Log < ApplicationRecord
-  TYPES = %w[error sms email configuration system].freeze
+  TYPES = %w[error sms email configuration system reservation].freeze
+
+  belongs_to :reservation, optional: true
 
   attribute :environment, :string, default: Rails.env
   attribute :severity, :string, default: "info"

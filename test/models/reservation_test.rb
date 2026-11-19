@@ -125,6 +125,49 @@ class ReservationTest < ActiveSupport::TestCase
     assert @reservation.picked_up?
   end
 
+  test "logs a reservation activity when created" do
+    assert_difference -> { Log.of_type("reservation").count }, 1 do
+      Reservation.create!(name: "Log Test", street: "1 Main St", city: "New York", state: "NY",
+                          country: "United States", email: "log.test@example.com")
+    end
+
+    log = Log.of_type("reservation").last
+    assert_includes log.message, "Reservation created"
+    assert_includes log.message, "log.test@example.com"
+    assert_equal "Log Test", log.reservation.name
+  end
+
+  test "does not log a reservation activity while importing" do
+    assert_no_difference -> { Log.of_type("reservation").count } do
+      Reservation.create!(name: "Import Log Test", street: "1 Main St", city: "New York", state: "NY",
+                          country: "United States", email: "import.log.test@example.com", importing: true)
+    end
+  end
+
+  test "logs a reservation activity when the status changes" do
+    reservation = reservations(:donation_1)
+
+    assert_difference -> { Log.of_type("reservation").count }, 1 do
+      reservation.routing!
+    end
+
+    log = Log.of_type("reservation").last
+    assert_equal reservation, log.reservation
+    assert_includes log.message, "donation → routing"
+  end
+
+  test "logs a reservation activity when the donation type changes" do
+    reservation = reservations(:donation_1)
+
+    assert_difference -> { Log.of_type("reservation").count }, 1 do
+      reservation.cash_or_check_donation!
+    end
+
+    log = Log.of_type("reservation").last
+    assert_equal reservation, log.reservation
+    assert_includes log.message, "Cash or check donation"
+  end
+
   test "invalid with duplicate email" do
     # Try to create second reservation with same email (routing_1 is existing)
     reservation = Reservation.new(email: "icky.jones@example.com")

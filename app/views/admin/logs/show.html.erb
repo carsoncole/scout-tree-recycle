@@ -34,6 +34,16 @@
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @log.environment %></dd>
         </div>
         <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Reservation</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <% if @log.reservation.present? %>
+              <%= link_to "#{@log.reservation.name} (#{@log.reservation.email})", admin_reservation_path(@log.reservation), class: admin_link_class %>
+            <% else %>
+              N/A
+            <% end %>
+          </dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Handled</dt>
           <dd class="admin-detail-value text-ink dark:text-ink-dark">
             <span class="<%= admin_handled_badge(@log.handled) %>"><%= @log.handled ? "Yes" : "No" %></span>

@@ -34,6 +34,13 @@ class Admin::LogsTest < ApplicationSystemTestCase
     assert_selector "tbody a", exact_text: "View", count: Log.count
   end
 
+  test "log show page links to the associated reservation" do
+    log = logs(:reservation_status_change)
+    visit admin_log_url(log)
+
+    assert_selector "a[href='#{admin_reservation_path(log.reservation)}']", text: log.reservation.name
+  end
+
   test "deleting all logs" do
     visit admin_logs_url
     find("summary", text: "Delete All Logs").click

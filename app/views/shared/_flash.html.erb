@@ -3,13 +3,21 @@
   <% next if message.blank? %>
   <% next if type.to_s == "import_errors" %>
   <%
-    is_notice = type.to_s == "notice"
-    styles = is_notice ?
-      "border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" :
-      "border border-line border-l-[3px] border-l-ink-soft bg-stone text-ink dark:border-line-dark dark:border-l-ink-soft-dark dark:bg-stone-dark dark:text-ink-dark"
+    type = type.to_s
+    is_notice = type == "notice"
+    role = is_notice ? "status" : "alert"
+    styles = admin_notice_class(
+      case type
+      when "notice" then "info"
+      when "alert" then "alert"
+      when "warning" then "warning"
+      when "danger" then "danger"
+      else "alert"
+      end
+    )
   %>
   <div class="flash" data-controller="dismissible">
-    <div class="site-notice <%= styles %>" role="<%= is_notice ? "status" : "alert" %>">
+    <div class="site-notice <%= styles %>" role="<%= role %>">
       <p class="site-notice-text text-ink dark:text-ink-dark"><%= message %></p>
       <button type="button"
               class="site-notice-dismiss text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-ink-dark"

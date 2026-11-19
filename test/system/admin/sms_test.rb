@@ -70,7 +70,7 @@ class Admin::SmsTest < ApplicationSystemTestCase
   test "should delete conversation on index page" do
     visit admin_sms_url
     accept_confirm do
-      first(".delete-button").click
+      first(".admin-conversation button", text: "Delete").click
     end
     assert_text "Conversation deleted successfully."
     assert_no_text "+12069230400"
@@ -79,7 +79,7 @@ class Admin::SmsTest < ApplicationSystemTestCase
   test "should delete conversation on show page" do
     visit admin_sms_url
     accept_confirm do
-      page.find(".conversation", text: "2069230400").find(".delete-button").click
+      page.find(".admin-conversation", text: "2069230400").find("button", text: "Delete").click
     end
     assert_text "Conversation deleted successfully."
     assert_no_text "+12069230400"

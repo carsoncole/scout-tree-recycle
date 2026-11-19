@@ -5,7 +5,7 @@
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Configuration status</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Required settings needed for the application to run correctly.</p>
     </div>
-    <span class="admin-badge <%= missing_settings.empty? ? 'admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark' : 'admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark' %>">
+    <span class="<%= admin_badge_class(missing_settings.empty? ? "positive" : "warning") %>">
       <%= missing_settings.empty? ? "Ready" : "#{missing_settings.size} missing" %>
     </span>
   </div>
@@ -14,12 +14,12 @@
     <% if missing_settings.empty? %>
       <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">All required settings are configured.</p>
     <% else %>
-      <div class="admin-notice admin-notice--warning border border-line border-l-[3px] border-l-warning bg-warning-bg text-ink dark:border-line-dark dark:border-l-warning-dark dark:bg-warning-bg-dark dark:text-ink-dark" role="status">
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
         <div>
           <p class="admin-notice-title">Missing required settings</p>
           <ul class="admin-setup-missing-list">
             <% missing_settings.each do |item| %>
-              <li><%= link_to item[:label], admin_settings_section_path(item[:section]), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></li>
+              <li><%= link_to item[:label], admin_settings_section_path(item[:section]), class: admin_link_class %></li>
             <% end %>
           </ul>
         </div>

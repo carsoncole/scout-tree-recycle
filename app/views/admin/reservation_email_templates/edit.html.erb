@@ -1,10 +1,11 @@
+<%= content_for :title, "Edit #{@template.display_name}" %>
 <%= render "admin/shared/page_header",
            title: "Edit #{@template.display_name}",
            description: "Update the logo and body, preview it with real reservation data, then publish it when it is ready to send." do %>
-  <%= link_to "Back to Reservation Emails", admin_reservation_email_templates_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Back to Reservation Emails", admin_reservation_email_templates_path, class: admin_button_class(variant: :secondary) %>
   <%= link_to "Preview Draft",
       preview_admin_reservation_email_template_path(@template, reservation_id: @selected_reservation.id, source: "draft"),
-      class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
+      class: admin_button_class(variant: :secondary),
       target: "_blank",
       rel: "noopener" %>
 <% end %>
@@ -25,11 +26,11 @@
           </div>
           <div>
             <% if @template.published? && @template.draft_changes? %>
-              <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">Draft changes</span>
+              <span class="<%= admin_badge_class(:warning) %>">Draft changes</span>
             <% elsif @template.published? %>
-              <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark">Published</span>
+              <span class="<%= admin_badge_class(:positive) %>">Published</span>
             <% else %>
-              <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">Draft</span>
+              <span class="<%= admin_badge_class(:neutral) %>">Draft</span>
             <% end %>
           </div>
         </div>
@@ -50,13 +51,13 @@
               <%= button_to "Publish Template",
                   publish_admin_reservation_email_template_path(@template),
                   method: :patch,
-                  class: "admin-button admin-button--small bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+                  class: admin_button_class(size: :small) %>
 
               <% if @template.published? %>
                 <%= button_to "Unpublish",
                     unpublish_admin_reservation_email_template_path(@template),
                     method: :patch,
-                    class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
+                    class: admin_button_class(variant: :secondary, size: :small),
                     data: { turbo_confirm: "Unpublish this template? Reservation emails using it will stop sending until it is published again." } %>
               <% end %>
             </div>
@@ -65,7 +66,7 @@
             <%= button_to "Restore Default Content",
                 restore_default_admin_reservation_email_template_path(@template),
                 method: :post,
-                class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
+                class: admin_button_class(variant: :secondary, size: :small),
                 data: { turbo_confirm: "Replace the saved draft with the built-in default content? The live published version will not change until you publish." } %>
           </div>
         </div>
@@ -94,7 +95,7 @@
                         @selected_reservation.id.to_s
                       ),
                       id: "preview_reservation_id",
-                      class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
+                      class: admin_select_class,
                       data: { action: "change->form#submit" } %>
                 </div>
 
@@ -103,7 +104,7 @@
                   <%= select_tag :source,
                       options_for_select([ [ "Draft", "draft" ] ] + (@template.published? ? [ [ "Published", "published" ] ] : []), @preview_source.to_s),
                       id: "preview_source",
-                      class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
+                      class: admin_select_class,
                       data: { action: "change->form#submit" } %>
                 </div>
 
@@ -114,7 +115,7 @@
                   </label>
                 <% end %>
 
-                <%= submit_tag "Update Preview", class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+                <%= submit_tag "Update Preview", class: admin_button_class(variant: :secondary, size: :small) %>
               <% end %>
 
               <% if @preview_error.present? %>
@@ -123,13 +124,13 @@
 
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Subject:</strong> <%= @preview_subject.presence || "(empty)" %></p>
 
-              <iframe class="admin-preview-frame"
+              <iframe class="admin-preview-frame border-line bg-white dark:border-line-dark"
                       title="Reservation email template preview"
                       sandbox
                       src="<%= preview_admin_reservation_email_template_path(@template, reservation_id: @selected_reservation.id, source: @preview_source, follow_up: (@follow_up ? "1" : "0")) %>"></iframe>
 
               <details>
-                <summary class="admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark">Plain-text preview</summary>
+                <summary class="<%= admin_link_class %>">Plain-text preview</summary>
                 <pre class="admin-code bg-stone text-ink dark:bg-stone-dark dark:text-ink-dark"><%= @preview_text.presence || "(empty)" %></pre>
               </details>
             </div>
@@ -151,7 +152,7 @@
               <%= label_tag :email, "Send to", class: "admin-label text-ink dark:text-ink-dark" %>
               <%= email_field_tag :email,
                   admin_test_email_recipient,
-                  class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
+                  class: admin_input_class,
                   required: true,
                   autocomplete: "email" %>
             </div>
@@ -164,7 +165,7 @@
                     @selected_reservation.id.to_s
                   ),
                   id: "test_reservation_id",
-                  class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+                  class: admin_select_class %>
             </div>
 
             <div class="admin-field">
@@ -172,7 +173,7 @@
               <%= select_tag :source,
                   options_for_select([ [ "Draft", "draft" ] ] + (@template.published? ? [ [ "Published", "published" ] ] : []), "draft"),
                   id: "test_source",
-                  class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+                  class: admin_select_class %>
             </div>
 
             <% if @template.name == "missing_tree_email" %>
@@ -182,7 +183,7 @@
               </label>
             <% end %>
 
-            <%= submit_tag "Send Test Email", class: "admin-button admin-button--secondary admin-button--full border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+            <%= submit_tag "Send Test Email", class: admin_button_class(variant: :secondary, full: true) %>
           <% end %>
         </div>
       </section>
@@ -209,12 +210,12 @@
           </div>
 
           <details class="admin-hint--spaced">
-            <summary class="admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark">Show variable descriptions</summary>
+            <summary class="<%= admin_link_class %>">Show variable descriptions</summary>
             <table class="admin-variable-table text-ink dark:text-ink-dark">
               <tbody>
                 <% ReservationEmailTemplate.available_variables.each do |variable| %>
                   <tr>
-                    <th scope="row" class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">{{ <%= variable[:name] %> }}</th>
+                    <th scope="row" class="<%= admin_td_class %>">{{ <%= variable[:name] %> }}</th>
                     <td class="border-b border-line text-ink-soft dark:border-line-dark dark:text-ink-soft-dark"><%= variable[:description] %></td>
                   </tr>
                 <% end %>

@@ -27,8 +27,6 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "Location Services", href: admin_settings_section_path("location_services")
       assert_link "Operations", href: admin_settings_section_path("operations")
       assert_link "System", href: admin_settings_section_path("system")
-      assert_link "Data", href: admin_data_path
-      assert_link "Jobs", href: admin_mission_control_jobs_path
       assert_link "Users", href: admin_users_path
     end
   end
@@ -515,6 +513,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     end
 
     visit admin_settings_url
+    assert_link "Data", href: admin_data_path
     assert_link "Jobs", href: admin_mission_control_jobs_path
     assert_link "Users", href: admin_users_path
   end

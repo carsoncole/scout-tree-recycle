@@ -10,36 +10,36 @@
     <table class="admin-table text-ink dark:text-ink-dark">
       <thead>
         <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Date</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Amount</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Reservation</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Status</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
+          <th scope="col" class="<%= admin_th_class %>">Date</th>
+          <th scope="col" class="<%= admin_th_class %>">Amount</th>
+          <th scope="col" class="<%= admin_th_class %>">Reservation</th>
+          <th scope="col" class="<%= admin_th_class %>">Status</th>
+          <th scope="col" class="<%= admin_th_class %>">Actions</th>
         </tr>
       </thead>
       <tbody>
         <% @donations.each do |donation| %>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= donation.created_at.strftime("%b %d, %Y %I:%M %p") %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= number_to_currency(donation.amount) %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+            <td class="<%= admin_td_class %>"><%= donation.created_at.strftime("%b %d, %Y %I:%M %p") %></td>
+            <td class="<%= admin_td_class %>"><%= number_to_currency(donation.amount) %></td>
+            <td class="<%= admin_td_class %>">
               <% if donation.reservation %>
-                <%= link_to donation.reservation.name, admin_reservation_path(donation.reservation), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                <%= link_to donation.reservation.name, admin_reservation_path(donation.reservation), class: admin_link_class %>
               <% else %>
                 <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark">No reservation</span>
               <% end %>
             </td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+            <td class="<%= admin_td_class %>">
               <span class="<%= admin_donation_status_badge(donation.status) %>">
                 <%= donation.status&.titleize %>
               </span>
             </td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+            <td class="<%= admin_td_class %>">
               <div class="admin-table-actions">
-                <%= link_to "View", admin_donation_path(donation), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                <%= link_to "View", admin_donation_path(donation), class: admin_link_class %>
                 <%= button_to "Delete", admin_donation_path(donation),
                     method: :delete,
-                    class: "admin-link admin-link--danger text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark",
+                    class: admin_link_class(variant: :danger),
                     form: { data: { turbo_confirm: "Are you sure you want to delete this donation?" } } %>
               </div>
             </td>
@@ -50,6 +50,6 @@
   </div>
 
   <% if @donations.empty? %>
-    <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No donations have been recorded yet.</p>
+    <%= render "admin/shared/empty_state", message: "No donations have been recorded yet." %>
   <% end %>
 </section>

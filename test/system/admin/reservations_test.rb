@@ -33,10 +33,7 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     click_link "Needs Routing"
 
     assert_equal 1, page.all("table").count
-    table = page.find("table.needs-routing")
-
-    reservation_count = table.all("tbody tr").count
-    assert_equal 4, reservation_count
+    assert_selector "table tbody tr", count: 4
   end
 
   # test that the edit link works

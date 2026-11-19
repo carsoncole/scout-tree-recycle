@@ -3,8 +3,8 @@
   <head>
     <title><%= content_for(:title) || "#{Setting.instance&.home_page_header.presence || "Tree Recycle"} Admin" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="#f4f3ed">
-    <meta name="theme-color" content="#171915" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f6f3ea">
+    <meta name="theme-color" content="#171a14" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
@@ -37,23 +37,53 @@
           </div>
 
           <nav class="admin-nav" aria-label="Admin">
-            <%= link_to "Reservations", admin_reservations_path,
-                        class: admin_nav_class(controller_name == "reservations") %>
-            <%= link_to "Donations", admin_donations_path,
-                        class: admin_nav_class(controller_name == "donations") %>
-            <%= link_to "Marketing", admin_marketing_index_path,
-                        class: admin_nav_class(%w[marketing marketing_email_templates marketing_images reservation_email_templates].include?(controller_name)) %>
-            <%= link_to admin_sms_path, class: admin_nav_class(controller_name == "sms") do %>
-              SMS
-              <% if unviewed_sms_count.positive? %>
-                <span class="admin-nav-badge bg-ink text-surface dark:bg-ink-dark dark:text-page-dark"><%= unviewed_sms_count %></span>
+            <div class="admin-nav-group">
+              <span class="admin-nav-group-label text-muted dark:text-muted-dark">Operations</span>
+              <%= link_to "Reservations", admin_reservations_path,
+                          class: admin_nav_class(controller_name == "reservations") %>
+              <%= link_to "Donations", admin_donations_path,
+                          class: admin_nav_class(controller_name == "donations") %>
+              <%= link_to admin_sms_path, class: admin_nav_class(controller_name == "sms") do %>
+                SMS
+                <% if unviewed_sms_count.positive? %>
+                  <span class="admin-nav-badge bg-ink text-surface dark:bg-ink-dark dark:text-page-dark"><%= unviewed_sms_count %></span>
+                <% end %>
               <% end %>
-            <% end %>
-            <%= link_to "Settings", admin_settings_path,
-                        class: admin_nav_class(controller_name == "settings") %>
+            </div>
+
+            <span class="admin-nav-divider bg-line dark:bg-line-dark" aria-hidden="true"></span>
+
+            <div class="admin-nav-group">
+              <span class="admin-nav-group-label text-muted dark:text-muted-dark">Content</span>
+              <%= link_to "Marketing", admin_marketing_index_path,
+                          class: admin_nav_class(%w[marketing marketing_email_templates marketing_images reservation_email_templates contacts].include?(controller_name)) %>
+            </div>
+
+            <span class="admin-nav-divider bg-line dark:bg-line-dark" aria-hidden="true"></span>
+
+            <div class="admin-nav-group">
+              <span class="admin-nav-group-label text-muted dark:text-muted-dark">System</span>
+              <%= link_to "Settings", admin_settings_path,
+                          class: admin_nav_class(%w[settings drivers routes zones users thanks].include?(controller_name)) %>
+              <%= link_to "Logs", admin_logs_path,
+                          class: admin_nav_class(controller_name == "logs") %>
+              <%= link_to "Data", admin_data_path,
+                          class: admin_nav_class(controller_name == "data") %>
+              <%= link_to "Jobs", admin_mission_control_jobs_path,
+                          class: admin_nav_class(false) %>
+            </div>
+
+            <span class="admin-nav-divider bg-line dark:bg-line-dark" aria-hidden="true"></span>
+
             <%= link_to pickups_root_path, target: "_blank", rel: "noopener",
-                        class: "admin-nav-link gap-1.5 text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+                        class: "#{admin_nav_class(false)} gap-1.5" do %>
               Pickups Portal
+              <%= external_link_icon %>
+            <% end %>
+
+            <%= link_to root_path, target: "_blank", rel: "noopener",
+                        class: "#{admin_nav_class(false)} gap-1.5" do %>
+              Website
               <%= external_link_icon %>
             <% end %>
           </nav>
@@ -64,10 +94,6 @@
               <%= link_to "Log out", admin_session_path, data: { turbo_method: :delete }, class: "admin-account-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
             <% else %>
               <%= link_to "Log in", new_admin_session_path, class: "admin-account-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
-            <% end %>
-            <%= link_to root_path, target: "_blank", rel: "noopener", class: "admin-account-link inline-flex items-center gap-1.5 text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
-              View site
-              <%= external_link_icon %>
             <% end %>
           </div>
         </div>

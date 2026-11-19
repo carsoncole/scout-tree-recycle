@@ -1,0 +1,20 @@
+<%# Confirmation-word gate for destructive actions (validated server-side per AGENTS.md). %>
+<% word = local_assigns.fetch(:word, "DELETE") %>
+<details class="admin-destructive">
+  <summary class="<%= admin_button_class(variant: :danger) %>"><%= summary_label %></summary>
+  <div class="admin-destructive-body">
+    <%= form_with url: url, method: :delete, class: "admin-inline-form" do %>
+      <div class="admin-field">
+        <%= label_tag :confirmation, "Type #{word} to confirm", class: "admin-label text-ink dark:text-ink-dark" %>
+        <%= text_field_tag :confirmation, nil,
+            class: admin_input_class,
+            required: true,
+            pattern: word,
+            title: "Type #{word} exactly to confirm.",
+            autocomplete: "off",
+            spellcheck: false %>
+      </div>
+      <%= submit_tag submit_label, class: admin_button_class(variant: :danger) %>
+    <% end %>
+  </div>
+</details>

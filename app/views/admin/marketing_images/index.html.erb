@@ -1,10 +1,11 @@
+<%= content_for :title, "Email Images" %>
 <%= render "admin/shared/page_header",
            title: "Email Images",
            description: "Images stored directly in app/assets/images that can be used in email templates." do %>
-  <%= link_to "Back to Marketing", admin_marketing_index_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Back to Marketing", admin_marketing_index_path, class: admin_button_class(variant: :secondary) %>
 <% end %>
 
-<div class="admin-notice admin-notice--spaced border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" role="note">
+<div class="<%= admin_notice_class(spaced: true) %>" role="note">
   <div>
     <p><strong>Using an image:</strong> use its Liquid variable in the template HTML, for example <code>&lt;img src="{{ images.tree }}" alt="Tree"&gt;</code>. Every image in this folder gets a variable generated from its filename: lowercase, with spaces, hyphens, and other punctuation replaced by underscores.</p>
   </div>
@@ -30,15 +31,15 @@
                 <code class="admin-image-variable border border-line-strong bg-stone text-ink dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark">{{ <%= variable %> }}</code>
               </div>
             <% else %>
-              <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">No Liquid variable</span>
+              <span class="<%= admin_badge_class(:neutral) %>">No Liquid variable</span>
             <% end %>
 
-            <%= link_to "Open image", image_path(filename), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark", target: "_blank", rel: "noopener" %>
+            <%= link_to "Open image", image_path(filename), class: admin_link_class, target: "_blank", rel: "noopener" %>
           </div>
         </div>
       </section>
     <% end %>
   </div>
 <% else %>
-  <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No images were found directly in app/assets/images.</p>
+  <%= render "admin/shared/empty_state", message: "No images were found directly in app/assets/images." %>
 <% end %>

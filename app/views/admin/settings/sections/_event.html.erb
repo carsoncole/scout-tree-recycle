@@ -19,7 +19,7 @@
             <div class="admin-toggle-copy" data-toggle-copy>
               <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Enable Reservations</h3>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Allow customers to make tree pickup reservations.</p>
-              <%= link_to "View Reservations Site", root_path, target: "_blank", rel: "noopener", class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+              <%= link_to "View Reservations Site", root_path, target: "_blank", rel: "noopener", class: admin_link_class %>
             </div>
             <div class="admin-toggle-control" data-toggle-control>
               <label class="admin-switch" id="reservations-toggle" aria-label="Enable reservations">
@@ -38,7 +38,7 @@
 
         <div class="admin-field admin-field--spaced">
           <%= label_tag "setting[reservations_closed_message]", "Reservations Closed Message", class: "admin-label text-ink dark:text-ink-dark" %>
-          <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE %>
+          <%= text_area_tag "setting[reservations_closed_message]", setting.reservations_closed_message, rows: 3, class: admin_textarea_class, placeholder: Setting::DEFAULT_RESERVATIONS_CLOSED_MESSAGE %>
           <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Displayed on the public home page in place of the reservation form when Enable Reservations is off. Leave blank to use the default message.</p>
         </div>
       </div>
@@ -50,28 +50,28 @@
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
             <%= label_tag "setting[event_pickup_start]", "Event Pickup Date/Time", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= datetime_field_tag "setting[event_pickup_start]", setting.event_pickup_start&.strftime("%Y-%m-%dT%H:%M"), class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= datetime_field_tag "setting[event_pickup_start]", setting.event_pickup_start&.strftime("%Y-%m-%dT%H:%M"), class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[event_pickup_end]", "Event Pickup End Date/Time", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= datetime_field_tag "setting[event_pickup_end]", setting.event_pickup_end&.strftime("%Y-%m-%dT%H:%M"), class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= datetime_field_tag "setting[event_pickup_end]", setting.event_pickup_end&.strftime("%Y-%m-%dT%H:%M"), class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[event_sign_up_deadline]", "Sign Up Deadline", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= datetime_field_tag "setting[event_sign_up_deadline]", setting.event_sign_up_deadline&.strftime("%Y-%m-%dT%H:%M"), class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= datetime_field_tag "setting[event_sign_up_deadline]", setting.event_sign_up_deadline&.strftime("%Y-%m-%dT%H:%M"), class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[suggested_donation]", "Suggested Donation", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= number_field_tag "setting[suggested_donation]", setting.suggested_donation, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", min: 0, step: 1, placeholder: Setting::DEFAULT_SUGGESTED_DONATION %>
+            <%= number_field_tag "setting[suggested_donation]", setting.suggested_donation, class: admin_input_class, min: 0, step: 1, placeholder: Setting::DEFAULT_SUGGESTED_DONATION %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default of <%= Setting::DEFAULT_SUGGESTED_DONATION %>.</p>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[default_city]", "Default City", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[default_city]", setting.default_city, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= text_field_tag "setting[default_city]", setting.default_city, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[default_state]", "Default State", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[default_state]", setting.default_state, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= text_field_tag "setting[default_state]", setting.default_state, class: admin_input_class %>
           </div>
         </div>
       </div>
@@ -83,25 +83,25 @@
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
             <%= label_tag "setting[contact_name]", "Contact Name", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[contact_name]", setting.contact_name, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= text_field_tag "setting[contact_name]", setting.contact_name, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[contact_email]", "Contact Email", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= email_field_tag "setting[contact_email]", setting.contact_email, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= email_field_tag "setting[contact_email]", setting.contact_email, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[contact_phone]", "Contact Phone", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= telephone_field_tag "setting[contact_phone]", setting.contact_phone, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= telephone_field_tag "setting[contact_phone]", setting.contact_phone, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[contact_sms]", "Contact SMS", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= telephone_field_tag "setting[contact_sms]", setting.contact_sms, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= telephone_field_tag "setting[contact_sms]", setting.contact_sms, class: admin_input_class %>
           </div>
         </div>
       </div>
 
       <div class="flex flex-wrap items-center justify-end gap-3">
-        <%= submit_tag "Save Settings", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+        <%= submit_tag "Save Settings", class: admin_button_class %>
       </div>
     <% end %>
   </div>

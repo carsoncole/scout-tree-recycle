@@ -1,82 +1,65 @@
+<%= content_for :title, "System Logs" %>
 <%= render "admin/shared/page_header",
            title: "System Logs",
            description: "View application activity and error reports." do %>
-  <details class="admin-destructive">
-    <summary class="admin-button admin-button--danger bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark">Delete All Logs</summary>
-    <div class="admin-destructive-body">
-      <%= form_with url: admin_destroy_all_logs_path, method: :delete, class: "admin-inline-form" do %>
-        <div class="admin-field">
-          <%= label_tag :confirmation, "Type DELETE to confirm", class: "admin-label text-ink dark:text-ink-dark" %>
-          <%= text_field_tag :confirmation, nil,
-              class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark",
-              required: true,
-              pattern: "DELETE",
-              title: "Type DELETE exactly to confirm.",
-              autocomplete: "off",
-              spellcheck: false %>
-        </div>
-        <%= submit_tag "Confirm Delete All Logs", class: "admin-button admin-button--danger bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark" %>
-      <% end %>
-    </div>
-  </details>
+  <%= render "admin/shared/destructive_details",
+             summary_label: "Delete All Logs",
+             url: admin_destroy_all_logs_path,
+             submit_label: "Confirm Delete All Logs" %>
 <% end %>
 
-<div class="admin-settings-layout">
-  <%= render "admin/settings/sidebar" %>
-
-  <div class="flex flex-col gap-6">
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-table-wrap">
-        <table class="admin-table table-fixed text-ink dark:text-ink-dark">
-          <thead>
+<div class="flex flex-col gap-6">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-table-wrap">
+      <table class="admin-table table-fixed text-ink dark:text-ink-dark">
+        <thead>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="w-[10.5rem] <%= admin_th_class %>">Timestamp</th>
+            <th scope="col" class="w-24 <%= admin_th_class %>">Severity</th>
+            <th scope="col" class="w-[20rem] <%= admin_th_class %>">Message</th>
+            <th scope="col" class="w-[12rem] <%= admin_th_class %>">Error type</th>
+            <th scope="col" class="w-[8rem] <%= admin_th_class %>">Environment</th>
+            <th scope="col" class="w-[24rem] <%= admin_th_class %>">Context</th>
+            <th scope="col" class="w-[6.5rem] <%= admin_th_class %>">Status</th>
+            <th scope="col" class="w-[6rem] <%= admin_th_class %>">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @logs.each do |log| %>
             <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <th scope="col" class="w-[10.5rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Timestamp</th>
-              <th scope="col" class="w-24 border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Severity</th>
-              <th scope="col" class="w-[20rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Message</th>
-              <th scope="col" class="w-[12rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Error type</th>
-              <th scope="col" class="w-[8rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Environment</th>
-              <th scope="col" class="w-[24rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Context</th>
-              <th scope="col" class="w-[6.5rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Status</th>
-              <th scope="col" class="w-[6rem] border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
+              <td class="<%= admin_td_class %> whitespace-nowrap"><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <td class="<%= admin_td_class %> whitespace-nowrap">
+                <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
+              </td>
+              <td class="<%= admin_td_class %>">
+                <span class="block truncate" title="<%= log.message %>"><%= log.message %></span>
+              </td>
+              <td class="<%= admin_td_class %>"><%= log.error_type %></td>
+              <td class="<%= admin_td_class %> whitespace-nowrap"><%= log.environment %></td>
+              <td class="<%= admin_td_class %>">
+                <% context_json = admin_log_context_json(log) %>
+                <% if context_json.present? %>
+                  <code class="block truncate font-mono text-[0.8rem] text-ink-soft dark:text-ink-soft-dark" title="<%= context_json %>"><%= context_json %></code>
+                <% end %>
+              </td>
+              <td class="<%= admin_td_class %> whitespace-nowrap">
+                <span class="<%= admin_handled_badge(log.handled) %>">
+                  <%= log.handled ? "Handled" : "Unhandled" %>
+                </span>
+              </td>
+              <td class="<%= admin_td_class %> whitespace-nowrap">
+                <%= link_to "View", admin_log_path(log), class: admin_link_class %>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            <% @logs.each do |log| %>
-              <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark"><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
-                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark">
-                  <span class="<%= admin_log_severity_badge(log.severity) %>"><%= log.severity&.titleize %></span>
-                </td>
-                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
-                  <span class="block truncate" title="<%= log.message %>"><%= log.message %></span>
-                </td>
-                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= log.error_type %></td>
-                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark"><%= log.environment %></td>
-                <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
-                  <% context_json = admin_log_context_json(log) %>
-                  <% if context_json.present? %>
-                    <code class="block truncate font-mono text-[0.8rem] text-ink-soft dark:text-ink-soft-dark" title="<%= context_json %>"><%= context_json %></code>
-                  <% end %>
-                </td>
-                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark">
-                  <span class="<%= admin_handled_badge(log.handled) %>">
-                    <%= log.handled ? "Handled" : "Unhandled" %>
-                  </span>
-                </td>
-                <td class="border-b border-line text-ink whitespace-nowrap dark:border-line-dark dark:text-ink-dark">
-                  <%= link_to "View", admin_log_path(log), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
 
-      <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
+    <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? %>
 
-      <% if @logs.empty? %>
-        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No log entries have been recorded.</p>
-      <% end %>
-    </section>
-  </div>
+    <% if @logs.empty? %>
+      <%= render "admin/shared/empty_state", message: "No log entries have been recorded." %>
+    <% end %>
+  </section>
 </div>

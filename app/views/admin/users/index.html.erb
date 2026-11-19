@@ -1,3 +1,4 @@
+<%= content_for :title, "Users" %>
 <%= render "admin/shared/page_header",
            title: "Users",
            description: "Manage system users and their permissions." %>
@@ -67,33 +68,33 @@
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">User list</h2>
         <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">A list of all users in the system.</p>
       </div>
-      <%= link_to "Add user", new_admin_user_path, class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+      <%= link_to "Add user", new_admin_user_path, class: admin_button_class %>
     </div>
 
     <div class="admin-table-wrap">
       <table class="admin-table text-ink dark:text-ink-dark">
         <thead>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Email</th>
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Role</th>
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
+            <th scope="col" class="<%= admin_th_class %>">Email</th>
+            <th scope="col" class="<%= admin_th_class %>">Role</th>
+            <th scope="col" class="<%= admin_th_class %>">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @users.each do |user| %>
             <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= user.email %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
-                <span class="admin-badge <%= user.role == "admin" ? "admin-badge--info bg-info-bg text-info dark:bg-info-bg-dark dark:text-info-dark" : "admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark" %>">
+              <td class="<%= admin_td_class %>"><%= user.email %></td>
+              <td class="<%= admin_td_class %>">
+                <span class="<%= admin_badge_class(user.role == "admin" ? "info" : "neutral") %>">
                   <%= user.role.titleize %>
                 </span>
               </td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+              <td class="<%= admin_td_class %>">
                 <div class="admin-table-actions">
-                  <%= link_to "Edit", edit_admin_user_path(user), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                  <%= link_to "Edit", edit_admin_user_path(user), class: admin_link_class %>
                   <%= button_to "Delete", admin_user_path(user),
                       method: :delete,
-                      class: "admin-link admin-link--danger text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark",
+                      class: admin_link_class(variant: :danger),
                       form: { data: { turbo_confirm: "Are you sure you want to delete this user?" } } %>
                 </div>
               </td>

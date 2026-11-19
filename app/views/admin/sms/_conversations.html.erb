@@ -3,12 +3,12 @@
     <% latest = smses.last %>
     <% reservations = smses.first&.reservations %>
     <% unviewed_count = smses.count { |sms| !sms.viewed && sms.incoming? } %>
-    <div class="admin-conversation conversation border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-conversation border border-line bg-surface hover:border-line-strong dark:border-line-dark dark:bg-surface-dark dark:hover:border-line-strong-dark">
       <% if reservations&.any? %>
         <div class="admin-conversation-reservations">
           <% reservations.each do |reservation| %>
             <%= link_to reservation.name, admin_reservation_path(reservation),
-                class: "admin-badge admin-badge--neutral admin-badge--link bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark" %>
+                class: "admin-badge--link #{admin_badge_class("neutral")} hover:bg-line hover:text-ink dark:hover:bg-line-dark dark:hover:text-ink-dark" %>
             <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= reservation.street %></span>
             <span class="<%= admin_reservation_status_badge(reservation.status) %>">
               <%= reservation.status.titleize %>
@@ -37,17 +37,17 @@
             <span class="admin-conversation-preview-direction text-ink dark:text-ink-dark"><%= latest.outgoing? ? "Sent" : "Received" %></span>
             <span class="admin-conversation-preview-body"><%= truncate(latest.body.to_s, length: 80) %></span>
             <% if latest.outgoing? && latest.service_status == "failed" %>
-              <span class="admin-badge admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark">Failed</span>
+              <span class="<%= admin_badge_class("danger") %>">Failed</span>
             <% end %>
           </p>
         </div>
       <% end %>
 
       <div class="admin-conversation-actions">
-        <%= link_to "Open", admin_sms_thread_path(phone), class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+        <%= link_to "Open", admin_sms_thread_path(phone), class: admin_button_class(variant: :secondary, size: :small) %>
         <%= button_to admin_sms_path(phone: phone),
             method: :delete,
-            class: "delete-button admin-button admin-button--danger admin-button--small bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark",
+            class: admin_button_class(variant: :danger, size: :small),
             data: {
               turbo_confirm: "Are you sure you want to delete this entire conversation? This action cannot be undone.",
               turbo_method: :delete
@@ -59,6 +59,6 @@
   <% end %>
 
   <% if smses_by_phone.empty? %>
-    <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No SMS conversations yet.</p>
+    <%= render "admin/shared/empty_state", message: "No SMS conversations yet." %>
   <% end %>
 </section>

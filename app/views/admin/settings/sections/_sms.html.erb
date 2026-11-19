@@ -40,15 +40,15 @@
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
             <%= label_tag "setting[twilio_account_sid]", "Account SID", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[twilio_account_sid]", setting.twilio_account_sid, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", autocomplete: "off" %>
+            <%= text_field_tag "setting[twilio_account_sid]", setting.twilio_account_sid, class: admin_input_class, autocomplete: "off" %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[twilio_auth_token]", "Auth Token", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= password_field_tag "setting[twilio_auth_token]", setting.twilio_auth_token, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", autocomplete: "new-password" %>
+            <%= password_field_tag "setting[twilio_auth_token]", setting.twilio_auth_token, class: admin_input_class, autocomplete: "new-password" %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[twilio_from_number]", "From Number", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= telephone_field_tag "setting[twilio_from_number]", setting.twilio_from_number, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "+15555550123" %>
+            <%= telephone_field_tag "setting[twilio_from_number]", setting.twilio_from_number, class: admin_input_class, placeholder: "+15555550123" %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The Twilio phone number messages are sent from, in E.164 format.</p>
           </div>
         </div>
@@ -62,7 +62,7 @@
           </div>
 
           <div class="admin-field admin-field--medium admin-toolbar-field">
-            <%= text_area_tag "setting[sms_quick_responses]", setting.sms_quick_responses, rows: 5, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= text_area_tag "setting[sms_quick_responses]", setting.sms_quick_responses, rows: 5, class: admin_textarea_class %>
           </div>
         </div>
       </div>
@@ -78,7 +78,7 @@
           </div>
 
           <div class="admin-field admin-field--medium admin-toolbar-field">
-            <%= text_area_tag "setting[missing_tree_sms_message]", setting.missing_tree_sms_message, rows: 4, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Reservation::DEFAULT_MISSING_TREE_SMS %>
+            <%= text_area_tag "setting[missing_tree_sms_message]", setting.missing_tree_sms_message, rows: 4, class: admin_textarea_class, placeholder: Reservation::DEFAULT_MISSING_TREE_SMS %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default message.</p>
           </div>
         </div>
@@ -90,7 +90,7 @@
           </div>
 
           <div class="admin-field admin-field--medium admin-toolbar-field">
-            <%= text_area_tag "setting[missing_tree_sms_follow_up_message]", setting.missing_tree_sms_follow_up_message, rows: 4, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: Reservation::DEFAULT_MISSING_TREE_SMS_FOLLOW_UP %>
+            <%= text_area_tag "setting[missing_tree_sms_follow_up_message]", setting.missing_tree_sms_follow_up_message, rows: 4, class: admin_textarea_class, placeholder: Reservation::DEFAULT_MISSING_TREE_SMS_FOLLOW_UP %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to use the default message.</p>
           </div>
         </div>
@@ -104,13 +104,13 @@
           </div>
 
           <div class="admin-field admin-toolbar-field">
-            <%= text_area_tag :sms_webhook_url, api_v1_sms_reply_url(**setting.site_url_options), rows: 2, class: "admin-textarea admin-code-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", readonly: true %>
+            <%= text_area_tag :sms_webhook_url, api_v1_sms_reply_url(**setting.site_url_options), rows: 2, class: "admin-code-input #{admin_textarea_class}", readonly: true %>
           </div>
         </div>
       </div>
 
       <div class="flex flex-wrap items-center justify-end gap-3">
-        <%= submit_tag "Save SMS Settings", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+        <%= submit_tag "Save SMS Settings", class: admin_button_class %>
       </div>
     <% end %>
   </div>

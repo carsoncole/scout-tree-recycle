@@ -1,7 +1,8 @@
+<%= content_for :title, "Zone: #{@zone.name}" %>
 <%= render "admin/shared/page_header",
            title: "Zone: #{@zone.name}" do %>
-  <%= link_to "Edit", edit_admin_zone_path(@zone), class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
-  <%= link_to "Back to Zones", admin_zones_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Edit", edit_admin_zone_path(@zone), class: admin_button_class %>
+  <%= link_to "Back to Zones", admin_zones_path, class: admin_button_class(variant: :secondary) %>
 <% end %>
 
 <div class="admin-settings-layout">
@@ -51,7 +52,7 @@
             </p>
           <% end %>
         <% else %>
-          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundaries or reservations with coordinates are available for this zone.</p>
+          <%= render "admin/shared/empty_state", message: "No route boundaries or reservations with coordinates are available for this zone." %>
         <% end %>
       </div>
     </section>
@@ -67,22 +68,22 @@
             <table class="admin-table text-ink dark:text-ink-dark">
               <thead>
                 <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Name</th>
-                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Reservations</th>
-                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Boundary points</th>
-                  <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Actions</th>
+                  <th scope="col" class="<%= admin_th_class %>">Name</th>
+                  <th scope="col" class="<%= admin_th_class %>">Reservations</th>
+                  <th scope="col" class="<%= admin_th_class %>">Boundary points</th>
+                  <th scope="col" class="<%= admin_th_class %>">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <% @routes.each do |route| %>
                   <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= link_to route.name, admin_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></td>
-                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route.reservations_count %></td>
-                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route.points.size %></td>
-                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+                    <td class="<%= admin_td_class %>"><%= link_to route.name, admin_route_path(route), class: admin_link_class %></td>
+                    <td class="<%= admin_td_class %>"><%= route.reservations_count %></td>
+                    <td class="<%= admin_td_class %>"><%= route.points.size %></td>
+                    <td class="<%= admin_td_class %>">
                       <div class="admin-table-actions">
-                        <%= link_to "View", admin_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
-                        <%= link_to "Edit", edit_admin_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                        <%= link_to "View", admin_route_path(route), class: admin_link_class %>
+                        <%= link_to "Edit", edit_admin_route_path(route), class: admin_link_class %>
                       </div>
                     </td>
                   </tr>
@@ -91,7 +92,7 @@
             </table>
           </div>
         <% else %>
-          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No routes are associated with this zone.</p>
+          <%= render "admin/shared/empty_state", message: "No routes are associated with this zone." %>
         <% end %>
       </div>
     </section>

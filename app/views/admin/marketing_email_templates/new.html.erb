@@ -1,7 +1,8 @@
+<%= content_for :title, "New Email Template" %>
 <%= render "admin/shared/page_header",
            title: "New Email Template",
            description: "Create a template, then preview it with contact data before publishing." do %>
-  <%= link_to "Back to Templates", admin_marketing_email_templates_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Back to Templates", admin_marketing_email_templates_path, class: admin_button_class(variant: :secondary) %>
 <% end %>
 
 <div data-controller="email-template-editor"
@@ -35,7 +36,7 @@
         </div>
       </section>
 
-      <div class="admin-notice border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark" role="note">
+      <div class="<%= admin_notice_class %>" role="note">
         <div>
           <p><strong>New templates start as drafts.</strong> After previewing, publish the template so marketing emails can use it.</p>
         </div>

@@ -1,7 +1,8 @@
+<%= content_for :title, "Edit Reservation" %>
 <%= render "admin/shared/page_header",
            title: "Edit Reservation",
            description: "Update reservation ##{@reservation.id}." do %>
-  <%= link_to "Back to reservation", admin_reservation_path(@reservation), class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Back to reservation", admin_reservation_path(@reservation), class: admin_button_class(variant: :secondary) %>
 <% end %>
 
 <%= form_with(model: [:admin, @reservation], class: "flex flex-col gap-6") do |f| %>
@@ -16,15 +17,15 @@
         <div class="admin-field-grid admin-field-grid--three">
           <div class="admin-field">
             <%= f.label :name, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.text_field :name, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= f.text_field :name, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= f.label :email, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.email_field :email, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= f.email_field :email, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= f.label :mobile, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.telephone_field :mobile, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= f.telephone_field :mobile, class: admin_input_class %>
           </div>
         </div>
       </div>
@@ -36,19 +37,19 @@
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
             <%= f.label :street, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.text_field :street, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= f.text_field :street, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= f.label :city, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.text_field :city, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= f.text_field :city, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= f.label :state, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.text_field :state, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= f.text_field :state, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= f.label :country, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.text_field :country, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= f.text_field :country, class: admin_input_class %>
           </div>
         </div>
 
@@ -60,13 +61,13 @@
             </div>
 
             <% if @reservation.geocoding_failed? %>
-              <span class="admin-badge admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark" id="status-geocoding-failed">Auto Geocoding Failed</span>
+              <span class="<%= admin_badge_class("danger") %>" id="status-geocoding-failed">Auto Geocoding Failed</span>
             <% elsif @reservation.was_automatically_geocoded? %>
-              <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark" id="status-auto-geocoded">Auto Geocoded</span>
+              <span class="<%= admin_badge_class("positive") %>" id="status-auto-geocoded">Auto Geocoded</span>
             <% elsif @reservation.is_manually_geocoded? %>
-              <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark" id="status-manually-geocoded">Manually Geocoded</span>
+              <span class="<%= admin_badge_class("warning") %>" id="status-manually-geocoded">Manually Geocoded</span>
             <% else %>
-              <span class="admin-badge admin-badge--neutral bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark" id="status-pending-geocoding">Pending</span>
+              <span class="<%= admin_badge_class("neutral") %>" id="status-pending-geocoding">Pending</span>
             <% end %>
           </div>
 
@@ -74,11 +75,11 @@
             <div class="admin-field-grid admin-field-grid--two">
               <div class="admin-field">
                 <%= f.label :latitude, class: "admin-label text-ink dark:text-ink-dark" %>
-                <%= f.number_field :latitude, step: :any, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+                <%= f.number_field :latitude, step: :any, class: admin_input_class %>
               </div>
               <div class="admin-field">
                 <%= f.label :longitude, class: "admin-label text-ink dark:text-ink-dark" %>
-                <%= f.number_field :longitude, step: :any, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+                <%= f.number_field :longitude, step: :any, class: admin_input_class %>
               </div>
             </div>
 
@@ -98,11 +99,11 @@
         <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Assign a route or change the reservation state.</p>
 
         <% if @reservation.routing_failed? %>
-          <span class="admin-badge admin-badge--danger bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark" id="status-routing-failed">Routing Failed</span>
+          <span class="<%= admin_badge_class("danger") %>" id="status-routing-failed">Routing Failed</span>
         <% elsif @reservation.was_automatically_routed? %>
-          <span class="admin-badge admin-badge--positive bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark" id="status-auto-routed">Auto Routed</span>
+          <span class="<%= admin_badge_class("positive") %>" id="status-auto-routed">Auto Routed</span>
         <% elsif @reservation.route_id.present? %>
-          <span class="admin-badge admin-badge--warning bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark" id="status-routing">Manually Routed</span>
+          <span class="<%= admin_badge_class("warning") %>" id="status-routing">Manually Routed</span>
         <% end %>
 
         <div class="admin-field-grid admin-field-grid--two admin-field-grid--spaced">
@@ -110,14 +111,14 @@
             <%= f.label :route_id, "Route", class: "admin-label text-ink dark:text-ink-dark" %>
             <%= f.collection_select :route_id, Route.order(:name), :id, :name,
                 { include_blank: "Select a route" },
-                class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+                class: admin_select_class %>
           </div>
           <div class="admin-field">
             <%= f.label :status, class: "admin-label text-ink dark:text-ink-dark" %>
             <%= f.select :status,
                 Reservation.statuses.except(:reservation_form, :address_verification, :donation).keys.map { |s| [ s.titleize, s ] },
                 {},
-                class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+                class: admin_select_class %>
           </div>
         </div>
 
@@ -136,14 +137,14 @@
 
         <div class="admin-field">
           <%= f.label :pickup_notes, class: "admin-label text-ink dark:text-ink-dark" %>
-          <%= f.text_area :pickup_notes, rows: 3, class: "admin-textarea border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+          <%= f.text_area :pickup_notes, rows: 3, class: admin_textarea_class %>
         </div>
       </div>
     </div>
 
     <div class="admin-panel-footer border-line dark:border-line-dark">
-      <%= link_to "Cancel", admin_reservation_path(@reservation), class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
-      <%= f.submit "Update Reservation", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+      <%= link_to "Cancel", admin_reservation_path(@reservation), class: admin_button_class(variant: :secondary) %>
+      <%= f.submit "Update Reservation", class: admin_button_class %>
     </div>
   </section>
 <% end %>

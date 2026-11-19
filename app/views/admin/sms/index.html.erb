@@ -21,16 +21,16 @@
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
             <%= f.label :phone, "Phone", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.telephone_field :phone, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "(555) 555-5555" %>
+            <%= f.telephone_field :phone, class: admin_input_class, placeholder: "(555) 555-5555" %>
           </div>
           <div class="admin-field">
             <%= f.label :body, "Message", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.text_field :body, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "Type your message here..." %>
+            <%= f.text_field :body, class: admin_input_class, placeholder: "Type your message here..." %>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center justify-end gap-3">
-          <%= button_tag type: "submit", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" do %>
+          <%= button_tag type: "submit", class: admin_button_class do %>
             Send
           <% end %>
         </div>

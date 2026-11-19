@@ -58,10 +58,6 @@ Rails.application.routes.draw do
         constraints: { section: /event|organization|site_details|site_content|pickups|sms|email|donations|location_services|operations|system/ }
     scope path: "settings" do
       resources :drivers, except: [ :show ]
-      resource :data, only: [ :show ], controller: "data" do
-        post :import
-        get :export
-      end
       resources :users, except: [ :show ]
       resources :thanks, except: [ :show ]
       resources :routes do
@@ -97,6 +93,12 @@ Rails.application.routes.draw do
     scope path: "system" do
       delete "logs", to: "logs#destroy_all", as: :destroy_all_logs
       resources :logs, only: [ :index, :show, :destroy ]
+    end
+
+    # System data
+    resource :data, only: [ :show ], controller: "data" do
+      post :import
+      get :export
     end
 
     # Operations

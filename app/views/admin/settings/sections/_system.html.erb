@@ -4,7 +4,7 @@
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">System</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Review system errors and application events.</p>
     </div>
-    <%= link_to admin_logs_path, class: "admin-button admin-button--secondary admin-button--small border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" do %>
+    <%= link_to admin_logs_path, class: admin_button_class(variant: :secondary, size: :small) do %>
       System Logs
       <% if @unviewed_logs_count.to_i.positive? %>
         <span class="admin-nav-badge bg-ink text-surface dark:bg-ink-dark dark:text-page-dark"><%= @unviewed_logs_count %></span>

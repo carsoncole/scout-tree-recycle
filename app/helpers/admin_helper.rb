@@ -51,7 +51,6 @@ module AdminHelper
       [ "Thanks", :admin_thanks_path ]
     ],
     "data" => [
-      [ "Settings", :admin_settings_path ],
       [ "Data", :admin_data_path ]
     ],
     "logs" => [
@@ -60,8 +59,15 @@ module AdminHelper
     ]
   }.freeze
 
-  ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark".freeze
-  ADMIN_NAV_ACTIVE_CLASSES = "is-active bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark".freeze
+  # Top-nav groups. Each entry is [label, [controller names]].
+  ADMIN_NAV_GROUPS = {
+    "Operations" => %w[reservations donations sms],
+    "Content" => %w[marketing marketing_email_templates marketing_images reservation_email_templates contacts],
+    "System" => %w[settings drivers routes zones users thanks logs data]
+  }.freeze
+
+  ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink hover:bg-stone dark:text-ink-soft-dark dark:hover:text-ink-dark dark:hover:bg-stone-dark".freeze
+  ADMIN_NAV_ACTIVE_CLASSES = "is-active bg-sage-soft text-sage-deep hover:bg-sage-soft dark:bg-sage-soft-dark dark:text-sage-deep-dark".freeze
 
   ADMIN_SETTINGS_NAV_CLASSES = "admin-settings-nav-link bg-cool text-ink-soft hover:bg-sage-soft hover:text-ink dark:bg-cool-dark dark:text-ink-soft-dark dark:hover:bg-sage-soft-dark dark:hover:text-ink-dark".freeze
   ADMIN_SETTINGS_NAV_ACTIVE_CLASSES = "is-active bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark".freeze
@@ -78,6 +84,10 @@ module AdminHelper
     [ ADMIN_NAV_CLASSES, (ADMIN_NAV_ACTIVE_CLASSES if active) ].compact.join(" ")
   end
 
+  def admin_nav_group_label
+    ADMIN_NAV_GROUPS.find { |_label, controllers| controllers.include?(controller_name) }&.first
+  end
+
   def admin_settings_nav_items
     section_items = Setting::SECTIONS.map do |key, metadata|
       {
@@ -89,18 +99,6 @@ module AdminHelper
     end
 
     section_items + [
-      {
-        key: "data",
-        label: "Data",
-        description: "Import and export reservation data as CSV.",
-        path: admin_data_path
-      },
-      {
-        key: "jobs",
-        label: "Jobs",
-        description: "Monitor background jobs, queues, and failures.",
-        path: admin_mission_control_jobs_path
-      },
       {
         key: "users",
         label: "Users",
@@ -159,6 +157,84 @@ module AdminHelper
 
   def admin_select_class(error: false)
     "admin-select #{error ? "admin-select--error #{ADMIN_SELECT_ERROR_CLASSES}" : ADMIN_SELECT_CLASSES}"
+  end
+
+  def admin_textarea_class(error: false)
+    "admin-textarea #{admin_input_class(error: error)}"
+  end
+
+  ADMIN_BUTTON_CLASSES = {
+    "primary" => "bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark",
+    "secondary" => "border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
+    "danger" => "bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark",
+    "quiet" => "text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark"
+  }.freeze
+
+  # Shape modifiers ("small", "full") append the matching admin-button--* class.
+  def admin_button_class(variant: "primary", size: nil, full: false)
+    variant = variant.to_s
+    classes = [ "admin-button" ]
+    classes << "admin-button--#{variant}" unless variant == "primary"
+    classes << ADMIN_BUTTON_CLASSES.fetch(variant, ADMIN_BUTTON_CLASSES["primary"])
+    classes << "admin-button--small" if size == "small"
+    classes << "admin-button--full" if full
+    classes.join(" ")
+  end
+
+  ADMIN_LINK_CLASSES = "text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark".freeze
+  ADMIN_LINK_DANGER_CLASSES = "text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark".freeze
+  ADMIN_LINK_MUTED_CLASSES = "text-ink-soft dark:text-ink-soft-dark".freeze
+
+  def admin_link_class(variant: "default")
+    case variant.to_s
+    when "danger"
+      "admin-link admin-link--danger #{ADMIN_LINK_DANGER_CLASSES}"
+    when "muted"
+      "admin-link admin-link--muted #{ADMIN_LINK_MUTED_CLASSES}"
+    else
+      "admin-link #{ADMIN_LINK_CLASSES}"
+    end
+  end
+
+  ADMIN_FILTER_CLASSES = "text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark".freeze
+  ADMIN_FILTER_ACTIVE_CLASSES = "is-active bg-sage text-surface dark:bg-sage-dark dark:text-page-dark".freeze
+
+  def admin_filter_class(active)
+    "admin-filter #{active ? ADMIN_FILTER_ACTIVE_CLASSES : ADMIN_FILTER_CLASSES}"
+  end
+
+  ADMIN_NOTICE_CLASSES = {
+    "info" => "border border-line border-l-[3px] border-l-sage bg-sage-soft text-ink dark:border-line-dark dark:border-l-sage-dark dark:bg-sage-soft-dark dark:text-ink-dark",
+    "alert" => "border border-line border-l-[3px] border-l-ink-soft bg-stone text-ink dark:border-line-dark dark:border-l-ink-soft-dark dark:bg-stone-dark dark:text-ink-dark",
+    "warning" => "border border-line border-l-[3px] border-l-warning bg-warning-bg text-ink dark:border-line-dark dark:border-l-warning-dark dark:bg-warning-bg-dark dark:text-ink-dark",
+    "danger" => "border border-line border-l-[3px] border-l-danger-border bg-danger-bg text-ink dark:border-line-dark dark:border-l-danger-border-dark dark:bg-danger-bg-dark dark:text-ink-dark"
+  }.freeze
+
+  def admin_notice_class(variant = "info", spaced: false)
+    variant = variant.to_s
+    classes = [ "admin-notice" ]
+    classes << "admin-notice--#{variant}" unless variant == "info"
+    classes << "admin-notice--spaced" if spaced
+    classes << ADMIN_NOTICE_CLASSES.fetch(variant, ADMIN_NOTICE_CLASSES["info"])
+    classes.join(" ")
+  end
+
+  ADMIN_TABLE_HEADER_CELL_CLASSES = "border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark".freeze
+  ADMIN_TABLE_BODY_CELL_CLASSES = "border-b border-line text-ink dark:border-line-dark dark:text-ink-dark".freeze
+
+  def admin_th_class
+    ADMIN_TABLE_HEADER_CELL_CLASSES
+  end
+
+  def admin_td_class
+    ADMIN_TABLE_BODY_CELL_CLASSES
+  end
+
+  ADMIN_PAGINATION_LINK_CLASSES = "border border-line text-ink-soft hover:bg-stone hover:text-ink dark:border-line-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark".freeze
+  ADMIN_PAGINATION_CURRENT_CLASSES = "is-current border-sage bg-sage text-surface dark:border-sage-dark dark:bg-sage-dark dark:text-page-dark".freeze
+
+  def admin_pagination_link_class(current: false)
+    "admin-pagination-link #{current ? ADMIN_PAGINATION_CURRENT_CLASSES : ADMIN_PAGINATION_LINK_CLASSES}"
   end
 
   def admin_badge_class(variant)

@@ -1,7 +1,8 @@
+<%= content_for :title, "Route: #{@route.name}" %>
 <%= render "admin/shared/page_header",
            title: "Route: #{@route.name}" do %>
-  <%= link_to "Edit", edit_admin_route_path(@route), class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
-  <%= link_to "Back to Routes", admin_routes_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Edit", edit_admin_route_path(@route), class: admin_button_class %>
+  <%= link_to "Back to Routes", admin_routes_path, class: admin_button_class(variant: :secondary) %>
 <% end %>
 
 <div class="admin-settings-layout">
@@ -67,7 +68,7 @@
             <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">No route boundary defined. Pickup markers are shown when available.</p>
           <% end %>
         <% else %>
-          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundary or pickup locations with coordinates are available for this route.</p>
+          <%= render "admin/shared/empty_state", message: "No route boundary or pickup locations with coordinates are available for this route." %>
         <% end %>
       </div>
     </section>
@@ -87,7 +88,7 @@
             <% end %>
           </dl>
         <% else %>
-          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No drivers assigned to this route.</p>
+          <%= render "admin/shared/empty_state", message: "No drivers assigned to this route." %>
         <% end %>
       </div>
     </section>
@@ -103,24 +104,24 @@
             <table class="admin-table text-ink dark:text-ink-dark">
               <thead>
                 <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-                  <th class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Order</th>
-                  <th class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Latitude</th>
-                  <th class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Longitude</th>
+                  <th scope="col" class="<%= admin_th_class %>">Order</th>
+                  <th scope="col" class="<%= admin_th_class %>">Latitude</th>
+                  <th scope="col" class="<%= admin_th_class %>">Longitude</th>
                 </tr>
               </thead>
               <tbody>
                 <% @route.points.order(:order).each do |point| %>
                   <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.order %></td>
-                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.latitude %></td>
-                    <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= point.longitude %></td>
+                    <td class="<%= admin_td_class %>"><%= point.order %></td>
+                    <td class="<%= admin_td_class %>"><%= point.latitude %></td>
+                    <td class="<%= admin_td_class %>"><%= point.longitude %></td>
                   </tr>
                 <% end %>
               </tbody>
             </table>
           </div>
         <% else %>
-          <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No points defined for this route.</p>
+          <%= render "admin/shared/empty_state", message: "No points defined for this route." %>
         <% end %>
       </div>
     </section>

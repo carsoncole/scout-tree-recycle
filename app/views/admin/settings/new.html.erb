@@ -1,3 +1,4 @@
+<%= content_for :title, "Initial Application Setup" %>
 <%= render "admin/shared/page_header",
            eyebrow: "First run",
            title: "Initial Application Setup",
@@ -22,7 +23,7 @@
 
           <div class="admin-field">
             <%= f.label :site_url, "Site URL", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.url_field :site_url, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", placeholder: "https://example.com" %>
+            <%= f.url_field :site_url, class: admin_input_class, placeholder: "https://example.com" %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Used for links in emails, such as password resets.</p>
           </div>
 
@@ -119,7 +120,7 @@
       </div>
 
       <div class="admin-panel-footer border-line dark:border-line-dark">
-        <%= f.submit "Save Settings", class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+        <%= f.submit "Save Settings", class: admin_button_class %>
       </div>
     </section>
   <% end %>

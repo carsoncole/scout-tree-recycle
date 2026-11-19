@@ -13,30 +13,30 @@
       <div class="admin-form">
         <div class="admin-field">
           <%= form.label :email, class: "admin-label text-ink dark:text-ink-dark" %>
-          <%= form.email_field :email, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+          <%= form.email_field :email, class: admin_input_class %>
         </div>
 
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
             <%= form.label :password, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= form.password_field :password, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= form.password_field :password, class: admin_input_class %>
           </div>
           <div class="admin-field">
             <%= form.label :password_confirmation, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= form.password_field :password_confirmation, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+            <%= form.password_field :password_confirmation, class: admin_input_class %>
           </div>
         </div>
 
         <div class="admin-field">
           <%= form.label :role, class: "admin-label text-ink dark:text-ink-dark" %>
-          <%= form.select :role, [ [ "Admin", "admin" ], [ "User", "user" ] ], {}, class: "admin-select border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+          <%= form.select :role, [ [ "Admin", "admin" ], [ "User", "user" ] ], {}, class: admin_select_class %>
         </div>
       </div>
     </div>
 
     <div class="admin-panel-footer border-line dark:border-line-dark">
-      <%= link_to "Cancel", admin_users_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
-      <%= form.submit class: "admin-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+      <%= link_to "Cancel", admin_users_path, class: admin_button_class(variant: :secondary) %>
+      <%= form.submit class: admin_button_class %>
     </div>
   </section>
 <% end %>

@@ -108,6 +108,25 @@ Use these exact class strings (light + `dark:`) together:
 
 - Use the shared `admin-select` class for `<select>` elements. Tailwind's preflight removes native form-control styling, and native selects can render with no inner padding. `admin-select` sets `appearance: none`, explicit padding, and a custom chevron so dropdown text is always inset. Avoid bare or custom-styled selects without it.
 
+## Admin views
+
+Admin pages use the same color tokens and recipes above. The `admin-*` classes in `app/assets/stylesheets/application.css` provide shape/layout only — colors always come from Tailwind utilities in markup. Call the helpers in `app/helpers/admin_helper.rb` instead of pasting recipe strings:
+
+| Element | Helper |
+|---------|--------|
+| Input / textarea | `admin_input_class(error:)` / `admin_textarea_class(error:)` |
+| Select | `admin_select_class(error:)` |
+| Button (primary/secondary/danger/quiet) | `admin_button_class(variant:, size:, full:)` |
+| Link (default/danger/muted) | `admin_link_class(variant:)` |
+| Badge | `admin_badge_class(variant)` or the dedicated badge helpers |
+| Notice (info/alert/warning/danger) | `admin_notice_class(variant:, spaced:)` |
+| Table header / body cell | `admin_th_class` / `admin_td_class` |
+| Filter pill | `admin_filter_class(active)` |
+| Pagination link | `admin_pagination_link_class(current:)` |
+| Top-nav link | `admin_nav_class(active)` |
+
+Shared admin partials: `admin/shared/page_header`, `admin/shared/pagination`, `admin/shared/empty_state` (message), and `admin/shared/destructive_details` (summary_label / url / submit_label) for DELETE-word confirmation forms.
+
 ## Destructive actions
 
 - For destructive "delete all" actions, require the user to type a confirmation word (e.g. `DELETE`) in a form field and validate it server-side before performing the deletion. Do not rely solely on `turbo_confirm` for important data.

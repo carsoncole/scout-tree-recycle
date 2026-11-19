@@ -1,4 +1,4 @@
-<% content_for :title, "Reservation Confirmed | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :title, "Reservation Confirmed | #{default_page_name}" %>
 <% content_for :description, "Your tree pickup reservation is confirmed." %>
 
 <section class="site-page">
@@ -26,14 +26,14 @@
         <div class="site-detail border-line dark:border-line-dark">
           <dt class="site-detail-label dark:text-muted-dark">Address</dt>
           <dd class="site-detail-value dark:text-ink-dark">
-            <%= @reservation.street.titleize %><br>
+            <%= @reservation.street %><br>
             <%= @reservation.city %>
           </dd>
         </div>
 
         <div class="site-detail border-line dark:border-line-dark">
           <dt class="site-detail-label dark:text-muted-dark">Pickup date</dt>
-          <dd class="site-detail-value dark:text-ink-dark"><%= setting.event_pickup_start.strftime("%B %-d, %Y") %></dd>
+          <dd class="site-detail-value dark:text-ink-dark"><%= pickup_date %></dd>
         </div>
 
         <div class="site-detail border-line dark:border-line-dark">
@@ -83,8 +83,8 @@
         </li>
         <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
           <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
-          Please have your tree ready by <%= setting.event_pickup_start.strftime("%l:%M%P") %>
-          on <%= setting.event_pickup_start.strftime("%A, %B %-e") %>.
+          Please have your tree ready by <%= pickup_start_time %>
+          on <%= pickup_day %>.
         </li>
       </ol>
     </section>

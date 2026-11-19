@@ -1,7 +1,4 @@
-<% pickup_full_date = setting.event_pickup_start.strftime("%A, %B %-d, %Y") %>
-<% pickup_start_time = setting.event_pickup_start.strftime("%-l:%M%P") %>
-<% sign_up_deadline = setting.event_sign_up_deadline.strftime("%B %-d, %Y at %-l:%M%P") %>
-<% content_for :title, "About | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :title, "About | #{default_page_name}" %>
 <% content_for :description, setting.about_event_description_text %>
 
 <section class="site-page">
@@ -17,19 +14,7 @@
                title: "About",
                description: setting.about_event_description_text %>
 
-    <div class="site-form-panel flex max-w-md flex-col gap-3 rounded-xl bg-fir p-5 dark:bg-fir-dark">
-      <p class="m-0 text-xs font-bold uppercase tracking-[0.14em] text-sage-soft">This year's pickup</p>
-      <p class="m-0 font-display text-2xl font-medium leading-snug text-surface">
-        <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_full_date %></time>
-      </p>
-      <p class="m-0 text-sage-soft/90">
-        Pickups start at
-        <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_start_time %></time>.
-      </p>
-      <p class="site-deadline-badge m-0 bg-warning-badge text-warning-badge-text">
-        <span class="site-deadline-badge-label">Sign up by</span>
-        <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
-      </p>
+    <%= render "shared/pickup_panel", panel_class: "site-form-panel" do %>
       <% if setting.is_reservations_open %>
         <%= link_to "Reserve your pickup", root_path(anchor: "reserve"),
                     class: "site-button bg-sage text-surface hover:bg-sage-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark dark:focus-visible:outline-surface" %>
@@ -38,7 +23,7 @@
           Reservations are closed right now — check the home page for the latest.
         </p>
       <% end %>
-    </div>
+    <% end %>
 
     <div class="site-prose text-ink-soft dark:text-ink-soft-dark">
       <section class="site-section border-line dark:border-line-dark">

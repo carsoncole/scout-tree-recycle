@@ -1,10 +1,5 @@
-<% pickup_full_date = setting.event_pickup_start.strftime("%A, %B %-d, %Y") %>
-<% pickup_date = setting.event_pickup_start.strftime("%B %-d, %Y") %>
-<% pickup_day = setting.event_pickup_start.strftime("%A, %B %-d") %>
-<% pickup_start_time = setting.event_pickup_start.strftime("%-l:%M%P") %>
-<% sign_up_deadline = setting.event_sign_up_deadline.strftime("%B %-d, %Y at %-l:%M%P") %>
 <% service_area = [ setting.default_city, setting.default_state ].compact_blank.join(", ") %>
-<% content_for :title, "Make a Reservation | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :title, "#{setting.is_reservations_open ? "Make a Reservation" : "Reservations Closed"} | #{default_page_name}" %>
 <% content_for :description, "Schedule a Christmas tree pickup for #{pickup_date}. Sign up by #{sign_up_deadline}." %>
 
 <section class="site-hero site-home-hero" id="reserve">
@@ -28,22 +23,10 @@
           <p class="site-home-service-area text-ink-soft dark:text-ink-soft-dark">Pickup in <%= service_area %>.</p>
         <% end %>
 
-        <div class="mt-6 flex max-w-md flex-col gap-3 rounded-xl bg-fir p-5 dark:bg-fir-dark">
-          <p class="m-0 text-xs font-bold uppercase tracking-[0.14em] text-sage-soft">This year's pickup</p>
-          <p class="m-0 font-display text-2xl font-medium leading-snug text-surface">
-            <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_full_date %></time>
-          </p>
-          <p class="m-0 text-sage-soft/90">
-            Pickups start at
-            <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_start_time %></time>.
-          </p>
-          <p class="site-deadline-badge m-0 bg-warning-badge text-warning-badge-text">
-            <span class="site-deadline-badge-label">Sign up by</span>
-            <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
-          </p>
+        <%= render "shared/pickup_panel" do %>
           <%= link_to "Learn more about the pickup", about_path,
                       class: "text-sm font-medium text-surface underline decoration-sage-soft/40 underline-offset-4 hover:decoration-sage-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface" %>
-        </div>
+        <% end %>
       </div>
 
       <% if setting.is_reservations_open %>

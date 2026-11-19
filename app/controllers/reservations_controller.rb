@@ -6,7 +6,7 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.new(reservation_params)
 
     if !Reservation.open?
-      redirect_to root_url, alert: "Reservations are CLOSED."
+      redirect_to root_url, alert: "Reservations are closed right now."
     elsif @reservation.save
       # Address verification is not implemented yet (see
       # AddressVerificationController), so completed reservations move
@@ -25,13 +25,13 @@ class ReservationsController < ApplicationController
 
   def edit
     unless Reservation.open?
-      redirect_to root_path, alert: "Reservations are CLOSED and not changeable."
+      redirect_to root_path, alert: "Reservations are closed right now and can't be changed."
     end
   end
 
   def update
     unless Reservation.open?
-      redirect_to root_path, alert: "Reservations are CLOSED and not changeable."
+      redirect_to root_path, alert: "Reservations are closed right now and can't be changed."
       return
     end
 

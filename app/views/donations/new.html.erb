@@ -1,5 +1,5 @@
 <% suggested_donation = number_to_currency(setting.suggested_donation_amount, precision: 0) %>
-<% content_for :title, "Support #{setting.organization_name} | #{setting&.home_page_header || "Tree Recycle"}" %>
+<% content_for :title, "Support #{setting.organization_name} | #{default_page_name}" %>
 <% content_for :description, "Choose how you would like to support the tree pickup fundraiser." %>
 
 <section class="site-page">

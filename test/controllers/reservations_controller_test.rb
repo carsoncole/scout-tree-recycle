@@ -5,7 +5,7 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     Setting.instance.update(is_reservations_open: false)
     post reservations_url, params: { reservation: { name: "John Doe", email: "johnnie@example.com", street: "123 Main St" } }
     assert_redirected_to root_url
-    assert_equal "Reservations are CLOSED.", flash[:alert]
+    assert_equal "Reservations are closed right now.", flash[:alert]
   end
 
   test "should create reservation" do
@@ -43,7 +43,7 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     @reservation = reservations(:pending_pickup_1)
     get edit_reservation_url(@reservation.public_token)
     assert_redirected_to root_url
-    assert_equal "Reservations are CLOSED and not changeable.", flash[:alert]
+    assert_equal "Reservations are closed right now and can't be changed.", flash[:alert]
   end
 
   test "should not find reservation by guessable id" do
@@ -77,7 +77,7 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     @reservation = reservations(:pending_pickup_1)
     patch reservation_url(@reservation.public_token), params: { reservation: { street: "123 Doodle St" } }
     assert_redirected_to root_url
-    assert_equal "Reservations are CLOSED and not changeable.", flash[:alert]
+    assert_equal "Reservations are closed right now and can't be changed.", flash[:alert]
   end
 
   test "should destroy reservation" do

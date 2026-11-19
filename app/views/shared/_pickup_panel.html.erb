@@ -1,0 +1,17 @@
+<%# locals: (panel_class: "mt-6") %>
+<%# Trailing CTA differs per page and is passed as a block. %>
+<div class="<%= panel_class %> flex max-w-md flex-col gap-3 rounded-xl bg-fir p-5 dark:bg-fir-dark">
+  <p class="m-0 text-xs font-bold uppercase tracking-[0.14em] text-sage-soft">This year's pickup</p>
+  <p class="m-0 font-display text-2xl font-medium leading-snug text-surface">
+    <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_full_date %></time>
+  </p>
+  <p class="m-0 text-sage-soft/90">
+    Pickups start at
+    <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_start_time %></time>.
+  </p>
+  <p class="site-deadline-badge m-0 bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
+    <span class="site-deadline-badge-label">Sign up by</span>
+    <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
+  </p>
+  <%= yield %>
+</div>

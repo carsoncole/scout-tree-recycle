@@ -8,6 +8,7 @@ class ReservationsTest < ApplicationSystemTestCase
   test "visiting root" do
     visit root_url
 
+    assert_title "Make a Reservation | #{Setting.instance.home_page_header}"
     assert_selector "h1", text: "Make a Reservation"
     assert_selector "img[alt='Recycle Your Tree']"
     assert_text "Schedule your tree pickup for " + Setting.instance.event_pickup_start.strftime("%B %-d, %Y")
@@ -121,6 +122,7 @@ class ReservationsTest < ApplicationSystemTestCase
     Setting.instance.update(is_reservations_open: false)
     visit root_url
 
+    assert_title "Reservations Closed | #{Setting.instance.home_page_header}"
     assert_selector "h1", text: "Make a Reservation"
     assert_text "We're not taking reservations right now"
     assert_text Setting.instance.reservations_closed_message_text
@@ -133,6 +135,6 @@ class ReservationsTest < ApplicationSystemTestCase
   test "editing a reservation when reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
     visit edit_reservation_path(reservations(:pending_pickup_1).public_token)
-    assert_text "Reservations are CLOSED and not changeable."
+    assert_text "Reservations are closed right now and can't be changed."
   end
 end

@@ -3,8 +3,32 @@ module ApplicationHelper
     @setting ||= Setting.instance
   end
 
+  # Single source of truth for the brand name in page titles. Matches the
+  # header wordmark and the layout fallback so every tab reads the same.
   def default_page_name
-    setting&.organization_name.presence || setting&.home_page_header.presence || "Tree Recycle"
+    setting&.home_page_header.presence || setting&.organization_name.presence || "Tree Recycle"
+  end
+
+  # Shared event date and time formatting for the public pages so the
+  # pickup details always read the same way everywhere.
+  def pickup_full_date
+    setting.event_pickup_start.strftime("%A, %B %-d, %Y")
+  end
+
+  def pickup_date
+    setting.event_pickup_start.strftime("%B %-d, %Y")
+  end
+
+  def pickup_day
+    setting.event_pickup_start.strftime("%A, %B %-d")
+  end
+
+  def pickup_start_time
+    setting.event_pickup_start.strftime("%-l:%M%P")
+  end
+
+  def sign_up_deadline
+    setting.event_sign_up_deadline.strftime("%B %-d, %Y at %-l:%M%P")
   end
 
   def external_link_icon(css_class: "size-3 shrink-0")

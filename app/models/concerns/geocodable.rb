@@ -21,6 +21,13 @@ module Geocodable
       [ latitude, longitude ] if geocoded?
     end
 
+    def preferred_geocode_result(results)
+      Array(results).compact.select { |result| result.coordinates.present? }.max_by do |result|
+        place = result.instance_variable_get(:@place)
+        place.respond_to?(:address_number) && place.address_number.present? ? 1 : 0
+      end
+    end
+
     def full_geocode!
       return false if self.class == Reservation && is_manually_geocoded?
 
@@ -31,22 +38,20 @@ module Geocodable
 
       update_columns(was_automatically_geocoded: true)
 
-      # Amazon Location Service can return two matches: the first with a house
-      # number and a second for just the street. Prefer the more precise match.
-      results = Geocoder.search(address)
-      if results.count == 1
-        geocode
-        update_columns(latitude: latitude, longitude: longitude)
-      elsif results.count == 2 && results.as_json[0]["place"]["address_number"].present?
-        result = results.as_json[0]["place"]
-        self.latitude = result["geometry"]["point"][1]
-        self.longitude = result["geometry"]["point"][0]
-        self.house_number = result["geometry"]["address_number"]
-        self.street_name = result["street"]
-        update_columns(latitude: latitude, longitude: longitude)
-      end
+      # Amazon Location Service can return the street and a second match with
+      # the house number. Prefer the more precise match. Coordinates come from
+      # the Geocoder result, which treats the place point as [longitude, latitude].
+      results = Geocoder.search(address, Setting.instance.location_search_options)
+      result = preferred_geocode_result(results)
+      return false unless result&.coordinates
+
+      self.latitude, self.longitude = result.coordinates
+      update_columns(latitude: latitude, longitude: longitude)
 
       geocoded?
+    rescue Aws::LocationService::Errors::ServiceError => error
+      Rails.logger.warn("Location service geocoding failed: #{error.class}: #{error.message}")
+      false
     end
   end
 end

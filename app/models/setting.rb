@@ -307,19 +307,50 @@ class Setting < ApplicationRecord
   def configure_location_service!
     return false unless location_service_configured?
 
+    # The Geocoder Amazon Location client reads the region from api_key.
+    # Aws.config and ~/.aws/config are fallbacks, which exist in development
+    # and are absent in the production container.
     Geocoder.configure(
       timeout: 10,
       lookup: :amazon_location_service,
       amazon_location_service: {
         index_name: aws_location_index_name,
         api_key: {
+          region: aws_region,
           access_key_id: aws_access_key_id,
           secret_access_key: aws_secret_access_key
         }
       }
     )
     Aws.config.update(region: aws_region)
+    reset_location_client!
     true
+  end
+
+  # Options for SearchPlaceIndexForText. Amazon Location allows a bias
+  # position or a bounding box, not both. The box keeps matches inside the
+  # area covered by route boundaries.
+  def location_search_options
+    options = { max_results: 5 }
+    box = location_filter_bbox
+    return options unless box
+
+    options[:filter_b_box] = box
+    options
+  end
+
+  def location_filter_bbox
+    latitudes = Point.where.not(latitude: nil).pluck(:latitude)
+    longitudes = Point.where.not(longitude: nil).pluck(:longitude)
+    return if latitudes.empty? || longitudes.empty?
+
+    pad = 0.05
+    [
+      longitudes.min.to_f - pad,
+      latitudes.min.to_f - pad,
+      longitudes.max.to_f + pad,
+      latitudes.max.to_f + pad
+    ]
   end
 
   def smtp_settings
@@ -344,6 +375,16 @@ class Setting < ApplicationRecord
   end
 
   private
+
+  # The lookup memoizes its AWS client. Drop it so a region or key change
+  # is used on the next search instead of the client built at boot.
+  def reset_location_client!
+    services = Geocoder::Lookup.instance_variable_get(:@services)
+    lookup = services&.[](:amazon_location_service)
+    return unless lookup&.instance_variable_defined?(:@client)
+
+    lookup.remove_instance_variable(:@client)
+  end
 
   def reservations_export_schedule_is_complete
     return unless is_reservations_export_schedule_enabled?

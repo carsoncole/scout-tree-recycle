@@ -255,6 +255,33 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.location_service_configured?
   end
 
+  test "configure_location_service! gives the geocoder the AWS region" do
+    setting = Setting.instance
+    setting.update!(
+      aws_access_key_id: "AKIATEST",
+      aws_secret_access_key: "secret",
+      aws_region: "us-west-2",
+      aws_location_index_name: "tree_recycle"
+    )
+
+    assert setting.configure_location_service!
+
+    api_key = Geocoder.config[:amazon_location_service][:api_key]
+    assert_equal "us-west-2", api_key[:region]
+    assert_equal "AKIATEST", api_key[:access_key_id]
+    assert_equal "tree_recycle", Geocoder.config[:amazon_location_service][:index_name]
+    assert_equal "us-west-2", Aws.config[:region]
+  end
+
+  test "location_search_options limits lookups to the route area" do
+    setting = Setting.instance
+    options = setting.location_search_options
+
+    assert_equal 5, options[:max_results]
+    assert_equal 4, options[:filter_b_box].length
+    assert_nil options[:bias_position]
+  end
+
   test "site_url_options is empty without a configured site url" do
     setting = Setting.instance
     setting.update(site_url: "")

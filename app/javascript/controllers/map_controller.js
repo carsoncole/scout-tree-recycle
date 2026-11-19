@@ -113,6 +113,8 @@ export default class extends Controller {
     if (!this.layerGroup) return
     const bounds = []
 
+    let polygonBounds = null
+
     this.polygonsValue.forEach((polygon) => {
       const points = this.normalizePolygon(polygon)
       if (points.length > 3) {
@@ -124,9 +126,11 @@ export default class extends Controller {
         })
         if (polygon && polygon.label) layer.bindPopup(String(polygon.label))
         layer.addTo(this.layerGroup)
-        bounds.push(layer.getBounds())
+        polygonBounds = polygonBounds ? polygonBounds.extend(layer.getBounds()) : layer.getBounds()
       }
     })
+
+    if (polygonBounds) bounds.push(polygonBounds)
 
     this.markersValue.forEach((marker) => {
       const lat = Number(marker.lat ?? marker.latitude)
@@ -156,7 +160,11 @@ export default class extends Controller {
       if (marker.id !== undefined && marker.id !== null) {
         this.markerLayers.set(String(marker.id), layer)
       }
-      bounds.push(L.latLngBounds([[lat, lng], [lat, lng]]))
+      // A coordinate far from the route boundary must not zoom the map out
+      // to the world. The marker stays on the map for anyone who pans to it.
+      if (!polygonBounds || this.nearBounds(polygonBounds, lat, lng)) {
+        bounds.push(L.latLngBounds([[lat, lng], [lat, lng]]))
+      }
     })
 
     if (bounds.length > 0) {
@@ -196,5 +204,11 @@ export default class extends Controller {
 
   validCoord(lat, lng) {
     return Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180
+  }
+
+  nearBounds(bounds, lat, lng) {
+    const pad = 0.15
+    return lat <= bounds.getNorth() + pad && lat >= bounds.getSouth() - pad &&
+      lng <= bounds.getEast() + pad && lng >= bounds.getWest() - pad
   }
 }

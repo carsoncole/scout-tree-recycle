@@ -462,8 +462,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_selector "#routing-toggle"
       assert_field "Access Key ID"
       assert_field "Secret Access Key"
-      assert_field "Region"
-      assert_field "Place Index Name"
+      assert_field "Region", placeholder: "us-west-2"
+      assert_field "Place Index Name", placeholder: "tree_recycle"
       assert_button "Save Location Services Settings"
       assert_text "If Location Services is not configured, reservations will need to be manually assigned to routes."
     end

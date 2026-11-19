@@ -97,9 +97,15 @@ namespace :sample_data do
 
       r.was_automatically_geocoded = true if r.routing? && [ 0, 1, 2, 3 ].sample == 0
 
-      if r.status == "pending_pickup"
-        r.latitude = Faker::Address.latitude
-        r.longitude = Faker::Address.longitude
+      if r.status == "pending_pickup" && route
+        point_count = route.points.count
+        if point_count.positive?
+          point = route.points.order(:order).offset(rand(point_count)).first
+          if point
+            r.latitude = point.latitude.to_f + rand(-0.002..0.002)
+            r.longitude = point.longitude.to_f + rand(-0.002..0.002)
+          end
+        end
         r.route = route
       end
       r.save!

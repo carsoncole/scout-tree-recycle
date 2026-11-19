@@ -111,24 +111,55 @@ module ApplicationHelper
     end
   end
 
+  # Map data only: the route map dialog fetches pickup details from the server,
+  # so markers carry coordinates plus a detail URL and nothing else.
   def pickups_route_map_markers(route, reservations)
     Array(reservations).filter_map do |reservation|
       next if reservation.latitude.blank? || reservation.longitude.blank?
-
-      address = [ reservation.street, reservation.unit.presence, reservation.city, reservation.state ].compact_blank.join(", ")
 
       {
         id: reservation.id,
         lat: reservation.latitude.to_f,
         lng: reservation.longitude.to_f,
         status: reservation.status.to_s,
-        status_label: reservation.status.to_s.titleize,
-        address: address,
-        pickup_notes: reservation.pickup_notes.to_s,
         color: pickup_status_color(reservation.status),
-        update_url: pickups_route_reservation_path(route, reservation)
+        detail_url: pickups_route_reservation_path(route, reservation)
       }
     end
+  end
+
+  # Confirmation message for a driver marking a pickup missing, matching what
+  # the reservation callbacks will actually send.
+  def pickups_missing_status_confirm(reservation)
+    return "Mark this pickup as missing? No notification will be sent because missing-tree notifications are turned off for this reservation." unless reservation.is_missing_tree_notifications_enabled?
+
+    if reservation.mobile.present?
+      "Mark this pickup as missing? This will send the resident a missing-tree text message."
+    else
+      "Mark this pickup as missing? This will send the resident a missing-tree email."
+    end
+  end
+
+  # Short driver-facing labels for the pickup statuses.
+  PICKUP_STATUS_LABELS = {
+    "pending_pickup" => "Pending",
+    "picked_up" => "Picked",
+    "missing" => "Missing"
+  }.freeze
+
+  def pickups_status_label(status)
+    PICKUP_STATUS_LABELS.fetch(status.to_s, status.to_s.titleize)
+  end
+
+  # Status buttons for the pickup popup, in the order drivers read them.
+  # The current status renders disabled with a check so a tap cannot
+  # accidentally resubmit it.
+  def pickup_status_buttons(reservation)
+    [
+      { value: "pending_pickup", label: "Pending", variant: "secondary", confirm: nil },
+      { value: "picked_up", label: "Picked", variant: "primary", confirm: nil },
+      { value: "missing", label: "Missing", variant: "danger", confirm: pickups_missing_status_confirm(reservation) }
+    ].each { |button| button[:current] = reservation.status.to_s == button[:value] }
   end
 
   # Anchor identifying a zone panel, so zone titles on the pickups overview

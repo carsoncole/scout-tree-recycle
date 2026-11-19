@@ -60,7 +60,12 @@
           <% routes.each do |route| %>
             <% route_totals = pickup_status_totals([route], status_counts) %>
             <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></td>
+              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+                <div class="flex items-center gap-1.5">
+                  <%= render "pickups/routes/favorite_button", route: route, favorited: route_favorited?(route) %>
+                  <%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                </div>
+              </td>
               <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["pending_pickup"] %></td>
               <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["picked_up"] %></td>
               <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["missing"] %></td>

@@ -162,7 +162,11 @@ Rails.application.routes.draw do
     resources :drivers, only: [ :index ]
     resources :zones, only: [ :index, :show ]
     resources :routes, only: [ :index, :show ] do
-      resources :reservations, only: [ :update ]
+      member do
+        post :favorite
+        delete :unfavorite
+      end
+      resources :reservations, only: [ :show, :update ]
     end
     get "driver_pickup_lists", to: "drivers#driver_pickup_lists"
     get "pickup_instructions", to: "drivers#pickup_instructions"

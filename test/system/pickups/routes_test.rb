@@ -6,26 +6,101 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     @route = routes(:one)
   end
 
-  test "driver can view route map and open reservation details" do
+  def sign_in_driver
     visit pickups_root_url
     fill_in "Password", with: "secret"
     click_on "Access Pickups"
+  end
+
+  test "driver can tap a pending pickup on the map to open its details" do
+    sign_in_driver
 
     click_on @route.name, match: :first
     assert_selector "h1", text: "Route: #{@route.name}"
+    assert_selector "#route_status_badge", text: "2 pickups pending"
     assert_selector "[data-controller='map']"
+
+    # Only the two pending pickups are plotted as tap targets.
+    assert_selector ".pickup-marker-hit", count: 2
     assert_no_link "Back to Pickups"
-    assert_no_selector "h2", text: "Route map"
-    assert_text "Green: Pending - Grey: Picked - Red: Missing"
 
-    # click marker via JS (Leaflet markers rendered in canvas/svg-like layers; use evaluate to select first marker)
-    # pick a known geocoded reservation on route one
     reservation = reservations(:pending_pickup_1)
-    page.execute_script(<<~JS, reservation.id)
-      window.dispatchEvent(new CustomEvent('map:marker-selected', { detail: { marker: { id: arguments[0], address: '100 Main St, New York, NY', status: 'pending_pickup', pickup_notes: '', update_url: '/pickups/routes/#{@route.id}/reservations/' + arguments[0] } } }))
-    JS
+    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
 
-    assert_selector "#pickup_reservation_panel", text: "100 Main St"
-    assert_selector "#pickup_reservation_panel", text: "Pending pickup"
+    assert_selector "dialog[open]"
+    within "dialog[open]" do
+      assert_text "770 Broadway"
+      assert_text "Mary Jones"
+      assert_text "+12069230400"
+      assert_text "Pending"
+    end
+  end
+
+  test "driver can mark a pickup picked from the map dialog" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    assert_selector "#route_status_badge", text: "2 pickups pending"
+
+    reservation = reservations(:pending_pickup_1)
+    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    assert_selector "dialog[open]"
+
+    within "dialog[open]" do
+      click_on "Picked"
+      assert_text "Pickup marked Picked Up."
+    end
+
+    assert_selector "#route_status_badge", text: "1 pickup pending"
+  end
+
+  test "marking a pickup missing confirms the missing-tree message first" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    assert_selector "#route_status_badge", text: "2 pickups pending"
+
+    reservation = reservations(:pending_pickup_1)
+    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    assert_selector "dialog[open]"
+
+    within "dialog[open]" do
+      accept_confirm "Mark this pickup as missing? This will send the resident a missing-tree text message." do
+        click_on "Missing"
+      end
+      assert_text "Pickup marked Missing."
+    end
+
+    assert_selector "#route_status_badge", text: "1 pickup pending"
+  end
+
+  test "routes page shows a pickup status indicator for each route" do
+    sign_in_driver
+    assert_selector "h1", text: "Pickups" # wait for the login redirect to complete
+
+    visit pickups_routes_path
+    assert_text "2 pickups pending"
+    assert_text "1 pickup pending"
+    assert_text "Pickups complete", count: 4
+  end
+
+  test "driver can favorite a route and see it listed first on routes page" do
+    route = routes(:five)
+
+    sign_in_driver
+
+    # Favorite the route from the overview page
+    find("button[aria-label='Favorite #{route.name}']").click
+    assert_selector "button[aria-label='Remove #{route.name} from favorites']", count: 1
+
+    # Favorited route is listed first on the routes page
+    visit pickups_routes_path
+    assert_selector "tbody tr:first-child", text: route.name
+    assert_selector "button[aria-label='Remove #{route.name} from favorites']", count: 1
+
+    # Unfavoriting restores the default name ordering
+    find("button[aria-label='Remove #{route.name} from favorites']").click
+    assert_selector "tbody tr:first-child", text: routes(:one).name
+    assert_selector "button[aria-label='Favorite #{route.name}']", count: 1
   end
 end

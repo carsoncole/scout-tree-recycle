@@ -140,7 +140,7 @@ export default class extends Controller {
       const stroke = marker.color || "#b91c1c"
       const fill = marker.fillColor || marker.color || "#ef4444"
       const layer = L.circleMarker([lat, lng], {
-        radius: 7,
+        radius: this.interactiveValue ? 12 : 7,
         color: stroke,
         weight: 2,
         fillColor: fill,
@@ -148,9 +148,8 @@ export default class extends Controller {
       })
 
       if (this.interactiveValue) {
-        layer.on("click", () => {
-          this.dispatch("marker-selected", { detail: { marker } })
-        })
+        const select = () => this.dispatch("marker-selected", { detail: { marker } })
+        layer.on("click", select)
       } else {
         const popup = marker.popup || marker.label || marker.name
         if (popup) layer.bindPopup(String(popup))
@@ -159,6 +158,28 @@ export default class extends Controller {
       layer.addTo(this.layerGroup)
       if (marker.id !== undefined && marker.id !== null) {
         this.markerLayers.set(String(marker.id), layer)
+      }
+
+      if (this.interactiveValue) {
+        // Transparent companion circle over the dot so the tap target is
+        // large enough for a finger on touch screens (~44px) while the
+        // visible dot stays small and easy to tell apart at a glance.
+        // Added after the dot so it is the topmost layer at the center.
+        const hit = L.circleMarker([lat, lng], {
+          radius: 22,
+          stroke: false,
+          fillColor: "#000000",
+          fillOpacity: 0,
+          className: "pickup-marker-hit",
+          interactive: true
+        })
+        const select = () => this.dispatch("marker-selected", { detail: { marker } })
+        hit.on("click", select)
+        hit.addTo(this.layerGroup)
+        // Mark the SVG element with the reservation id so tests and browser
+        // devtools can target a specific stop's tap target.
+        const hitEl = hit.getElement()
+        if (hitEl) hitEl.setAttribute("data-marker-id", String(marker.id))
       }
       // A coordinate far from the route boundary must not zoom the map out
       // to the world. The marker stays on the map for anyone who pans to it.

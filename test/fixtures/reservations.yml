@@ -127,8 +127,8 @@ pending_pickup_1:
   email: mary.jones@example.com
   mobile: "+12069230400"
   status: pending_pickup
-  latitude: 31.1212
-  longitude: 1212.1212
+  latitude: 40.7208
+  longitude: -73.9930
   route: one
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
@@ -140,8 +140,8 @@ pending_pickup_no_mobile:
   country: United States
   email: mack.gilbert@example.com
   status: pending_pickup
-  latitude:  31.1212
-  longitude: 1212.1212
+  latitude: 40.7300
+  longitude: -73.9800
   route: one
 
 pending_pickup_not_routed:
@@ -156,8 +156,8 @@ pending_pickup_not_routed:
   status: pending_pickup
   is_manually_geocoded: true
   is_manually_routed: false
-  latitude: 31.1212
-  longitude: 1212.1212
+  latitude: 40.7400
+  longitude: -73.9700
   route: two
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
@@ -170,8 +170,8 @@ picked_up_1:
   email: bob.jones@example.com
   mobile: "+12064759823" 
   status: picked_up
-  latitude: 31.1212
-  longitude: 1212.1212
+  latitude: 40.7500
+  longitude: -73.9600
   route: one
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
@@ -185,8 +185,8 @@ picked_up_2:
   mobile: "+12064759823" 
   status: picked_up
   is_manually_routed: true
-  latitude: 31.1212
-  longitude: 1212.1212
+  latitude: 40.7600
+  longitude: -73.9500
   route: four
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 
@@ -200,8 +200,8 @@ missing_1:
   mobile: "+12069230404"
   status: missing
   is_manually_routed: true
-  latitude: 31.1212
-  longitude: 1212.1212
+  latitude: 40.7700
+  longitude: -73.9400
   route: one
   confirmed_reservation_email_sent_at: 2025-05-17 12:00:00
 

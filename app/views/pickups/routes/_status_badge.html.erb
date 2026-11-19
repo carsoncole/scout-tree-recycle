@@ -1,0 +1,17 @@
+<%# Prominent pickup status for a route: complete when nothing is pending,
+   otherwise the number of pickups still pending.
+   locals: (pending_count:, id: nil) %>
+<% complete = pending_count.zero? %>
+<%= tag.span id: local_assigns[:id], class: [
+      "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[0.85rem] font-semibold",
+      complete ? "bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark"
+               : "bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark"
+    ] do %>
+  <% if complete %>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-4 shrink-0" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+    Pickups complete
+  <% else %>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-4 shrink-0" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+    <%= pluralize(pending_count, "pickup") %> pending
+  <% end %>
+<% end %>

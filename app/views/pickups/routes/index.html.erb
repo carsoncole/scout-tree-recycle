@@ -1,13 +1,15 @@
 <%= render "admin/shared/page_header",
            title: "Routes",
-           description: "All pickup routes with their zone, drivers, and reservation totals." %>
+           description: "All pickup routes with their zone, drivers, and reservation totals. Favorites are saved on this device and shown first." %>
 
 <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
   <div class="admin-table-wrap">
     <table class="admin-table text-ink dark:text-ink-dark">
       <thead>
         <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark"><span class="sr-only">Favorite</span></th>
           <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Route</th>
+          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Status</th>
           <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Zone</th>
           <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Drivers</th>
           <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Reservations</th>
@@ -16,8 +18,13 @@
       <tbody>
         <% @routes.each do |route| %>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= render "pickups/routes/favorite_button", route: route, favorited: route_favorited?(route) %></td>
             <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route.zone&.name || "No Zone" %></td>
+            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= render "pickups/routes/status_badge", pending_count: @pending_counts[route.id] || 0 %></td>
+            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+              <% zone_target = route.zone ? pickups_zone_path(route.zone) : pickups_zones_path(anchor: pickups_zone_anchor(route.zone)) %>
+              <%= link_to route.zone&.name || "No Zone", zone_target, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+            </td>
             <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= pluralize(route.drivers.size, "driver") %></td>
             <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route.reservations_count %></td>
           </tr>

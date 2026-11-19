@@ -9,6 +9,43 @@ class Pickups::ReservationsControllerTest < ActionDispatch::IntegrationTest
     get pickups_route_url(@route), params: { driver_secret_key: "secret" }
   end
 
+  test "should get reservation show with valid driver key" do
+    get pickups_route_reservation_url(@route, @reservation)
+    assert_response :success
+    assert_select "#pickup_reservation_dialog", count: 1
+    assert_select "p", text: "770 Broadway, New York, NY"
+    assert_select "p", text: "Mary Jones"
+    assert_select "a[href^='tel:']", text: @reservation.mobile
+    assert_select "button[value=picked_up]", text: "Picked"
+    assert_select "button[value=missing]", text: "Missing"
+    assert_select "button[value=pending_pickup][disabled]", count: 1
+    assert_match(/missing-tree text message/, @response.body)
+  end
+
+  test "show explains that an email is sent when there is no mobile number" do
+    get pickups_route_reservation_url(@route, reservations(:pending_pickup_no_mobile))
+    assert_response :success
+    assert_match(/missing-tree email/, @response.body)
+  end
+
+  test "should not get reservation show without driver key" do
+    cookies[:driver_secret_key] = "wrong-key"
+    get pickups_route_reservation_url(@route, @reservation)
+    assert_response :unauthorized
+  end
+
+  test "should not get reservation show when pickups site disabled" do
+    Setting.instance.update!(is_pickups_site_enabled: false)
+    get pickups_route_reservation_url(@route, @reservation)
+    assert_response :unauthorized
+  end
+
+  test "should not get reservation show from other route" do
+    other = reservations(:cancelled_1) # route two
+    get pickups_route_reservation_url(@route, other)
+    assert_response :not_found
+  end
+
   test "should update reservation status to picked up" do
     patch pickups_route_reservation_url(@route, @reservation), params: { reservation: { status: "picked_up" } }
     assert_redirected_to pickups_route_url(@route)
@@ -25,5 +62,15 @@ class Pickups::ReservationsControllerTest < ActionDispatch::IntegrationTest
     other = reservations(:cancelled_1) # route two
     patch pickups_route_reservation_url(@route, other), params: { reservation: { status: "picked_up" } }
     assert_response :not_found
+  end
+
+  test "turbo stream update refreshes the route status indicator" do
+    patch pickups_route_reservation_url(@route, @reservation),
+          params: { reservation: { status: "picked_up" } },
+          headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :success
+    assert_match(/action="replace" target="route_status_badge"/, response.body)
+    assert_match(/1 pickup pending/, response.body)
   end
 end

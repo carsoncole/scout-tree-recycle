@@ -1,56 +1,60 @@
 <%= render "admin/shared/page_header",
            title: "Route: #{@route.name}",
-           description: [@route.zone&.name || "No Zone", "Tap a point to view and update status. Green: Pending - Grey: Picked - Red: Missing"].join(" · ") %>
+           description: [ @route.zone&.name || "No Zone", "Tap a green dot to view the stop and update its status." ].join(" · ") do %>
+  <%= render "pickups/routes/status_badge", pending_count: @route.pending_pickup_count, id: "route_status_badge" %>
+<% end %>
 
 <% boundary_polygons = route_boundary_polygon(@route) %>
 <% pickup_markers = pickups_route_map_markers(@route, @pickup_reservations) %>
 
-<div class="grid gap-6 lg:grid-cols-3"
-     data-controller="pickups-route"
+<div data-controller="pickups-route"
      data-action="map:marker-selected@window->pickups-route#select">
-  <section class="admin-panel lg:col-span-2 border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-body admin-panel-body--tight">
       <% if boundary_polygons.any? || pickup_markers.any? %>
         <div data-pickups-route-target="mapWrap" data-action="pickups:marker-update@window->pickups-route#markerUpdated">
           <%= render "shared/map",
                 polygons: boundary_polygons,
                 markers: pickup_markers,
-                height_class: "h-[70vh] min-h-[28rem]",
+                height_class: "h-[calc(100dvh-12rem)] min-h-[24rem] lg:h-[calc(100dvh-14rem)]",
                 interactive: true,
                 empty_message: "No map data available for this route." %>
         </div>
+        <% if pickup_markers.empty? %>
+          <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark">No pending pickups on this route.</p>
+        <% end %>
         <% if @missing_coordinates_count.positive? %>
-          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(@missing_coordinates_count, "reservation") %> in this route do not have coordinates and are not shown on the map.</p>
+          <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(@missing_coordinates_count, "pending pickup") %> in this route do not have coordinates and are not shown on the map.</p>
         <% end %>
         <% if boundary_polygons.empty? && @route.points.any? %>
-          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">A bounded area requires more than 3 ordered points. Pickup markers are shown when available.</p>
+          <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark">A bounded area requires more than 3 ordered points. Pickup markers are shown when available.</p>
         <% elsif boundary_polygons.empty? %>
-          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">No route boundary defined. Pickup markers are shown when available.</p>
+          <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark">No route boundary defined. Pickup markers are shown when available.</p>
         <% end %>
       <% else %>
-        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundary or pickup locations with coordinates are available for this route.</p>
+        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundary or pending pickup locations with coordinates are available for this route.</p>
         <% if @missing_coordinates_count.positive? %>
-          <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(@missing_coordinates_count, "reservation") %> in this route are missing coordinates.</p>
+          <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(@missing_coordinates_count, "pending pickup") %> in this route are missing coordinates.</p>
         <% end %>
       <% end %>
     </div>
   </section>
 
-  <section class="admin-panel scroll-mt-24 lg:sticky lg:top-24 lg:self-start border border-line bg-surface dark:border-line-dark dark:bg-surface-dark"
-           id="pickup-detail-panel"
-           data-pickups-route-target="panel">
-    <div class="admin-panel-header border-line dark:border-line-dark">
-      <div>
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Reservation details</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Select a point on the map to view its address, notes, and update status.</p>
-      </div>
+  <dialog data-pickups-route-target="dialog"
+          data-action="click->pickups-route#backdropClick close->pickups-route#dialogClosed"
+          aria-labelledby="pickup_dialog_title"
+          class="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[85dvh] w-full max-w-none rounded-t-2xl border border-line bg-surface p-0 pb-[env(safe-area-inset-bottom)] text-ink backdrop:bg-black/40 open:flex open:flex-col sm:inset-0 sm:m-auto sm:max-w-lg sm:rounded-2xl dark:border-line-dark dark:bg-surface-dark dark:text-ink-dark">
+    <div class="flex shrink-0 items-center justify-between gap-3 border-b border-line px-5 py-3.5 dark:border-line-dark">
+      <h2 id="pickup_dialog_title" class="text-base font-semibold text-ink dark:text-ink-dark">Pickup details</h2>
+      <button type="button" data-action="pickups-route#close" aria-label="Close"
+              class="flex size-10 items-center justify-center rounded-full text-ink-soft hover:bg-stone hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+      </button>
     </div>
-    <div class="admin-panel-body">
-      <div id="pickup_reservation_panel" data-pickups-route-target="content">
-        <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No reservation selected.</p>
-      </div>
+    <div class="max-h-[70dvh] overflow-y-auto px-5 py-5 sm:max-h-none sm:flex-1 sm:overflow-y-auto">
+      <%= turbo_frame_tag "pickup_reservation_dialog", data: { pickups_route_target: "frame" } do %>
+        <p class="py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">Loading pickup details…</p>
+      <% end %>
     </div>
-  </section>
+  </dialog>
 </div>
-
-<script type="application/json" id="pickups-route-markers"><%= raw json_escape(pickup_markers.to_json) %></script>

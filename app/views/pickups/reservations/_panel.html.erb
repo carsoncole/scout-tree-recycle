@@ -1,0 +1,75 @@
+<%# locals: (route:, reservation:, error: nil, notice: nil) %>
+<%# Pickup details for the route map dialog (also shown standalone on the
+   reservation show page). %>
+<% color = pickup_status_color(reservation.status) %>
+<div id="<%= dom_id(reservation, :panel) %>"
+     class="flex flex-col gap-5"
+     data-controller="pickups-route-panel"
+     data-pickups-route-panel-reservation-id-value="<%= reservation.id %>"
+     data-pickups-route-panel-status-value="<%= reservation.status %>"
+     data-pickups-route-panel-color-value="<%= color %>">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <span class="<%= admin_reservation_status_badge(reservation.status) %>"><%= pickups_status_label(reservation.status) %></span>
+    <% if notice.present? %>
+      <span class="text-[0.85rem] font-medium text-positive dark:text-positive-dark" role="status"><%= notice %></span>
+    <% end %>
+    <% if error.present? %>
+      <span class="text-[0.85rem] font-medium text-danger dark:text-danger-dark" role="alert"><%= error %></span>
+    <% end %>
+  </div>
+
+  <div class="flex flex-col gap-4">
+    <div>
+      <p class="admin-label text-ink dark:text-ink-dark">Address</p>
+      <p class="admin-detail-value text-ink dark:text-ink-dark"><%= [ reservation.street, reservation.unit.presence, reservation.city, reservation.state, reservation.zip.presence ].compact_blank.join(", ") %></p>
+    </div>
+
+    <% if reservation.name.present? %>
+      <div>
+        <p class="admin-label text-ink dark:text-ink-dark">Resident</p>
+        <p class="admin-detail-value text-ink dark:text-ink-dark"><%= reservation.name %></p>
+      </div>
+    <% end %>
+
+    <% if reservation.mobile.present? %>
+      <div>
+        <p class="admin-label text-ink dark:text-ink-dark">Phone</p>
+        <p class="admin-detail-value">
+          <%= link_to reservation.mobile, "tel:#{reservation.mobile.gsub(/[^\d+]/, "")}",
+                       class: "text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+        </p>
+      </div>
+    <% end %>
+
+    <div>
+      <p class="admin-label text-ink dark:text-ink-dark">Notes</p>
+      <% if reservation.pickup_notes.present? %>
+        <p class="admin-detail-value whitespace-pre-wrap text-ink dark:text-ink-dark"><%= reservation.pickup_notes %></p>
+      <% else %>
+        <p class="admin-table-note text-ink-soft dark:text-ink-soft-dark">No special instructions.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <%= form_with model: reservation,
+                url: pickups_route_reservation_path(route, reservation),
+                method: :patch do %>
+    <div class="grid gap-2 sm:grid-cols-3">
+      <% pickup_status_buttons(reservation).each do |button| %>
+        <%= button_tag type: :submit,
+                       name: "reservation[status]",
+                       value: button[:value],
+                       disabled: button[:current],
+                       aria: { current: button[:current] ? "true" : nil },
+                       data: button[:confirm] ? { turbo_confirm: button[:confirm] } : {},
+                       class: [ "min-h-12 text-[0.95rem]", admin_button_class(variant: button[:variant], full: true) ] do %>
+          <% if button[:current] %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4 shrink-0" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+          <% end %>
+          <%= button[:label] %><span class="sr-only"><%= " (current status)" if button[:current] %></span>
+        <% end %>
+      <% end %>
+    </div>
+    <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">Marking a pickup missing notifies the resident with a missing-tree message.</p>
+  <% end %>
+</div>

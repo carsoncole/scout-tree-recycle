@@ -27,6 +27,12 @@ class Route < ApplicationRecord
     points.count > 3
   end
 
+  # Reservations on this route still waiting to be picked up. Pickups on the
+  # route are complete when none remain.
+  def pending_pickup_count
+    reservations.pending_pickup.count
+  end
+
   def contains?(lat, lon)
     return false unless polygon?
     polygon_array = points.order(:order).map { |point| Geokit::LatLng.new(point.latitude, point.longitude) }

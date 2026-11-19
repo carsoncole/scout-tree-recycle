@@ -3,6 +3,8 @@ module Pickups
     before_action :authenticate_driver
     layout "pickups"
 
+    helper_method :favorite_route_ids, :route_favorited?
+
     private
 
     def authenticate_driver
@@ -28,6 +30,26 @@ module Pickups
       else
         cookies[:driver_secret_key] == Setting.instance.driver_secret_key
       end
+    end
+
+    # Drivers do not have accounts on the pickups site, so favorite routes are
+    # stored in a permanent cookie on their browser.
+    def favorite_route_ids
+      cookies[:pickup_route_favorites].to_s.split(",").filter_map { |id| id.to_i if id.match?(/\A\d+\z/) }.uniq
+    end
+
+    def route_favorited?(route)
+      favorite_route_ids.include?(route.id)
+    end
+
+    def favorite_route(route_id)
+      return if favorite_route_ids.include?(route_id)
+
+      cookies.permanent[:pickup_route_favorites] = (favorite_route_ids + [ route_id ]).join(",")
+    end
+
+    def unfavorite_route(route_id)
+      cookies.permanent[:pickup_route_favorites] = favorite_route_ids.reject { |id| id == route_id.to_i }.join(",")
     end
   end
 end

@@ -16,6 +16,8 @@ class DonationsTest < ApplicationSystemTestCase
 
     assert_button "Continue without donation"
 
+    assert_link "Review or change your details"
+
     assert_selector ".site-flow", count: 1
     assert_selector ".site-flow-step[aria-current='step']", text: "Donate"
     assert_selector ".site-flow-step", text: "Reserve"
@@ -66,6 +68,7 @@ class DonationsTest < ApplicationSystemTestCase
     Setting.instance.update(is_donations_enabled: false)
     make_system_reservation
     assert_selector "h1", text: "Donations"
+    assert_link "Review or change your details"
     assert_text "Support our mission"
     assert_text Setting::DEFAULT_DONATIONS_PAGE_CONTENT
     assert_selector "h2", text: "How to Donate"
@@ -82,6 +85,29 @@ class DonationsTest < ApplicationSystemTestCase
     assert_selector "h2", text: "How to Donate"
     assert_text "Custom donations intro copy"
     assert_text "Custom how to donate copy"
+  end
+
+  test "editing details from the donation step returns to the donation choice" do
+    make_system_reservation
+    assert_selector "h1", text: "Support #{Setting.instance.organization_name}"
+
+    click_link "Review or change your details"
+    assert_selector "h1", text: "Edit Reservation"
+
+    # The edit page points incomplete reservations back to the donation step
+    click_link "Back to your donation choice"
+    assert_selector "h1", text: "Support #{Setting.instance.organization_name}"
+
+    # Save an edit and land back on the donation step, not a confirmation page
+    click_link "Review or change your details"
+    fill_in "Street", with: "999 New Street"
+    click_button "Update Reservation"
+    assert_selector "h1", text: "Support #{Setting.instance.organization_name}"
+    assert_text "Reservation updated."
+    assert_no_selector "h1", text: "Reservation Confirmed"
+
+    complete_donation
+    assert_selector "h1", text: "Reservation Confirmed"
   end
 
   test "donating at pickup" do

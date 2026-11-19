@@ -68,6 +68,14 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Reservation updated.", flash[:notice]
   end
 
+  test "should update an incomplete reservation and return to the donation step" do
+    @reservation = reservations(:donation_1)
+    patch reservation_url(@reservation.public_token), params: { reservation: { street: "123 Doodle St" } }
+    assert_redirected_to reservation_address_verification_url(@reservation.public_token)
+    assert_equal "Reservation updated.", flash[:notice]
+    assert_equal "123 Doodle St", @reservation.reload.street
+  end
+
   test "should not update reservation with invalid details" do
     @reservation = reservations(:pending_pickup_1)
     original_email = @reservation.email

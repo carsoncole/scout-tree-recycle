@@ -126,6 +126,7 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "Reservation Confirmed"
 
     click_link "Edit Reservation"
+    assert_link "Back to your reservation"
     fill_in "Name", with: "Joey"
     fill_in "Street", with: Faker::Address.street_address
     fill_in "Email", with: Faker::Internet.email

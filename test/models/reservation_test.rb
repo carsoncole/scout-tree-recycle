@@ -69,6 +69,23 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal "Canada", Reservation.new.country
   end
 
+  test "changing the street on an incomplete reservation does not promote it to routing" do
+    reservation = reservations(:donation_1)
+    reservation.update!(street: "500 New Address Ave")
+
+    assert reservation.reload.donation?
+    assert_nil reservation.route_id
+  end
+
+  test "changing the street resets geocoding and returns a completed reservation to routing" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update!(street: "500 New Address Ave")
+
+    assert reservation.reload.routing?
+    assert_nil reservation.route_id
+    assert_nil reservation.latitude
+  end
+
   test "short_address returns street and city" do
     assert_equal @reservation.street + ", " + @reservation.city + ", " + @reservation.state, @reservation.short_address
   end

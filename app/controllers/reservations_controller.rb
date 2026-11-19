@@ -38,7 +38,14 @@ class ReservationsController < ApplicationController
     end
 
     if @reservation.update(reservation_params)
-      redirect_to reservation_confirmation_path(@reservation.public_token), notice: "Reservation updated."
+      # Pre-donation edits return to the donation step rather than showing
+      # a confirmation page for an incomplete reservation; completed
+      # reservations return to their confirmation page.
+      if @reservation.status_lower_than?("routing")
+        redirect_to reservation_address_verification_path(@reservation.public_token), notice: "Reservation updated."
+      else
+        redirect_to reservation_confirmation_path(@reservation.public_token), notice: "Reservation updated."
+      end
     else
       render :edit, status: :unprocessable_entity
     end

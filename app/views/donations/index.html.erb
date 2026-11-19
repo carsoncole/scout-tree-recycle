@@ -3,6 +3,10 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
+    <%= link_to edit_reservation_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+      <span aria-hidden="true">←</span> Review or change your details
+    <% end %>
+
     <%= render "shared/flow_steps", current: 2 %>
 
     <%= render "shared/page_header",

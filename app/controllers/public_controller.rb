@@ -10,7 +10,6 @@ class PublicController < ApplicationController
     else
       @reservation = Reservation.new
     end
-    @reservation.city = Setting.instance.default_city
   end
 
   def about

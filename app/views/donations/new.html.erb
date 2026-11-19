@@ -4,6 +4,10 @@
 
 <section class="site-page">
   <div class="site-container site-container--medium">
+    <%= link_to edit_reservation_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+      <span aria-hidden="true">←</span> Review or change your details
+    <% end %>
+
     <%= render "shared/flow_steps", current: 2 %>
 
     <%= render "shared/page_header",
@@ -41,7 +45,6 @@
           <p class="text-ink-soft dark:text-ink-soft-dark">Leave cash or a check with your tree.</p>
           <%= form_with url: reservation_cash_or_check_path(reservation_id: @reservation.public_token),
                         method: :post,
-                        data: { turbo: false },
                         class: "site-form" do |form| %>
             <%= form.submit "Donate at Pickup", class: "site-button site-button--secondary site-button--full border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
           <% end %>
@@ -53,7 +56,6 @@
         <p class="text-ink-soft dark:text-ink-soft-dark">You can still reserve a tree pickup. Donations are always optional.</p>
         <%= form_with url: reservation_no_donation_path(reservation_id: @reservation.public_token),
                       method: :post,
-                      data: { turbo: false },
                       class: "site-form" do |form| %>
           <%= form.submit "Continue without donation", class: "site-button site-button--quiet text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
         <% end %>

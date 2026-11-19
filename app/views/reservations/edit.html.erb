@@ -3,8 +3,15 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <%= link_to reservation_confirmation_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
-      <span aria-hidden="true">←</span> Back to your reservation
+    <% if @reservation.status_lower_than?("routing") %>
+      <%# Incomplete reservations return to the donation step, not a premature confirmation page. %>
+      <%= link_to reservation_address_verification_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+        <span aria-hidden="true">←</span> Back to your donation choice
+      <% end %>
+    <% else %>
+      <%= link_to reservation_confirmation_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
+        <span aria-hidden="true">←</span> Back to your reservation
+      <% end %>
     <% end %>
 
     <%= render "shared/page_header",

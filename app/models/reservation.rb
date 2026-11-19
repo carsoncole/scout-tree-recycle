@@ -245,7 +245,10 @@ class Reservation < ApplicationRecord
     self.route_id = nil
     self.was_automatically_routed = false
     self.is_manually_routed = false
-    self.status = "routing"
+    # Only completed reservations (routing or later) reset to routing for
+    # re-geocoding/re-routing. Incomplete reservations keep their flow
+    # step; the flow itself promotes them to routing at completion.
+    self.status = "routing" unless status_lower_than?("routing")
   end
 
   def extract_street_name

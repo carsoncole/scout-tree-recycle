@@ -107,10 +107,17 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "test@example.com"
 
     # Try to create second reservation with same email
-    make_system_reservation("test@example.com")
+    visit root_url
+    fill_in "Name", with: "Charlie"
+    fill_in "Street", with: "1 Main Street"
+    fill_in "Email", with: "test@example.com"
+    click_button "Create Reservation"
 
-    # Should show error message
+    # Should show the error message and keep the entered details
     assert_text "There appears to already be a reservation with that email"
+    assert_field "Name", with: "Charlie"
+    assert_field "Street", with: "1 Main Street"
+    assert_field "Email", with: "test@example.com"
   end
 
   test "editing a reservation" do

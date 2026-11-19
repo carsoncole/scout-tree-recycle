@@ -7,6 +7,10 @@
 - Add signature verification for Stripe and Twilio webhooks.
 - Remove the deprecated unversioned `/api/*` webhook aliases once Stripe and Twilio are configured to use `/api/v1/*`.
 
+### Reservation flow
+
+- Decide whether to build a real address verification step (Amazon Location Service) or remove the placeholder entirely. `AddressVerificationController`, the `address_verification` status, and the TODO in `ReservationsController#create` mark where the step would slot in.
+
 ### Controllers and REST
 
 - Move state-changing GET actions to `PATCH`/`POST`, including marking logs and SMS conversations as viewed.

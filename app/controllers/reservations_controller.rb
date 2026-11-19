@@ -15,11 +15,13 @@ class ReservationsController < ApplicationController
       @reservation.donation!
       redirect_to reservation_address_verification_url(@reservation.public_token)
     else
-      if @reservation.errors[:email].include? "has already been taken"
-        redirect_to root_url, alert: "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received."
-      else
-        render "public/index", status: :unprocessable_entity
+      if @reservation.errors[:email].include?("has already been taken")
+        # Render the form again (with the entered values) rather than
+        # redirecting, so a duplicate email does not discard what the
+        # visitor typed.
+        flash.now[:alert] = "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received."
       end
+      render "public/index", status: :unprocessable_entity
     end
   end
 
@@ -60,6 +62,6 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:name, :email, :mobile, :street, :city, :pickup_notes, :use_suggested_address)
+    params.require(:reservation).permit(:name, :email, :mobile, :street, :city, :pickup_notes)
   end
 end

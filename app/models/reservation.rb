@@ -166,14 +166,6 @@ class Reservation < ApplicationRecord
     find_by_token_for(:public_access, token.to_s) or raise ActiveRecord::RecordNotFound
   end
 
-  def verify_address!
-    nil
-  end
-
-  def suggested_address?
-    nil
-  end
-
   def routed?
     route.present?
   end

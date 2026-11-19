@@ -27,9 +27,16 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not create reservation if email is already taken" do
-    post reservations_url, params: { reservation: { name: "Icky Jones", email: "icky.jones@example.com", street: "123 Main St" } }
-    assert_redirected_to root_url
-    assert_equal "There appears to already be a reservation with that email. If you would like to make any changes, use the link in the confirmation email you should have received.", flash[:alert]
+    assert_no_difference "Reservation.count" do
+      post reservations_url, params: { reservation: { name: "Icky Jones", email: "icky.jones@example.com", street: "123 Main St" } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_match "There appears to already be a reservation with that email", response.body
+    assert_match "has already been taken", response.body
+    # The form re-renders with the entered values instead of discarding them.
+    assert_match "Icky Jones", response.body
+    assert_match "123 Main St", response.body
   end
 
   test "should edit reservation" do

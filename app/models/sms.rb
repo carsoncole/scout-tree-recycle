@@ -17,6 +17,11 @@ class Sms < ApplicationRecord
 
   after_commit :broadcast_sms_update! # , on: [:create, :update]
 
+  # Records an sms log for every message sent or received. When the phone
+  # number matches a reservation's mobile, the log is associated with the
+  # most recent reservation for that number.
+  after_create :log_sms!
+
   def self.grouped_by_phone_for_index
     # Get all SMS messages ordered by creation time descending
     all_smses = includes(:user).order(created_at: :desc)
@@ -94,6 +99,21 @@ class Sms < ApplicationRecord
   end
 
   private
+
+  def log_sms!
+    Log.create(
+      log_type: "sms",
+      reservation: reservation_for_log,
+      message: "#{incoming? ? "SMS received from" : "SMS sent to"} #{formatted_phone}: #{body}",
+      context: { phone: phone, direction: direction }
+    )
+  rescue StandardError => e
+    Rails.logger.error("SMS activity could not be logged: #{e.class}: #{e.message}")
+  end
+
+  def reservation_for_log
+    reservations.order(created_at: :desc).first
+  end
 
   def broadcast_sms_update!
     Rails.logger.info "Broadcasting SMS update for phone: #{phone}, id: #{id}"

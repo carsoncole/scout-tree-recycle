@@ -37,4 +37,28 @@ class SmsTest < ActiveSupport::TestCase
       sms.save!
     end
   end
+
+  test "logs an sms activity associated with the reservation when sent to a reservation mobile" do
+    reservation = reservations(:pending_pickup_1)
+
+    assert_difference -> { Log.of_type("sms").count }, 1 do
+      Sms.create!(phone: reservation.mobile, body: "Please leave the tree at the curb")
+    end
+
+    log = Log.of_type("sms").last
+    assert_equal reservation, log.reservation
+    assert_includes log.message, "SMS sent to"
+    assert_includes log.message, "Please leave the tree at the curb"
+  end
+
+  test "logs an sms activity without a reservation for unknown numbers" do
+    assert_difference -> { Log.of_type("sms").count }, 1 do
+      Sms.create!(phone: "+15550001234", body: "Thanks for the pickup!", direction: "incoming")
+    end
+
+    log = Log.of_type("sms").last
+    assert_nil log.reservation
+    assert_includes log.message, "SMS received from"
+    assert_includes log.message, "Thanks for the pickup!"
+  end
 end

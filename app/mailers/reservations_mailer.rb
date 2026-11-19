@@ -1,6 +1,7 @@
 class ReservationsMailer < ApplicationMailer
   before_action :set_reservation, except: :test_email
   after_deliver :mark_reservation_email_sent
+  after_deliver :log_reservation_email
 
   def new_reservation_email(force: false)
     return suppress_delivery("Your tree pickup is confirmed") unless Setting.instance.is_emailing_enabled?
@@ -114,5 +115,22 @@ class ReservationsMailer < ApplicationMailer
     return if @reservation.blank? || @reservation.id.blank?
 
     Reservation.where(id: @reservation.id).update_all(@sent_at_attribute => Time.current, updated_at: Time.current)
+  end
+
+  # Records an email log with the sent subject for the reservation's
+  # activity history. Suppressed and test sends are not real activity, so
+  # they are not logged. A logging failure must never break the delivery.
+  def log_reservation_email
+    return if @delivery_suppressed
+    return if @sent_at_attribute.blank?
+
+    Log.create(
+      log_type: "email",
+      reservation: @reservation,
+      message: "Email sent to #{@reservation.email}: #{message.subject}",
+      context: { to: @reservation.email, subject: message.subject }
+    )
+  rescue StandardError => e
+    Rails.logger.error("Reservation email could not be logged: #{e.class}: #{e.message}")
   end
 end

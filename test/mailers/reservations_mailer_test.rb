@@ -73,6 +73,28 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)
   end
 
+  test "delivery is logged as reservation email activity with the subject" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update_column(:confirmed_reservation_email_sent_at, nil)
+
+    assert_difference -> { Log.of_type("email").count }, 1 do
+      ReservationsMailer.with(reservation_id: reservation.id).new_reservation_email.deliver_now
+    end
+
+    log = Log.of_type("email").last
+    assert_equal reservation, log.reservation
+    assert_includes log.message, "Email sent to #{reservation.email}"
+    assert_includes log.message, "Your tree pickup is confirmed"
+  end
+
+  test "suppressed deliveries are not logged" do
+    reservation = reservations(:pending_pickup_1) # already sent, so delivery is suppressed
+
+    assert_no_difference -> { Log.of_type("email").count } do
+      ReservationsMailer.with(reservation_id: reservation.id).new_reservation_email.deliver_now
+    end
+  end
+
   test "not sending more than one confirmation email" do
     Setting.instance.update(is_routing_enabled: true)
     configure_location_service!

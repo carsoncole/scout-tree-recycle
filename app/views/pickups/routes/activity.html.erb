@@ -1,0 +1,35 @@
+<%# Recent reservation activity for a route, loaded into the route map's
+   activity dialog when a driver taps the Activity button. %>
+<%= render "admin/shared/page_header",
+           title: "Route activity",
+           description: "#{@route.name} · Recent reservation changes and donations" do %>
+  <%= link_to "Back to route", pickups_route_path(@route), class: "admin-button #{admin_button_class(variant: "secondary")}" %>
+<% end %>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+  <%= turbo_frame_tag "pickup_route_activity", data: { pickups_route_target: "activityFrame" } do %>
+    <% if @activity_logs.any? %>
+      <ol class="m-0 flex list-none flex-col p-0">
+        <% @activity_logs.each do |log| %>
+          <li class="border-b border-line last:border-b-0 dark:border-line-dark">
+            <% row_body = capture do %>
+              <p class="m-0 text-[0.9rem] leading-[1.5] text-ink dark:text-ink-dark"><%= log.message %></p>
+              <p class="m-0 mt-1 text-[0.8rem] text-ink-soft dark:text-ink-soft-dark"><%= time_ago_in_words(log.created_at) %> ago</p>
+            <% end %>
+            <% if log.reservation.present? %>
+              <%= link_to pickups_route_reservation_path(@route, log.reservation),
+                    class: "block px-5 py-3 hover:bg-table-hover dark:hover:bg-table-hover-dark",
+                    data: { turbo_frame: "pickup_reservation_dialog", action: "pickups-route#openReservationDialog" } do %>
+                <%= row_body %>
+              <% end %>
+            <% else %>
+              <div class="px-5 py-3"><%= row_body %></div>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    <% else %>
+      <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No reservation activity for this route yet.</p>
+    <% end %>
+  <% end %>
+</section>

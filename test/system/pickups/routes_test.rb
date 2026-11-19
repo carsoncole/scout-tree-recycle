@@ -74,6 +74,34 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_selector "#route_status_badge", text: "1 pickup pending"
   end
 
+  test "driver can view route activity over the map and jump to a stop" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    assert_selector "#route_status_badge", text: "2 pickups pending"
+
+    click_on "Activity"
+    assert_selector "dialog[open] turbo-frame#pickup_route_activity"
+    within "dialog[open] turbo-frame#pickup_route_activity" do
+      assert_text "routing → pending_pickup — Mary Jones (mary.jones@example.com)"
+    end
+    # The map stays on the page behind the dialog.
+    assert_selector "[data-controller='map'] .pickup-marker-hit", count: 2
+
+    # Tapping an entry opens that stop's details over the activity list.
+    within "dialog[open] turbo-frame#pickup_route_activity" do
+      click_on "routing → pending_pickup — Mary Jones (mary.jones@example.com)"
+    end
+    assert_selector "dialog[open] #pickup_reservation_dialog"
+    assert_text "770 Broadway"
+
+    # Closing the pickup details returns to the activity list.
+    find("dialog[open] turbo-frame#pickup_reservation_dialog")
+      .find(:xpath, "ancestor::dialog")
+      .find("button[aria-label='Close']").click
+    assert_selector "dialog[open] turbo-frame#pickup_route_activity"
+  end
+
   test "routes page shows a pickup status indicator for each route" do
     sign_in_driver
     assert_selector "h1", text: "Pickups" # wait for the login redirect to complete

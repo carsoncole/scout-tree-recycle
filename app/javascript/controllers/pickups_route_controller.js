@@ -1,9 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Route map page: opens the pickup details dialog when a map marker is
-// selected and keeps the map marker colors in sync after status updates.
+// Route map page: opens the pickup details and route activity dialogs over
+// the map (so drivers never lose their place) and keeps the map marker
+// colors in sync after status updates.
 export default class extends Controller {
-  static targets = [ "dialog", "frame", "mapWrap" ]
+  static targets = [ "dialog", "frame", "activityDialog", "activityFrame", "mapWrap" ]
 
   select(event) {
     const marker = event.detail?.marker || event.detail
@@ -20,15 +21,38 @@ export default class extends Controller {
     if (this.dialogTarget.open) this.dialogTarget.close()
   }
 
-  // The dialog element itself is the backdrop, so a click that hits the
-  // element (not its children) is a backdrop tap.
-  backdropClick(event) {
-    if (event.target === this.dialogTarget) this.close()
-  }
-
   dialogClosed() {
     this.frameTarget.removeAttribute("src")
     this.frameTarget.innerHTML = ""
+  }
+
+  // A log entry link loads the pickup details frame (via data-turbo-frame)
+  // and this reveals the dialog containing it.
+  openReservationDialog() {
+    if (!this.dialogTarget.open) this.dialogTarget.showModal()
+  }
+
+  openActivity(event) {
+    this.activityFrameTarget.src = event.params.url
+
+    if (!this.activityDialogTarget.open) {
+      this.activityDialogTarget.showModal()
+    }
+  }
+
+  closeActivity() {
+    if (this.activityDialogTarget.open) this.activityDialogTarget.close()
+  }
+
+  activityClosed() {
+    this.activityFrameTarget.removeAttribute("src")
+    this.activityFrameTarget.innerHTML = ""
+  }
+
+  // The dialog element itself is the backdrop, so a click that hits the
+  // element (not its children) is a backdrop tap.
+  backdropClose(event) {
+    if (event.target === event.currentTarget) event.currentTarget.close()
   }
 
   markerUpdated(event) {

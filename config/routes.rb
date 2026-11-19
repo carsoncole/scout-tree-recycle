@@ -165,6 +165,7 @@ Rails.application.routes.draw do
       member do
         post :favorite
         delete :unfavorite
+        get :activity
       end
       resources :reservations, only: [ :show, :update ]
     end

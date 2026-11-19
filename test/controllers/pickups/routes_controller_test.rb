@@ -73,6 +73,38 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
+  test "should get route activity with valid driver key" do
+    get activity_pickups_route_url(@route), params: { driver_secret_key: "secret" }
+    assert_redirected_to pickups_root_url
+
+    get activity_pickups_route_url(@route)
+    assert_response :success
+    assert_select "turbo-frame#pickup_route_activity", count: 1
+    assert_match(/Mary Jones \(mary\.jones@example\.com\)/, @response.body)
+    # Only this route's stops are listed; routing_1 has no route.
+    assert_no_match(/Icky Jones/, @response.body)
+  end
+
+  test "route activity shows an empty state when there are no reservation logs" do
+    route = routes(:five)
+    get activity_pickups_route_url(route), params: { driver_secret_key: "secret" }
+    get activity_pickups_route_url(route)
+    assert_response :success
+    assert_match(/No reservation activity for this route yet/, @response.body)
+  end
+
+  test "should not get route activity without driver key" do
+    cookies[:driver_secret_key] = "wrong-key"
+    get activity_pickups_route_url(@route)
+    assert_response :unauthorized
+  end
+
+  test "should not get route activity when pickups site disabled" do
+    Setting.instance.update!(is_pickups_site_enabled: false)
+    get activity_pickups_route_url(@route), params: { driver_secret_key: "secret" }
+    assert_response :unauthorized
+  end
+
   test "should favorite route and show it first" do
     get pickups_routes_url, params: { driver_secret_key: "secret" }
     get pickups_routes_url

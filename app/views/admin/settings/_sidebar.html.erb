@@ -5,6 +5,11 @@
           class: admin_settings_nav_class("overview"),
           aria: { current: ("page" if admin_settings_active_key == "overview") } %>
     </li>
+    <li>
+      <%= link_to "Configuration", admin_configuration_path,
+          class: admin_settings_nav_class("configuration"),
+          aria: { current: ("page" if admin_settings_active_key == "configuration") } %>
+    </li>
     <% admin_settings_nav_items.each do |item| %>
       <li>
         <%= link_to item[:label], item[:path],

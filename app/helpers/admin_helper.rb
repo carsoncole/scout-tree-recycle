@@ -3,7 +3,7 @@ module AdminHelper
   ADMIN_NAV_GROUPS = {
     "Operations" => %w[reservations donations sms],
     "Content" => %w[marketing marketing_email_templates marketing_images reservation_email_templates contacts],
-    "System" => %w[settings drivers routes zones users thanks logs data]
+    "System" => %w[settings configuration drivers routes zones users thanks logs data]
   }.freeze
 
   ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink hover:bg-stone dark:text-ink-soft-dark dark:hover:text-ink-dark dark:hover:bg-stone-dark".freeze
@@ -18,6 +18,14 @@ module AdminHelper
     "info" => "bg-info-bg text-info dark:bg-info-bg-dark dark:text-info-dark",
     "warning" => "bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark",
     "danger" => "bg-danger-bg-strong text-danger dark:bg-danger-bg-strong-dark dark:text-danger-dark"
+  }.freeze
+
+  CONFIGURATION_STATUS_BADGES = {
+    "missing" => "danger",
+    "configured" => "positive",
+    "default" => "info",
+    "not_set" => "neutral",
+    "not_needed" => "neutral"
   }.freeze
 
   def admin_nav_class(active)
@@ -164,6 +172,31 @@ module AdminHelper
     variant = variant.to_s
     colors = ADMIN_BADGE_CLASSES.fetch(variant, ADMIN_BADGE_CLASSES["neutral"])
     "admin-badge admin-badge--#{variant} #{colors}"
+  end
+
+  # Readable status badge for a ConfigurationOverview entry.
+  def admin_configuration_status_badge(status)
+    variant = CONFIGURATION_STATUS_BADGES.fetch(status.to_s, "neutral")
+    tag.span(status.to_s.humanize, class: admin_badge_class(variant))
+  end
+
+  # Value column for a ConfigurationOverview entry. Secrets are always masked;
+  # blanks render as an em dash; long text is truncated.
+  def admin_configuration_value(entry)
+    value = entry.value
+    return "On" if value == true
+    return "Off" if value == false
+    return tag.span("—", class: "text-muted dark:text-muted-dark") if value.nil? || value.to_s.strip.empty?
+    return tag.span("●●●●●●●●", class: "text-ink-soft dark:text-ink-soft-dark", title: "Hidden for safety") if entry.secret
+
+    case value
+    when Time, DateTime
+      value.in_time_zone.strftime("%b %-d, %-l:%M %p")
+    when Integer
+      entry.attribute == :suggested_donation ? "$#{value}" : value.to_s
+    else
+      truncate(value.to_s, length: 80)
+    end
   end
 
   def admin_reservation_status_badge(status)

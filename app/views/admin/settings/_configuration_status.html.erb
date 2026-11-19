@@ -5,9 +5,12 @@
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Configuration status</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Required settings needed for the application to run correctly.</p>
     </div>
-    <span class="<%= admin_badge_class(missing_settings.empty? ? "positive" : "warning") %>">
-      <%= missing_settings.empty? ? "Ready" : "#{missing_settings.size} missing" %>
-    </span>
+    <div class="flex items-center gap-3">
+      <span class="<%= admin_badge_class(missing_settings.empty? ? "positive" : "warning") %>">
+        <%= missing_settings.empty? ? "Ready" : "#{missing_settings.size} missing" %>
+      </span>
+      <%= link_to "All settings", admin_configuration_path, class: admin_link_class %>
+    </div>
   </div>
 
   <div class="admin-panel-body">

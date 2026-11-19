@@ -1,7 +1,11 @@
-<% content_for :title, "Pickup Report" %>
+<% content_for :title, "Pending Pickups Report" %>
 
 <% if @pickups_by_route.any? %>
-  <% @pickups_by_route.each_with_index do |(route, reservations), index| %>
+  <%# Render at the printable page width (letter minus @page margins) so Leaflet
+      fits the route to the same width that Chrome prints, keeping the map
+      centered and uncropped in the PDF. %>
+  <div class="mx-auto w-full max-w-[7.8in]">
+    <% @pickups_by_route.each_with_index do |(route, reservations), index| %>
     <% if index.positive? %>
       <div class="admin-page-break"></div>
     <% end %>
@@ -14,16 +18,18 @@
             <%= route&.zone&.name || "No Zone" %> · <%= pluralize(reservations.size, "reservation") %>
           </p>
         </div>
+        <p class="admin-table-note text-muted dark:text-muted-dark">
+          Report printed <%= Time.current.strftime("%B %-d, %Y at %-l:%M %p %Z") %>
+        </p>
       </div>
 
       <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
         <div>
-          <p class="admin-notice-title">Important</p>
+          <p class="admin-notice-title">Important — this is a backup report</p>
           <p>
-            This list is a backup in case you lose internet access. When a tree is
-            <strong>picked up</strong> or is <strong>missing</strong>, update its pickup status
-            on the website at <strong><%= pickups_root_url %></strong> as soon as you
-            have internet access again.
+            Mark each tree as <strong>picked</strong> or <strong>missing</strong> below, then update
+            its pickup status on the website at
+            <strong><%= pickups_root_url %></strong> as soon as possible.
           </p>
         </div>
       </div>
@@ -34,7 +40,8 @@
             <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
               <th scope="col" class="<%= admin_th_class %>">Name</th>
               <th scope="col" class="<%= admin_th_class %>">Street Address</th>
-              <th scope="col" class="<%= admin_th_class %>">Status</th>
+              <th scope="col" class="<%= admin_th_class %>">Picked</th>
+              <th scope="col" class="<%= admin_th_class %>">Missing</th>
             </tr>
           </thead>
           <tbody>
@@ -49,9 +56,12 @@
                   <% end %>
                 </td>
                 <td class="<%= admin_td_class %>">
-                  <span class="<%= admin_reservation_status_badge(reservation.status) %>">
-                    <%= reservation.status.titleize %>
-                  </span>
+                  <input type="checkbox" class="admin-pickup-check accent-sage dark:accent-sage-dark"
+                         aria-label="Mark <%= reservation.name %> as picked">
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <input type="checkbox" class="admin-pickup-check accent-sage dark:accent-sage-dark"
+                         aria-label="Mark <%= reservation.name %> as missing">
                 </td>
               </tr>
             <% end %>
@@ -59,11 +69,30 @@
         </table>
       </div>
 
-      <p class="admin-table-note mt-3 text-muted dark:text-muted-dark">
-        Report printed <%= Time.current.strftime("%B %-d, %Y at %-l:%M %p %Z") %>
-      </p>
+      <div class="mt-4">
+        <%# Large route map: boundary polygon plus every reservation on this sheet. %>
+        <%= render "shared/map",
+              polygons: (route ? route_boundary_polygon(route) : []),
+              markers: reservation_map_markers(reservations),
+              height_class: "h-[840px] print:break-inside-avoid",
+              show_empty_message: false %>
+      </div>
+
+      <% if route && route.drivers.any? %>
+        <div class="mt-4 <%= admin_notice_class(:info) %>" role="contentinfo">
+          <div>
+            <p class="admin-notice-title">Route drivers</p>
+            <div class="mt-2 flex flex-wrap gap-x-6 gap-y-1">
+              <% route.drivers.each do |driver| %>
+                <span><%= driver.name %> — <%= Phonelib.parse(driver.mobile).national if driver.mobile.present? %></span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   <% end %>
+  </div>
 <% else %>
-  <%= render "admin/shared/empty_state", message: "No pending, picked up, or missing reservations." %>
+  <%= render "admin/shared/empty_state", message: "No pending pickups." %>
 <% end %>

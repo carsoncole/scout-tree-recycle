@@ -354,27 +354,25 @@ class ReservationTest < ActiveSupport::TestCase
     assert_empty Reservation.where(status: "picked_up").search("susan")
   end
 
-  test "pickup_overview_by_route groups pickup reservations by route in route-name order" do
-    by_route = Reservation.pickup_overview_by_route
+  test "pending_pickups_by_route groups pending pickups by route in route-name order" do
+    by_route = Reservation.pending_pickups_by_route
 
-    assert_equal [ "Lower Manhattan", "Route 2", "Route 4" ], by_route.map { |route, _reservations| route&.name }
+    assert_equal [ "Lower Manhattan", "Route 2" ], by_route.map { |route, _reservations| route&.name }
 
     groups = by_route.to_h { |route, reservations| [ route&.name, reservations ] }
-    assert_equal [ "Bill Carson", "Bob Jones", "Mack Gilbert", "Mary Jones" ].sort,
-                 groups["Lower Manhattan"].map(&:name).sort
+    assert_equal [ "Mack Gilbert", "Mary Jones" ].sort, groups["Lower Manhattan"].map(&:name).sort
     assert_equal [ "Susan Banks" ], groups["Route 2"].map(&:name)
-    assert_equal [ "Sammy Kopeke" ], groups["Route 4"].map(&:name)
+    assert_nil groups["Route 4"] # routes without pending pickups are omitted
     assert_nil groups[nil]
   end
 
-  test "pickup_overview_by_route only includes pending, picked up, and missing reservations" do
-    statuses = Reservation.pickup_overview_by_route
-                          .flat_map { |_route, reservations| reservations.map(&:status) }
-                          .uniq
+  test "pending_pickups_by_route only includes pending pickups" do
+    by_route = Reservation.pending_pickups_by_route
+    statuses = by_route.flat_map { |_route, reservations| reservations.map(&:status) }.uniq
 
-    assert_equal %w[missing pending_pickup picked_up].sort, statuses.sort
-    assert_equal Reservation.pickup_overview.count,
-                 Reservation.pickup_overview_by_route.sum { |_route, reservations| reservations.size }
+    assert_equal [ "pending_pickup" ], statuses
+    assert_equal Reservation.pending_pickup.count,
+                 by_route.sum { |_route, reservations| reservations.size }
   end
 
   test "reset_geocoding and status to routing when address is changed" do

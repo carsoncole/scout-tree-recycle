@@ -17,7 +17,7 @@ class Admin::PickupsTest < ApplicationSystemTestCase
     assert_text "Bill Carson"
     assert_no_text "Mary Jones"
 
-    assert_link "PDF Report", href: admin_pickups_report_path(format: :pdf)
+    assert_link "Pending PDF Report", href: admin_pickups_report_path(format: :pdf)
   end
 
   test "searching pickups by name, email, or address" do
@@ -43,10 +43,15 @@ class Admin::PickupsTest < ApplicationSystemTestCase
     assert_text "Mary Jones"
     assert_text "Bob Jones"
 
-    # Status filter links keep the active search
+    # Filter links clear the active search
     click_link "Picked Up"
     assert_text "Bob Jones"
+    assert_text "Sammy Kopeke"
     assert_no_text "Mary Jones"
+
+    click_link "All"
+    assert_text "Mary Jones"
+    assert_text "Susan Banks"
 
     fill_in "Search pickups", with: "no-such-reservation"
     click_button "Search"

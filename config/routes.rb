@@ -99,6 +99,8 @@ Rails.application.routes.draw do
     resource :data, only: [ :show ], controller: "data" do
       post :import
       get :export
+      patch :schedule
+      post :email_export
     end
 
     # Operations

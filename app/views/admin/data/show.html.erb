@@ -87,16 +87,50 @@
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">Export reservations</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download all reservations, including imported records, as a CSV file.</p>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download all reservations as a CSV file, or email the export on a daily schedule.</p>
       </div>
     </div>
     <div class="admin-panel-body">
       <p class="admin-hint admin-hint--spaced text-ink-soft dark:text-ink-soft-dark">Exports every reservation with its mapped fields and route name.</p>
-      <div class="flex flex-wrap items-center justify-end gap-3">
-        <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
-                    class: admin_button_class,
-                    data: { turbo: false } %>
-      </div>
+
+      <% if @setting %>
+        <%= form_with model: @setting, url: schedule_admin_data_path, method: :patch, class: "admin-form" do |f| %>
+          <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
+            <div class="admin-field-grid admin-field-grid--two gap-5">
+              <div class="admin-field">
+                <%= f.label :reservations_export_email, "Email address", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= f.email_field :reservations_export_email, class: admin_input_class, placeholder: "recipient@example.com" %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The address that receives the reservations CSV export.</p>
+              </div>
+              <div class="admin-field">
+                <%= f.label :reservations_export_time, "Daily send time", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= f.select :reservations_export_time, Setting.reservations_export_time_options, {}, class: admin_select_class %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Sent every day at this time in the configured time zone.</p>
+              </div>
+            </div>
+
+            <label class="admin-check-row text-ink dark:text-ink-dark" for="setting_is_reservations_export_schedule_enabled">
+              <%= f.check_box :is_reservations_export_schedule_enabled, class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
+              <span>Email the export daily</span>
+            </label>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-end gap-3">
+            <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
+                        class: admin_button_class(variant: "secondary"),
+                        data: { turbo: false } %>
+            <%= f.submit "Email Export Now", formaction: email_export_admin_data_path, formmethod: :post,
+                        class: admin_button_class %>
+            <%= f.submit "Save Daily Schedule", class: admin_button_class(variant: "secondary") %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
+                      class: admin_button_class,
+                      data: { turbo: false } %>
+        </div>
+      <% end %>
     </div>
   </section>
 </div>

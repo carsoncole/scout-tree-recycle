@@ -25,6 +25,11 @@ class Setting < ApplicationRecord
   DEFAULT_DONATIONS_NEW_PAGE_CONTENT = "Our tree pickup service is free, but it's also our biggest fundraiser of the year. Every donation goes straight to our organization and helps our members take part in:\n\n- Summer camps and outdoor adventures\n- Leadership and team-building activities\n- Community service projects"
   DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT = "Thanks to you, our organization can keep adventuring, leading, and giving back to the community. We'll put your donation to good use."
   DEFAULT_HOME_PAGE_IMAGE = "tree-4c-bc.png"
+  DEFAULT_RESERVATIONS_EXPORT_TIME = "06:00"
+  RESERVATIONS_EXPORT_TIME_FORMAT = /\A([01]\d|2[0-3]):[0-5]\d\z/
+
+  # Half-hour send times offered for the daily reservations CSV export.
+  RESERVATIONS_EXPORT_TIMES = (0..47).map { |slot| format("%02d:%02d", slot / 2, (slot % 2) * 30) }.freeze
 
   SECTIONS = {
     "event" => {
@@ -99,6 +104,8 @@ class Setting < ApplicationRecord
   attribute :time_zone, :string, default: DEFAULT_TIME_ZONE
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
   attribute :is_log_notifications_enabled, :boolean, default: true
+  attribute :is_reservations_export_schedule_enabled, :boolean, default: false
+  attribute :reservations_export_time, :string, default: DEFAULT_RESERVATIONS_EXPORT_TIME
 
   normalizes :phone_default_country, with: ->(country) { country.to_s.strip.upcase.presence }
 
@@ -110,6 +117,9 @@ class Setting < ApplicationRecord
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
   validates :marketing_email_cooldown_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :contact_retention_months, numericality: { only_integer: true, greater_than: 0 }
+  validates :reservations_export_email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" }, allow_blank: true
+  validates :reservations_export_time, format: { with: RESERVATIONS_EXPORT_TIME_FORMAT, message: "must be a valid time (HH:MM)" }, allow_blank: true
+  validate :reservations_export_schedule_is_complete
   validate :home_page_image_is_available
 
   before_validation :apply_defaults
@@ -162,6 +172,35 @@ class Setting < ApplicationRecord
 
   def self.instance
     first
+  end
+
+  # Select options for the daily export send time, labeled like "6:00 AM".
+  def self.reservations_export_time_options
+    RESERVATIONS_EXPORT_TIMES.map do |time|
+      [ Time.parse(time).strftime("%-l:%M %p"), time ]
+    end
+  end
+
+  def reservations_export_schedule_configured?
+    is_reservations_export_schedule_enabled? &&
+      reservations_export_email.present? && reservations_export_time.present?
+  end
+
+  # True when the daily export should be sent for the given local time: the
+  # schedule is enabled, the send time has passed today, and it has not
+  # already been sent today.
+  def reservations_export_due?(now = Time.current)
+    return false unless reservations_export_schedule_configured?
+
+    hour, minute = reservations_export_time.split(":").map(&:to_i)
+    return false if now < now.beginning_of_day + hour.hours + minute.minutes
+
+    last_sent = reservations_export_last_sent_at&.in_time_zone(now.time_zone)
+    last_sent.nil? || last_sent.to_date != now.to_date
+  end
+
+  def mark_reservations_export_sent!(at = Time.current)
+    update!(reservations_export_last_sent_at: at)
   end
 
   def sms_configured?
@@ -305,6 +344,13 @@ class Setting < ApplicationRecord
   end
 
   private
+
+  def reservations_export_schedule_is_complete
+    return unless is_reservations_export_schedule_enabled?
+
+    errors.add(:reservations_export_email, "is required to schedule the daily export") if reservations_export_email.blank?
+    errors.add(:reservations_export_time, "is required to schedule the daily export") if reservations_export_time.blank?
+  end
 
   def home_page_image_is_available
     return if home_page_image.blank?

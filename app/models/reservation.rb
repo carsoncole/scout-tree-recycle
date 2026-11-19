@@ -35,10 +35,36 @@ class Reservation < ApplicationRecord
     "route" => %w[route_name]
   }.freeze
 
+  # Every column of the reservations table (in schema order), plus the
+  # associated route's name, so the CSV export is an exact copy of the table.
   EXPORT_FIELDS = [
-    "name", "email", "mobile", "street", "unit", "city", "state", "zip", "country",
-    "pickup_notes", "status", "donation_type", "latitude", "longitude", "route",
+    "id",
+    "name", "email", "mobile",
+    "street", "house_number", "street_name",
+    "city", "state", "zip", "country",
+    "pickup_notes",
+    "donation_type", "stripe_charge_amount",
+    "latitude", "longitude",
+    "is_manually_geocoded", "was_automatically_geocoded",
+    "is_manually_routed", "was_automatically_routed",
+    "route_id", "route", "distance_to_route",
+    "status", "heard_about_source", "unit",
+    "is_door_hanger", "is_route_polygon",
+    "confirmed_reservation_email_sent_at",
+    "cancelled_reservation_email_sent_at",
+    "missing_tree_email_sent_at", "missing_tree_sms_sent_at",
+    "is_missing_tree_notifications_enabled",
     "created_at", "updated_at"
+  ].freeze
+
+  # Timestamp columns rendered as ISO 8601 strings in the CSV export.
+  EXPORT_TIMESTAMP_FIELDS = %w[
+    confirmed_reservation_email_sent_at
+    cancelled_reservation_email_sent_at
+    missing_tree_email_sent_at
+    missing_tree_sms_sent_at
+    created_at
+    updated_at
   ].freeze
 
   DEFAULT_MISSING_TREE_SMS = "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
@@ -349,7 +375,7 @@ class Reservation < ApplicationRecord
     case field
     when "route"
       reservation.route&.name
-    when "created_at", "updated_at"
+    when *EXPORT_TIMESTAMP_FIELDS
       reservation.public_send(field)&.iso8601
     else
       reservation.public_send(field)

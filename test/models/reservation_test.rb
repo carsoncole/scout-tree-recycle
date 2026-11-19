@@ -1,4 +1,5 @@
 require "test_helper"
+require "csv"
 
 class ReservationTest < ActiveSupport::TestCase
   def setup
@@ -38,6 +39,30 @@ class ReservationTest < ActiveSupport::TestCase
     csv = Reservation.to_csv
     assert_includes csv, "email"
     assert_includes csv, reservations(:pending_pickup_1).email
+  end
+
+  test "to_csv is an exact copy of the reservations table plus the route" do
+    reservation = reservations(:pending_pickup_1)
+    csv = Reservation.to_csv
+
+    headers = CSV.parse(csv, headers: true).headers
+    assert_equal Reservation::EXPORT_FIELDS, headers
+    assert_includes headers, "route"
+    assert_includes headers, "stripe_charge_amount"
+    assert_includes headers, "heard_about_source"
+    assert_includes headers, "is_missing_tree_notifications_enabled"
+
+    rows = CSV.parse(csv, headers: true)
+    assert_equal Reservation.count, rows.size
+
+    row = rows.find { |r| r["id"] == reservation.id }
+    assert_equal reservation.email, row["email"]
+    assert_equal reservation.route_id.to_s, row["route_id"]
+    assert_equal reservation.route.name, row["route"]
+    assert_equal reservation.status, row["status"]
+    assert_equal reservation.confirmed_reservation_email_sent_at.iso8601, row["confirmed_reservation_email_sent_at"]
+    assert_equal reservation.created_at.iso8601, row["created_at"]
+    assert_equal "true", row["is_missing_tree_notifications_enabled"]
   end
 
   test "validates name" do

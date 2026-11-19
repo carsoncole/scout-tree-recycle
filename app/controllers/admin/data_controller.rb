@@ -1,5 +1,6 @@
 class Admin::DataController < Admin::BaseController
   def show
+    @setting = Setting.instance
   end
 
   def import
@@ -47,5 +48,44 @@ class Admin::DataController < Admin::BaseController
       filename: "reservations-#{Time.current.strftime("%Y%m%d-%H%M%S")}.csv",
       type: "text/csv; charset=utf-8",
       disposition: "attachment"
+  end
+
+  def schedule
+    setting = Setting.instance
+    return redirect_to admin_data_path, alert: "Complete the initial settings before scheduling exports." if setting.nil?
+
+    if setting.update(schedule_params)
+      redirect_to admin_data_path, notice: "Daily reservations export schedule saved."
+    else
+      redirect_to admin_data_path, alert: setting.errors.full_messages.to_sentence
+    end
+  end
+
+  def email_export
+    recipient = params.dig(:setting, :reservations_export_email).to_s.strip
+
+    if recipient.blank? || !recipient.match?(URI::MailTo::EMAIL_REGEXP)
+      return redirect_to admin_data_path, alert: "Enter a valid email address to receive the export."
+    end
+
+    if (message = Setting.instance&.email_configuration_alert(purpose: "emailing the export"))
+      return redirect_to admin_data_path, alert: message
+    end
+
+    DataMailer.reservations_export_email(recipient).deliver_now
+    redirect_to admin_data_path, notice: "Reservations CSV emailed to #{recipient}."
+  rescue StandardError => e
+    Rails.error.report(e, handled: true, severity: :warning, context: { email: recipient })
+    redirect_to admin_data_path, alert: "The export email could not be sent: #{e.message}"
+  end
+
+  private
+
+  def schedule_params
+    params.require(:setting).permit(
+      :is_reservations_export_schedule_enabled,
+      :reservations_export_email,
+      :reservations_export_time
+    )
   end
 end

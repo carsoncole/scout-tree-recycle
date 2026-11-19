@@ -24,4 +24,34 @@ class Admin::DataTest < ApplicationSystemTestCase
     click_button "Import Contacts CSV"
     assert_text "Imported 2 contact"
   end
+
+  test "saving the daily reservations export schedule" do
+    visit admin_data_url
+    fill_in "Email address", with: "exports@example.com"
+    select "6:30 AM", from: "Daily send time"
+    check "Email the export daily"
+    click_button "Save Daily Schedule"
+
+    assert_text "Daily reservations export schedule saved."
+    setting = Setting.instance.reload
+    assert setting.reservations_export_schedule_configured?
+    assert_equal "exports@example.com", setting.reservations_export_email
+    assert_equal "06:30", setting.reservations_export_time
+  end
+
+  test "emailing the reservations export immediately" do
+    configure_email!
+    original_perform_deliveries = ActionMailer::Base.perform_deliveries
+    ActionMailer::Base.perform_deliveries = false
+
+    visit admin_data_url
+    fill_in "Email address", with: "qa@example.com"
+    click_button "Email Export Now"
+
+    assert_text "Reservations CSV emailed to qa@example.com."
+  ensure
+    ActionMailer::Base.perform_deliveries = original_perform_deliveries
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.smtp_settings = {}
+  end
 end

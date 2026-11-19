@@ -1,6 +1,8 @@
 require "test_helper"
 
 class SettingTest < ActiveSupport::TestCase
+  include ActiveSupport::Testing::TimeHelpers
+
   test "should set defaults" do
     setting = Setting.new(organization_name: "Troop 100", default_city: "Anytown", default_state: "CA", event_pickup_start: "2099-01-06 08:00:00", event_pickup_end: "2099-01-06 15:00:00", event_sign_up_deadline: "2099-01-05 11:59:00")
     setting.save!
@@ -274,5 +276,92 @@ class SettingTest < ActiveSupport::TestCase
     setting.update(site_url: "https://exa mple.com")
 
     assert_equal({}, setting.site_url_options)
+  end
+
+  test "reservations export schedule requires email and time when enabled" do
+    setting = Setting.instance
+    setting.update(is_reservations_export_schedule_enabled: true, reservations_export_email: "", reservations_export_time: "")
+
+    assert_not setting.valid?
+    assert setting.errors[:reservations_export_email].present?
+    assert setting.errors[:reservations_export_time].present?
+
+    setting.update(reservations_export_email: "exports@example.com", reservations_export_time: "06:00")
+
+    assert setting.valid?
+    assert setting.reservations_export_schedule_configured?
+  end
+
+  test "reservations export schedule rejects an invalid email or time" do
+    setting = Setting.instance
+
+    setting.reservations_export_email = "not-an-email"
+    assert_not setting.valid?
+    assert setting.errors[:reservations_export_email].present?
+
+    setting.reservations_export_email = "exports@example.com"
+    setting.reservations_export_time = "6am"
+    assert_not setting.valid?
+    assert setting.errors[:reservations_export_time].present?
+  end
+
+  test "reservations_export_time_options covers every half hour" do
+    options = Setting.reservations_export_time_options
+
+    assert_equal 48, options.size
+    assert_equal [ "12:00 AM", "00:00" ], options.first
+    assert_equal [ "6:00 AM", "06:00" ], options[12]
+    assert_equal [ "11:30 PM", "23:30" ], options.last
+  end
+
+  test "reservations_export_due? is true once the send time has passed and not yet sent today" do
+    setting = Setting.instance
+    setting.update!(
+      is_reservations_export_schedule_enabled: true,
+      reservations_export_email: "exports@example.com",
+      reservations_export_time: "06:00",
+      reservations_export_last_sent_at: nil
+    )
+
+    travel_to Time.zone.parse("2026-11-18 05:59") do
+      assert_not setting.reservations_export_due?
+    end
+    travel_to Time.zone.parse("2026-11-18 06:00") do
+      assert setting.reservations_export_due?
+    end
+  end
+
+  test "reservations_export_due? is false when disabled, unconfigured, or already sent today" do
+    setting = Setting.instance
+
+    setting.update!(is_reservations_export_schedule_enabled: false, reservations_export_email: "exports@example.com", reservations_export_time: "06:00")
+    travel_to Time.zone.parse("2026-11-18 12:00") do
+      assert_not setting.reservations_export_due?
+    end
+
+    setting.update!(is_reservations_export_schedule_enabled: true, reservations_export_time: "06:00")
+    setting.reservations_export_email = ""
+    setting.save(validate: false)
+    travel_to Time.zone.parse("2026-11-18 12:00") do
+      assert_not setting.reservations_export_due?
+    end
+
+    setting.update!(reservations_export_email: "exports@example.com", reservations_export_last_sent_at: Time.zone.parse("2026-11-18 06:05"))
+    travel_to Time.zone.parse("2026-11-18 12:00") do
+      assert_not setting.reservations_export_due?
+    end
+    travel_to Time.zone.parse("2026-11-19 06:00") do
+      assert setting.reservations_export_due?
+    end
+  end
+
+  test "mark_reservations_export_sent! records the send time" do
+    setting = Setting.instance
+    setting.update!(reservations_export_last_sent_at: nil)
+    sent_at = Time.zone.parse("2026-11-18 06:15")
+
+    setting.mark_reservations_export_sent!(sent_at)
+
+    assert_equal sent_at, setting.reload.reservations_export_last_sent_at
   end
 end

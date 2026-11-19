@@ -1,4 +1,6 @@
 class Admin::DataController < Admin::BaseController
+  before_action :require_admin_access, except: [ :show ]
+
   def show
     @setting = Setting.instance
     @database_overview = DatabaseOverview.new
@@ -89,6 +91,12 @@ class Admin::DataController < Admin::BaseController
   end
 
   private
+
+  def require_admin_access
+    unless Current.user.admin?
+      redirect_to admin_data_path, alert: "You are not authorized to perform this data action."
+    end
+  end
 
   def schedule_params
     params.require(:setting).permit(

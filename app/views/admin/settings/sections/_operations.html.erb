@@ -18,14 +18,18 @@
           </div>
 
           <div class="admin-field admin-field--short admin-toolbar-field">
-            <%= number_field_tag "setting[contact_retention_months]", setting.contact_retention_months, class: admin_input_class, min: 1, step: 1 %>
+            <%= number_field_tag "setting[contact_retention_months]", setting.contact_retention_months, class: admin_input_class, min: 1, step: 1, disabled: !Current.user&.admin? %>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center justify-end gap-3">
-        <%= submit_tag "Save Operations Settings", class: admin_button_class %>
-      </div>
+      <% if Current.user&.admin? %>
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <%= submit_tag "Save Operations Settings", class: admin_button_class %>
+        </div>
+      <% else %>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Retention settings can be updated by admins only.</p>
+      <% end %>
     <% end %>
 
     <div class="admin-form-section admin-form-section--spaced border-line dark:border-line-dark">
@@ -34,15 +38,22 @@
           <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Migrate Reservations</h3>
           <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Move reservations to contacts for next season's marketing.</p>
         </div>
-        <%= button_to admin_post_event_cleanup_path,
-            class: admin_button_class(variant: :danger),
-            data: {
-              turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to contacts which will be used for marketing. This action cannot be undone. ",
-              turbo_method: :post
-            } do %>
-          Migrate
+        <% if Current.user&.admin? %>
+          <%= button_to admin_post_event_cleanup_path,
+              class: admin_button_class(variant: :danger),
+              data: {
+                turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to contacts which will be used for marketing. This action cannot be undone. ",
+                turbo_method: :post
+              } do %>
+            Migrate
+          <% end %>
+        <% else %>
+          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
         <% end %>
       </div>
+      <% unless Current.user&.admin? %>
+        <p class="admin-hint mt-2 text-ink-soft dark:text-ink-soft-dark">Only admins can migrate reservations.</p>
+      <% end %>
     </div>
   </div>
 </section>

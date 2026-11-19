@@ -296,6 +296,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_120000) do
     t.string "role", default: "user", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_login_at"
     t.index [ "email" ], name: "index_users_on_email", unique: true
   end
 

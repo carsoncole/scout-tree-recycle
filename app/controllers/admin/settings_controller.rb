@@ -61,6 +61,19 @@ class Admin::SettingsController < Admin::BaseController
       else
         render :show, status: :unprocessable_entity
       end
+    elsif params[:return_to] == "admin_thanks"
+      restoring_thank_you_message = params[:restore_default].present?
+      attributes = if restoring_thank_you_message
+        { thank_you_message: Setting::DEFAULT_THANK_YOU_MESSAGE }
+      else
+        params.require(:setting).permit(:thank_you_message)
+      end
+
+      if @setting.update(attributes)
+        redirect_to settings_redirect_path, notice: "Settings were successfully updated."
+      else
+        redirect_to admin_thanks_path, alert: @setting.errors.full_messages.to_sentence.presence || "Thank you message could not be updated."
+      end
     else
       redirect_to admin_settings_path, alert: "You are not authorized to update settings."
     end

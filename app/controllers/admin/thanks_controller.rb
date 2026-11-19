@@ -1,6 +1,5 @@
 class Admin::ThanksController < Admin::BaseController
   before_action :set_thank, only: [ :edit, :update, :destroy ]
-  before_action :require_admin_access
 
   def index
     @thanks = Thank.recent
@@ -44,11 +43,5 @@ class Admin::ThanksController < Admin::BaseController
 
   def thank_params
     params.require(:thank).permit(:content, :image_upload)
-  end
-
-  def require_admin_access
-    unless Current.user.admin?
-      redirect_to admin_settings_path, alert: "You are not authorized to manage thanks."
-    end
   end
 end

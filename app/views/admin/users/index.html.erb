@@ -11,7 +11,7 @@
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">Role privileges</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">What each role can access in the admin area.</p>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Current access by role in the admin area, based on controller authorization checks. Review carefully: several sensitive areas are currently available to any authenticated user.</p>
       </div>
     </div>
 
@@ -21,20 +21,21 @@
           <h3 class="admin-section-title text-ink dark:text-ink-dark">User role</h3>
           <dl class="admin-detail-list admin-detail-list--spaced">
             <% [
-              "Reservations: all access",
-              "Routes: all access",
-              "Zones: all access",
-              "Marketing: all access",
-              "SMS: all access",
-              "Donations: all access",
-              "System logs: all access"
+              "Operations: reservations, pickups, donations, and SMS (full access)",
+              "Content: marketing, templates, images, contacts, and thank-you content (full access)",
+              "Routing setup: routes, zones, drivers, and route points (full access)",
+              "System: logs (view/delete), configuration (view), and jobs dashboard (full access)",
+              "Data: view only (cannot import, export, schedule, or email reservation data)"
             ].each do |privilege| %>
               <div class="admin-detail border-line dark:border-line-dark">
                 <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Allowed</dt>
                 <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= privilege %></dd>
               </div>
             <% end %>
-            <% [ "Users: view only", "Settings: view only" ].each do |privilege| %>
+            <% [
+              "Users: view list and role privileges only (cannot create, edit, or delete users)",
+              "Settings & operations: can view settings/operations sections, but cannot update settings, toggle flags, send test email, change retention, or run post-event cleanup (migrate reservations)"
+            ].each do |privilege| %>
               <div class="admin-detail border-line dark:border-line-dark">
                 <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Limited</dt>
                 <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= privilege %></dd>
@@ -49,7 +50,7 @@
             <% [
               "Full access to all system features and settings",
               "Can manage user accounts and roles",
-              "Can modify system settings and configurations"
+              "Can perform all data actions, modify settings (including retention/operations), and run protected operations"
             ].each do |privilege| %>
               <div class="admin-detail border-line dark:border-line-dark">
                 <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Full access</dt>
@@ -57,6 +58,7 @@
               </div>
             <% end %>
           </dl>
+
         </div>
       </div>
     </div>
@@ -77,6 +79,7 @@
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
             <th scope="col" class="<%= admin_th_class %>">Email</th>
             <th scope="col" class="<%= admin_th_class %>">Role</th>
+            <th scope="col" class="<%= admin_th_class %>">Last login</th>
             <th scope="col" class="<%= admin_th_class %>">Actions</th>
           </tr>
         </thead>
@@ -88,6 +91,13 @@
                 <span class="<%= admin_badge_class(user.role == "admin" ? "info" : "neutral") %>">
                   <%= user.role.titleize %>
                 </span>
+              </td>
+              <td class="<%= admin_td_class %>">
+                <% if user.last_login_at.present? %>
+                  <%= l(user.last_login_at.in_time_zone, format: :long) %>
+                <% else %>
+                  <span class="text-muted dark:text-muted-dark">Never</span>
+                <% end %>
               </td>
               <td class="<%= admin_td_class %>">
                 <div class="admin-table-actions">

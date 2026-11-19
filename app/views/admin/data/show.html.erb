@@ -23,116 +23,131 @@
       </div>
     </section>
   <% end %>
-  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-    <div class="admin-panel-header border-line dark:border-line-dark">
-      <div>
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Import contacts</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Upload a CSV file, map its columns to contact fields, and import.</p>
-      </div>
-    </div>
-    <div class="admin-panel-body">
-      <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
+
+  <% if Current.user&.admin? %>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
-          <p class="admin-notice-title">Import errors</p>
-          <p>
-            Rows that cannot be imported are recorded in the
-            <%= link_to "System Logs", admin_logs_path, class: admin_link_class %>
-            with row numbers and validation messages.
-          </p>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Import contacts</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Upload a CSV file, map its columns to contact fields, and import.</p>
         </div>
       </div>
-
-      <noscript>
-        <div class="<%= admin_notice_class(:danger, spaced: true) %>" role="status">
+      <div class="admin-panel-body">
+        <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
           <div>
-            <p class="admin-notice-title">JavaScript required</p>
-            <p>Column mapping requires JavaScript. Enable it in your browser to import CSV files.</p>
+            <p class="admin-notice-title">Import errors</p>
+            <p>
+              Rows that cannot be imported are recorded in the
+              <%= link_to "System Logs", admin_logs_path, class: admin_link_class %>
+              with row numbers and validation messages.
+            </p>
           </div>
         </div>
-      </noscript>
 
-      <%= form_with url: import_admin_data_path, method: :post, multipart: true,
-                    class: "admin-form",
-                    data: {
-                      controller: "csv-mapping",
-                      csv_mapping_fields_value: Contact::IMPORTABLE_FIELDS.map do |value, label|
-                        { value: value, label: label, aliases: Contact::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
-                      end.to_json
-                    } do |f| %>
-        <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
-          <div class="admin-field">
-            <%= label_tag :file, "CSV file", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= file_field_tag :file, accept: ".csv,text/csv", class: admin_input_class,
-                  data: { csv_mapping_target: "file", action: "change->csv-mapping#load" } %>
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Upload a CSV with a header row. These fields are required: name, email, mobile, street. Maximum 5 MB.</p>
-
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark" data-csv-mapping-target="matchStatus">Matching fields found: none yet.</p>
+        <noscript>
+          <div class="<%= admin_notice_class(:danger, spaced: true) %>" role="status">
+            <div>
+              <p class="admin-notice-title">JavaScript required</p>
+              <p>Column mapping requires JavaScript. Enable it in your browser to import CSV files.</p>
+            </div>
           </div>
+        </noscript>
 
-          <p class="admin-error-text text-danger dark:text-danger-dark" data-csv-mapping-target="error" hidden></p>
-        </div>
-
-        <div class="admin-form-section border-line dark:border-line-dark">
-          <div class="admin-field-grid admin-field-grid--two gap-5" data-csv-mapping-target="mapping"></div>
-        </div>
-
-        <div class="flex flex-wrap items-center justify-end gap-3">
-          <%= submit_tag "Import Contacts CSV", class: admin_button_class %>
-        </div>
-      <% end %>
-    </div>
-  </section>
-
-  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-    <div class="admin-panel-header border-line dark:border-line-dark">
-      <div>
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Export reservations</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download all reservations as a CSV file, or email the export on a daily schedule.</p>
-      </div>
-    </div>
-    <div class="admin-panel-body">
-      <p class="admin-hint admin-hint--spaced text-ink-soft dark:text-ink-soft-dark">Exports every reservation with its mapped fields and route name.</p>
-
-      <% if @setting %>
-        <%= form_with model: @setting, url: schedule_admin_data_path, method: :patch, class: "admin-form" do |f| %>
+        <%= form_with url: import_admin_data_path, method: :post, multipart: true,
+                      class: "admin-form",
+                      data: {
+                        controller: "csv-mapping",
+                        csv_mapping_fields_value: Contact::IMPORTABLE_FIELDS.map do |value, label|
+                          { value: value, label: label, aliases: Contact::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
+                        end.to_json
+                      } do |f| %>
           <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
-            <div class="admin-field-grid admin-field-grid--two gap-5">
-              <div class="admin-field">
-                <%= f.label :reservations_export_email, "Email address", class: "admin-label text-ink dark:text-ink-dark" %>
-                <%= f.email_field :reservations_export_email, class: admin_input_class, placeholder: "recipient@example.com" %>
-                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The address that receives the reservations CSV export.</p>
-              </div>
-              <div class="admin-field">
-                <%= f.label :reservations_export_time, "Daily send time", class: "admin-label text-ink dark:text-ink-dark" %>
-                <%= f.select :reservations_export_time, Setting.reservations_export_time_options, {}, class: admin_select_class %>
-                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Sent every day at this time in the configured time zone.</p>
-              </div>
+            <div class="admin-field">
+              <%= label_tag :file, "CSV file", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= file_field_tag :file, accept: ".csv,text/csv", class: admin_input_class,
+                    data: { csv_mapping_target: "file", action: "change->csv-mapping#load" } %>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Upload a CSV with a header row. These fields are required: name, email, mobile, street. Maximum 5 MB.</p>
+
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark" data-csv-mapping-target="matchStatus">Matching fields found: none yet.</p>
             </div>
 
-            <label class="admin-check-row text-ink dark:text-ink-dark" for="setting_is_reservations_export_schedule_enabled">
-              <%= f.check_box :is_reservations_export_schedule_enabled, class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
-              <span>Email the export daily</span>
-            </label>
+            <p class="admin-error-text text-danger dark:text-danger-dark" data-csv-mapping-target="error" hidden></p>
+          </div>
+
+          <div class="admin-form-section border-line dark:border-line-dark">
+            <div class="admin-field-grid admin-field-grid--two gap-5" data-csv-mapping-target="mapping"></div>
           </div>
 
           <div class="flex flex-wrap items-center justify-end gap-3">
-            <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
-                        class: admin_button_class(variant: "secondary"),
-                        data: { turbo: false } %>
-            <%= f.submit "Email Export Now", formaction: email_export_admin_data_path, formmethod: :post,
-                        class: admin_button_class %>
-            <%= f.submit "Save Daily Schedule", class: admin_button_class(variant: "secondary") %>
+            <%= submit_tag "Import Contacts CSV", class: admin_button_class %>
           </div>
         <% end %>
-      <% else %>
-        <div class="flex flex-wrap items-center justify-end gap-3">
-          <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
-                      class: admin_button_class,
-                      data: { turbo: false } %>
+      </div>
+    </section>
+
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <div>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Export reservations</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download all reservations as a CSV file, or email the export on a daily schedule.</p>
         </div>
-      <% end %>
-    </div>
-  </section>
+      </div>
+      <div class="admin-panel-body">
+        <p class="admin-hint admin-hint--spaced text-ink-soft dark:text-ink-soft-dark">Exports every reservation with its mapped fields and route name.</p>
+
+        <% if @setting %>
+          <%= form_with model: @setting, url: schedule_admin_data_path, method: :patch, class: "admin-form" do |f| %>
+            <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
+              <div class="admin-field-grid admin-field-grid--two gap-5">
+                <div class="admin-field">
+                  <%= f.label :reservations_export_email, "Email address", class: "admin-label text-ink dark:text-ink-dark" %>
+                  <%= f.email_field :reservations_export_email, class: admin_input_class, placeholder: "recipient@example.com" %>
+                  <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The address that receives the reservations CSV export.</p>
+                </div>
+                <div class="admin-field">
+                  <%= f.label :reservations_export_time, "Daily send time", class: "admin-label text-ink dark:text-ink-dark" %>
+                  <%= f.select :reservations_export_time, Setting.reservations_export_time_options, {}, class: admin_select_class %>
+                  <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Sent every day at this time in the configured time zone.</p>
+                </div>
+              </div>
+
+              <label class="admin-check-row text-ink dark:text-ink-dark" for="setting_is_reservations_export_schedule_enabled">
+                <%= f.check_box :is_reservations_export_schedule_enabled, class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
+                <span>Email the export daily</span>
+              </label>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-end gap-3">
+              <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
+                          class: admin_button_class(variant: "secondary"),
+                          data: { turbo: false } %>
+              <%= f.submit "Email Export Now", formaction: email_export_admin_data_path, formmethod: :post,
+                          class: admin_button_class %>
+              <%= f.submit "Save Daily Schedule", class: admin_button_class(variant: "secondary") %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="flex flex-wrap items-center justify-end gap-3">
+            <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
+                        class: admin_button_class,
+                        data: { turbo: false } %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% else %>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <div>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Data access</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Read-only access for your role.</p>
+        </div>
+      </div>
+      <div class="admin-panel-body">
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">You can view this page, but importing contacts, exporting reservations, scheduling exports, and emailing exports are available to admins only.</p>
+      </div>
+    </section>
+  <% end %>
 
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">

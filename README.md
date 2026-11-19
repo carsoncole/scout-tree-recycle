@@ -196,7 +196,7 @@ The confirmation, cancellation, and missing-tree emails sent by `ReservationsMai
 
 1. Create a [Place Index](https://docs.aws.amazon.com/location/latest/developerguide/places.html) in Amazon Location Service.
 2. Create an IAM user with permission to use Location Service place indexes, and generate an access key.
-3. In `/admin/settings` → Location Services, enable automatic routing and enter the **Access Key ID**, **Secret Access Key**, **Region** (default `us-west-2`), and **Place Index Name**.
+3. In `/admin/settings` → Location Services, enable automatic routing and enter the **Access Key ID**, **Secret Access Key**, **Region**, and **Place Index Name**.
 
 Addresses are geocoded with the Place Index and assigned to routes by zone. If Location Services is not configured or routing is disabled, reservations must be assigned to routes manually in the admin.
 

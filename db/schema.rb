@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_18_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_19_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -246,8 +246,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_18_110000) do
     t.string "stripe_price_id"
     t.string "aws_access_key_id"
     t.string "aws_secret_access_key"
-    t.string "aws_region", default: "us-west-2"
-    t.string "aws_location_index_name", default: "tree_recycle"
+    t.string "aws_region"
+    t.string "aws_location_index_name"
     t.integer "marketing_email_cooldown_days", default: 7
     t.integer "contact_retention_months", default: 24
     t.text "sms_quick_responses", default: "Thank you! I'll let the Scouts know.\nThanks for the update. I'll have them swing by again to pick up the tree.\nWe are only picking up today, however I can see if we could swing by tomorrow.\nThank you for your support! We appreciate it."

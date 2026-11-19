@@ -48,11 +48,11 @@
           </div>
           <div class="admin-field">
             <%= label_tag "setting[aws_region]", "Region", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[aws_region]", setting.aws_region, class: admin_input_class, placeholder: "us-west-2" %>
+            <%= text_field_tag "setting[aws_region]", setting.aws_region, class: admin_input_class, autocomplete: "off" %>
           </div>
           <div class="admin-field">
             <%= label_tag "setting[aws_location_index_name]", "Place Index Name", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[aws_location_index_name]", setting.aws_location_index_name, class: admin_input_class, placeholder: "tree_recycle" %>
+            <%= text_field_tag "setting[aws_location_index_name]", setting.aws_location_index_name, class: admin_input_class, autocomplete: "off" %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The Amazon Location Service place index used for address lookups.</p>
           </div>
         </div>

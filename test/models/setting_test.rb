@@ -20,6 +20,15 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.sms_configured?
   end
 
+  test "AWS location settings have no default values" do
+    setting = Setting.new
+
+    assert_nil setting.aws_access_key_id
+    assert_nil setting.aws_secret_access_key
+    assert_nil setting.aws_region
+    assert_nil setting.aws_location_index_name
+  end
+
   test "sms_quick_response_list splits and strips lines" do
     setting = Setting.instance
     setting.update(sms_quick_responses: "One\n\n Two \nThree")

@@ -19,11 +19,14 @@ class Admin::ReservationsController < Admin::BaseController
       @reservations.joins(:route).order('routes.name': sort_direction)
     when "status"
       @reservations.order(status: sort_direction)
+    when "created_at"
+      @reservations.order(created_at: sort_direction)
     else
       @reservations.order(created_at: :desc)
     end
 
-    @reservations = @reservations.where(status: params[:status]) if params[:status].present?
+    @reservations = @reservations.where(status: params[:status]) if params[:status].present? && Reservation.statuses.key?(params[:status])
+    @reservations = @reservations.search(params[:q]) if params[:q].present?
     @pagy, @reservations = pagy(@reservations)
     flash.now[:alert] = "Reservations are CLOSED." unless Reservation.open?
   end

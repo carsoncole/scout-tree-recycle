@@ -6,6 +6,7 @@ reservation_form_minimum:
   country: United States
   email: form.minimum@example.com
   status: reservation_form
+  created_at: 2025-11-01 10:00:00
 
 reservation_form_with_mobile:
   name: Steve Jobs
@@ -170,6 +171,7 @@ picked_up_1:
   email: bob.jones@example.com
   mobile: "+12064759823" 
   status: picked_up
+  created_at: 2025-12-01 09:00:00
   latitude: 40.7500
   longitude: -73.9600
   route: one

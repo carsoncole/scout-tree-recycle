@@ -14,6 +14,47 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Reservations are CLOSED.", flash[:alert]
   end
 
+  test "should search reservations by name, email, or address" do
+    sign_in
+    get admin_reservations_url(q: "Icky")
+    assert_response :success
+    assert_match "Icky Jones", response.body
+    assert_no_match "John Doe", response.body
+  end
+
+  test "should filter reservations by status" do
+    sign_in
+    get admin_reservations_url(status: "picked_up")
+    assert_response :success
+    assert_match "Bob Jones", response.body
+    assert_no_match "Icky Jones", response.body
+  end
+
+  test "should combine search with a status filter" do
+    sign_in
+    get admin_reservations_url(q: "Jones", status: "pending_pickup")
+    assert_response :success
+    assert_match "Mary Jones", response.body
+    assert_no_match "Bob Jones", response.body
+    assert_no_match "Icky Jones", response.body
+  end
+
+  test "should ignore an unknown status filter" do
+    sign_in
+    get admin_reservations_url(status: "bogus")
+    assert_response :success
+    assert_match "Icky Jones", response.body
+    assert_match "Bob Jones", response.body
+  end
+
+  test "should sort reservations by created date" do
+    sign_in
+    get admin_reservations_url(sort: "created_at", direction: "asc")
+    assert_response :success
+    # The oldest fixture (Form Minimum) renders before the next-oldest (Bob Jones).
+    assert_match(/Form Minimum.*Bob Jones/m, response.body)
+  end
+
   test "should get show" do
     sign_in
     get admin_reservation_url(reservations(:pending_pickup_1))

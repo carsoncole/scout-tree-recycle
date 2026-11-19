@@ -36,6 +36,44 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_selector "table tbody tr", count: 4
   end
 
+  test "index filters by picked up status" do
+    visit admin_reservations_url
+    click_link "Picked Up"
+
+    assert_text "Bob Jones"
+    assert_no_text "Icky Jones"
+  end
+
+  test "index searches reservations" do
+    visit admin_reservations_url
+    fill_in "Search name, email, or address", with: "Icky"
+    click_button "Search"
+
+    assert_text "Icky Jones"
+    assert_no_text "John Doe"
+
+    fill_in "Search name, email, or address", with: "Bowling Green"
+    click_button "Search"
+
+    assert_text "John Doe"
+    assert_no_text "Icky Jones"
+  end
+
+  test "index keeps the active status filter when searching" do
+    visit admin_reservations_url(status: "pending_pickup")
+    fill_in "Search name, email, or address", with: "Jones"
+    click_button "Search"
+
+    assert_text "Mary Jones"
+    assert_no_text "Bob Jones"
+  end
+
+  test "index sorts by created date" do
+    visit admin_reservations_url(sort: "created_at", direction: "asc")
+
+    assert_selector "table tbody tr:first-child", text: "Form Minimum"
+  end
+
   # test that the edit link works
   test "edit link works" do
     visit admin_reservations_url

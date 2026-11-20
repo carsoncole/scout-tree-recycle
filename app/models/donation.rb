@@ -7,17 +7,17 @@ class Donation < ApplicationRecord
   # Payment statuses reported by Stripe that mean the donation was made.
   PAID_PAYMENT_STATUSES = %w[paid succeeded].freeze
 
-  # Records a reservation log when the donation is paid. Donations without a
-  # reservation (general donations) have no reservation log to write.
-  after_save :log_reservation_donation!, if: -> {
+  # Records a donation log when the donation is paid. Donations without a
+  # reservation (general donations) have no reservation to associate.
+  after_save :log_donation_made!, if: -> {
     reservation.present? && saved_change_to_payment_status? && payment_status.in?(PAID_PAYMENT_STATUSES)
   }
 
   private
 
-  def log_reservation_donation!
+  def log_donation_made!
     Log.create(
-      log_type: "reservation",
+      log_type: "donation",
       reservation: reservation,
       message: "#{form.humanize} donation received#{formatted_amount} — #{reservation.name} (#{reservation.email})",
       context: { donation_id: id, amount: amount&.to_s, payment_status: payment_status }

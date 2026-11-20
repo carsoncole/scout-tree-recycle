@@ -1,5 +1,5 @@
 class Log < ApplicationRecord
-  TYPES = %w[error sms email configuration system reservation].freeze
+  TYPES = %w[error sms email configuration system reservation donation].freeze
 
   belongs_to :reservation, optional: true
 

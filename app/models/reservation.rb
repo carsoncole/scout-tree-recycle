@@ -217,10 +217,11 @@ class Reservation < ApplicationRecord
   after_commit :send_missing_email!, if: ->(obj) { obj.missing? && obj.is_missing_tree_notifications_enabled? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
 
   # RESERVATION ACTIVITY LOGS
-  # Records a reservation log whenever a reservation is created, its status
-  # changes, or its donation choice changes (cash/check and no-donation are
-  # recorded on the reservation itself; online payments are logged by
-  # Donation when Stripe confirms payment). Skipped while importing.
+  # Records a reservation log whenever a reservation is created or its
+  # status changes, and a donation log when a cash/check donation is made
+  # (cash/check is recorded on the reservation itself; online payments are
+  # logged by Donation when Stripe confirms payment). Skipped while
+  # importing.
   after_create :log_creation!, unless: :importing
   after_update :log_status_change!, if: ->(obj) { obj.saved_change_to_status? && !obj.importing }
   after_update :log_donation_type_change!, if: ->(obj) { obj.saved_change_to_donation_type? && !obj.importing }
@@ -434,34 +435,45 @@ class Reservation < ApplicationRecord
   private
 
   def log_creation!
-    record_reservation_log!(
-      "Reservation created: #{name} (#{email}) — #{short_address}",
-      { status: status }
+    record_activity_log!(
+      log_type: "reservation",
+      message: "Reservation created: #{name} (#{email}) — #{short_address}",
+      context: { status: status }
     )
   end
 
   def log_status_change!
     from_status, to_status = saved_change_to_status
-    record_reservation_log!(
-      "Reservation status changed: #{from_status.presence || "none"} → #{to_status} — #{name} (#{email})",
-      { from: from_status, to: to_status }
+    record_activity_log!(
+      log_type: "reservation",
+      message: "Reservation status changed: #{from_status.presence || "none"} → #{to_status} — #{name} (#{email})",
+      context: { from: from_status, to: to_status }
     )
   end
 
   def log_donation_type_change!
     from_type, to_type = saved_change_to_donation_type
-    record_reservation_log!(
-      "Reservation donation changed: #{from_type.presence || "none"} → #{to_type&.humanize} — #{name} (#{email})",
-      { from: from_type, to: to_type }
-    )
+    if to_type == "cash_or_check_donation"
+      record_activity_log!(
+        log_type: "donation",
+        message: "Cash or check donation made — #{name} (#{email})",
+        context: { from: from_type, to: to_type }
+      )
+    else
+      record_activity_log!(
+        log_type: "reservation",
+        message: "Reservation donation changed: #{from_type.presence || "none"} → #{to_type&.humanize} — #{name} (#{email})",
+        context: { from: from_type, to: to_type }
+      )
+    end
   end
 
-  # Writes a reservation activity log associated with this reservation. A
-  # logging failure must never break the reservation save, so errors are
-  # reported to the Rails logger instead of being raised.
-  def record_reservation_log!(message, context)
+  # Writes an activity log associated with this reservation. A logging
+  # failure must never break the reservation save, so errors are reported
+  # to the Rails logger instead of being raised.
+  def record_activity_log!(log_type:, message:, context:)
     Log.create(
-      log_type: "reservation",
+      log_type: log_type,
       reservation: self,
       message: message,
       context: context

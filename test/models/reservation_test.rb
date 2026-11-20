@@ -156,16 +156,28 @@ class ReservationTest < ActiveSupport::TestCase
     assert_includes log.message, "donation → routing"
   end
 
-  test "logs a reservation activity when the donation type changes" do
+  test "logs a donation activity for cash or check donations" do
+    reservation = reservations(:donation_1)
+
+    assert_difference -> { Log.of_type("donation").count }, 1 do
+      reservation.cash_or_check_donation!
+    end
+
+    log = Log.of_type("donation").last
+    assert_equal reservation, log.reservation
+    assert_includes log.message, "Cash or check donation made"
+  end
+
+  test "logs a reservation activity for other donation choice changes" do
     reservation = reservations(:donation_1)
 
     assert_difference -> { Log.of_type("reservation").count }, 1 do
-      reservation.cash_or_check_donation!
+      reservation.no_donation!
     end
 
     log = Log.of_type("reservation").last
     assert_equal reservation, log.reservation
-    assert_includes log.message, "Cash or check donation"
+    assert_includes log.message, "No donation"
   end
 
   test "invalid with duplicate email" do

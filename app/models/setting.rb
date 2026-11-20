@@ -317,23 +317,17 @@ class Setting < ApplicationRecord
   def configure_location_service!
     return false unless location_service_configured?
 
-    # The Geocoder Amazon Location client reads the region from api_key.
-    # Aws.config and ~/.aws/config are fallbacks, which exist in development
-    # and are absent in the production container.
-    Geocoder.configure(
-      timeout: 10,
-      lookup: :amazon_location_service,
-      amazon_location_service: {
-        index_name: aws_location_index_name,
-        api_key: {
-          region: aws_region,
-          access_key_id: aws_access_key_id,
-          secret_access_key: aws_secret_access_key
-        }
-      }
-    )
-    Aws.config.update(region: aws_region)
-    reset_location_client!
+    apply_location_client!
+    true
+  end
+
+  # Credentials and region are enough to ask Amazon. A blank place index is
+  # sent through so the SDK or the service can reject it, instead of stopping
+  # locally and reporting a successful geocode.
+  def prepare_location_search!
+    return false unless aws_access_key_id.present? && aws_secret_access_key.present? && aws_region.present?
+
+    apply_location_client!
     true
   end
 
@@ -412,6 +406,26 @@ class Setting < ApplicationRecord
         result[attribute] = [ before, after ]
       end
     end
+  end
+
+  # The Geocoder Amazon Location client reads the region from api_key.
+  # Aws.config and ~/.aws/config are fallbacks, which exist in development
+  # and are absent in the production container.
+  def apply_location_client!
+    Geocoder.configure(
+      timeout: 10,
+      lookup: :amazon_location_service,
+      amazon_location_service: {
+        index_name: aws_location_index_name,
+        api_key: {
+          region: aws_region,
+          access_key_id: aws_access_key_id,
+          secret_access_key: aws_secret_access_key
+        }
+      }
+    )
+    Aws.config.update(region: aws_region)
+    reset_location_client!
   end
 
   # The lookup memoizes its AWS client. Drop it so a region or key change

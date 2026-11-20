@@ -216,6 +216,40 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "routing", reservation.status
   end
 
+  test "geocode reports success only when coordinates are saved" do
+    sign_in
+    Setting.instance.update!(is_routing_enabled: true)
+    configure_location_service!
+    reservation = reservations(:routing_1)
+
+    with_stubbed_geocoding do
+      post geocode_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Reservation was successfully geocoded.", flash[:notice]
+    assert reservation.reload.geocoded?
+  end
+
+  test "geocode reports a failure when the place index is blank" do
+    sign_in
+    Setting.instance.update!(is_routing_enabled: true)
+    configure_location_service!
+    Setting.instance.update!(aws_location_index_name: "")
+    reservation = reservations(:routing_1)
+
+    assert_difference -> { Log.where(log_type: "error", reservation_id: reservation.id).count }, 1 do
+      post geocode_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Geocoding was not successful.", flash[:alert]
+    assert_nil flash[:notice]
+    assert_nil reservation.reload.latitude
+    log = Log.where(log_type: "error", reservation_id: reservation.id).order(:created_at).last
+    assert_equal ":index_name must not be blank", log.message
+  end
+
   test "should route the address again after a manual route is removed" do
     sign_in
     Setting.instance.update(is_routing_enabled: true)

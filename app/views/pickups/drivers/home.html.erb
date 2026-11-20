@@ -2,12 +2,7 @@
            title: "Pickups",
            description: "Overall pickup status by zone: counts, routes, and plotted reservations." %>
 
-<div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.88rem] text-ink-soft dark:text-ink-soft-dark">
-  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-green-600"></span>Pending</span>
-  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-gray-500"></span>Picked</span>
-  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-red-600"></span>Missing</span>
-  <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-blue-500/70"></span>Route area</span>
-</div>
+<%= render "pickups/shared/legend" %>
 
 <div class="mt-6 flex flex-col gap-6">
   <%= render "pickups/drivers/all_zones_overview",

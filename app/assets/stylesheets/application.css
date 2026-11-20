@@ -1292,6 +1292,28 @@
   padding: 0.6rem 0.75rem;
 }
 
+.admin-nav--pickups {
+  flex-wrap: wrap;
+  row-gap: 0.25rem;
+  overflow: visible;
+}
+
+@media (max-width: 767px) {
+  .pickups-routes-table .pickups-col-secondary {
+    display: none;
+  }
+
+  .pickups-routes-table .admin-table th,
+  .pickups-routes-table .admin-table td {
+    padding-inline: 0.4rem;
+  }
+
+  .pickups-routes-table .inline-flex.rounded-full {
+    gap: 0.35rem;
+    padding-inline: 0.55rem;
+  }
+}
+
 .admin-shell--pickups .admin-flash {
   margin-bottom: 1rem;
 }
@@ -2615,8 +2637,8 @@
     flex: 1 1 auto;
     width: auto;
     margin-left: 0;
-    overflow-x: auto;
-    flex-wrap: nowrap;
+    overflow: visible;
+    flex-wrap: wrap;
   }
 
   .admin-user-menu__email {

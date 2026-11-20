@@ -33,6 +33,23 @@ class Route < ApplicationRecord
     reservations.pending_pickup.count
   end
 
+  # Pending and missing reservations, the stops still on a driver's list.
+  def pickups
+    if reservations.loaded?
+      reservations.select { |reservation| reservation.pending_pickup? || reservation.missing? }
+    else
+      reservations.pickup
+    end
+  end
+
+  def pickup_count
+    if reservations.loaded?
+      pickups.size
+    else
+      reservations.pickup.count
+    end
+  end
+
   def contains?(lat, lon)
     return false unless polygon?
     polygon_array = points.order(:order).map { |point| Geokit::LatLng.new(point.latitude, point.longitude) }

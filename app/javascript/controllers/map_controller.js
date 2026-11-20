@@ -119,9 +119,9 @@ export default class extends Controller {
       const points = this.normalizePolygon(polygon)
       if (points.length > 3) {
         const layer = L.polygon(points, {
-          color: "#2563eb",
+          color: polygon.color || "#2563eb",
           weight: 2,
-          fillColor: "#3b82f6",
+          fillColor: polygon.fillColor || "#3b82f6",
           fillOpacity: 0.2
         })
         if (polygon && polygon.label) layer.bindPopup(String(polygon.label))

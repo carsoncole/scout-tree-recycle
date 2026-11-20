@@ -20,6 +20,8 @@ class Pickups::DriversControllerTest < ActionDispatch::IntegrationTest
     %w[Pending Picked Missing Total].each do |column|
       assert_select "th", text: column, minimum: 1
     end
+    assert_includes response.body, ApplicationHelper::PICKUP_STATUS_COLORS["pending_pickup"]
+    assert_not_includes response.body, "bg-green-600"
   end
 
   test "overview counts only pending, picked, and missing reservations" do
@@ -32,6 +34,14 @@ class Pickups::DriversControllerTest < ActionDispatch::IntegrationTest
     end
     within_zone_one = Regexp.new(Regexp.escape("Total #{zone_one_totals}"))
     assert_select ".admin-panel-header", text: within_zone_one
+  end
+
+  test "pickup instructions keep the title with the steps" do
+    get pickups_pickup_instructions_url, params: { driver_secret_key: "secret" }
+    get pickups_pickup_instructions_url
+
+    assert_response :success
+    assert_select "header.admin-page-header--stacked h1", "Pickup Instructions"
   end
 
   test "should not get home without driver key" do

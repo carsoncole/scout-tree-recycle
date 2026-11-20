@@ -1,5 +1,5 @@
 <div class="admin-container--narrow flex flex-col gap-6">
-  <header class="admin-page-header print:hidden">
+  <header class="admin-page-header admin-page-header--stacked print:hidden">
     <p class="admin-eyebrow text-sage-deep dark:text-sage-deep-dark">Driver portal</p>
     <h1 class="admin-page-title text-ink dark:text-ink-dark">Pickup Instructions</h1>
     <p class="mt-[0.45rem] mb-0 max-w-[44rem] text-[0.96rem] leading-[1.55] text-ink-soft dark:text-ink-soft-dark">Instructions for drivers and scouts picking up trees.</p>
@@ -9,7 +9,7 @@
     <h2 class="admin-section-title text-ink dark:text-ink-dark">Logging in to the pickups portal</h2>
     <p>Use the shared driver password to access the pickups portal and your assigned pickup list.</p>
     <ol class="flex flex-col gap-4">
-      <li>Visit <%= link_to pickups_root_url, pickups_root_url, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>.</li>
+      <li>Visit <%= link_to pickups_root_url, pickups_root_url, class: admin_link_class %>.</li>
       <li>Enter the current driver password:</li>
     </ol>
     <p class="admin-code bg-stone text-ink dark:bg-stone-dark dark:text-ink-dark"><%= @password %></p>
@@ -26,6 +26,6 @@
   </section>
 
   <p class="print:hidden">
-    <%= link_to "Back to Drivers", pickups_drivers_path, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+    <%= link_to "Back to Drivers", pickups_drivers_path, class: admin_link_class %>
   </p>
 </div>

@@ -9,22 +9,11 @@
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">
         <% zone_target = zone ? pickups_zone_path(zone) : pickups_zones_path(anchor: pickups_zone_anchor(zone)) %>
-        <%= link_to name, zone_target, class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+        <%= link_to name, zone_target, class: admin_link_class %>
       </h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= pluralize(routes.size, "route") %></p>
     </div>
-    <div class="flex flex-wrap items-center gap-2 text-[0.8rem]">
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
-        <span class="size-2 rounded-full bg-green-600"></span>Pending <%= totals["pending_pickup"] %>
-      </span>
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
-        <span class="size-2 rounded-full bg-gray-500"></span>Picked <%= totals["picked_up"] %>
-      </span>
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
-        <span class="size-2 rounded-full bg-red-600"></span>Missing <%= totals["missing"] %>
-      </span>
-      <span class="inline-flex items-center rounded-full bg-stone px-2.5 py-1 font-medium text-ink dark:bg-stone-dark dark:text-ink-dark">Total <%= totals["total"] %></span>
-    </div>
+    <%= render "pickups/shared/status_counts", totals: totals %>
   </header>
 
   <% if routes.any? %>
@@ -49,27 +38,27 @@
       <table class="admin-table text-ink dark:text-ink-dark">
         <thead>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Route</th>
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Pending</th>
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Picked</th>
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Missing</th>
-            <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Total</th>
+            <th scope="col" class="<%= admin_th_class %>">Route</th>
+            <th scope="col" class="<%= admin_th_class %>">Pending</th>
+            <th scope="col" class="<%= admin_th_class %>">Picked</th>
+            <th scope="col" class="<%= admin_th_class %>">Missing</th>
+            <th scope="col" class="<%= admin_th_class %>">Total</th>
           </tr>
         </thead>
         <tbody>
           <% routes.each do |route| %>
             <% route_totals = pickup_status_totals([route], status_counts) %>
             <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+              <td class="<%= admin_td_class %>">
                 <div class="flex items-center gap-1.5">
                   <%= render "pickups/routes/favorite_button", route: route, favorited: route_favorited?(route) %>
-                  <%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+                  <%= link_to route.name, pickups_route_path(route), class: admin_link_class %>
                 </div>
               </td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["pending_pickup"] %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["picked_up"] %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["missing"] %></td>
-              <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= route_totals["total"] %></td>
+              <td class="<%= admin_td_class %>"><%= route_totals["pending_pickup"] %></td>
+              <td class="<%= admin_td_class %>"><%= route_totals["picked_up"] %></td>
+              <td class="<%= admin_td_class %>"><%= route_totals["missing"] %></td>
+              <td class="<%= admin_td_class %>"><%= route_totals["total"] %></td>
             </tr>
           <% end %>
         </tbody>

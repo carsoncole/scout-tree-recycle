@@ -13,16 +13,16 @@
         <div class="admin-pickup-route border-line dark:border-line-dark">
           <div class="admin-pickup-route-header">
             <h2 class="admin-pickup-route-title text-ink dark:text-ink-dark">
-              <%= link_to route.name, pickups_route_path(route), class: "admin-link text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %> · <%= route.zone&.name || "No Zone" %>
+              <%= link_to route.name, pickups_route_path(route), class: admin_link_class %> · <%= route.zone&.name || "No Zone" %>
             </h2>
-            <span class="admin-badge admin-badge--info bg-info-bg text-info dark:bg-info-bg-dark dark:text-info-dark">
-              <%= pluralize(route.reservations.pickup.count, "pickup") %>
+            <span class="<%= admin_badge_class("info") %>">
+              <%= pluralize(route.pickup_count, "pickup") %>
             </span>
           </div>
 
-          <% if route.reservations.pickup.any? %>
+          <% if route.pickups.any? %>
             <ul class="admin-pickup-list">
-              <% route.reservations.pickup.each do |reservation| %>
+              <% route.pickups.each do |reservation| %>
                 <li class="admin-pickup-item border-line dark:border-line-dark">
                   <input type="checkbox"
                          class="admin-pickup-check accent-sage dark:accent-sage-dark"

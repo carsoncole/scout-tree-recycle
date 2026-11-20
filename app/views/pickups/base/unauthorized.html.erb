@@ -10,10 +10,10 @@
       <%= form_tag pickups_root_path, method: :get, class: "admin-form" do %>
         <div class="admin-field">
           <%= label_tag :driver_secret_key, "Password", class: "admin-label text-ink dark:text-ink-dark" %>
-          <%= text_field_tag :driver_secret_key, nil, class: "admin-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark", autocomplete: "off" %>
+          <%= text_field_tag :driver_secret_key, nil, class: admin_input_class, autocomplete: "off" %>
         </div>
 
-        <%= submit_tag "Access Pickups", class: "admin-button admin-button--full bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+        <%= submit_tag "Access Pickups", class: admin_button_class(full: true) %>
       <% end %>
     </div>
   </section>

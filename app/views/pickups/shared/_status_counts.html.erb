@@ -1,0 +1,9 @@
+<%# locals: (totals:) %>
+<div class="flex flex-wrap items-center gap-2 text-[0.8rem]">
+  <% pickup_status_swatches.each do |swatch| %>
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
+      <span class="size-2 rounded-full" style="background-color: <%= swatch[:color] %>"></span><%= swatch[:label] %> <%= totals[swatch[:status]] %>
+    </span>
+  <% end %>
+  <span class="inline-flex items-center rounded-full bg-stone px-2.5 py-1 font-medium text-ink dark:bg-stone-dark dark:text-ink-dark">Total <%= totals["total"] %></span>
+</div>

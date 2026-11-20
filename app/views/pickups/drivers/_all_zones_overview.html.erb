@@ -9,18 +9,7 @@
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">All Zones</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Every route and plotted reservation across all zones.</p>
     </div>
-    <div class="flex flex-wrap items-center gap-2 text-[0.8rem]">
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
-        <span class="size-2 rounded-full bg-green-600"></span>Pending <%= totals["pending_pickup"] %>
-      </span>
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
-        <span class="size-2 rounded-full bg-gray-500"></span>Picked <%= totals["picked_up"] %>
-      </span>
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-stone px-2.5 py-1 font-medium text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark">
-        <span class="size-2 rounded-full bg-red-600"></span>Missing <%= totals["missing"] %>
-      </span>
-      <span class="inline-flex items-center rounded-full bg-stone px-2.5 py-1 font-medium text-ink dark:bg-stone-dark dark:text-ink-dark">Total <%= totals["total"] %></span>
-    </div>
+    <%= render "pickups/shared/status_counts", totals: totals %>
   </header>
 
   <div class="admin-panel-body admin-panel-body--tight">

@@ -18,6 +18,8 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a", text: "Zone 1"
     assert_select "a", text: "No Zone"
     assert_select "a[href=?]", pickups_zone_path(zones(:one))
+    assert_select "th.pickups-col-secondary", text: "Zone"
+    assert_select "th.pickups-col-secondary", text: "Drivers"
   end
 
   test "index shows pickup status indicator for each route" do

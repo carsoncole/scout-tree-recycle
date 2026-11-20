@@ -30,7 +30,7 @@ module Pickups
     end
 
     def index
-      @drivers = Driver.includes(routes: { reservations: :route }).all
+      @drivers = Driver.includes(routes: :reservations).all
     end
 
     def show
@@ -38,7 +38,7 @@ module Pickups
     end
 
     def driver_pickup_lists
-      @drivers = Driver.all.order(:name)
+      @drivers = Driver.includes(routes: :reservations).order(:name)
       respond_to do |format|
         format.html
         format.pdf {

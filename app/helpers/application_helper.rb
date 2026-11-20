@@ -64,7 +64,12 @@ module ApplicationHelper
 
     return [] if points.length <= 3
 
-    [ { points: points, label: "#{route.name} boundary" } ]
+    [ {
+      points: points,
+      label: "#{route.name} boundary",
+      color: ROUTE_AREA_STROKE,
+      fillColor: ROUTE_AREA_COLOR
+    } ]
   end
 
   # Single source of truth for pickup status colors on the pickups maps,
@@ -75,9 +80,21 @@ module ApplicationHelper
     "picked_up" => "#6b7280",
     "missing" => "#dc2626"
   }.freeze
+  ROUTE_AREA_COLOR = "#3b82f6"
+  ROUTE_AREA_STROKE = "#2563eb"
 
   def pickup_status_color(status)
-    PICKUP_STATUS_COLORS.fetch(status.to_s, "#2563eb")
+    PICKUP_STATUS_COLORS.fetch(status.to_s, ROUTE_AREA_STROKE)
+  end
+
+  def route_area_color
+    ROUTE_AREA_COLOR
+  end
+
+  def pickup_status_swatches
+    PICKUP_STATUS_LABELS.map do |status, label|
+      { status: status, label: label, color: PICKUP_STATUS_COLORS.fetch(status) }
+    end
   end
 
   # Pending / picked / missing / total counts for a set of routes, built from

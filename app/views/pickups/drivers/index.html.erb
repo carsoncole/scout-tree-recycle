@@ -3,7 +3,7 @@
            description: "View driver assignments and pickup counts." %>
 
 <div class="admin-page-actions print:hidden">
-  <%= link_to "Pickup Instructions", pickups_pickup_instructions_path, class: "admin-button admin-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
+  <%= link_to "Pickup Instructions", pickups_pickup_instructions_path, class: admin_button_class(variant: "secondary") %>
 </div>
 
 <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
@@ -11,29 +11,29 @@
     <table class="admin-table text-ink dark:text-ink-dark">
       <thead>
         <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Name</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Phone</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Routes</th>
-          <th scope="col" class="border-b border-line bg-stone text-ink-soft dark:border-line-dark dark:bg-stone-dark dark:text-ink-soft-dark">Total pickups</th>
+          <th scope="col" class="<%= admin_th_class %>">Name</th>
+          <th scope="col" class="<%= admin_th_class %>">Phone</th>
+          <th scope="col" class="<%= admin_th_class %>">Routes</th>
+          <th scope="col" class="<%= admin_th_class %>">Total pickups</th>
         </tr>
       </thead>
       <tbody>
         <% @drivers.each do |driver| %>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= driver.name %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= Phonelib.parse(driver.mobile).national if driver.mobile.present? %></td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark">
+            <td class="<%= admin_td_class %>"><%= driver.name %></td>
+            <td class="<%= admin_td_class %>"><%= driver.national_mobile %></td>
+            <td class="<%= admin_td_class %>">
               <% if driver.routes.any? %>
                 <div class="admin-table-actions">
                   <% driver.routes.each do |route| %>
-                    <%= link_to route.name, pickups_route_path(route), class: "admin-badge admin-badge--info bg-info-bg text-info dark:bg-info-bg-dark dark:text-info-dark" %>
+                    <%= link_to route.name, pickups_route_path(route), class: admin_badge_class("info") %>
                   <% end %>
                 </div>
               <% else %>
                 <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark">No routes assigned</span>
               <% end %>
             </td>
-            <td class="border-b border-line text-ink dark:border-line-dark dark:text-ink-dark"><%= driver.routes.sum { |route| route.reservations.pickup.count } %></td>
+            <td class="<%= admin_td_class %>"><%= driver.pickup_count %></td>
           </tr>
         <% end %>
       </tbody>

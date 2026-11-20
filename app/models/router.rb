@@ -13,11 +13,7 @@ class Router
       location.update_columns(was_automatically_routed: true)
       Route.ordered.each do |z|
         if z.polygon? && z.contains?(location.latitude, location.longitude)
-          @route_id = z.id
-          @status = "pending_pickup"
-          # location.route_id = z.id
-          # location.is_route_polygon = true
-          location.update_columns(route_id: @route_id, status: @status)
+          assign_route!(z.id)
           break
         end
         # puts z.coordinates
@@ -31,6 +27,20 @@ class Router
       end
       location.route
     end
+
+    # update_columns skips the belongs_to counter cache. Adjust the old and
+    # new route counts here so Routes keeps a real reservation total.
+    def assign_route!(route_id)
+      previous_route_id = location.route_id
+      location.transaction do
+        location.update_columns(route_id: route_id, status: "pending_pickup")
+        next if previous_route_id == route_id
+
+        Route.decrement_counter(:reservations_count, previous_route_id) if previous_route_id.present?
+        Route.increment_counter(:reservations_count, route_id)
+      end
+    end
+    private :assign_route!
 
     def zone!
       return unless location.is_zoned?

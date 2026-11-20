@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_19_170100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -221,7 +221,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_170100) do
     t.string "contact_sms"
     t.text "about_event_description"
     t.text "on_day_of_pickup_instructions"
-    t.boolean "is_reservations_open", default: true
+    t.boolean "is_reservations_open", default: false
     t.boolean "is_pickups_site_enabled", default: false
     t.boolean "is_emailing_enabled", default: false
     t.boolean "is_sms_enabled", default: false
@@ -269,7 +269,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_170100) do
     t.string "reservations_export_email"
     t.string "reservations_export_time", default: "06:00", null: false
     t.datetime "reservations_export_last_sent_at"
-    t.boolean "is_maintenance_mode", default: false, null: false
+    t.boolean "is_maintenance_mode", default: true, null: false
     t.boolean "is_pickup_notice_enabled", default: false, null: false
   end
 

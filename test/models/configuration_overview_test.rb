@@ -31,6 +31,13 @@ class ConfigurationOverviewTest < ActiveSupport::TestCase
   test "reports values that still match their default" do
     assert_equal :default, entry_for(:time_zone).status
     assert_equal :default, entry_for(:suggested_donation).status
+  end
+
+  test "reports the reservations toggle against the closed default" do
+    assert_equal :configured, entry_for(:is_reservations_open).status
+
+    @setting.is_reservations_open = false
+
     assert_equal :default, entry_for(:is_reservations_open).status
   end
 

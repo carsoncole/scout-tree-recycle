@@ -543,7 +543,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal 0, Contact.count
   end
 
-  test "admin can reset all data and lands on first-run setup" do
+  test "admin can reset all data and relaunch in maintenance mode" do
     visit admin_settings_section_path("system")
 
     within "section#data-management" do
@@ -558,6 +558,30 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal 0, Setting.count
     assert_equal MarketingEmailTemplate.default_names.sort, MarketingEmailTemplate.pluck(:name).sort
     assert_equal 0, Reservation.count, "sample data should not be loaded by the reset"
+
+    # Complete first-run setup: the site relaunches down for maintenance with
+    # reservations closed until an admin turns them on.
+    fill_in "Organization Name", with: "Troop 200"
+    fill_in "Site URL", with: "https://example.com"
+    fill_in "Default City", with: "Anytown"
+    select "New York", from: "Default State"
+    fill_in "Event Pickup Start", with: "2024-01-15T14:30"
+    fill_in "Event Pickup End", with: "2024-01-15T15:30"
+    fill_in "Sign Up Deadline", with: "2024-01-14T16:59"
+    fill_in "Admin Email", with: "reset-admin@example.com"
+    fill_in "Admin Password", with: "password123456789"
+    fill_in "Confirm Admin Password", with: "password123456789"
+    click_on "Save Settings"
+
+    # The reset wiped the sessions, so the admin lands on the sign-in page.
+    assert_current_path new_admin_session_path
+
+    setting = Setting.instance
+    assert setting.is_maintenance_mode?, "site should relaunch down for maintenance"
+    assert_not setting.is_reservations_open?, "reservations should stay closed by default"
+
+    visit root_path
+    assert_selector "h1", text: "Down for maintenance"
   end
 
   test "admin can load sample data from the data management panel" do

@@ -108,7 +108,7 @@ class Setting < ApplicationRecord
   attribute :time_zone, :string, default: DEFAULT_TIME_ZONE
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
   attribute :is_log_notifications_enabled, :boolean, default: true
-  attribute :is_maintenance_mode, :boolean, default: false
+  attribute :is_maintenance_mode, :boolean, default: true
   attribute :is_pickup_notice_enabled, :boolean, default: false
   attribute :is_reservations_export_schedule_enabled, :boolean, default: false
   attribute :reservations_export_time, :string, default: DEFAULT_RESERVATIONS_EXPORT_TIME

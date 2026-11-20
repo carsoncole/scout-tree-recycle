@@ -3,10 +3,17 @@ require "test_helper"
 class SettingTest < ActiveSupport::TestCase
   include ActiveSupport::Testing::TimeHelpers
 
-  test "maintenance mode is off by default" do
+  test "maintenance mode is on by default" do
     setting = Setting.new(organization_name: "Troop 100")
 
-    assert_not setting.is_maintenance_mode
+    assert setting.is_maintenance_mode
+  end
+
+  test "reservations are closed by default" do
+    setting = Setting.new(organization_name: "Troop 100")
+
+    assert_not setting.is_reservations_open
+    assert_not setting.accepting_reservations?
   end
 
   test "pickup notice is off by default and hides the reservation form when enabled" do

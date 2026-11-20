@@ -15,7 +15,17 @@ class SettingsMailerTest < ActionMailer::TestCase
     html = mail.html_part.body.decoded
     assert_match(/src="cid:[^"]+"/, html)
     assert_no_match(/localhost/, html)
-    logo = mail.attachments.find { |part| part.filename == ApplicationMailer::LOGO_FILENAME }
+    logo = mail.attachments.find { |part| part.filename == Setting::DEFAULT_MAILER_LOGO }
     assert logo&.inline?
+  end
+
+  test "test_email uses the configured default mailer logo" do
+    Setting.instance.update!(mailer_logo: "tree-4c-bc.png")
+
+    mail = SettingsMailer.test_email("qa@example.com")
+
+    logo = mail.attachments.find { |part| part.filename == "tree-4c-bc.png" }
+    assert logo&.inline?
+    assert_nil mail.attachments.find { |part| part.filename == Setting::DEFAULT_MAILER_LOGO }
   end
 end

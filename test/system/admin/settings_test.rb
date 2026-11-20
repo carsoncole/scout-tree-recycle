@@ -695,6 +695,22 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_link "Users", href: admin_users_path
   end
 
+  test "system panel updates the default email logo" do
+    image = MarketingEmailTemplate.available_images.first
+
+    visit admin_settings_section_path("system")
+
+    within "section#email-logo" do
+      assert_field "Logo Image"
+      assert_button "Save Email Logo"
+      select image, from: "Logo Image"
+      click_on "Save Email Logo"
+    end
+
+    assert_text "Settings were successfully updated"
+    assert_equal image, Setting.instance.reload.mailer_logo
+  end
+
   test "site content settings live in the Site Content panel" do
     visit admin_settings_section_path("site_content")
 

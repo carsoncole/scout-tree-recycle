@@ -3,6 +3,7 @@ one:
   default_state: "New York"
   organization_name: "Troop 100"
   home_page_header: "Troop 100 Tree Recycle"
+  mailer_logo: "fleur-de-lis-2024-logo-4c-bc-small.png"
   email_from_address: "example@example.com"
   phone_default_country: "US"
   marketing_email_cooldown_days: 7

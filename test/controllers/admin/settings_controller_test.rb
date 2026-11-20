@@ -204,6 +204,16 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal image, Setting.first.reload.home_page_image
   end
 
+  test "should update the default mailer logo from the system section" do
+    sign_in
+    image = MarketingEmailTemplate.available_images.first
+
+    patch admin_setting_path(Setting.first), params: { setting: { mailer_logo: image }, section: "system" }
+
+    assert_redirected_to admin_settings_section_path("system")
+    assert_equal image, Setting.first.reload.mailer_logo
+  end
+
   test "should update donations page content" do
     sign_in
 

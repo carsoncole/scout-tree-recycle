@@ -25,6 +25,7 @@ class Setting < ApplicationRecord
   DEFAULT_DONATIONS_NEW_PAGE_CONTENT = "Our tree pickup service is free, but it's also our biggest fundraiser of the year. Every donation goes straight to our organization and helps our members take part in:\n\n- Summer camps and outdoor adventures\n- Leadership and team-building activities\n- Community service projects"
   DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT = "Thanks to you, our organization can keep adventuring, leading, and giving back to the community. We'll put your donation to good use."
   DEFAULT_HOME_PAGE_IMAGE = "tree-4c-bc.png"
+  DEFAULT_MAILER_LOGO = "fleur-de-lis-2024-logo-4c-bc-small.png"
   DEFAULT_RESERVATIONS_EXPORT_TIME = "06:00"
   RESERVATIONS_EXPORT_TIME_FORMAT = /\A([01]\d|2[0-3]):[0-5]\d\z/
 
@@ -127,6 +128,7 @@ class Setting < ApplicationRecord
   validates :reservations_export_time, format: { with: RESERVATIONS_EXPORT_TIME_FORMAT, message: "must be a valid time (HH:MM)" }, allow_blank: true
   validate :reservations_export_schedule_is_complete
   validate :home_page_image_is_available
+  validate :mailer_logo_is_available
 
   before_validation :apply_defaults
   after_update_commit :log_configuration_changes
@@ -181,6 +183,11 @@ class Setting < ApplicationRecord
 
   def home_page_image_name
     home_page_image.presence || DEFAULT_HOME_PAGE_IMAGE
+  end
+
+  # Logo system emails use when the mailer does not pass an explicit filename.
+  def mailer_logo_name
+    mailer_logo.presence || DEFAULT_MAILER_LOGO
   end
 
   def self.instance
@@ -453,5 +460,12 @@ class Setting < ApplicationRecord
     return if MarketingEmailTemplate.available_images.include?(home_page_image)
 
     errors.add(:home_page_image, "is not an available image")
+  end
+
+  def mailer_logo_is_available
+    return if mailer_logo.blank?
+    return if MarketingEmailTemplate.available_images.include?(mailer_logo)
+
+    errors.add(:mailer_logo, "is not an available image")
   end
 end

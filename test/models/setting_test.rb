@@ -229,6 +229,28 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal image, setting.home_page_image_name
   end
 
+  test "mailer logo defaults to the small logo for a new setting" do
+    assert_equal Setting::DEFAULT_MAILER_LOGO, Setting.new.mailer_logo_name
+    assert_equal Setting::DEFAULT_MAILER_LOGO, Setting.new(mailer_logo: "").mailer_logo_name
+  end
+
+  test "mailer logo must be an available image" do
+    setting = Setting.instance
+    setting.mailer_logo = "missing.png"
+
+    assert_not setting.valid?
+    assert_includes setting.errors[:mailer_logo], "is not an available image"
+  end
+
+  test "mailer logo accepts an available image" do
+    setting = Setting.instance
+    image = MarketingEmailTemplate.available_images.first
+    setting.mailer_logo = image
+
+    assert setting.valid?
+    assert_equal image, setting.mailer_logo_name
+  end
+
   test "email_configuration_alert lists missing email settings" do
     setting = Setting.instance
     setting.update(email_from_address: nil, smtp_address: nil, smtp_port: nil)

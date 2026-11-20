@@ -179,6 +179,7 @@ class Admin::SettingsController < Admin::BaseController
       :organization_url,
       :site_url,
       :home_page_image,
+      :mailer_logo,
       :time_zone,
       :default_country,
       :phone_default_country,

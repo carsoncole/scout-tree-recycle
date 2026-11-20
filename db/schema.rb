@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -271,6 +271,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_120000) do
     t.datetime "reservations_export_last_sent_at"
     t.boolean "is_maintenance_mode", default: true, null: false
     t.boolean "is_pickup_notice_enabled", default: false, null: false
+    t.string "mailer_logo", default: "fleur-de-lis-2024-logo-4c-bc-small.png", null: false
   end
 
   create_table "sms", force: :cascade do |t|

@@ -31,4 +31,27 @@ class LogNotificationJobTest < ActiveJob::TestCase
   ensure
     LogsMailer.define_singleton_method(:with, original_with) if original_with
   end
+
+  test "records an error log when the notification email cannot connect" do
+    configure_email!
+    Setting.instance.update!(is_log_notifications_enabled: true, smtp_password: "super-secret-password")
+    original_deliver = Mail::SMTP.instance_method(:deliver!)
+    Mail::SMTP.send(:define_method, :deliver!) { |*| raise Net::OpenTimeout, "execution expired" }
+
+    assert_nothing_raised do
+      assert_no_enqueued_jobs only: LogNotificationJob do
+        assert_difference -> { Log.where(log_type: "error").count }, 1 do
+          LogNotificationJob.perform_now(log_id: logs(:one).id)
+        end
+      end
+    end
+
+    log = Log.where(log_type: "error").order(:created_at).last
+    assert_equal "Net::OpenTimeout", log.error_type
+    assert_equal "execution expired", log.message
+    assert_equal "LogsMailer", log.context["mailer"]
+    refute_includes log.context.to_json, "super-secret-password"
+  ensure
+    Mail::SMTP.send(:define_method, :deliver!, original_deliver) if original_deliver
+  end
 end

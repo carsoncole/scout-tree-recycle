@@ -13,6 +13,9 @@ class ErrorLogSubscriber
 
   def report(error, handled:, severity:, context:, source: nil)
     return if IGNORED_SOURCES.include?(source.to_s)
+    # A connection failure is already an Error log. Reporting the same
+    # exception again (the test-email rescue, for example) would duplicate it.
+    return if EmailDeliveryErrorSubscriber.logged?(error)
 
     # Guard against a report triggered while this subscriber is already
     # writing a Log (for example, a failing notification email). Without it

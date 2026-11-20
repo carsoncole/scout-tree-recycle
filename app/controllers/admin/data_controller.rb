@@ -19,6 +19,12 @@ class Admin::DataController < Admin::BaseController
       return
     end
 
+    # Uploaded file contents read as binary (ASCII-8BIT). Job arguments are
+    # stored as JSON, which cannot encode high bytes in a binary string, so
+    # normalize to valid UTF-8 here (ContactCsvImport scrubs it again when
+    # parsing).
+    csv = csv.force_encoding("UTF-8").scrub
+
     # Large imports run long enough to time out the request, so the work is
     # performed by a background job. The outcome is recorded in the System
     # Logs with the "job" log type.

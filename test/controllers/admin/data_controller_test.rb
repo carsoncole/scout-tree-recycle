@@ -74,6 +74,30 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Please choose a CSV file to import.", flash[:alert]
   end
 
+  test "should queue an import for a csv containing multibyte characters" do
+    sign_in
+    file = fixture_file_upload("reservations_import_utf8.csv", "text/csv")
+    mapping = [ "name", "email", "street", "city", "state", "zip", "status" ]
+
+    assert_enqueued_with(job: ContactCsvImportJob) do
+      post import_admin_data_url, params: { file: file, mapping: mapping }
+    end
+
+    # Solid Queue stores job arguments as JSON, so the uploaded file's
+    # contents must be valid UTF-8 or the enqueue itself fails with
+    # JSON::GeneratorError ("\\xE2" from ASCII-8BIT to UTF-8).
+    enqueued = ActiveJob::Base.queue_adapter.enqueued_jobs.reverse.find { |job_data| job_data[:job] == ContactCsvImportJob }
+    assert enqueued, "expected ContactCsvImportJob to be enqueued"
+    assert_nothing_raised { ActiveSupport::JSON.encode(enqueued.fetch("arguments")) }
+
+    assert_redirected_to admin_data_url
+    assert_match "queued", flash[:notice]
+
+    perform_enqueued_jobs
+    assert_equal "José García", Contact.find_by(email: "jose.garcia@example.com")&.name
+    assert_equal "Mira O’Brien", Contact.find_by(email: "mira.obrien@example.com")&.name
+  end
+
   test "should log import failures from the background job" do
     sign_in
     file = fixture_file_upload("reservations_import.csv", "text/csv")

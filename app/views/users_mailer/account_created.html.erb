@@ -24,7 +24,8 @@
 
                 <p style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #1f2937; margin: 0 0 16px 0;">
                   An account has been created for <strong><%= @user.email %></strong> at
-                  <%= @organization_name %>. Choose a password to sign in and get started.
+                  <%= @site_header %><% if @site_url %>, located at
+                  <a href="<%= @site_url %>" style="color: #4c6a57; text-decoration: none;"><%= @site_url %></a><% end %>. Choose a password to sign in and get started.
                 </p>
 
                 <p align="center" style="font-family: Arial, sans-serif; margin: 24px 0;">

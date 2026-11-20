@@ -1,7 +1,7 @@
 Your account is ready
 =====================
 
-An account has been created for <%= @user.email %> at <%= @organization_name %>.
+An account has been created for <%= @user.email %> at <%= @site_header %><%= ", located at #{@site_url}" if @site_url %>.
 Choose a password to sign in and get started:
 
 <%= @setup_url %>

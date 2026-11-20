@@ -11,7 +11,8 @@ class UsersMailerTest < ActionMailer::TestCase
 
     body = [ mail.text_part, mail.html_part ].compact.map { |part| part.body.decoded }.join("\n")
     assert_includes body, user.email
-    assert_includes body, "Troop 100"
+    assert_includes body, "Troop 100 Tree Recycle"
+    assert_not_includes body, "located at"
     assert_includes body, "expires in 7 days"
     assert_match %r{/account_setups/[^"'\s<]+/edit}, body
 
@@ -21,6 +22,18 @@ class UsersMailerTest < ActionMailer::TestCase
     assert_no_match(/width="600"/, html)
     assert_includes html, '<meta name="viewport" content="width=device-width, initial-scale=1.0" />'
     assert_equal 1, html.scan(/<html/i).size
+  end
+
+  test "account_created includes the site url when one is configured" do
+    Setting.instance.update!(site_url: "https://trees.example.com")
+    user = users(:user)
+    mail = UsersMailer.account_created(user)
+
+    body = [ mail.text_part, mail.html_part ].compact.map { |part| part.body.decoded }.join("\n")
+    assert_includes body, "Troop 100 Tree Recycle, located at https://trees.example.com"
+
+    html = mail.html_part.body.decoded
+    assert_includes html, '<a href="https://trees.example.com" style="color: #4c6a57; text-decoration: none;">https://trees.example.com</a>'
   end
 
   test "delivery is recorded in the email log" do

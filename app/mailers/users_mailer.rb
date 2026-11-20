@@ -10,7 +10,10 @@ class UsersMailer < ApplicationMailer
 
   def account_created(user)
     @user = user
-    @organization_name = Setting.instance&.organization_name.presence || "Tree Recycle"
+    setting = Setting.instance
+    @organization_name = setting&.organization_name.presence || "Tree Recycle"
+    @site_header = setting&.home_page_header.presence
+    @site_url = setting&.site_url.presence
     @setup_url = edit_account_setup_url(@user.account_setup_token)
     @expires_in_days = User::ACCOUNT_SETUP_TOKEN_TTL.in_days.to_i
 

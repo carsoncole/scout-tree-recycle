@@ -51,6 +51,46 @@ class SmsTest < ActiveSupport::TestCase
     assert_includes log.message, "Please leave the tree at the curb"
   end
 
+  test "records an error log when Twilio rejects the send" do
+    configure_twilio!
+    reservation = reservations(:pending_pickup_1)
+    sms = Sms.create!(phone: reservation.mobile, body: "Please leave the tree at the curb")
+    error = twilio_rest_error
+
+    with_twilio_error(sms, error) do
+      assert_difference -> { Log.where(log_type: "error").count }, 1 do
+        sms.send_via_twilio!
+      end
+    end
+
+    log = Log.where(log_type: "error").order(:created_at).last
+    assert_equal "failed", sms.reload.service_status
+    assert_equal reservation, log.reservation
+    assert_equal "Twilio::REST::RestError", log.error_type
+    assert_includes log.message, "[HTTP 401] 20003"
+    assert_includes log.message, "Authenticate"
+    assert_equal 401, log.context["status_code"]
+    assert_equal 20003, log.context["code"]
+    assert_equal "Authenticate", log.context["error_message"]
+    assert_equal "https://www.twilio.com/docs/errors/20003", log.context["more_info"]
+    assert_equal "Authenticate", log.context["response_body"]["message"]
+    assert_equal sms.id, log.context["sms_id"]
+  end
+
+  test "records an error log when Twilio credentials are missing" do
+    Setting.instance.update!(twilio_account_sid: nil, twilio_auth_token: nil, twilio_from_number: nil)
+    sms = Sms.create!(phone: "+15550001111", body: "Hello")
+
+    assert_difference -> { Log.where(log_type: "error", error_type: "Twilio").count }, 1 do
+      sms.send_via_twilio!
+    end
+
+    log = Log.where(error_type: "Twilio").order(:created_at).last
+    assert_equal "failed", sms.reload.service_status
+    assert_equal "Twilio credentials are not configured", log.message
+    assert_equal sms.phone, log.context["phone"]
+  end
+
   test "logs an sms activity without a reservation for unknown numbers" do
     assert_difference -> { Log.of_type("sms").count }, 1 do
       Sms.create!(phone: "+15550001234", body: "Thanks for the pickup!", direction: "incoming")
@@ -60,5 +100,38 @@ class SmsTest < ActiveSupport::TestCase
     assert_nil log.reservation
     assert_includes log.message, "SMS received from"
     assert_includes log.message, "Thanks for the pickup!"
+  end
+
+  private
+
+  def configure_twilio!
+    Setting.instance.update!(
+      is_sms_enabled: true,
+      twilio_account_sid: "AC123",
+      twilio_auth_token: "token",
+      twilio_from_number: "+15555550123"
+    )
+  end
+
+  def twilio_rest_error
+    response = Struct.new(:status_code, :body).new(
+      401,
+      {
+        "code" => 20003,
+        "message" => "Authenticate",
+        "more_info" => "https://www.twilio.com/docs/errors/20003",
+        "status" => 401
+      }
+    )
+    Twilio::REST::RestError.new("Unable to create record", response)
+  end
+
+  def with_twilio_error(sms, error)
+    messages = Object.new
+    messages.define_singleton_method(:create) { |**| raise error }
+    client = Object.new
+    client.define_singleton_method(:messages) { messages }
+    sms.define_singleton_method(:client) { client }
+    yield
   end
 end

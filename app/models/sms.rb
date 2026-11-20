@@ -43,24 +43,21 @@ class Sms < ApplicationRecord
 
   def send_via_twilio!
     unless Setting.instance&.sms_configured?
-      Rails.logger.error("Twilio credentials are not configured")
+      log_twilio_error("Twilio credentials are not configured")
       update_column(:service_status, "failed")
       return
     end
 
-    begin
-      client.messages.create(
-        from: from_number,
-        to: phone,
-        body: body
-      )
+    client.messages.create(
+      from: from_number,
+      to: phone,
+      body: body
+    )
 
-      update_column(:service_status, "sent") # optional: mark status after send
-    rescue => e
-      Rails.logger.error("Twilio send failed: #{e}")
-      Rails.error.report(e, handled: true, context: { phone: phone })
-      update_column(:service_status, "failed") # optional: mark failure
-    end
+    update_column(:service_status, "sent")
+  rescue StandardError => error
+    log_twilio_error(error)
+    update_column(:service_status, "failed")
   end
 
   def client
@@ -99,6 +96,41 @@ class Sms < ApplicationRecord
   end
 
   private
+
+  # Twilio's HTTP error is the useful part of a failed send. Store the status,
+  # error code, and response body on an Error log. A logging failure must not
+  # change the send result.
+  def log_twilio_error(error)
+    exception = error.is_a?(Exception) ? error : nil
+    response = exception&.respond_to?(:response) ? exception.response : nil
+    body = response.respond_to?(:body) ? response.body : nil
+    message = exception ? exception.message : error.to_s
+
+    Rails.logger.error("Twilio send failed: #{message}")
+
+    attributes = {
+      log_type: "error",
+      severity: "error",
+      handled: true,
+      error_type: exception&.class&.name || "Twilio",
+      message: message.to_s.truncate(5_000),
+      backtrace: exception ? Array(exception.backtrace).join("\n").presence : nil,
+      reservation: reservation_for_log,
+      context: {
+        phone: phone,
+        sms_id: id,
+        status_code: (exception.status_code if exception.respond_to?(:status_code)),
+        code: (exception.code if exception.respond_to?(:code)),
+        error_message: (exception.error_message if exception.respond_to?(:error_message)),
+        details: (exception.details if exception.respond_to?(:details)),
+        more_info: (exception.more_info if exception.respond_to?(:more_info)),
+        response_body: body.is_a?(Hash) || body.is_a?(Array) ? body : body.to_s.presence
+      }.compact
+    }
+    Log.create(attributes)
+  rescue StandardError => logging_error
+    Rails.logger.error("Twilio error could not be logged: #{logging_error.class}: #{logging_error.message}")
+  end
 
   def log_sms!
     Log.create(

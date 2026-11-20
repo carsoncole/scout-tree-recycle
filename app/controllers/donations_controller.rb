@@ -58,7 +58,6 @@ class DonationsController < ApplicationController
       @reservation = Reservation.find_by_public_token!(params[:reservation_id] || params[:id])
     end
     @driver = params[:driver] == "true"
-    flash[:notice] = "Thank you! Your donation is greatly appreciated and goes a long way towards supporting #{Setting.instance&.organization_name.presence || 'our organization'}."
   end
 
 

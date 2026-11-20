@@ -18,14 +18,11 @@
     <div class="site-home-layout <%= "site-home-layout--closed" unless setting.accepting_reservations? %>">
       <div class="site-home-intro">
         <div class="site-home-art rounded-3xl bg-gradient-to-br from-sage-soft via-sage-soft/60 to-transparent dark:from-sage-soft-dark dark:via-sage-soft-dark/60">
-          <%= image_tag setting.home_page_image_name, alt: "Recycle Your Tree", class: "site-home-image" %>
-        </div>
-
-        <div class="site-home-heading">
-          <div>
+          <div class="site-home-heading">
             <p class="site-eyebrow text-sage-deep dark:text-sage-deep-dark">Holiday tree pickup</p>
             <h1 class="site-title text-ink dark:text-ink-dark"><%= setting.is_pickup_notice_enabled? ? "Pickups are underway" : "Make a Reservation" %></h1>
           </div>
+          <%= image_tag setting.home_page_image_name, alt: "Recycle Your Tree", class: "site-home-image" %>
         </div>
         <p class="site-lede text-ink-soft dark:text-ink-soft-dark">
           <% if setting.is_pickup_notice_enabled? %>
@@ -72,18 +69,46 @@
     <section class="site-section border-line dark:border-line-dark" aria-labelledby="pickup-steps">
       <h2 id="pickup-steps" class="site-subtitle text-ink dark:text-ink-dark">How pickup works</h2>
       <ol class="site-steps site-steps--three">
-        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
-          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
-          Reserve a pickup time for your tree.
-        </li>
-        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
-          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
-          We confirm the details by email.
-        </li>
-        <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
-          <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
-          Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.
-        </li>
+        <% if setting.is_pickup_notice_enabled? %>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.
+          </li>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            Remove decorations and tinsel so we can recycle it.
+          </li>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            Contact us if we can't find your tree.
+          </li>
+        <% elsif !setting.accepting_reservations? %>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            Reservations are closed for this pickup.
+          </li>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            We confirm existing reservations by email.
+          </li>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.
+          </li>
+        <% else %>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            Reserve a pickup time for your tree.
+          </li>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            We confirm the details by email.
+          </li>
+          <li class="site-step text-ink-soft border-line dark:text-ink-soft-dark dark:border-line-dark">
+            <span aria-hidden="true" class="site-step-chip bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark"></span>
+            Leave your tree where we can find it by <%= pickup_start_time %> on <%= pickup_day %>.
+          </li>
+        <% end %>
       </ol>
     </section>
   </div>

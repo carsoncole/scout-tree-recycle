@@ -9,9 +9,11 @@
     Pickups start at
     <time datetime="<%= setting.event_pickup_start.iso8601 %>"><%= pickup_start_time %></time>.
   </p>
-  <p class="site-deadline-badge m-0 bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
-    <span class="site-deadline-badge-label">Sign up by</span>
-    <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
-  </p>
+  <% if setting.accepting_reservations? %>
+    <p class="site-deadline-badge m-0 bg-warning-badge text-warning-badge-text dark:bg-warning-badge-dark dark:text-warning-badge-text-dark">
+      <span class="site-deadline-badge-label">Sign up by</span>
+      <time datetime="<%= setting.event_sign_up_deadline.iso8601 %>"><%= sign_up_deadline %></time>
+    </p>
+  <% end %>
   <%= yield %>
 </div>

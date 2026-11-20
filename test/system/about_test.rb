@@ -18,6 +18,7 @@ class AboutTest < ApplicationSystemTestCase
 
     assert_text "Reservations are closed right now"
     assert_no_link "Reserve your pickup"
+    assert_no_selector ".site-deadline-badge"
   end
 
   test "should display contact info" do
@@ -32,49 +33,48 @@ class AboutTest < ApplicationSystemTestCase
     visit about_url
 
     assert_text "John Doe"
-    assert_text "john@example.com"
-    assert_text "206-555-1212"
-    assert_text "Contact John Doe at john@example.com or 206-555-1212"
-    assert_text "You can also text us at 206-555-3434"
-    assert_selector "h4", text: "Questions?"
+    assert_link "john@example.com", href: "mailto:john@example.com"
+    assert_link "206-555-1212", href: "tel:206-555-1212"
+    assert_link "206-555-3434", href: "sms:206-555-3434"
+    assert_selector "h3", text: "Questions?"
 
     setting.update(contact_name: nil, contact_sms: nil)
     visit about_url
 
     assert_no_text "John Doe"
-    assert_text "Contact us at john@example.com or 206-555-1212"
-    assert_selector "h4", text: "Questions?"
+    assert_link "john@example.com", href: "mailto:john@example.com"
+    assert_link "206-555-1212", href: "tel:206-555-1212"
+    assert_selector "h3", text: "Questions?"
 
     setting.update(contact_email: nil)
     visit about_url
 
     assert_no_text "john@example.com"
-    assert_text "Contact us at 206-555-1212"
-    assert_selector "h4", text: "Questions?"
+    assert_link "206-555-1212", href: "tel:206-555-1212"
+    assert_selector "h3", text: "Questions?"
 
     setting.update(contact_phone: nil)
     visit about_url
 
-    assert_no_text "Contact us"
-    assert_no_selector "h4", text: "Questions?"
+    assert_no_selector "h3", text: "Questions?"
 
     setting.update(contact_email: "jill@example.com")
     visit about_url
 
-    assert_text "Contact us at jill@example.com"
-    assert_selector "h4", text: "Questions?"
+    assert_link "jill@example.com", href: "mailto:jill@example.com"
+    assert_selector "h3", text: "Questions?"
 
     setting.update(contact_email: nil, contact_sms: "206-555-3434")
     visit about_url
 
-    assert_text "Text us at 206-555-3434"
-    assert_selector "h4", text: "Questions?"
+    assert_link "206-555-3434", href: "sms:206-555-3434"
+    assert_selector "h3", text: "Questions?"
 
     setting.update(contact_sms: nil, contact_name: "Jill Doe")
     visit about_url
 
-    assert_text "Contact Jill Doe"
-    assert_selector "h4", text: "Questions?"
+    assert_text "Jill Doe"
+    assert_selector "h3", text: "Questions?"
   end
 
   test "should display on day of pickup info" do

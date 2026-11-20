@@ -4,6 +4,8 @@ class Admin::SessionsTest < ApplicationSystemTestCase
   test "visiting root" do
     visit admin_root_url
     assert_text "Sign in"
+    assert_no_link "Pickups Portal"
+    assert_no_link "Website"
     assert_field "Email"
     assert_field "Password"
     assert_link "Forgot your password?"
@@ -17,6 +19,8 @@ class Admin::SessionsTest < ApplicationSystemTestCase
     fill_in "Password", with: "password123456789"
     click_button "Sign in"
     assert_text "Reservations"
+    assert_link "Pickups Portal"
+    assert_link "Website"
     find(".admin-user-menu__summary").click
     click_link "Log out"
     assert_text "Sign in to your account"

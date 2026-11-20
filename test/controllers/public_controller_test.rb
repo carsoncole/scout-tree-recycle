@@ -91,6 +91,9 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       assert_includes response.body, "issues with your reservation or tree pickup"
       assert_select "form", count: 0
       assert_select "a", text: "Reserve a pickup", count: 0
+      assert_select ".site-deadline-badge", count: 0
+      assert_includes response.body, "Remove decorations and tinsel"
+      assert_not_includes response.body, "Reserve a pickup time for your tree."
     end
 
     test "pickup notice includes only the contact details that are set" do

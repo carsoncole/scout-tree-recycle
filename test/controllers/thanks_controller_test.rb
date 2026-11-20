@@ -39,6 +39,17 @@ class ThanksControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, Setting::DEFAULT_THANK_YOU_MESSAGE
   end
 
+  test "omits the image frame when a thank has no image bytes" do
+    thank = thanks(:one)
+    thank.update_columns(image: "")
+
+    get thanks_url
+
+    assert_response :success
+    assert_includes response.body, thank.content
+    assert_select "img[src=?]", image_thank_path(thank, v: thank.updated_at.to_i), count: 0
+  end
+
   test "displays a thank that has no content" do
     thank = Thank.create!(content: nil, image: "bytes", image_content_type: "image/jpeg")
 

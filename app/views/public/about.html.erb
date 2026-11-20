@@ -64,28 +64,10 @@
         </p>
       </section>
 
-      <% contact_name = setting.contact_name.presence %>
-      <% contact_methods = [setting.contact_email.presence, setting.contact_phone.presence].compact %>
-      <% contact_sms = setting.contact_sms.presence %>
-
-      <% if contact_name || contact_methods.any? || contact_sms %>
+      <% if setting.contact_name.presence || setting.contact_email.presence || setting.contact_phone.presence || setting.contact_sms.presence %>
         <section class="site-section border-line dark:border-line-dark">
-          <h4 class="text-ink dark:text-ink-dark">Questions?</h4>
-          <p>
-            <% if contact_methods.any? %>
-              Contact <%= contact_name || "us" %> at <%= contact_methods.join(" or ") %>.
-            <% elsif contact_name %>
-              Contact <%= contact_name %>.
-            <% end %>
-
-            <% if contact_sms %>
-              <% if contact_name || contact_methods.any? %>
-                You can also text us at <%= contact_sms %>.
-              <% else %>
-                Text us at <%= contact_sms %>.
-              <% end %>
-            <% end %>
-          </p>
+          <h3 class="text-ink dark:text-ink-dark">Questions?</h3>
+          <%= render "public/contact_details" %>
         </section>
       <% end %>
     </div>

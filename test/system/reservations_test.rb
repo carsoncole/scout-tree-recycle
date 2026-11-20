@@ -179,6 +179,9 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_link "206-555-3434", href: "sms:206-555-3434"
     assert_no_button "Create Reservation"
     assert_no_link "Reserve a pickup"
+    assert_no_selector ".site-deadline-badge"
+    assert_text "Remove decorations and tinsel"
+    assert_no_text "Reserve a pickup time for your tree."
   end
 
   test "root shows the closed notice when reservations are closed" do
@@ -190,7 +193,9 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "We're not taking reservations right now"
     assert_text Setting.instance.reservations_closed_message_text
     assert_text /this year's pickup/i
-    assert_selector ".site-deadline-badge", text: /sign up by/i
+    assert_no_selector ".site-deadline-badge"
+    assert_text "Reservations are closed for this pickup."
+    assert_no_text "Reserve a pickup time for your tree."
     assert_no_selector "form#new_reservation"
     assert_link "Read about how the pickup works", href: about_path
   end

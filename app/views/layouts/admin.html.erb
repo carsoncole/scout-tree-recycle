@@ -29,7 +29,6 @@
     <a class="site-skip-link bg-ink text-surface dark:bg-ink-dark dark:text-page-dark" href="#admin-main">Skip to content</a>
 
     <% if Setting.exists? %>
-      <% unviewed_sms_count = Sms.incoming.unviewed.count %>
       <header class="admin-header border-b border-line bg-page dark:border-line-dark dark:bg-page-dark">
         <div class="admin-header-inner">
           <div class="admin-brand">
@@ -37,6 +36,8 @@
             <span class="admin-brand-meta text-ink-soft dark:text-ink-soft-dark">Admin</span>
           </div>
 
+          <% if Current.user %>
+          <% unviewed_sms_count = Sms.incoming.unviewed.count %>
           <nav class="admin-nav" aria-label="Admin">
             <div class="admin-nav-group">
               <span class="admin-nav-group-label text-muted dark:text-muted-dark">Operations</span>
@@ -90,6 +91,7 @@
               <%= external_link_icon %>
             <% end %>
           </nav>
+          <% end %>
 
           <div class="admin-account">
             <% if Current.user %>

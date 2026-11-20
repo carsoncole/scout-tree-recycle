@@ -1,0 +1,32 @@
+<% contact_name = setting.contact_name.presence %>
+<% contact_email = setting.contact_email.presence %>
+<% contact_phone = setting.contact_phone.presence %>
+<% contact_sms = setting.contact_sms.presence %>
+<% contact_link_class = "font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" %>
+
+<dl class="m-0 grid gap-3 text-sm">
+  <% if contact_name %>
+    <div>
+      <dt class="text-muted dark:text-muted-dark">Contact</dt>
+      <dd class="m-0 font-medium text-ink dark:text-ink-dark"><%= contact_name %></dd>
+    </div>
+  <% end %>
+  <% if contact_sms %>
+    <div>
+      <dt class="text-muted dark:text-muted-dark">Message us (SMS)</dt>
+      <dd class="m-0"><%= link_to contact_sms, "sms:#{contact_sms}", class: contact_link_class %></dd>
+    </div>
+  <% end %>
+  <% if contact_email %>
+    <div>
+      <dt class="text-muted dark:text-muted-dark">Email</dt>
+      <dd class="m-0"><%= mail_to contact_email, contact_email, class: contact_link_class %></dd>
+    </div>
+  <% end %>
+  <% if contact_phone %>
+    <div>
+      <dt class="text-muted dark:text-muted-dark">Phone</dt>
+      <dd class="m-0"><%= link_to contact_phone, "tel:#{contact_phone}", class: contact_link_class %></dd>
+    </div>
+  <% end %>
+</dl>

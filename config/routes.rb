@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "reservations#index"
     resource :session, only: [ :new, :create, :destroy ]
+    resource :profile, only: [ :show, :update ]
     resources :reservations, except: [ :new, :create ] do
       member do
         post :geocode

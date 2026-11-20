@@ -19,4 +19,19 @@ class User < ApplicationRecord
   def user?
     role == "user"
   end
+
+  # Updates this account's email and, when supplied, password.
+  # Role is ignored. The current password is required.
+  def update_profile(attributes)
+    attributes = attributes.to_h.with_indifferent_access.except(:role)
+    attributes[:password_challenge] = attributes[:password_challenge].to_s
+
+    if attributes[:password].blank? && attributes[:password_confirmation].blank?
+      attributes = attributes.except(:password, :password_confirmation)
+    elsif attributes[:password].present?
+      attributes[:password_confirmation] = attributes[:password_confirmation].to_s
+    end
+
+    update(attributes)
+  end
 end

@@ -97,12 +97,13 @@
             <% if Current.user %>
               <details class="admin-user-menu">
                 <summary class="admin-user-menu__summary text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark">
-                  <span class="admin-user-menu__email"><%= Current.user.email %></span>
+                  <span class="admin-user-menu__email"><%= Current.user.email_in_database.presence || Current.user.email %></span>
                   <svg class="admin-user-menu__chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                   </svg>
                 </summary>
                 <div class="admin-user-menu__panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+                  <%= link_to "Profile", admin_profile_path, class: "admin-user-menu__item text-ink-soft hover:bg-stone hover:text-ink dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark" %>
                   <%= link_to "Log out", admin_session_path, data: { turbo_method: :delete }, class: "admin-user-menu__item text-ink-soft hover:bg-stone hover:text-ink dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark" %>
                 </div>
               </details>

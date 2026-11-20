@@ -57,4 +57,71 @@ class UserTest < ActiveSupport::TestCase
     assert users(:user).user?
     assert_not users(:admin).user?
   end
+
+  test "update_profile changes email when the current password matches" do
+    user = users(:user)
+
+    assert user.update_profile(email: "fresh@example.com", password_challenge: "password123456789")
+    assert_equal "fresh@example.com", user.reload.email
+    assert user.authenticate("password123456789")
+  end
+
+  test "update_profile changes the password" do
+    user = users(:user)
+
+    assert user.update_profile(
+      email: user.email,
+      password: "another-password",
+      password_confirmation: "another-password",
+      password_challenge: "password123456789"
+    )
+    assert user.reload.authenticate("another-password")
+  end
+
+  test "update_profile leaves the password unchanged when the new password is blank" do
+    user = users(:admin)
+
+    assert user.update_profile(
+      email: "kept@example.com",
+      password: "",
+      password_confirmation: "",
+      password_challenge: "password123456789"
+    )
+    assert_equal "kept@example.com", user.reload.email
+    assert user.authenticate("password123456789")
+  end
+
+  test "update_profile rejects a wrong current password" do
+    user = users(:user)
+
+    assert_not user.update_profile(email: "fresh@example.com", password_challenge: "nope")
+    assert_includes user.errors[:password_challenge], "is incorrect"
+    assert_equal "three@example.com", user.reload.email
+  end
+
+  test "update_profile requires the current password" do
+    user = users(:user)
+
+    assert_not user.update_profile(email: "fresh@example.com")
+    assert_equal "three@example.com", user.reload.email
+  end
+
+  test "update_profile ignores role" do
+    user = users(:user)
+
+    assert user.update_profile(email: user.email, role: "admin", password_challenge: "password123456789")
+    assert_equal "user", user.reload.role
+  end
+
+  test "update_profile rejects a password without a matching confirmation" do
+    user = users(:user)
+
+    assert_not user.update_profile(
+      email: user.email,
+      password: "another-password",
+      password_challenge: "password123456789"
+    )
+    assert user.errors[:password_confirmation].any?
+    assert user.reload.authenticate("password123456789")
+  end
 end

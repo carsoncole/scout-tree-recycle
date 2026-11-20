@@ -7,8 +7,10 @@ class DataResetTest < ActiveSupport::TestCase
     assert_equal "RESET ALL", DataReset.confirmation_word("all")
   end
 
-  test "only destructive scopes require a confirmation word" do
-    assert_equal DataReset::SCOPES - DataReset::CONFIRMATION_WORDS.keys, %w[sample_data]
+  test "every scope requires a confirmation word" do
+    DataReset::SCOPES.each do |scope|
+      assert DataReset::CONFIRMATION_WORDS.key?(scope), "expected a confirmation word for #{scope}"
+    end
   end
 
   test "confirmed? matches the scope's word case-insensitively" do
@@ -23,6 +25,11 @@ class DataResetTest < ActiveSupport::TestCase
   test "raises for an unknown scope" do
     assert_raises(ArgumentError) do
       DataReset.new(scope: "users").perform!
+    end
+
+    # Loading sample data is handled by LoadSampleDataJob, not DataReset.
+    assert_raises(ArgumentError) do
+      DataReset.new(scope: "sample_data").perform!
     end
   end
 
@@ -83,23 +90,6 @@ class DataResetTest < ActiveSupport::TestCase
     log = Log.order(:created_at).last
     assert_equal "system", log.log_type
     assert_includes log.message, "All data was reset to defaults"
-    assert_equal users(:admin).email, log.context["user"]
-  end
-
-  test "loading sample data creates the sample records and logs the event" do
-    result = DataReset.new(scope: "sample_data", user: users(:admin)).perform!
-
-    assert_not result.signed_out
-
-    Datasets::SeedData::ZONES.each do |attrs|
-      assert Zone.exists?(name: attrs[:name]), "expected seed zone #{attrs[:name]}"
-    end
-    assert_operator Reservation.count, :>, 50
-    assert_operator Contact.count, :>, 100
-
-    log = Log.order(:created_at).last
-    assert_equal "system", log.log_type
-    assert_includes log.message, "Sample data was loaded"
     assert_equal users(:admin).email, log.context["user"]
   end
 end

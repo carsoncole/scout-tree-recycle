@@ -1,7 +1,7 @@
 # Loads example Bainbridge Island zones, routes, route points, and sample
 # records (drivers, reservations, contacts). Backs the `sample_data:load`
-# rake task and the admin "reset all data" action. Intended for
-# development/demo use.
+# rake task and the admin "Load Sample Data" action (LoadSampleDataJob).
+# Intended for development/demo use.
 class SampleData
   def self.load!
     require "faker"

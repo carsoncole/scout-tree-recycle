@@ -591,9 +591,12 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       accept_confirm { click_on "Load Sample Data" }
     end
 
-    assert_text "Sample data has been loaded"
+    assert_text "Sample data load queued"
+
+    perform_enqueued_jobs
     assert_operator Reservation.count, :>, 50
     assert_operator Contact.count, :>, 100
+    assert Log.of_type("job").exists?
   end
 
   test "a non-admin sees the data management panel but cannot act" do

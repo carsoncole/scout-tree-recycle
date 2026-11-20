@@ -120,9 +120,9 @@
         <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">How long contacts are kept is set on the close event page.</p>
       </div>
       <% if Current.user&.admin? %>
-        <%= link_to "Close Event", admin_close_event_path, class: admin_button_class(variant: :danger) %>
+        <%= link_to "Close Event", admin_close_event_path, class: "#{admin_button_class(variant: :danger)} ml-auto shrink-0" %>
       <% else %>
-        <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+        <span class="<%= admin_badge_class("neutral") %> ml-auto shrink-0">Admin only</span>
       <% end %>
     </div>
     <% unless Current.user&.admin? %>
@@ -162,7 +162,7 @@
               submit_label: "Confirm Delete All Reservations",
               confirm: "Delete all reservations? This permanently deletes every reservation and cannot be undone." %>
         <% else %>
-          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+          <span class="<%= admin_badge_class("neutral") %> ml-auto shrink-0">Admin only</span>
         <% end %>
       </div>
       <div class="admin-toggle-row border-line dark:border-line-dark">
@@ -183,24 +183,25 @@
               submit_label: "Confirm Delete All Contacts",
               confirm: "Delete all contacts? This permanently deletes every contact and cannot be undone." %>
         <% else %>
-          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+          <span class="<%= admin_badge_class("neutral") %> ml-auto shrink-0">Admin only</span>
         <% end %>
       </div>
       <div class="admin-toggle-row border-line dark:border-line-dark">
         <div class="admin-toggle-copy">
           <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Load sample data</h3>
           <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
-            Creates the example Bainbridge Island zones, routes, route points, drivers, reservations, and contacts.
-            Intended for local development and demos — it adds records to the current database.
+            Queues a background job that creates the example Bainbridge Island zones, routes, route points, drivers, reservations, and contacts.
+            Intended for local development and demos — it adds records to the current database, and the completed run is recorded in the System Logs.
           </p>
         </div>
         <% if Current.user&.admin? %>
           <%= button_to "Load Sample Data", admin_data_reset_path,
               params: { "data_reset[scope]" => "sample_data" },
               class: admin_button_class(variant: :secondary),
+              form: { class: "ml-auto shrink-0" },
               data: { turbo_confirm: "Load sample data? This adds example zones, routes, drivers, reservations, and contacts to the database." } %>
         <% else %>
-          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+          <span class="<%= admin_badge_class("neutral") %> ml-auto shrink-0">Admin only</span>
         <% end %>
       </div>
     </div>
@@ -227,7 +228,7 @@
             submit_label: "Confirm Reset All Data",
             confirm: "Are you sure? This permanently deletes ALL data, including users and settings. You will be signed out and returned to first-run setup." %>
       <% else %>
-        <span class="<%= admin_badge_class("danger") %>">Admin only</span>
+        <span class="<%= admin_badge_class("danger") %> ml-auto shrink-0">Admin only</span>
       <% end %>
     </div>
     <% if Current.user&.admin? %>

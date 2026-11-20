@@ -28,7 +28,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
   test "non-admin users cannot load sample data" do
     sign_in users(:user)
 
-    assert_no_changes -> { Reservation.count } do
+    assert_no_enqueued_jobs only: LoadSampleDataJob do
       post admin_data_reset_path, params: { data_reset: { scope: "sample_data" } }
     end
 
@@ -130,17 +130,30 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
     assert_equal users(:admin).email, log.context["user"]
   end
 
-  test "admin can load sample data without a typed confirmation word" do
+  test "admin can queue the sample data load without a typed confirmation word" do
     sign_in users(:admin)
 
-    assert_difference -> { Log.where(log_type: "system").count }, 1 do
+    assert_enqueued_with(job: LoadSampleDataJob) do
       post admin_data_reset_path, params: { data_reset: { scope: "sample_data" } }
     end
 
     assert_redirected_to admin_settings_section_path("system")
-    assert_match "Sample data has been loaded", flash[:notice]
+    assert_match "queued", flash[:notice]
+  end
+
+  test "admin can load sample data in the background job" do
+    sign_in users(:admin)
+
+    assert_difference -> { Log.of_type("job").count }, 1 do
+      perform_enqueued_jobs do
+        post admin_data_reset_path, params: { data_reset: { scope: "sample_data" } }
+      end
+    end
+
+    assert_redirected_to admin_settings_section_path("system")
     assert_operator Reservation.count, :>, 50
     assert_operator Contact.count, :>, 100
+    assert Log.of_type("job").where(error_type: "LoadSampleDataJob").exists?
   end
 
   test "a failed reset rolls back and reports an error" do

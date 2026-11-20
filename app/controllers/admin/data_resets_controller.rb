@@ -4,11 +4,20 @@ class Admin::DataResetsController < Admin::BaseController
   def create
     scope = params.dig(:data_reset, :scope).to_s
 
+    # Loading sample data is additive: it needs no typed confirmation, and it
+    # runs in a background job because it takes long enough to time out the
+    # request. The outcome is recorded in the System Logs with the "job" type.
+    if scope == "sample_data"
+      LoadSampleDataJob.perform_later(user: Current.user)
+      return redirect_to admin_settings_section_path("system"),
+        notice: "Sample data load queued. Check the System Logs for results."
+    end
+
     unless DataReset::SCOPES.include?(scope)
       return redirect_to admin_settings_section_path("system"), alert: "Unknown data reset action."
     end
 
-    # Loading sample data is additive; only destructive actions need the word.
+    # Destructive actions require a typed confirmation word, validated server-side.
     if DataReset::CONFIRMATION_WORDS.key?(scope) && !DataReset.confirmed?(scope, params[:confirmation])
       return redirect_to admin_settings_section_path("system"),
         alert: "Type #{DataReset.confirmation_word(scope)} to confirm this destructive action."
@@ -46,8 +55,6 @@ class Admin::DataResetsController < Admin::BaseController
     when "contacts"
       deleted = result.deleted_count == 1 ? "1 contact has" : "#{result.deleted_count} contacts have"
       "#{deleted} been deleted."
-    when "sample_data"
-      "Sample data has been loaded. Example zones, routes, route points, drivers, reservations, and contacts are ready to explore."
     else
       "Done."
     end

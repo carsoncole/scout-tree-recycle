@@ -2,13 +2,16 @@
 # controls on /admin/settings/system. Destructive operations require a typed
 # confirmation word that is validated server-side (see Admin::DataResetsController).
 #
+# Loading sample data is additive rather than destructive, so it is not a
+# reset scope; it is handled by LoadSampleDataJob.
+#
 # Like EventClosure, this is a plain model object: controllers stay skinny and
 # the destructive logic is testable on its own.
 class DataReset
-  SCOPES = %w[reservations contacts all sample_data].freeze
+  SCOPES = %w[reservations contacts all].freeze
 
   # Destructive scopes require a typed confirmation word, validated
-  # server-side. Loading sample data is additive, so it is not listed here.
+  # server-side.
   CONFIRMATION_WORDS = {
     "reservations" => "DELETE",
     "contacts" => "DELETE",
@@ -56,7 +59,6 @@ class DataReset
     when "reservations" then delete_reservations!
     when "contacts" then delete_contacts!
     when "all" then reset_all!
-    when "sample_data" then load_sample_data!
     else
       raise ArgumentError, "Unknown data reset scope: #{@scope}"
     end
@@ -88,7 +90,7 @@ class DataReset
     # One transaction: if reloading the default templates fails, the
     # destructive deletes roll back instead of leaving an emptied database.
     # Sample data is not loaded here — it is a separate, manually triggered
-    # action (see load_sample_data!).
+    # action (see LoadSampleDataJob).
     ActiveRecord::Base.transaction do
       TABLES.each { |table| delete_table_rows!(table) }
 
@@ -100,14 +102,6 @@ class DataReset
     log_system_event("All data was reset to defaults. Every application table was cleared and the default email templates were reloaded.")
 
     Result.new(scope: @scope, deleted_count: TABLES.size, signed_out: true)
-  end
-
-  def load_sample_data!
-    SampleData.load!
-
-    log_system_event("Sample data was loaded manually. Example zones, routes, route points, drivers, reservations, and contacts were created.")
-
-    Result.new(scope: @scope, deleted_count: nil, signed_out: false)
   end
 
   def log_system_event(message)

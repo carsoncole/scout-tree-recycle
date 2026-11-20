@@ -60,6 +60,20 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     assert Log.where(error_type: "ContactCsvImport", severity: "error").exists?
   end
 
+  test "non-admin users can view data but cannot export or import" do
+    sign_in users(:user)
+
+    get admin_data_url
+    assert_response :success
+    assert_match "Read-only access", response.body
+    assert_no_match "Import Contacts CSV", response.body
+    assert_no_match "Export Reservations CSV", response.body
+
+    get export_admin_data_url(format: :csv)
+    assert_redirected_to admin_data_url
+    assert_equal "You are not authorized to perform this data action.", flash[:alert]
+  end
+
   test "should require authentication to schedule or email exports" do
     patch schedule_admin_data_url
     assert_redirected_to new_admin_session_url

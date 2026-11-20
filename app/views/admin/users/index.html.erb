@@ -15,52 +15,35 @@
       </div>
     </div>
 
+    <div class="admin-table-wrap">
+      <table class="admin-table text-ink dark:text-ink-dark">
+        <thead>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="<%= admin_th_class %>">Area</th>
+            <th scope="col" class="<%= admin_th_class %>">Privilege</th>
+            <th scope="col" class="<%= admin_th_class %> admin-table-check">User</th>
+            <th scope="col" class="<%= admin_th_class %> admin-table-check">Admin</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% privileges = admin_role_privileges %>
+          <% privileges.each_with_index do |privilege, index| %>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <% if index.zero? || privileges[index - 1][:area] != privilege[:area] %>
+                <th scope="rowgroup" rowspan="<%= privileges.count { |row| row[:area] == privilege[:area] } %>" class="<%= admin_th_class %> admin-table-area">
+                  <%= privilege[:area] %>
+                </th>
+              <% end %>
+              <td class="<%= admin_td_class %>"><%= privilege[:label] %></td>
+              <td class="<%= admin_td_class %> admin-table-check"><%= admin_privilege_mark(privilege[:user]) %></td>
+              <td class="<%= admin_td_class %> admin-table-check"><%= admin_privilege_mark(privilege[:admin]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
     <div class="admin-panel-body">
-      <div class="grid gap-5 md:grid-cols-2">
-        <div>
-          <h3 class="admin-section-title text-ink dark:text-ink-dark">User role</h3>
-          <dl class="admin-detail-list admin-detail-list--spaced">
-            <% [
-              "Operations: reservations, pickups, donations, and SMS (full access)",
-              "Content: marketing, templates, images, contacts, and thank-you content (full access)",
-              "Routing setup: routes, zones, drivers, and route points (full access)",
-              "System: logs (view/delete), configuration (view), and jobs dashboard (full access)",
-              "Data: view only (cannot import, export, schedule, or email reservation data)"
-            ].each do |privilege| %>
-              <div class="admin-detail border-line dark:border-line-dark">
-                <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Allowed</dt>
-                <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= privilege %></dd>
-              </div>
-            <% end %>
-            <% [
-              "Users: view list and role privileges only (cannot create, edit, or delete users)",
-              "Settings & operations: can view settings and the close-event page, but cannot update settings, toggle flags, send test email, change retention, or close the event"
-            ].each do |privilege| %>
-              <div class="admin-detail border-line dark:border-line-dark">
-                <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Limited</dt>
-                <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= privilege %></dd>
-              </div>
-            <% end %>
-          </dl>
-        </div>
-
-        <div>
-          <h3 class="admin-section-title text-ink dark:text-ink-dark">Admin role</h3>
-          <dl class="admin-detail-list admin-detail-list--spaced">
-            <% [
-              "Full access to all system features and settings",
-              "Can manage user accounts and roles",
-              "Can perform all data actions, modify settings (including retention/operations), and run protected operations"
-            ].each do |privilege| %>
-              <div class="admin-detail border-line dark:border-line-dark">
-                <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Full access</dt>
-                <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= privilege %></dd>
-              </div>
-            <% end %>
-          </dl>
-
-        </div>
-      </div>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The last admin account cannot be deleted. From Profile, a person can change their own email and password, and cannot change their own role. The thank-you message is the only setting a user can save.</p>
     </div>
   </section>
 

@@ -403,6 +403,48 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Enter a valid email address to receive the test message.", flash[:alert]
   end
 
+  test "non-admin users cannot update settings" do
+    sign_in users(:user)
+    setting = Setting.first
+    previous_city = setting.default_city
+
+    patch admin_setting_path(setting), params: {
+      setting: { default_city: "New Town" },
+      section: "site_details"
+    }
+
+    assert_redirected_to admin_settings_path
+    assert_equal "You are not authorized to update settings.", flash[:alert]
+    assert_equal previous_city, setting.reload.default_city
+  end
+
+  test "non-admin users can update the thank you message only" do
+    sign_in users(:user)
+    setting = Setting.first
+    previous_city = setting.default_city
+
+    patch admin_setting_path(setting), params: {
+      setting: { thank_you_message: "Custom thank you message", default_city: "New Town" },
+      return_to: "admin_thanks"
+    }
+
+    assert_redirected_to admin_thanks_path
+    setting.reload
+    assert_equal "Custom thank you message", setting.thank_you_message
+    assert_equal previous_city, setting.default_city
+  end
+
+  test "non-admin users cannot toggle settings" do
+    sign_in users(:user)
+    setting = Setting.first
+    setting.update!(is_sms_enabled: false)
+
+    patch toggle_admin_setting_path(setting), params: { setting: "is_sms_enabled", value: true }, as: :json
+
+    assert_response :unauthorized
+    assert_not setting.reload.is_sms_enabled?
+  end
+
   test "non-admin users cannot send a test email" do
     sign_in users(:user)
     configure_email!

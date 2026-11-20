@@ -7,10 +7,27 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "user should not get index" do
+  test "user can view the privilege table" do
     sign_in(users(:user))
     get admin_users_url
     assert_response :success
+    assert_select "table" do
+      assert_select "th", text: "User"
+      assert_select "th", text: "Admin"
+      assert_select "td", text: "Delete all contacts"
+      assert_select "td", text: "Thank-you message and supporter thanks"
+      assert_select "td", text: "Create, edit, and delete users"
+    end
+
+    delete_all = css_select("tbody tr").find { |row| row.text.include?("Delete all contacts") }
+    assert_includes delete_all.text, "Not allowed"
+    assert_includes delete_all.text, "Allowed"
+
+    thanks = css_select("tbody tr").find { |row| row.text.include?("Thank-you message and supporter thanks") }
+    assert_equal 2, thanks.text.scan("Allowed").size
+
+    manage_users = css_select("tbody tr").find { |row| row.text.include?("Create, edit, and delete users") }
+    assert_includes manage_users.text, "Not allowed"
   end
 
   test "admin should get new" do

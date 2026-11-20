@@ -28,6 +28,48 @@ module AdminHelper
     "not_needed" => "neutral"
   }.freeze
 
+  # What each signed-in role can do. Matches the controller checks.
+  # :user and :admin are true when that role is allowed.
+  ADMIN_ROLE_PRIVILEGES = [
+    { area: "Operations", label: "Reservations, pickups, donations, and SMS", user: true, admin: true },
+    { area: "Content", label: "Marketing, templates, images, and contacts", user: true, admin: true },
+    { area: "Content", label: "Delete all contacts", user: false, admin: true },
+    { area: "Content", label: "Thank-you message and supporter thanks", user: true, admin: true },
+    { area: "Routing", label: "Routes, zones, drivers, and route points", user: true, admin: true },
+    { area: "System", label: "Logs, including delete and delete all", user: true, admin: true },
+    { area: "System", label: "Configuration report", user: true, admin: true },
+    { area: "System", label: "Jobs dashboard, including retry, discard, and queue pause", user: true, admin: true },
+    { area: "Data", label: "View the data page and database settings", user: true, admin: true },
+    { area: "Data", label: "Import contacts, and export, schedule, or email reservations", user: false, admin: true },
+    { area: "Users", label: "View the user list and these privileges", user: true, admin: true },
+    { area: "Users", label: "Create, edit, and delete users", user: false, admin: true },
+    { area: "Settings", label: "View settings and the close-event page", user: true, admin: true },
+    { area: "Settings", label: "Update settings, toggles, test email, retention, and close the event", user: false, admin: true },
+    { area: "Account", label: "Edit own email and password", user: true, admin: true }
+  ].freeze
+
+  def admin_role_privileges
+    ADMIN_ROLE_PRIVILEGES
+  end
+
+  def admin_privilege_mark(allowed)
+    if allowed
+      tag.span(class: "text-lg font-semibold leading-none text-positive dark:text-positive-dark") do
+        safe_join([
+          tag.span("✓", aria: { hidden: true }),
+          tag.span("Allowed", class: "sr-only")
+        ])
+      end
+    else
+      tag.span(class: "text-lg leading-none text-muted dark:text-muted-dark") do
+        safe_join([
+          tag.span("—", aria: { hidden: true }),
+          tag.span("Not allowed", class: "sr-only")
+        ])
+      end
+    end
+  end
+
   def admin_nav_class(active)
     [ ADMIN_NAV_CLASSES, (ADMIN_NAV_ACTIVE_CLASSES if active) ].compact.join(" ")
   end

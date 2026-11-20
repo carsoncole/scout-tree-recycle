@@ -15,13 +15,13 @@ class Admin::ThanksControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_admin_session_url
   end
 
-  test "redirects non-admin users to settings" do
+  test "lists thanks for non-admin users" do
     sign_in users(:user)
 
     get admin_thanks_url
 
-    assert_redirected_to admin_settings_path
-    assert_equal "You are not authorized to manage thanks.", flash[:alert]
+    assert_response :success
+    assert_select "h1", text: "Thanks"
   end
 
   test "lists thanks for admins" do
@@ -94,15 +94,16 @@ class Admin::ThanksControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Thank was successfully deleted.", flash[:notice]
   end
 
-  test "does not let non-admin users create thanks" do
+  test "lets non-admin users create thanks" do
     sign_in users(:user)
 
-    assert_no_difference("Thank.count") do
+    assert_difference("Thank.count") do
       post admin_thanks_url, params: {
         thank: { content: "Thanks!", image_upload: fixture_file_upload("thanks.png", "image/png") }
       }
     end
 
-    assert_redirected_to admin_settings_path
+    assert_redirected_to admin_thanks_url
+    assert_equal "Thank was successfully created.", flash[:notice]
   end
 end

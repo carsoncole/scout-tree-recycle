@@ -1800,8 +1800,20 @@
   vertical-align: top;
 }
 
-.admin-table tbody tr:last-child td {
+.admin-table tbody tr:last-child td,
+.admin-table tbody tr:last-child th {
   border-bottom: 0;
+}
+
+.admin-table th.admin-table-area {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.admin-table .admin-table-check {
+  text-align: center;
+  width: 6rem;
+  white-space: nowrap;
 }
 
 .admin-table-actions {

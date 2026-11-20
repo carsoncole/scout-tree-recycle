@@ -14,6 +14,13 @@ class UsersMailerTest < ActionMailer::TestCase
     assert_includes body, "Troop 100"
     assert_includes body, "expires in 7 days"
     assert_match %r{/account_setups/[^"'\s<]+/edit}, body
+
+    html = mail.html_part.body.decoded
+    assert_includes html, "max-width: 600px"
+    assert_includes html, "word-break: break-all"
+    assert_no_match(/width="600"/, html)
+    assert_includes html, '<meta name="viewport" content="width=device-width, initial-scale=1.0" />'
+    assert_equal 1, html.scan(/<html/i).size
   end
 
   test "delivery is recorded in the email log" do

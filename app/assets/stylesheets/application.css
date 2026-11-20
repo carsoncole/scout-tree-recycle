@@ -1926,14 +1926,21 @@
 }
 
 .admin-destructive {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-width: 0;
+  max-width: 100%;
+}
+
+.admin-destructive[open] {
+  flex: 1 1 auto;
 }
 
 .admin-destructive summary {
   width: fit-content;
+  max-width: 100%;
   margin-left: auto;
   list-style: none;
+  white-space: normal;
 }
 
 .admin-destructive summary::-webkit-details-marker {
@@ -1990,6 +1997,15 @@
 
 .admin-toggle-row:last-child {
   padding-bottom: 0;
+}
+
+.admin-toggle-copy {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.admin-toggle-row:has(.admin-destructive[open]) .admin-toggle-copy {
+  flex: 0 1 auto;
 }
 
 .admin-toggle-title {

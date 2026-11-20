@@ -235,11 +235,18 @@
             </p>
           </div>
 
-          <%= render "admin/shared/destructive_details",
-                     summary_label: "Delete All Contacts",
-                     url: destroy_all_admin_contacts_path,
-                     submit_label: "Confirm Delete All Contacts" %>
+          <% if Current.user&.admin? %>
+            <%= render "admin/shared/destructive_details",
+                       summary_label: "Delete All Contacts",
+                       url: destroy_all_admin_contacts_path,
+                       submit_label: "Confirm Delete All Contacts" %>
+          <% else %>
+            <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+          <% end %>
         </div>
+        <% unless Current.user&.admin? %>
+          <p class="admin-hint mt-2 text-ink-soft dark:text-ink-soft-dark">Only admins can delete all contacts.</p>
+        <% end %>
       </div>
     <% end %>
   </section>

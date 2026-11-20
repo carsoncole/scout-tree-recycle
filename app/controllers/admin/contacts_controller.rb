@@ -40,6 +40,11 @@ class Admin::ContactsController < Admin::BaseController
   end
 
   def destroy_all
+    unless Current.user.admin?
+      redirect_to admin_marketing_index_path, alert: "You are not authorized to delete all contacts."
+      return
+    end
+
     if params[:confirmation].to_s.strip.casecmp?("DELETE")
       deleted_count = Contact.delete_all
       redirect_to admin_marketing_index_path,

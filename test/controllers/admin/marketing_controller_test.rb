@@ -6,6 +6,20 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     get admin_marketing_index_url
     assert_response :success
     assert_select "input[type='email'][value=?]", users(:admin).email, count: 2
+    assert_select "#delete-all-contacts", count: 1
+    assert_select "#delete-all-contacts form[action=?]", destroy_all_admin_contacts_path
+  end
+
+  test "user can use marketing except delete all contacts" do
+    sign_in(users(:user))
+    get admin_marketing_index_url
+    assert_response :success
+    assert_select "#delete-all-contacts", text: /Delete all contacts/
+    assert_select "#delete-all-contacts", text: /Admin only/
+    assert_select "#delete-all-contacts", text: /Only admins can delete all contacts/
+    assert_select "#delete-all-contacts form", count: 0
+    assert_select "a[href=?]", edit_admin_contact_path(contacts(:full))
+    assert_select "form[action=?]", admin_send_marketing_email_1_path
   end
 
   test "should get index with disabled emailing" do

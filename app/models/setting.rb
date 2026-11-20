@@ -70,7 +70,7 @@ class Setting < ApplicationRecord
     },
     "system" => {
       label: "System",
-      description: "Take the public site down for maintenance, review system errors, and close the current event."
+      description: "Take the public site down for maintenance, show the pickup notice, review system errors, and close the current event."
     }
   }.freeze
 
@@ -109,6 +109,7 @@ class Setting < ApplicationRecord
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
   attribute :is_log_notifications_enabled, :boolean, default: true
   attribute :is_maintenance_mode, :boolean, default: false
+  attribute :is_pickup_notice_enabled, :boolean, default: false
   attribute :is_reservations_export_schedule_enabled, :boolean, default: false
   attribute :reservations_export_time, :string, default: DEFAULT_RESERVATIONS_EXPORT_TIME
 
@@ -154,6 +155,12 @@ class Setting < ApplicationRecord
 
   def reservations_closed_message_text
     reservations_closed_message.presence || DEFAULT_RESERVATIONS_CLOSED_MESSAGE
+  end
+
+  # The home page form is shown only while reservations are open and the
+  # pickup notice is off. The notice replaces the form during pickups.
+  def accepting_reservations?
+    is_reservations_open? && !is_pickup_notice_enabled?
   end
 
   def donations_page_content_text

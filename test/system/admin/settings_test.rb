@@ -525,11 +525,50 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Make a Reservation"
   end
 
+  test "pickup notice toggle replaces the home page reservation form" do
+    Setting.instance.update!(
+      contact_name: "Alex Rivera",
+      contact_email: "alex@example.com",
+      contact_phone: nil,
+      contact_sms: nil
+    )
+
+    visit admin_settings_section_path("system")
+
+    within "section#system" do
+      find("#pickup-notice-toggle").click
+      assert_text "Saved"
+    end
+
+    assert Setting.instance.reload.is_pickup_notice_enabled?
+
+    visit root_url
+    assert_text "We're no longer taking reservations"
+    assert_text "Alex Rivera"
+    assert_link "alex@example.com", href: "mailto:alex@example.com"
+    assert_no_text "Phone"
+    assert_no_button "Create Reservation"
+
+    visit admin_settings_section_path("system")
+
+    within "section#system" do
+      find("#pickup-notice-toggle").click
+      assert_text "Saved"
+    end
+
+    assert_not Setting.instance.reload.is_pickup_notice_enabled?
+
+    visit root_url
+    assert_button "Create Reservation"
+    assert_no_text "We're no longer taking reservations"
+  end
+
   test "page links" do
     visit admin_settings_section_path("system")
     within "section#system" do
       assert_link "System Logs", href: admin_logs_path
       assert_selector "#maintenance-mode-toggle"
+      assert_selector "#pickup-notice-toggle"
     end
 
     visit admin_settings_section_path("pickups")

@@ -15,7 +15,7 @@
                description: setting.about_event_description_text %>
 
     <%= render "shared/pickup_panel", panel_class: "site-form-panel" do %>
-      <% if setting.is_reservations_open %>
+      <% if setting.accepting_reservations? %>
         <%= link_to "Reserve your pickup", root_path(anchor: "reserve"),
                     class: "site-button bg-sage text-surface hover:bg-sage-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark dark:focus-visible:outline-surface" %>
       <% else %>

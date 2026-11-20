@@ -155,6 +155,32 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_text "Reservation updated."
   end
 
+  test "root shows the pickup notice instead of the reservation form" do
+    Setting.instance.update!(
+      is_pickup_notice_enabled: true,
+      is_reservations_open: true,
+      contact_name: "Alex Rivera",
+      contact_email: "alex@example.com",
+      contact_phone: "206-555-1212",
+      contact_sms: "206-555-3434"
+    )
+
+    visit root_url
+
+    assert_title "Pickups Underway | #{Setting.instance.home_page_header}"
+    assert_selector "h1", text: "Pickups are underway"
+    assert_text "Our volunteers are collecting trees"
+    assert_text "We're no longer taking reservations"
+    assert_text "currently picking up trees"
+    assert_text "issues with your reservation or tree pickup"
+    assert_text "Alex Rivera"
+    assert_link "alex@example.com", href: "mailto:alex@example.com"
+    assert_link "206-555-1212", href: "tel:206-555-1212"
+    assert_link "206-555-3434", href: "sms:206-555-3434"
+    assert_no_button "Create Reservation"
+    assert_no_link "Reserve a pickup"
+  end
+
   test "root shows the closed notice when reservations are closed" do
     Setting.instance.update(is_reservations_open: false)
     visit root_url

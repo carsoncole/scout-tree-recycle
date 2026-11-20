@@ -433,6 +433,15 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert Setting.first.reload.is_maintenance_mode?
   end
 
+  test "should toggle the pickup notice" do
+    sign_in
+
+    patch toggle_admin_setting_path(Setting.first), params: { setting: "is_pickup_notice_enabled", value: true }, as: :json
+
+    assert_response :success
+    assert Setting.first.reload.is_pickup_notice_enabled?
+  end
+
   test "should reject an unknown toggle setting" do
     sign_in
 

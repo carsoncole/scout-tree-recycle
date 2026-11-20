@@ -1,10 +1,21 @@
 <% service_area = [ setting.default_city, setting.default_state ].compact_blank.join(", ") %>
-<% content_for :title, "#{setting.is_reservations_open ? "Make a Reservation" : "Reservations Closed"} | #{default_page_name}" %>
-<% content_for :description, "Schedule a Christmas tree pickup for #{pickup_date}. Sign up by #{sign_up_deadline}." %>
+<% home_title = if setting.is_pickup_notice_enabled?
+     "Pickups Underway"
+   elsif setting.is_reservations_open?
+     "Make a Reservation"
+   else
+     "Reservations Closed"
+   end %>
+<% content_for :title, "#{home_title} | #{default_page_name}" %>
+<% if setting.is_pickup_notice_enabled? %>
+  <% content_for :description, "We're no longer taking reservations and are currently picking up trees. Contact us if you have any issues with your reservation or tree pickup." %>
+<% else %>
+  <% content_for :description, "Schedule a Christmas tree pickup for #{pickup_date}. Sign up by #{sign_up_deadline}." %>
+<% end %>
 
 <section class="site-hero site-home-hero" id="reserve">
   <div class="site-container site-container--wide">
-    <div class="site-home-layout <%= "site-home-layout--closed" unless setting.is_reservations_open %>">
+    <div class="site-home-layout <%= "site-home-layout--closed" unless setting.accepting_reservations? %>">
       <div class="site-home-intro">
         <div class="site-home-art rounded-3xl bg-gradient-to-br from-sage-soft via-sage-soft/60 to-transparent dark:from-sage-soft-dark dark:via-sage-soft-dark/60">
           <%= image_tag setting.home_page_image_name, alt: "Recycle Your Tree", class: "site-home-image" %>
@@ -13,11 +24,15 @@
         <div class="site-home-heading">
           <div>
             <p class="site-eyebrow text-sage-deep dark:text-sage-deep-dark">Holiday tree pickup</p>
-            <h1 class="site-title text-ink dark:text-ink-dark">Make a Reservation</h1>
+            <h1 class="site-title text-ink dark:text-ink-dark"><%= setting.is_pickup_notice_enabled? ? "Pickups are underway" : "Make a Reservation" %></h1>
           </div>
         </div>
         <p class="site-lede text-ink-soft dark:text-ink-soft-dark">
-          Schedule your tree pickup for <strong class="font-semibold text-ink dark:text-ink-dark"><%= pickup_date %></strong> and we'll take it off your hands.
+          <% if setting.is_pickup_notice_enabled? %>
+            Our volunteers are collecting trees on <strong class="font-semibold text-ink dark:text-ink-dark"><%= pickup_date %></strong>.
+          <% else %>
+            Schedule your tree pickup for <strong class="font-semibold text-ink dark:text-ink-dark"><%= pickup_date %></strong> and we'll take it off your hands.
+          <% end %>
         </p>
         <% if service_area.present? %>
           <p class="site-home-service-area text-ink-soft dark:text-ink-soft-dark">Pickup in <%= service_area %>.</p>
@@ -29,12 +44,14 @@
         <% end %>
       </div>
 
-      <% if setting.is_reservations_open %>
+      <% if setting.accepting_reservations? %>
         <div class="site-home-form border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
           <h2 class="site-home-form-title text-ink dark:text-ink-dark">Reserve your pickup</h2>
           <p class="mt-0 mb-4 text-sm text-ink-soft dark:text-ink-soft-dark">It only takes a minute. We'll confirm the details by email.</p>
           <%= render "reservations/form" %>
         </div>
+      <% elsif setting.is_pickup_notice_enabled? %>
+        <%= render "public/pickup_notice" %>
       <% else %>
         <div class="site-home-form border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
           <p class="m-0">

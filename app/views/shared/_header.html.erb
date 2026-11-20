@@ -5,7 +5,7 @@
     <nav class="site-nav" aria-label="Primary">
       <%= link_to "About", about_path, class: "site-nav-link hidden sm:inline-block text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
       <%= link_to "Thank You", thanks_path, class: "site-nav-link hidden sm:inline-block text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
-      <% if setting&.is_reservations_open %>
+      <% if setting&.accepting_reservations? %>
         <%= link_to "Reserve a pickup", root_path(anchor: "reserve"), class: "site-button site-button--small bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
       <% end %>
     </nav>

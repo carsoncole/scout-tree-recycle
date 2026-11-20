@@ -2,7 +2,7 @@
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">System</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Take the public site down for maintenance, review system errors, and close the current event.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Take the public site down for maintenance, show the pickup notice, review system errors, and close the current event.</p>
     </div>
     <%= link_to admin_logs_path, class: admin_button_class(variant: :secondary, size: :small) do %>
       System Logs
@@ -26,6 +26,24 @@
                   testid: "maintenance-mode-toggle",
                   toggle_target: "toggle",
                   setting: "is_maintenance_mode"
+                } %>
+            <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
+      <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
+        <div class="admin-toggle-copy" data-toggle-copy>
+          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Pickup notice</h3>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Replace the home page reservation form with a notice that we are no longer taking reservations and are currently doing pickups. The notice includes whatever contact details are saved on The Event.</p>
+        </div>
+        <div class="admin-toggle-control" data-toggle-control>
+          <label class="admin-switch" id="pickup-notice-toggle" aria-label="Pickup notice">
+            <%= check_box_tag "setting[is_pickup_notice_enabled]", "1", setting.is_pickup_notice_enabled,
+                class: "admin-switch-input peer",
+                data: {
+                  testid: "pickup-notice-toggle",
+                  toggle_target: "toggle",
+                  setting: "is_pickup_notice_enabled"
                 } %>
             <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
           </label>

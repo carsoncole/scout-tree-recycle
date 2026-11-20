@@ -1,0 +1,44 @@
+<% contact_name = setting.contact_name.presence %>
+<% contact_email = setting.contact_email.presence %>
+<% contact_phone = setting.contact_phone.presence %>
+<% contact_sms = setting.contact_sms.presence %>
+<% contact_link_class = "font-medium text-sage-deep hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-sage-deep-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark" %>
+
+<div class="site-home-form border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="pickup-notice">
+  <p class="m-0">
+    <span class="inline-flex items-center rounded-full bg-sage-soft px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark">Pickups underway</span>
+  </p>
+  <h2 class="site-subtitle mt-3 mb-2 text-ink dark:text-ink-dark">We're no longer taking reservations</h2>
+  <p class="m-0 max-w-[34rem] text-ink-soft dark:text-ink-soft-dark">
+    We're currently picking up trees. Contact us if you have any issues with your reservation or tree pickup.
+  </p>
+
+  <% if contact_name || contact_email || contact_phone || contact_sms %>
+    <dl class="mt-5 grid gap-3 border-t border-line pt-5 text-sm dark:border-line-dark">
+      <% if contact_name %>
+        <div>
+          <dt class="text-muted dark:text-muted-dark">Contact</dt>
+          <dd class="m-0 font-medium text-ink dark:text-ink-dark"><%= contact_name %></dd>
+        </div>
+      <% end %>
+      <% if contact_sms %>
+        <div>
+          <dt class="text-muted dark:text-muted-dark">Message us (SMS)</dt>
+          <dd class="m-0"><%= link_to contact_sms, "sms:#{contact_sms}", class: contact_link_class %></dd>
+        </div>
+      <% end %>
+      <% if contact_email %>
+        <div>
+          <dt class="text-muted dark:text-muted-dark">Email</dt>
+          <dd class="m-0"><%= mail_to contact_email, contact_email, class: contact_link_class %></dd>
+        </div>
+      <% end %>
+      <% if contact_phone %>
+        <div>
+          <dt class="text-muted dark:text-muted-dark">Phone</dt>
+          <dd class="m-0"><%= link_to contact_phone, "tel:#{contact_phone}", class: contact_link_class %></dd>
+        </div>
+      <% end %>
+    </dl>
+  <% end %>
+</div>

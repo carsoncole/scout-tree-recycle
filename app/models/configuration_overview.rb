@@ -33,13 +33,13 @@ class ConfigurationOverview
         { attribute: :suggested_donation, label: "Suggested Donation",
           note: "Amount suggested on the donation page." },
         { attribute: :contact_name, label: "Contact Name",
-          note: "Shown on the About page." },
+          note: "Shown on the About page and on the home page pickup notice." },
         { attribute: :contact_email, label: "Contact Email",
-          note: "Shown on the About page; also the fallback From address." },
+          note: "Shown on the About page and the home page pickup notice; also the fallback From address." },
         { attribute: :contact_phone, label: "Contact Phone",
-          note: "Shown on the About page." },
+          note: "Shown on the About page and on the home page pickup notice." },
         { attribute: :contact_sms, label: "Contact SMS",
-          note: "Shown on the About page." }
+          note: "Shown on the About page and on the home page pickup notice." }
       ]
     },
     "organization" => {

@@ -9,6 +9,17 @@ class SettingTest < ActiveSupport::TestCase
     assert_not setting.is_maintenance_mode
   end
 
+  test "pickup notice is off by default and hides the reservation form when enabled" do
+    setting = Setting.new(organization_name: "Troop 100", is_reservations_open: true)
+
+    assert_not setting.is_pickup_notice_enabled
+    assert setting.accepting_reservations?
+
+    setting.is_pickup_notice_enabled = true
+
+    assert_not setting.accepting_reservations?
+  end
+
   test "should set defaults" do
     setting = Setting.new(organization_name: "Troop 100", default_city: "Anytown", default_state: "CA", event_pickup_start: "2099-01-06 08:00:00", event_pickup_end: "2099-01-06 15:00:00", event_sign_up_deadline: "2099-01-05 11:59:00")
     setting.save!

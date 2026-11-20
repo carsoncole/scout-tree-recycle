@@ -13,10 +13,13 @@ class Admin::ConfigurationControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Configuration"
+    assert_select "p", text: "Important event settings to review, including required fields, optional features, and whether each value still uses its default."
 
-    Setting::SECTIONS.each_key do |section|
+    ConfigurationOverview::CATALOG.each_key do |section|
       assert_select "#configuration-#{section}"
     end
+    assert_select "#configuration-operations", count: 0
+    assert_select "#configuration-system", count: 0
   end
 
   test "reports missing required settings" do

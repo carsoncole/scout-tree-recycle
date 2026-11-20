@@ -10,9 +10,12 @@ class Admin::ConfigurationTest < ApplicationSystemTestCase
 
     assert_selector "h1", text: "Configuration"
 
-    %w[event organization site_details site_content pickups sms email donations location_services operations system].each do |key|
+    %w[event organization site_details site_content pickups sms email donations location_services].each do |key|
       assert_selector "#configuration-#{key}"
     end
+
+    assert_no_selector "#configuration-operations"
+    assert_no_selector "#configuration-system"
   end
 
   test "shows missing, default, and not needed settings" do

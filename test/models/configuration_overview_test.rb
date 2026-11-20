@@ -6,7 +6,7 @@ class ConfigurationOverviewTest < ActiveSupport::TestCase
   end
 
   test "groups follow the settings sections" do
-    expected = %w[event organization site_details site_content pickups sms email donations location_services operations system]
+    expected = %w[event organization site_details site_content pickups sms email donations location_services]
     assert_equal expected, overview.groups.map(&:key)
   end
 

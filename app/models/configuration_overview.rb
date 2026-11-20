@@ -1,5 +1,7 @@
-# Read-only status report for every configurable setting, grouped by the
-# settings sections. Each entry reports the current value and whether it is
+# Read-only status report for the settings that matter while the event is
+# running, grouped by settings section. Close-event work and error
+# notifications stay on the Operations and System settings pages and are
+# omitted here. Each entry reports the current value and whether it is
 # missing, configured, or still using its built-in default. Secret values are
 # marked so views can mask them.
 class ConfigurationOverview
@@ -159,26 +161,6 @@ class ConfigurationOverview
           note: "AWS region of the place index." },
         { attribute: :aws_location_index_name, label: "Place Index Name", conditional_on: :is_routing_enabled,
           note: "The Amazon Location Service place index." }
-      ]
-    },
-    "operations" => {
-      toggle: :is_reservations_export_schedule_enabled,
-      entries: [
-        { attribute: :contact_retention_months, label: "Retention (Months)",
-          note: "Contacts older than this are removed by end-of-season cleanup." },
-        { attribute: :is_reservations_export_schedule_enabled, label: "Daily Reservations Export",
-          note: "Scheduled CSV email; managed on the Data page." },
-        { attribute: :reservations_export_email, label: "Export Recipient", conditional_on: :is_reservations_export_schedule_enabled,
-          note: "Receives the daily reservations CSV; managed on the Data page." },
-        { attribute: :reservations_export_time, label: "Export Send Time", conditional_on: :is_reservations_export_schedule_enabled,
-          note: "Send time for the daily export; managed on the Data page." }
-      ]
-    },
-    "system" => {
-      toggle: :is_log_notifications_enabled,
-      entries: [
-        { attribute: :is_log_notifications_enabled, label: "Error Notifications",
-          note: "Emails admins when errors are logged." }
       ]
     }
   }.freeze

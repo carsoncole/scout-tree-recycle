@@ -6,6 +6,18 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
+    test "home header leaves out the reserve shortcut that other pages keep" do
+      get root_url
+
+      assert_response :success
+      assert_select "header a", text: "Reserve a pickup", count: 0
+
+      get about_url
+
+      assert_response :success
+      assert_select "header a[href=?]", "#{root_path}#reserve", text: "Reserve a pickup"
+    end
+
     test "should get about" do
       get about_url
       assert_response :success

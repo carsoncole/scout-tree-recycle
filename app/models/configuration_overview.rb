@@ -1,9 +1,9 @@
 # Read-only status report for the settings that matter while the event is
 # running, grouped by settings section. Close-event work and error
-# notifications stay on the Operations and System settings pages and are
-# omitted here. Each entry reports the current value and whether it is
-# missing, configured, or still using its built-in default. Secret values are
-# marked so views can mask them.
+# notifications stay on the System settings page and are omitted here. Each
+# entry reports the current value and whether it is missing, configured, or
+# still using its built-in default. Secret values are marked so views can
+# mask them.
 class ConfigurationOverview
   Entry = Struct.new(:attribute, :label, :note, :secret, :value, :status, keyword_init: true)
   Group = Struct.new(:key, :label, :description, :toggle, :entries, keyword_init: true)

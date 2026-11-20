@@ -3,7 +3,7 @@ require "application_system_test_case"
 class Admin::OperationsTest < ApplicationSystemTestCase
   test "closing the event as an admin" do
     sign_in_as(users(:admin), true)
-    visit admin_settings_section_path("operations")
+    visit admin_settings_section_path("system")
     assert_no_text "Migrate Reservations"
     click_link "Close Event"
 
@@ -39,7 +39,7 @@ class Admin::OperationsTest < ApplicationSystemTestCase
 
   test "a non-admin can read the close event page but cannot confirm it" do
     sign_in_as(users(:user), true)
-    visit admin_settings_section_path("operations")
+    visit admin_settings_section_path("system")
 
     assert_no_link "Close Event"
     assert_text "Only admins can close the event"

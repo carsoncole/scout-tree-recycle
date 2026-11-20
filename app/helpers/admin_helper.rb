@@ -64,9 +64,7 @@ module AdminHelper
       "pickups"
     when "thanks"
       "site_content"
-    when "operations"
-      "operations"
-    when "logs"
+    when "operations", "logs"
       "system"
     else
       controller_name

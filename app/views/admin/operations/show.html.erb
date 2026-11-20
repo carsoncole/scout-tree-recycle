@@ -2,7 +2,7 @@
 <%= render "admin/shared/page_header",
            title: "Close Event",
            description: "Copy this event's reservations into contacts, then clear reservations so the next event can begin." do %>
-  <%= link_to "Back to Operations", admin_settings_section_path("operations"), class: admin_button_class(variant: :secondary) %>
+  <%= link_to "Back to System", admin_settings_section_path("system"), class: admin_button_class(variant: :secondary) %>
 <% end %>
 
 <div class="admin-settings-layout">
@@ -19,7 +19,7 @@
 
       <div class="admin-panel-body">
         <%= form_with url: admin_setting_path(@setting), method: :patch, class: "admin-form" do %>
-          <%= hidden_field_tag :section, "operations" %>
+          <%= hidden_field_tag :section, "system" %>
           <%= hidden_field_tag :return_to, "close_event" %>
 
           <div class="admin-toolbar">

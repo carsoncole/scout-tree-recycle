@@ -42,7 +42,7 @@ class Admin::OperationsControllerTest < ActionDispatch::IntegrationTest
 
     post admin_close_event_path, params: { confirmation: "close" }
 
-    assert_redirected_to admin_settings_section_path("operations")
+    assert_redirected_to admin_settings_section_path("system")
     assert_equal "Event closed. Reservations were copied into contacts and cleared for the next event.", flash[:notice]
     assert_equal 0, Reservation.count
     assert Contact.find_by(email: copied_email)

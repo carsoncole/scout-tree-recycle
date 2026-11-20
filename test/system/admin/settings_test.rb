@@ -25,8 +25,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "Email", href: admin_settings_section_path("email")
       assert_link "Donations", href: admin_settings_section_path("donations")
       assert_link "Location Services", href: admin_settings_section_path("location_services")
-      assert_link "Operations", href: admin_settings_section_path("operations")
       assert_link "System", href: admin_settings_section_path("system")
+      assert_no_link "Operations"
       assert_link "Users", href: admin_users_path
     end
   end
@@ -489,10 +489,10 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "test-index", setting.aws_location_index_name
   end
 
-  test "operations panel links to close event" do
-    visit admin_settings_section_path("operations")
+  test "system panel links to close event" do
+    visit admin_settings_section_path("system")
 
-    within "section#operations" do
+    within "section#close-event" do
       assert_link "Close Event", href: admin_close_event_path
       assert_no_text "Retention (Months)"
     end

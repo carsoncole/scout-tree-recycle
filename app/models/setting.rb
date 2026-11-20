@@ -68,13 +68,9 @@ class Setting < ApplicationRecord
       label: "Location Services",
       description: "Geocode reservation and route addresses with Amazon Location Service."
     },
-    "operations" => {
-      label: "Operations",
-      description: "Close the current event and prepare contacts for the next one."
-    },
     "system" => {
       label: "System",
-      description: "Take the public site down for maintenance and review system errors."
+      description: "Take the public site down for maintenance, review system errors, and close the current event."
     }
   }.freeze
 

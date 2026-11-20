@@ -249,7 +249,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     sign_in
 
     patch admin_setting_path(Setting.first), params: {
-      section: "operations",
+      section: "system",
       return_to: "close_event",
       setting: { contact_retention_months: 18 }
     }
@@ -263,7 +263,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     sign_in
 
     patch admin_setting_path(Setting.first), params: {
-      section: "operations",
+      section: "system",
       return_to: "close_event",
       setting: { contact_retention_months: 0 }
     }

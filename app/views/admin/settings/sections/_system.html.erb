@@ -2,7 +2,7 @@
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">System</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Take the public site down for maintenance and review system errors.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Take the public site down for maintenance, review system errors, and close the current event.</p>
     </div>
     <%= link_to admin_logs_path, class: admin_button_class(variant: :secondary, size: :small) do %>
       System Logs
@@ -53,6 +53,33 @@
     </div>
     <% unless setting.is_emailing_enabled? %>
       <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Enable and configure Email to send error notifications to admins.</p>
+    <% end %>
+  </div>
+</section>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="close-event">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Close Event</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Copy this event's reservations into contacts, delete every reservation, and reset marketing so the next event can begin.</p>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <div class="admin-toolbar">
+      <div>
+        <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Close this event</h3>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">How long contacts are kept is set on the close event page.</p>
+      </div>
+      <% if Current.user&.admin? %>
+        <%= link_to "Close Event", admin_close_event_path, class: admin_button_class(variant: :danger) %>
+      <% else %>
+        <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+      <% end %>
+    </div>
+    <% unless Current.user&.admin? %>
+      <p class="admin-hint mt-2 text-ink-soft dark:text-ink-soft-dark">Only admins can close the event or change how long contacts are kept.</p>
+      <%= link_to "View close event", admin_close_event_path, class: "#{admin_link_class} mt-2 inline-block" %>
     <% end %>
   </div>
 </section>

@@ -30,4 +30,25 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_admin_session_url
     assert user.reload.authenticate("new-password-123")
   end
+
+  test "should not reset the password when it is blank" do
+    user = users(:admin)
+
+    patch password_url(user.password_reset_token), params: { password: "", password_confirmation: "" }
+
+    assert_response :unprocessable_entity
+    assert user.reload.authenticate("password123456789")
+  end
+
+  test "should re-render the form when the confirmation does not match" do
+    user = users(:admin)
+
+    patch password_url(user.password_reset_token), params: {
+      password: "new-password-123",
+      password_confirmation: "a-different-password"
+    }
+
+    assert_response :unprocessable_entity
+    assert user.reload.authenticate("password123456789")
+  end
 end

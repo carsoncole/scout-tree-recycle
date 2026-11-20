@@ -8,6 +8,8 @@
                description: "Choose a new password for your account." %>
 
     <div class="site-form-panel">
+      <%= render "shared/form_errors", object: @user %>
+
       <%= form_with url: password_path(params[:token]), method: :put, class: "site-form" do |form| %>
         <div class="flex flex-col gap-[0.45rem]">
           <%= form.label :password, "New password", class: "site-label text-ink dark:text-ink-dark" %>

@@ -16,16 +16,21 @@
           <%= form.email_field :email, class: admin_input_class %>
         </div>
 
-        <div class="admin-field-grid admin-field-grid--two">
-          <div class="admin-field">
-            <%= form.label :password, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= form.password_field :password, class: admin_input_class %>
+        <% if user.persisted? %>
+          <div class="admin-field-grid admin-field-grid--two">
+            <div class="admin-field">
+              <%= form.label :password, "New password", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= form.password_field :password, class: admin_input_class %>
+            </div>
+            <div class="admin-field">
+              <%= form.label :password_confirmation, "Confirm new password", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= form.password_field :password_confirmation, class: admin_input_class %>
+            </div>
           </div>
-          <div class="admin-field">
-            <%= form.label :password_confirmation, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= form.password_field :password_confirmation, class: admin_input_class %>
-          </div>
-        </div>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave both password fields blank to keep the current password.</p>
+        <% else %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The user will receive an email with a link to create their password.</p>
+        <% end %>
 
         <div class="admin-field">
           <%= form.label :role, class: "admin-label text-ink dark:text-ink-dark" %>

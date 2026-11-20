@@ -1,6 +1,10 @@
 require "test_helper"
 
 class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    configure_email!
+  end
+
   test "admin should get index" do
     sign_in
     get admin_users_url
@@ -42,18 +46,66 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_users_url
   end
 
-  test "admin should create user with user role" do
+  test "admin should create user with user role and send the account setup email" do
     sign_in
-    post admin_users_url, params: { user: { email: "test@example.com", password: "password", password_confirmation: "password", role: "user" } }
+
+    assert_enqueued_email_with UsersMailer, :account_created,
+        args: ->(mailer_args) { mailer_args.first.is_a?(User) && mailer_args.first.email == "test@example.com" } do
+      post admin_users_url, params: { user: { email: "test@example.com", role: "user" } }
+    end
+
+    user = User.find_by!(email: "test@example.com")
+    assert_equal "user", user.role
+    assert user.password_digest.present?
     assert_redirected_to admin_users_url
-    assert_equal "User was successfully created.", flash[:notice]
+    assert_equal "User was created. An account setup email was sent to test@example.com.", flash[:notice]
   end
 
   test "admin should create user with admin role" do
     sign_in
-    post admin_users_url, params: { user: { email: "test@example.com", password: "password", password_confirmation: "password", role: "admin" } }
+
+    assert_enqueued_email_with UsersMailer, :account_created,
+        args: ->(mailer_args) { mailer_args.first.is_a?(User) && mailer_args.first.email == "test@example.com" } do
+      post admin_users_url, params: { user: { email: "test@example.com", role: "admin" } }
+    end
+
+    assert_equal "admin", User.find_by!(email: "test@example.com").role
     assert_redirected_to admin_users_url
-    assert_equal "User was successfully created.", flash[:notice]
+  end
+
+  test "created user cannot authenticate with a password posted at creation" do
+    sign_in
+    post admin_users_url, params: { user: { email: "test@example.com", password: "posted-password", password_confirmation: "posted-password", role: "user" } }
+
+    assert_not User.find_by!(email: "test@example.com").authenticate("posted-password")
+  end
+
+  test "should not enqueue an account setup email when creation fails" do
+    sign_in
+
+    assert_no_enqueued_emails do
+      post admin_users_url, params: { user: { email: users(:user).email, role: "user" } }
+    end
+    assert_response :unprocessable_entity
+  end
+
+  test "admin cannot create a user while email settings are incomplete" do
+    sign_in
+    Setting.instance.update!(smtp_address: nil, smtp_port: nil)
+
+    assert_no_difference "User.count" do
+      assert_no_enqueued_emails do
+        post admin_users_url, params: { user: { email: "test@example.com", role: "user" } }
+      end
+    end
+
+    assert_redirected_to new_admin_user_url
+    assert_equal "Email settings are incomplete. Add SMTP Address and SMTP Port in Settings before emailing the account setup link.", flash[:alert]
+
+    log = Log.of_type("email").last
+    assert_equal "warning", log.severity
+    assert_includes log.message, "New user creation blocked: Email settings are incomplete."
+    assert_equal "test@example.com", log.context["attempted_email"]
   end
 
   test "user should not create user" do

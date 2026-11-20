@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   end
 
   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
+  resources :account_setups, param: :token, only: [ :edit, :update ]
 
   resources :reservations, only: [ :create, :update, :edit, :destroy ] do
     get "address_verification", to: "address_verification#address_verification", as: :address_verification

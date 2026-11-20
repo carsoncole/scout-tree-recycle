@@ -1,0 +1,40 @@
+<% content_for :title, "Create Your Password | #{default_page_name}" %>
+
+<section class="site-page">
+  <div class="site-container site-container--narrow">
+    <%= render "shared/page_header",
+               eyebrow: "Account access",
+               title: "Create your password",
+               description: "Choose a password for your account, #{@user.email}." %>
+
+    <div class="site-form-panel">
+      <%= render "shared/form_errors", object: @user %>
+
+      <%= form_with url: account_setup_path(params[:token]), method: :patch, class: "site-form" do |form| %>
+        <div class="flex flex-col gap-[0.45rem]">
+          <%= form.label :password, "Password", class: "site-label text-ink dark:text-ink-dark" %>
+          <%= form.password_field :password,
+                                  required: true,
+                                  autocomplete: "new-password",
+                                  maxlength: 72,
+                                  class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+        </div>
+
+        <div class="flex flex-col gap-[0.45rem]">
+          <%= form.label :password_confirmation, "Confirm password", class: "site-label text-ink dark:text-ink-dark" %>
+          <%= form.password_field :password_confirmation,
+                                  required: true,
+                                  autocomplete: "new-password",
+                                  maxlength: 72,
+                                  class: "site-input border border-line-strong bg-surface text-ink placeholder-muted hover:border-ink-soft focus:border-sage focus:bg-[#fffdf8] disabled:bg-stone disabled:text-muted dark:border-line-strong-dark dark:bg-stone-dark dark:text-ink-dark dark:placeholder-muted-dark dark:hover:border-ink-soft-dark dark:focus:border-sage-dark dark:focus:bg-input-focus-dark dark:disabled:bg-stone-dark dark:disabled:text-muted-dark" %>
+        </div>
+
+        <%= form.submit "Create my password", class: "site-button site-button--full bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+      <% end %>
+    </div>
+
+    <div class="site-section border-line dark:border-line-dark">
+      <%= link_to "Back to sign in", new_admin_session_path, class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
+    </div>
+  </div>
+</section>

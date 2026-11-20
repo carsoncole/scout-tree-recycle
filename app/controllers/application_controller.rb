@@ -27,7 +27,8 @@ class ApplicationController < ActionController::Base
   def maintenance_exempt_path?
     path = request.path
     path == "/admin" || path.start_with?("/admin/") ||
-      path == "/passwords" || path.start_with?("/passwords/")
+      path == "/passwords" || path.start_with?("/passwords/") ||
+      path == "/account_setups" || path.start_with?("/account_setups/")
   end
 
   def configure_phonelib

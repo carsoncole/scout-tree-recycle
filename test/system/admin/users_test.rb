@@ -12,34 +12,45 @@ class Admin::UsersTest < ApplicationSystemTestCase
   end
 
   test "should create admin user" do
+    configure_email!
     visit admin_users_url
     click_link "Add user"
 
+    assert_text "The user will receive an email with a link to create their password."
     fill_in "Email", with: "test@example.com"
-    fill_in "Password", with: "abCDefg123"
-    fill_in "Password confirmation", with: "abCDefg123"
     select "Admin", from: "Role"
     click_button "Create User"
 
-    assert_text "User was successfully created."
+    assert_text "User was created. An account setup email was sent to test@example.com."
   end
 
   test "should create non-admin user" do
+    configure_email!
     visit admin_users_url
     click_link "Add user"
     assert_field "Email"
-    assert_field "Password"
-    assert_field "Password confirmation"
+    assert_no_field "Password"
     assert_field "Role"
     assert_button "Create User"
 
     fill_in "Email", with: "test@example.com"
-    fill_in "Password", with: "abCDefg123"
-    fill_in "Password confirmation", with: "abCDefg123"
     select "User", from: "Role"
     click_button "Create User"
 
-    assert_text "User was successfully created."
+    assert_text "User was created. An account setup email was sent to test@example.com."
+  end
+
+  test "blocks creation when email settings are incomplete" do
+    visit admin_users_url
+    click_link "Add user"
+
+    fill_in "Email", with: "test@example.com"
+    select "User", from: "Role"
+    click_button "Create User"
+
+    assert_current_path new_admin_user_path
+    assert_text "Email settings are incomplete. Add SMTP Address and SMTP Port in Settings before emailing the account setup link."
+    assert_no_text "User was created."
   end
 
   test "should edit users email" do
@@ -58,8 +69,8 @@ class Admin::UsersTest < ApplicationSystemTestCase
     visit admin_users_url
     all(:link, "Edit").first.click
     fill_in "Email", with: "test191@example.com"
-    fill_in "Password", with: "newpassword"
-    fill_in "Password confirmation", with: "newpassword"
+    fill_in "New password", with: "newpassword"
+    fill_in "Confirm new password", with: "newpassword"
     click_button "Update User"
 
     assert_text "User was successfully updated."

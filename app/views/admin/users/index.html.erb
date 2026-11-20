@@ -10,46 +10,6 @@
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Role privileges</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">An overview of the access and permissions assigned to each role.</p>
-      </div>
-    </div>
-
-    <div class="admin-table-wrap">
-      <table class="admin-table text-ink dark:text-ink-dark">
-        <thead>
-          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <th scope="col" class="<%= admin_th_class %>">Area</th>
-            <th scope="col" class="<%= admin_th_class %>">Privilege</th>
-            <th scope="col" class="<%= admin_th_class %> admin-table-check">User</th>
-            <th scope="col" class="<%= admin_th_class %> admin-table-check">Admin</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% privileges = admin_role_privileges %>
-          <% privileges.each_with_index do |privilege, index| %>
-            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <% if index.zero? || privileges[index - 1][:area] != privilege[:area] %>
-                <th scope="rowgroup" rowspan="<%= privileges.count { |row| row[:area] == privilege[:area] } %>" class="<%= admin_th_class %> admin-table-area">
-                  <%= privilege[:area] %>
-                </th>
-              <% end %>
-              <td class="<%= admin_td_class %>"><%= privilege[:label] %></td>
-              <td class="<%= admin_td_class %> admin-table-check"><%= admin_privilege_mark(privilege[:user]) %></td>
-              <td class="<%= admin_td_class %> admin-table-check"><%= admin_privilege_mark(privilege[:admin]) %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-    <div class="admin-panel-body">
-      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The last admin account cannot be deleted. From Profile, a person can change their own email and password, and cannot change their own role. The thank-you message is the only setting a user can save.</p>
-    </div>
-  </section>
-
-  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-    <div class="admin-panel-header border-line dark:border-line-dark">
-      <div>
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">User list</h2>
         <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">A list of all users in the system.</p>
       </div>
@@ -95,6 +55,46 @@
           <% end %>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Role privileges</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">An overview of the access and permissions assigned to each role.</p>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table text-ink dark:text-ink-dark">
+        <thead>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="<%= admin_th_class %>">Area</th>
+            <th scope="col" class="<%= admin_th_class %>">Privilege</th>
+            <th scope="col" class="<%= admin_th_class %> admin-table-check">User</th>
+            <th scope="col" class="<%= admin_th_class %> admin-table-check">Admin</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% privileges = admin_role_privileges %>
+          <% privileges.each_with_index do |privilege, index| %>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <% if index.zero? || privileges[index - 1][:area] != privilege[:area] %>
+                <th scope="rowgroup" rowspan="<%= privileges.count { |row| row[:area] == privilege[:area] } %>" class="<%= admin_th_class %> admin-table-area">
+                  <%= privilege[:area] %>
+                </th>
+              <% end %>
+              <td class="<%= admin_td_class %>"><%= privilege[:label] %></td>
+              <td class="<%= admin_td_class %> admin-table-check"><%= admin_privilege_mark(privilege[:user]) %></td>
+              <td class="<%= admin_td_class %> admin-table-check"><%= admin_privilege_mark(privilege[:admin]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="admin-panel-body">
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The last admin account cannot be deleted. From Profile, a person can change their own email and password, and cannot change their own role. The thank-you message is the only setting a user can save.</p>
     </div>
   </section>
 </div>

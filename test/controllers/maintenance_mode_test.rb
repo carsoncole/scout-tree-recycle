@@ -41,6 +41,10 @@ class MaintenanceModeTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Down for maintenance", count: 0
 
+    get edit_account_setup_url(users(:admin).account_setup_token)
+    assert_response :success
+    assert_select "h1", text: "Down for maintenance", count: 0
+
     sign_in
     get admin_reservations_path
     assert_response :success

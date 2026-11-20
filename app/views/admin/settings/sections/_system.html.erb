@@ -2,7 +2,7 @@
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">System</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Review system errors and application events.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Take the public site down for maintenance and review system errors.</p>
     </div>
     <%= link_to admin_logs_path, class: admin_button_class(variant: :secondary, size: :small) do %>
       System Logs
@@ -13,6 +13,24 @@
   </div>
   <div class="admin-panel-body">
     <div class="admin-toggle-list">
+      <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
+        <div class="admin-toggle-copy" data-toggle-copy>
+          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Down for maintenance</h3>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Visitors and drivers see a maintenance page until this is turned off. The admin area stays available.</p>
+        </div>
+        <div class="admin-toggle-control" data-toggle-control>
+          <label class="admin-switch" id="maintenance-mode-toggle" aria-label="Down for maintenance">
+            <%= check_box_tag "setting[is_maintenance_mode]", "1", setting.is_maintenance_mode,
+                class: "admin-switch-input peer",
+                data: {
+                  testid: "maintenance-mode-toggle",
+                  toggle_target: "toggle",
+                  setting: "is_maintenance_mode"
+                } %>
+            <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
       <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
         <div class="admin-toggle-copy" data-toggle-copy>
           <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Send error messages to admins</h3>

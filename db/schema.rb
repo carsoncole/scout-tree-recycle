@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_19_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_19_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -269,6 +269,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_130000) do
     t.string "reservations_export_email"
     t.string "reservations_export_time", default: "06:00", null: false
     t.datetime "reservations_export_last_sent_at"
+    t.boolean "is_maintenance_mode", default: false, null: false
   end
 
   create_table "sms", force: :cascade do |t|

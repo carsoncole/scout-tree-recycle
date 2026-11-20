@@ -1,0 +1,12 @@
+<% content_for :title, "Down for Maintenance | #{default_page_name}" %>
+<% content_for :description, "#{default_page_name} is temporarily down for maintenance." %>
+
+<section class="site-page">
+  <div class="site-container site-container--narrow">
+    <p class="mb-8 text-sm font-semibold text-ink dark:text-ink-dark"><%= default_page_name %></p>
+    <%= render "shared/page_header",
+               eyebrow: "Please check back soon",
+               title: "Down for maintenance",
+               description: "#{default_page_name} is temporarily unavailable while we make updates. If you were making a reservation, you can start again once we're back." %>
+  </div>
+</section>

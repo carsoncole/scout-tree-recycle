@@ -7,6 +7,7 @@ class Admin::SettingsController < Admin::BaseController
     is_reservations_open
     is_emailing_enabled
     is_log_notifications_enabled
+    is_maintenance_mode
     is_sms_enabled
     is_pickups_site_enabled
     is_routing_enabled
@@ -195,6 +196,7 @@ class Admin::SettingsController < Admin::BaseController
       :is_reservations_open,
       :is_emailing_enabled,
       :is_log_notifications_enabled,
+      :is_maintenance_mode,
       :is_sms_enabled,
       :is_pickups_site_enabled,
       :is_routing_enabled,

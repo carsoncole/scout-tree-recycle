@@ -498,10 +498,38 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     end
   end
 
+  test "maintenance toggle takes the public site down and brings it back" do
+    visit admin_settings_section_path("system")
+
+    within "section#system" do
+      find("#maintenance-mode-toggle").click
+      assert_text "Saved"
+    end
+
+    assert Setting.instance.reload.is_maintenance_mode?
+
+    visit root_url
+    assert_selector "h1", text: "Down for maintenance"
+    assert_text "Troop 100 Tree Recycle is temporarily unavailable"
+
+    visit admin_settings_section_path("system")
+
+    within "section#system" do
+      find("#maintenance-mode-toggle").click
+      assert_text "Saved"
+    end
+
+    assert_not Setting.instance.reload.is_maintenance_mode?
+
+    visit root_url
+    assert_selector "h1", text: "Make a Reservation"
+  end
+
   test "page links" do
     visit admin_settings_section_path("system")
     within "section#system" do
       assert_link "System Logs", href: admin_logs_path
+      assert_selector "#maintenance-mode-toggle"
     end
 
     visit admin_settings_section_path("pickups")

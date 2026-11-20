@@ -3,6 +3,12 @@ require "test_helper"
 class SettingTest < ActiveSupport::TestCase
   include ActiveSupport::Testing::TimeHelpers
 
+  test "maintenance mode is off by default" do
+    setting = Setting.new(organization_name: "Troop 100")
+
+    assert_not setting.is_maintenance_mode
+  end
+
   test "should set defaults" do
     setting = Setting.new(organization_name: "Troop 100", default_city: "Anytown", default_state: "CA", event_pickup_start: "2099-01-06 08:00:00", event_pickup_end: "2099-01-06 15:00:00", event_sign_up_deadline: "2099-01-05 11:59:00")
     setting.save!

@@ -101,3 +101,113 @@
     <% end %>
   </div>
 </section>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="data-management">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Data Management</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Delete all reservations or contacts, wipe the database back to defaults, or load the example dataset for development and demos.</p>
+    </div>
+    <% unless Current.user&.admin? %>
+      <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+    <% end %>
+  </div>
+  <div class="admin-panel-body">
+    <div class="admin-toggle-list">
+      <div class="admin-toggle-row border-line dark:border-line-dark">
+        <div class="admin-toggle-copy">
+          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Delete all reservations</h3>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+            This permanently deletes <strong class="text-ink dark:text-ink-dark"><%= pluralize(@reservations_count.to_i, "reservation") %></strong>.
+            Donations are kept but detached from their reservations. Type DELETE to confirm.
+          </p>
+        </div>
+        <% if Current.user&.admin? %>
+          <%= render "admin/shared/destructive_details",
+              summary_label: "Delete All Reservations",
+              url: admin_data_reset_path,
+              method: :post,
+              word: "DELETE",
+              fields: { "data_reset[scope]" => "reservations" },
+              submit_label: "Confirm Delete All Reservations",
+              confirm: "Delete all reservations? This permanently deletes every reservation and cannot be undone." %>
+        <% else %>
+          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+        <% end %>
+      </div>
+      <div class="admin-toggle-row border-line dark:border-line-dark">
+        <div class="admin-toggle-copy">
+          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Delete all contacts</h3>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+            This permanently deletes <strong class="text-ink dark:text-ink-dark"><%= pluralize(@contacts_count.to_i, "contact") %></strong>.
+            Contacts from prior events and imports are removed. Type DELETE to confirm.
+          </p>
+        </div>
+        <% if Current.user&.admin? %>
+          <%= render "admin/shared/destructive_details",
+              summary_label: "Delete All Contacts",
+              url: admin_data_reset_path,
+              method: :post,
+              word: "DELETE",
+              fields: { "data_reset[scope]" => "contacts" },
+              submit_label: "Confirm Delete All Contacts",
+              confirm: "Delete all contacts? This permanently deletes every contact and cannot be undone." %>
+        <% else %>
+          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+        <% end %>
+      </div>
+      <div class="admin-toggle-row border-line dark:border-line-dark">
+        <div class="admin-toggle-copy">
+          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Load sample data</h3>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+            Creates the example Bainbridge Island zones, routes, route points, drivers, reservations, and contacts.
+            Intended for local development and demos — it adds records to the current database.
+          </p>
+        </div>
+        <% if Current.user&.admin? %>
+          <%= button_to "Load Sample Data", admin_data_reset_path,
+              params: { "data_reset[scope]" => "sample_data" },
+              class: admin_button_class(variant: :secondary),
+              data: { turbo_confirm: "Load sample data? This adds example zones, routes, drivers, reservations, and contacts to the database." } %>
+        <% else %>
+          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="admin-danger-zone border-danger-border bg-danger-bg dark:border-danger-border-dark dark:bg-danger-bg-dark" id="reset-all-data">
+    <div class="admin-toggle-row">
+      <div class="admin-toggle-copy">
+        <span class="<%= admin_badge_class("danger") %>">Danger zone</span>
+        <h3 class="admin-toggle-title mt-2 text-ink dark:text-ink-dark">Reset all data to default</h3>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+          This permanently deletes <strong class="text-ink dark:text-ink-dark">every record in every table</strong>,
+          including reservations, contacts, donations, routes, users, settings, and the current sign-in sessions.
+          You will be signed out and returned to first-run setup, with the default email templates reloaded.
+          Sample data is not loaded — run it separately once setup is complete.
+        </p>
+      </div>
+      <% if Current.user&.admin? %>
+        <%= render "admin/shared/destructive_details",
+            summary_label: "Reset All Data to Default",
+            url: admin_data_reset_path,
+            method: :post,
+            word: "RESET ALL",
+            fields: { "data_reset[scope]" => "all" },
+            submit_label: "Confirm Reset All Data",
+            confirm: "Are you sure? This permanently deletes ALL data, including users and settings. You will be signed out and returned to first-run setup." %>
+      <% else %>
+        <span class="<%= admin_badge_class("danger") %>">Admin only</span>
+      <% end %>
+    </div>
+    <% if Current.user&.admin? %>
+      <div class="<%= admin_notice_class("danger") %> mt-4" role="alert">
+        <div>
+          <p><strong>Warning:</strong> This is the most destructive action in the application. There is no undo and no backup. Export anything you need first from the <%= link_to "Data page", admin_data_path, class: admin_link_class %>.</p>
+        </div>
+      </div>
+    <% else %>
+      <p class="admin-hint mt-4 text-ink-soft dark:text-ink-soft-dark">Only admins can delete or reset data.</p>
+    <% end %>
+  </div>
+</section>

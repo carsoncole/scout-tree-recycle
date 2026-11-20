@@ -498,6 +498,95 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     end
   end
 
+  test "data management panel lists the destructive actions with counts" do
+    visit admin_settings_section_path("system")
+
+    within "section#data-management" do
+      assert_text "Data Management"
+      assert_text "Danger zone"
+      assert_text "Reset all data to default"
+      assert_text "This permanently deletes #{Reservation.count} reservation"
+      assert_text "This permanently deletes #{Contact.count} contact"
+      assert_text "Sample data is not loaded — run it separately once setup is complete."
+      assert_text "This is the most destructive action in the application."
+    end
+  end
+
+  test "admin can delete all reservations from the data management panel" do
+    visit admin_settings_section_path("system")
+
+    within "section#data-management" do
+      find("summary", text: "Delete All Reservations").click
+      within find("details", text: "Delete All Reservations") do
+        fill_in "Type DELETE to confirm", with: "DELETE"
+        accept_confirm { click_on "Confirm Delete All Reservations" }
+      end
+    end
+
+    assert_text "reservations have been deleted"
+    assert_equal 0, Reservation.count
+    assert_nil Donation.first&.reservation_id
+  end
+
+  test "admin can delete all contacts from the data management panel" do
+    visit admin_settings_section_path("system")
+
+    within "section#data-management" do
+      find("summary", text: "Delete All Contacts").click
+      within find("details", text: "Delete All Contacts") do
+        fill_in "Type DELETE to confirm", with: "DELETE"
+        accept_confirm { click_on "Confirm Delete All Contacts" }
+      end
+    end
+
+    assert_text "contacts have been deleted"
+    assert_equal 0, Contact.count
+  end
+
+  test "admin can reset all data and lands on first-run setup" do
+    visit admin_settings_section_path("system")
+
+    within "section#data-management" do
+      find("summary", text: "Reset All Data to Default").click
+      fill_in "Type RESET ALL to confirm", with: "RESET ALL"
+      accept_confirm { click_on "Confirm Reset All Data" }
+    end
+
+    assert_text "All data has been reset to defaults"
+    assert_text "Initial Application Setup"
+    assert_equal 0, User.count
+    assert_equal 0, Setting.count
+    assert_equal MarketingEmailTemplate.default_names.sort, MarketingEmailTemplate.pluck(:name).sort
+    assert_equal 0, Reservation.count, "sample data should not be loaded by the reset"
+  end
+
+  test "admin can load sample data from the data management panel" do
+    visit admin_settings_section_path("system")
+
+    within "section#data-management" do
+      accept_confirm { click_on "Load Sample Data" }
+    end
+
+    assert_text "Sample data has been loaded"
+    assert_operator Reservation.count, :>, 50
+    assert_operator Contact.count, :>, 100
+  end
+
+  test "a non-admin sees the data management panel but cannot act" do
+    sign_in_as(users(:user), true)
+    visit admin_settings_section_path("system")
+
+    within "section#data-management" do
+      assert_text "Admin only"
+      assert_text "Only admins can delete or reset data."
+      assert_no_button "Confirm Delete All Reservations"
+      assert_no_button "Confirm Delete All Contacts"
+      assert_no_button "Confirm Reset All Data"
+      assert_no_button "Load Sample Data"
+      assert_no_text "Reset All Data to Default"
+    end
+  end
+
   test "maintenance toggle takes the public site down and brings it back" do
     visit admin_settings_section_path("system")
 

@@ -119,6 +119,8 @@ bin/rails sample_data:load
 
 This task loads example zones, routes, route points, and related sample records (drivers, reservations, and contacts) for **Bainbridge Island, Washington**. It is intended for local development/demo use and can be run manually when you want a realistic starting map and sample pickup data.
 
+Admins can also manage this data from the app at `/admin/settings/system`: delete all reservations, delete all contacts, reset all data to default (clears every application table and reloads the built-in email templates), or load the sample dataset as a separate action. These actions are admin-only; the destructive ones require typing a confirmation word.
+
 Database connection settings live in `config/database.yml`.
 
 ## Configuration

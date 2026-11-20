@@ -109,6 +109,9 @@ Rails.application.routes.draw do
       post :email_export
     end
 
+    # Data management (delete all reservations/contacts, reset all data)
+    resource :data_reset, only: [ :create ]
+
     # Close the current event and prepare contacts for the next one.
     resource :close_event, only: [ :show, :create ], controller: "operations", path: "close-event"
 

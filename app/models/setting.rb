@@ -70,7 +70,7 @@ class Setting < ApplicationRecord
     },
     "system" => {
       label: "System",
-      description: "Take the public site down for maintenance, show the pickup notice, review system errors, and close the current event."
+      description: "Take the public site down for maintenance, show the pickup notice, review system errors, close the current event, and delete or reset data."
     }
   }.freeze
 

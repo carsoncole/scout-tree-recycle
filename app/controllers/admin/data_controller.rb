@@ -14,36 +14,21 @@ class Admin::DataController < Admin::BaseController
     end
 
     csv = file.read
-    result = ContactCsvImport.new(
+    if csv.bytesize > ContactCsvImport::MAX_FILE_SIZE
+      redirect_to admin_data_path, alert: "CSV file is too large (maximum 5 MB)."
+      return
+    end
+
+    # Large imports run long enough to time out the request, so the work is
+    # performed by a background job. The outcome is recorded in the System
+    # Logs with the "job" log type.
+    ContactCsvImportJob.perform_later(
       csv: csv,
       filename: file.original_filename.to_s,
-      mapping: params[:mapping],
+      mapping: Array(params[:mapping]).map(&:to_s),
       user: Current.user
-    ).perform
-
-    if result.error.present?
-      redirect_to admin_data_path, alert: result.error
-    elsif result.failed.positive?
-      all_row_errors = Array(result.row_errors || result.errors || result.failed_rows || result.failures)
-      display_errors = all_row_errors.first(5).map do |row_error|
-        row_number = row_error[:row] || row_error["row"]
-        messages = Array(row_error[:errors] || row_error["errors"]).map { |message| message.to_s.truncate(80) }
-        { row: row_number, errors: messages }
-      end
-      row_error_details = display_errors.map do |row_error|
-        "Row #{row_error[:row]}: #{row_error[:errors].join(", ")}"
-      end.join("; ")
-      row_error_details += "; and #{all_row_errors.size - display_errors.size} more" if all_row_errors.size > display_errors.size
-      alert = "Imported #{result.imported} contact(s). Skipped #{result.skipped} duplicate(s). #{result.failed} row(s) failed."
-      alert += " #{row_error_details}." if row_error_details.present?
-      alert += " Check the System Logs for details."
-      flash[:import_errors] = display_errors if display_errors.any?
-      redirect_to admin_data_path, alert: alert
-    elsif result.skipped.positive?
-      redirect_to admin_data_path, notice: "Imported #{result.imported} contact(s). Skipped #{result.skipped} duplicate email(s)."
-    else
-      redirect_to admin_data_path, notice: "Imported #{result.imported} contact(s) successfully."
-    end
+    )
+    redirect_to admin_data_path, notice: "Contact import queued. Check the System Logs for results."
   end
 
   def export

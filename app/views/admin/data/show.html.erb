@@ -4,40 +4,20 @@
            description: "Import contacts, export reservation data as CSV, and review database settings." %>
 
 <div class="flex flex-col gap-6">
-  <% if flash[:import_errors].present? %>
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Import row errors</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">The following rows could not be imported.</p>
-        </div>
-      </div>
-      <div class="admin-panel-body">
-        <ul class="admin-list">
-          <% Array(flash[:import_errors]).each do |row_error| %>
-            <% row_number = row_error.is_a?(Hash) ? (row_error[:row] || row_error["row"]) : nil %>
-            <% messages = row_error.is_a?(Hash) ? Array(row_error[:errors] || row_error["errors"]) : [row_error.to_s] %>
-            <li><%= "Row #{row_number}: " if row_number.present? %><%= messages.join(", ") %></li>
-          <% end %>
-        </ul>
-      </div>
-    </section>
-  <% end %>
-
   <% if Current.user&.admin? %>
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
           <h2 class="admin-panel-title text-ink dark:text-ink-dark">Import contacts</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Upload a CSV file, map its columns to contact fields, and import.</p>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Upload a CSV file, map its columns to contact fields, and queue a background import.</p>
         </div>
       </div>
       <div class="admin-panel-body">
         <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
           <div>
-            <p class="admin-notice-title">Import errors</p>
+            <p class="admin-notice-title">Background import</p>
             <p>
-              Rows that cannot be imported are recorded in the
+              Imports run in the background after you submit. The completed summary and any rows that cannot be imported are recorded in the
               <%= link_to "System Logs", admin_logs_path, class: admin_link_class %>
               with row numbers and validation messages.
             </p>

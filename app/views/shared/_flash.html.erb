@@ -1,7 +1,5 @@
-<%# Import row errors are rendered in detail by admin/data/show.html.erb. %>
 <% flash.each do |type, message| %>
   <% next if message.blank? %>
-  <% next if type.to_s == "import_errors" %>
   <%
     type = type.to_s
     is_notice = type == "notice"

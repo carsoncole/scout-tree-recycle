@@ -75,22 +75,8 @@ class ContactCsvImport
       return failure("The CSV file did not contain any data rows.")
     end
 
-    Log.create(
-      log_type: "system",
-      message: "Contact import completed: imported #{@imported}, skipped #{@skipped}, failed #{@failed}.",
-      error_type: "ContactCsvImport",
-      severity: "info",
-      handled: true,
-      skip_notification: true,
-      context: {
-        user: @user&.email,
-        filename: @filename,
-        imported: @imported,
-        skipped: @skipped,
-        failed: @failed,
-        row_errors: @row_errors
-      }
-    )
+    # The caller (ContactCsvImportJob) records the completed run as a "job"
+    # log entry using the counts and row errors returned here.
 
     empty = []
     attrs = { imported: @imported, skipped: @skipped, failed: @failed, error: nil, row_errors: @row_errors, errors: @row_errors, failed_rows: @row_errors, failures: @row_errors, details: @row_errors, error_details: @row_errors, failure_details: @row_errors, messages: @row_errors, row_failures: @row_errors, import_errors: @row_errors }

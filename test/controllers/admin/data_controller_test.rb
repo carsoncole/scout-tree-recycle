@@ -36,28 +36,58 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "is_missing_tree_notifications_enabled"
   end
 
-  test "should import contacts" do
+  test "should queue the contacts import" do
     sign_in
     file = fixture_file_upload("reservations_import.csv", "text/csv")
     mapping = [ "name", "email", "street", "city", "state", "zip", "status" ]
-    assert_difference "Contact.count", 2 do
+
+    assert_enqueued_with(job: ContactCsvImportJob) do
       post import_admin_data_url, params: { file: file, mapping: mapping }
     end
+
     assert_redirected_to admin_data_url
-    assert_match "Imported 2 contact", flash[:alert]
-    assert Contact.find_by(email: "imported.person@example.com")
+    assert_match "queued", flash[:notice].to_s
   end
 
-  test "should log import failures" do
+  test "should import contacts in the background job" do
     sign_in
     file = fixture_file_upload("reservations_import.csv", "text/csv")
     mapping = [ "name", "email", "street", "city", "state", "zip", "status" ]
-    assert_difference "Log.count", 2 do
-      post import_admin_data_url, params: { file: file, mapping: mapping }
+
+    assert_difference "Contact.count", 2 do
+      perform_enqueued_jobs do
+        post import_admin_data_url, params: { file: file, mapping: mapping }
+      end
     end
+
     assert_redirected_to admin_data_url
-    assert_match "failed", flash[:alert]
+    assert Contact.find_by(email: "imported.person@example.com")
+    assert Log.of_type("job").where(error_type: "ContactCsvImportJob").exists?
+  end
+
+  test "should require a csv file to import" do
+    sign_in
+
+    post import_admin_data_url, params: { mapping: [ "name", "email" ] }
+
+    assert_redirected_to admin_data_url
+    assert_equal "Please choose a CSV file to import.", flash[:alert]
+  end
+
+  test "should log import failures from the background job" do
+    sign_in
+    file = fixture_file_upload("reservations_import.csv", "text/csv")
+    mapping = [ "name", "email", "street", "city", "state", "zip", "status" ]
+
+    assert_difference "Log.count", 2 do
+      perform_enqueued_jobs do
+        post import_admin_data_url, params: { file: file, mapping: mapping }
+      end
+    end
+
+    assert_redirected_to admin_data_url
     assert Log.where(error_type: "ContactCsvImport", severity: "error").exists?
+    assert Log.of_type("job").exists?
   end
 
   test "non-admin users can view data but cannot export or import" do
@@ -70,6 +100,11 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Export Reservations CSV", response.body
 
     get export_admin_data_url(format: :csv)
+    assert_redirected_to admin_data_url
+    assert_equal "You are not authorized to perform this data action.", flash[:alert]
+
+    file = fixture_file_upload("reservations_import.csv", "text/csv")
+    post import_admin_data_url, params: { file: file, mapping: [ "name", "email" ] }
     assert_redirected_to admin_data_url
     assert_equal "You are not authorized to perform this data action.", flash[:alert]
   end

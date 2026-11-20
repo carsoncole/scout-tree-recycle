@@ -33,7 +33,11 @@ class Admin::DataTest < ApplicationSystemTestCase
     selects[1].select("Email")
     selects[2].select("Street")
     click_button "Import Contacts CSV"
-    assert_text "Imported 2 contact"
+    assert_text "Contact import queued"
+
+    perform_enqueued_jobs
+    assert Contact.find_by(email: "imported.person@example.com")
+    assert Log.of_type("job").exists?
   end
 
   test "saving the daily reservations export schedule" do

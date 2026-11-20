@@ -25,7 +25,6 @@ class ContactCsvImportTest < ActiveSupport::TestCase
 
     assert_equal 1, Log.where(error_type: "ContactCsvImport", severity: "error").count
     assert_equal 0, Log.where(error_type: "ContactCsvImport", severity: "warning").count
-    assert_equal 1, Log.where(error_type: "ContactCsvImport", severity: "info").count
   end
 
   test "returns an error when required fields are missing" do

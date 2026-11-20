@@ -15,6 +15,16 @@ class AddressVerificationControllerTest < ActionDispatch::IntegrationTest
     assert_equal "address_verification", reservations(:address_verification_1).reload.status
   end
 
+  test "cancelled reservation is not sent back to the donation step" do
+    reservation = reservations(:cancelled_1)
+
+    get reservation_address_verification_url(reservation.public_token)
+
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+    assert_equal ReservationsController::CANCELLED_ALERT, flash[:alert]
+    assert_equal "cancelled", reservation.reload.status
+  end
+
   test "should not find reservation by guessable id" do
     get reservation_address_verification_url(reservation_id: reservations(:address_verification_1).id)
 

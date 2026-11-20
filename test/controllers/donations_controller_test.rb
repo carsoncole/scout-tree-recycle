@@ -49,6 +49,32 @@ class DonationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Online donations are not configured yet.", flash[:alert]
   end
 
+  test "cancelled reservation cannot restart donation" do
+    reservation = reservations(:cancelled_1)
+    original_donation_type = reservation.donation_type
+
+    get new_reservation_donation_url(reservation.public_token)
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+    assert_equal ReservationsController::CANCELLED_ALERT, flash[:alert]
+
+    get reservation_donations_url(reservation.public_token)
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+
+    post reservation_cash_or_check_url(reservation.public_token)
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+
+    post reservation_no_donation_url(reservation.public_token)
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+
+    post reservation_donations_url(reservation.public_token)
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+
+    reservation.reload
+    assert_equal "cancelled", reservation.status
+    assert_nil reservation.donation_type
+    assert_nil original_donation_type
+  end
+
   test "should not find donation pages by guessable id" do
     get new_reservation_donation_url(reservation_id: reservations(:donation_1).id)
 

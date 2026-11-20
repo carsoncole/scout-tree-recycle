@@ -96,7 +96,26 @@ class ReservationsTest < ApplicationSystemTestCase
     assert_button "Cancel Reservation"
 
     visit reservation_confirmation_path(reservations(:cancelled_1).public_token)
+    assert_selector "h1", text: "Reservation Cancelled"
+    assert_text "This pickup will not happen"
+    assert_text reservations(:cancelled_1).name
+    assert_link "Make a new reservation", href: root_path
+    assert_no_text "Reservation Confirmed"
+    assert_no_link "Edit Reservation"
     assert_no_button "Cancel Reservation"
+    assert_no_button "Update Reservation"
+  end
+
+  test "confirmation email edit link shows a cancelled reservation as cancelled" do
+    reservation = reservations(:cancelled_1)
+
+    visit edit_reservation_path(reservation.public_token)
+
+    assert_current_path reservation_confirmation_path(reservation.public_token)
+    assert_selector "h1", text: "Reservation Cancelled"
+    assert_text "This reservation is cancelled and can't be changed."
+    assert_no_button "Update Reservation"
+    assert_equal "cancelled", reservation.reload.status
   end
 
   test "cannot create reservation with duplicate email" do

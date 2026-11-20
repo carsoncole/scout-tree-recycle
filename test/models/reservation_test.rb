@@ -445,6 +445,19 @@ class ReservationTest < ActiveSupport::TestCase
     assert_nil reservation.longitude
   end
 
+  test "changing the street of a cancelled reservation does not revive it" do
+    reservation = reservations(:cancelled_1)
+
+    assert_no_enqueued_jobs only: ActionMailer::MailDeliveryJob do
+      reservation.update!(street: "1 East 161st St")
+    end
+
+    reservation.reload
+    assert_equal "cancelled", reservation.status
+    assert_equal "1 East 161st St", reservation.street
+    assert_nil reservation.route_id
+  end
+
   test "status changes to routing when route is removed" do
     reservation = reservations(:pending_pickup_1)
     reservation.route_id = nil

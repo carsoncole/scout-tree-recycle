@@ -1,20 +1,36 @@
-<% content_for :title, "Reservation Confirmed | #{default_page_name}" %>
-<% content_for :description, "Your tree pickup reservation is confirmed." %>
+<% cancelled = @reservation.cancelled? %>
+<% content_for :title, "#{cancelled ? "Reservation Cancelled" : "Reservation Confirmed"} | #{default_page_name}" %>
+<% content_for :description, cancelled ? "Your tree pickup reservation has been cancelled." : "Your tree pickup reservation is confirmed." %>
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <%= render "shared/flow_steps", completed: true %>
+    <% if cancelled %>
+      <div class="site-notice mb-8 border border-line border-l-[3px] border-l-danger-border bg-danger-bg text-ink dark:border-line-dark dark:border-l-danger-border-dark dark:bg-danger-bg-dark dark:text-ink-dark" role="alert">
+        <p class="site-notice-text text-ink dark:text-ink-dark">This pickup will not happen. We will not collect a tree for this reservation.</p>
+      </div>
+    <% else %>
+      <%= render "shared/flow_steps", completed: true %>
+    <% end %>
 
+    <% unless cancelled %>
     <div class="site-confirmation-mark bg-sage text-surface ring-4 ring-sage-soft dark:bg-sage-dark dark:text-page-dark dark:ring-sage-soft-dark" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="m8.5 12.3 2.3 2.3 4.8-5"></path>
       </svg>
     </div>
+    <% end %>
 
-    <%= render "shared/page_header",
-               eyebrow: "You're all set",
-               title: "Reservation Confirmed",
-               description: "Thank you, #{@reservation.name}. We'll take it from here." %>
+    <% if cancelled %>
+      <%= render "shared/page_header",
+                 eyebrow: "Pickup cancelled",
+                 title: "Reservation Cancelled",
+                 description: "Thank you, #{@reservation.name}. This reservation is cancelled, so we will not pick up a tree at this address. The link in your confirmation email still opens this page." %>
+    <% else %>
+      <%= render "shared/page_header",
+                 eyebrow: "You're all set",
+                 title: "Reservation Confirmed",
+                 description: "Thank you, #{@reservation.name}. We'll take it from here." %>
+    <% end %>
 
     <section class="site-section border-line dark:border-line-dark" aria-labelledby="reservation-details">
       <h2 id="reservation-details" class="site-subtitle text-ink dark:text-ink-dark">Reservation details</h2>
@@ -42,7 +58,7 @@
           <dt class="site-detail-label dark:text-muted-dark">Email</dt>
           <dd class="site-detail-value dark:text-ink-dark">
             <%= @reservation.email %>
-            <% if @reservation.mobile.blank? %>
+            <% if @reservation.mobile.blank? && !cancelled %>
               <span class="site-detail-note text-ink-soft dark:text-ink-soft-dark">We’ll email you here if we can’t find your tree.</span>
               <span class="site-detail-note text-sage-deep dark:text-sage-deep-dark">
                 A mobile number is really helpful — if we can’t find your tree, a quick text reaches you faster than email. You can
@@ -72,6 +88,7 @@
       </dl>
     </section>
 
+    <% unless cancelled %>
     <section class="site-section border-line dark:border-line-dark" aria-labelledby="before-pickup">
       <h2 id="before-pickup" class="site-subtitle text-ink dark:text-ink-dark">Before pickup</h2>
       <ol class="site-steps">
@@ -95,8 +112,13 @@
       <%= link_to "Edit Reservation", edit_reservation_path(@reservation.public_token), class: "site-button site-button--secondary border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark" %>
       <%= link_to "Back to home", root_path, class: "site-button site-button--quiet text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" %>
     </div>
+    <% else %>
+    <div class="flex flex-wrap items-center gap-4">
+      <%= link_to "Make a new reservation", root_path, class: "site-button bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark" %>
+    </div>
+    <% end %>
 
-    <% if @reservation.routing? || @reservation.pending_pickup? %>
+    <% if !cancelled && (@reservation.routing? || @reservation.pending_pickup?) %>
       <div class="mt-8 border-t border-line pt-5 dark:border-line-dark">
         <%= button_to "Cancel Reservation",
                       reservation_path(@reservation.public_token),

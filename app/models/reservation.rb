@@ -316,6 +316,10 @@ class Reservation < ApplicationRecord
     self.route_id = nil
     self.was_automatically_routed = false
     self.is_manually_routed = false
+    # A cancelled reservation stays cancelled. Clearing its route must not
+    # put it back into routing or send a new confirmation email.
+    return if cancelled?
+
     # Only completed reservations (routing or later) reset to routing for
     # re-geocoding/re-routing. Incomplete reservations keep their flow
     # step; the flow itself promotes them to routing at completion.

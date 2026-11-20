@@ -1,5 +1,7 @@
 # OPTIMIZE new in process reservations will destroy archived reservations even if they are not confirmed
 class ReservationsController < ApplicationController
+  CANCELLED_ALERT = "This reservation is cancelled and can't be changed."
+
   before_action :set_reservation, only: %i[ update confirmation edit destroy ]
 
   def create
@@ -26,12 +28,24 @@ class ReservationsController < ApplicationController
   end
 
   def edit
+    if @reservation.cancelled?
+      redirect_to reservation_confirmation_path(@reservation.public_token), alert: CANCELLED_ALERT
+      return
+    end
+
     unless Reservation.open?
       redirect_to root_path, alert: "Reservations are closed right now and can't be changed."
     end
   end
 
   def update
+    # Reject a cancelled reservation before assigning attributes. A street
+    # change would otherwise clear geocoding and move the status back to routing.
+    if @reservation.cancelled?
+      redirect_to reservation_confirmation_path(@reservation.public_token), alert: CANCELLED_ALERT
+      return
+    end
+
     unless Reservation.open?
       redirect_to root_path, alert: "Reservations are closed right now and can't be changed."
       return
@@ -58,8 +72,15 @@ class ReservationsController < ApplicationController
   end
 
   def destroy # cancel
-    @reservation.cancelled!
-    redirect_to root_path, notice: "Your tree pickup has been cancelled."
+    if @reservation.routing? || @reservation.pending_pickup?
+      @reservation.cancelled!
+      redirect_to root_path, notice: "Your tree pickup has been cancelled."
+    elsif @reservation.cancelled?
+      redirect_to reservation_confirmation_path(@reservation.public_token)
+    else
+      redirect_to reservation_confirmation_path(@reservation.public_token),
+                  alert: "This reservation can't be cancelled."
+    end
   end
 
   private

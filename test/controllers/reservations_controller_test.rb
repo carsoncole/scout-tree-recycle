@@ -102,4 +102,68 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Your tree pickup has been cancelled.", flash[:notice]
     assert_equal "cancelled", @reservation.reload.status
   end
+
+  test "confirmation page shows a cancelled reservation as cancelled" do
+    reservation = reservations(:cancelled_1)
+
+    get reservation_confirmation_url(reservation.public_token)
+
+    assert_response :success
+    assert_match "Reservation Cancelled", response.body
+    assert_no_match "Reservation Confirmed", response.body
+    assert_no_match "Edit Reservation", response.body
+    assert_match "Make a new reservation", response.body
+    assert_match reservation.name, response.body
+    assert_match reservation.street, response.body
+    assert_equal "cancelled", reservation.reload.status
+  end
+
+  test "should not edit a cancelled reservation" do
+    reservation = reservations(:cancelled_1)
+
+    get edit_reservation_url(reservation.public_token)
+
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+    assert_equal ReservationsController::CANCELLED_ALERT, flash[:alert]
+  end
+
+  test "should not update a cancelled reservation" do
+    reservation = reservations(:cancelled_1)
+    original_street = reservation.street
+    original_name = reservation.name
+
+    assert_no_enqueued_emails do
+      patch reservation_url(reservation.public_token), params: { reservation: { street: "999 Revived St", name: "New Name" } }
+    end
+
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+    assert_equal ReservationsController::CANCELLED_ALERT, flash[:alert]
+    reservation.reload
+    assert_equal "cancelled", reservation.status
+    assert_equal original_street, reservation.street
+    assert_equal original_name, reservation.name
+  end
+
+  test "should not cancel an already cancelled reservation again" do
+    reservation = reservations(:cancelled_1)
+
+    assert_no_enqueued_emails do
+      delete reservation_url(reservation.public_token)
+    end
+
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+    assert_equal "cancelled", reservation.reload.status
+  end
+
+  test "should not cancel a picked up reservation from the public link" do
+    reservation = reservations(:picked_up_1)
+
+    assert_no_enqueued_emails do
+      delete reservation_url(reservation.public_token)
+    end
+
+    assert_redirected_to reservation_confirmation_url(reservation.public_token)
+    assert_equal "This reservation can't be cancelled.", flash[:alert]
+    assert_equal "picked_up", reservation.reload.status
+  end
 end

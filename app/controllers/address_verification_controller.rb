@@ -6,7 +6,10 @@ class AddressVerificationController < ApplicationController
   # status transition happens in ReservationsController#create, so this
   # GET must never change state.
   def address_verification
-    if Setting.instance.is_donations_enabled
+    if @reservation.cancelled?
+      redirect_to reservation_confirmation_url(@reservation.public_token),
+                  alert: ReservationsController::CANCELLED_ALERT
+    elsif Setting.instance.is_donations_enabled
       redirect_to new_reservation_donation_url(@reservation.public_token)
     else
       redirect_to reservation_donations_url(@reservation.public_token)

@@ -2,6 +2,7 @@ class DonationsController < ApplicationController
   include StripeConfigurable
 
   before_action :set_reservation, only: %i[ index create new cash_or_check no_donation ]
+  before_action :reject_cancelled_reservation, only: %i[ index create new cash_or_check no_donation ]
   before_action :ensure_stripe_configured, only: %i[ create donation_without_reservation ]
 
   def index
@@ -71,5 +72,12 @@ class DonationsController < ApplicationController
 
   def set_reservation
     @reservation = Reservation.find_by_public_token!(params[:reservation_id] || params[:id])
+  end
+
+  def reject_cancelled_reservation
+    return unless @reservation.cancelled?
+
+    redirect_to reservation_confirmation_path(@reservation.public_token),
+                alert: ReservationsController::CANCELLED_ALERT
   end
 end

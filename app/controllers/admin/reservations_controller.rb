@@ -41,7 +41,7 @@ class Admin::ReservationsController < Admin::BaseController
 
   def update
     if @reservation.update(reservation_params)
-      redirect_back fallback_location: edit_admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
+      redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end

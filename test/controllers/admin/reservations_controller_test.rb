@@ -95,7 +95,7 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
   test "should get update" do
     sign_in
     patch admin_reservation_url(reservations(:pending_pickup_1)), params: { reservation: { name: "New Name" } }
-    assert_redirected_to edit_admin_reservation_url(reservations(:pending_pickup_1))
+    assert_redirected_to admin_reservation_url(reservations(:pending_pickup_1))
     assert_equal "Reservation was successfully updated.", flash[:notice]
   end
 
@@ -112,7 +112,7 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Reservation was successfully updated.", flash[:notice]
   end
 
-  test "should redirect back to the edit page after an update from the edit page" do
+  test "should redirect to the show page after an update from the edit page" do
     sign_in
     reservation = reservations(:pending_pickup_1)
 
@@ -120,7 +120,7 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
           params: { reservation: { name: "New Name" } },
           headers: { "HTTP_REFERER" => edit_admin_reservation_url(reservation) }
 
-    assert_redirected_to edit_admin_reservation_url(reservation)
+    assert_redirected_to admin_reservation_url(reservation)
     assert_equal "New Name", reservation.reload.name
   end
 

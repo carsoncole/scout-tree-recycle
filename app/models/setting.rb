@@ -70,7 +70,7 @@ class Setting < ApplicationRecord
     },
     "operations" => {
       label: "Operations",
-      description: "Retention and end-of-season data cleanup."
+      description: "Close the current event and prepare contacts for the next one."
     },
     "system" => {
       label: "System",

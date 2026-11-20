@@ -489,16 +489,13 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "test-index", setting.aws_location_index_name
   end
 
-  test "operations panel saves retention settings" do
+  test "operations panel links to close event" do
     visit admin_settings_section_path("operations")
 
     within "section#operations" do
-      fill_in "Retention (Months)", with: "36"
-      click_on "Save Operations Settings"
+      assert_link "Close Event", href: admin_close_event_path
+      assert_no_text "Retention (Months)"
     end
-
-    assert_text "Settings were successfully updated"
-    assert_equal 36, Setting.instance.reload.contact_retention_months
   end
 
   test "page links" do

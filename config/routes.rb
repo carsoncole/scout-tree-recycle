@@ -108,8 +108,8 @@ Rails.application.routes.draw do
       post :email_export
     end
 
-    # Operations
-    post "post-event-cleanup", to: "operations#post_event_cleanup"
+    # Close the current event and prepare contacts for the next one.
+    resource :close_event, only: [ :show, :create ], controller: "operations", path: "close-event"
 
 
 

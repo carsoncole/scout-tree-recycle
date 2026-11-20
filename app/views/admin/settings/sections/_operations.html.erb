@@ -2,58 +2,25 @@
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Operations</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Retention and end-of-season data cleanup.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Close the current event and prepare contacts for the next one.</p>
     </div>
   </div>
 
   <div class="admin-panel-body">
-    <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
-      <%= hidden_field_tag :section, "operations" %>
-
-      <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
-        <div class="admin-toolbar">
-          <div>
-            <%= label_tag "setting[contact_retention_months]", "Retention (Months)", class: "admin-section-title text-ink dark:text-ink-dark" %>
-            <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">How long past participants remain available for marketing. Contacts older than this are removed during cleanup.</p>
-          </div>
-
-          <div class="admin-field admin-field--short admin-toolbar-field">
-            <%= number_field_tag "setting[contact_retention_months]", setting.contact_retention_months, class: admin_input_class, min: 1, step: 1, disabled: !Current.user&.admin? %>
-          </div>
-        </div>
+    <div class="admin-toolbar">
+      <div>
+        <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Close Event</h3>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Copy this event's reservations into contacts, delete every reservation, and reset marketing so the next event can begin. How long contacts are kept is set on that page.</p>
       </div>
-
       <% if Current.user&.admin? %>
-        <div class="flex flex-wrap items-center justify-end gap-3">
-          <%= submit_tag "Save Operations Settings", class: admin_button_class %>
-        </div>
+        <%= link_to "Close Event", admin_close_event_path, class: admin_button_class(variant: :danger) %>
       <% else %>
-        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Retention settings can be updated by admins only.</p>
-      <% end %>
-    <% end %>
-
-    <div class="admin-form-section admin-form-section--spaced border-line dark:border-line-dark">
-      <div class="admin-toolbar">
-        <div>
-          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Migrate Reservations</h3>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Move reservations to contacts for next season's marketing.</p>
-        </div>
-        <% if Current.user&.admin? %>
-          <%= button_to admin_post_event_cleanup_path,
-              class: admin_button_class(variant: :danger),
-              data: {
-                turbo_confirm: "Are you sure you want to migrate reservations? This will move all reservations to contacts which will be used for marketing. This action cannot be undone. ",
-                turbo_method: :post
-              } do %>
-            Migrate
-          <% end %>
-        <% else %>
-          <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
-        <% end %>
-      </div>
-      <% unless Current.user&.admin? %>
-        <p class="admin-hint mt-2 text-ink-soft dark:text-ink-soft-dark">Only admins can migrate reservations.</p>
+        <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
       <% end %>
     </div>
+    <% unless Current.user&.admin? %>
+      <p class="admin-hint mt-2 text-ink-soft dark:text-ink-soft-dark">Only admins can close the event or change how long contacts are kept.</p>
+      <%= link_to "View close event", admin_close_event_path, class: "#{admin_link_class} mt-2 inline-block" %>
+    <% end %>
   </div>
 </section>

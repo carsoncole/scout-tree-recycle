@@ -134,7 +134,10 @@ class Reservation < ApplicationRecord
     )
   }
   scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
-  scope :migratable, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled", "imported" ]) }
+  # Statuses copied into contacts when an event is closed. Every reservation
+  # is deleted afterward, including statuses that are not in this list.
+  MIGRATABLE_STATUSES = %w[routing pending_pickup picked_up missing cancelled imported].freeze
+  scope :migratable, -> { where(status: MIGRATABLE_STATUSES) }
   scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }
   scope :not_active, -> { where.not(status: [ "routing", "pending_pickup" ]) }
   scope :pickup, -> { where(status: [ "pending_pickup", "missing" ]) }

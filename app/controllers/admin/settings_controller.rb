@@ -58,6 +58,8 @@ class Admin::SettingsController < Admin::BaseController
 
       if @setting.update(attributes)
         redirect_to settings_redirect_path, notice: "Settings were successfully updated."
+      elsif params[:return_to] == "close_event"
+        redirect_to admin_close_event_path, alert: @setting.errors.full_messages.to_sentence
       else
         render :show, status: :unprocessable_entity
       end
@@ -148,6 +150,7 @@ class Admin::SettingsController < Admin::BaseController
   end
 
   def settings_redirect_path
+    return admin_close_event_path if params[:return_to] == "close_event"
     return admin_thanks_path if params[:return_to] == "admin_thanks"
 
     if params[:section].present? && Setting::SECTIONS.key?(@section)

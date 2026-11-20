@@ -1,0 +1,156 @@
+<%= content_for :title, "Close Event" %>
+<%= render "admin/shared/page_header",
+           title: "Close Event",
+           description: "Copy this event's reservations into contacts, then clear reservations so the next event can begin." do %>
+  <%= link_to "Back to Operations", admin_settings_section_path("operations"), class: admin_button_class(variant: :secondary) %>
+<% end %>
+
+<div class="admin-settings-layout">
+  <%= render "admin/settings/sidebar" %>
+
+  <div class="flex flex-col gap-6">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="retention">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <div>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Retention</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">How long past participants remain available for marketing. Contacts older than this are removed when the event is closed.</p>
+        </div>
+      </div>
+
+      <div class="admin-panel-body">
+        <%= form_with url: admin_setting_path(@setting), method: :patch, class: "admin-form" do %>
+          <%= hidden_field_tag :section, "operations" %>
+          <%= hidden_field_tag :return_to, "close_event" %>
+
+          <div class="admin-toolbar">
+            <div>
+              <%= label_tag "setting[contact_retention_months]", "Retention (Months)", class: "admin-section-title text-ink dark:text-ink-dark" %>
+              <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Contacts created more than this many months ago are deleted, unless a reservation copied below replaces them.</p>
+            </div>
+
+            <div class="admin-field admin-field--short admin-toolbar-field">
+              <%= number_field_tag "setting[contact_retention_months]", @setting.contact_retention_months, class: admin_input_class, min: 1, step: 1, disabled: !Current.user&.admin? %>
+            </div>
+          </div>
+
+          <% if Current.user&.admin? %>
+            <div class="mt-4 flex flex-wrap items-center justify-end gap-3">
+              <%= submit_tag "Save Retention", class: admin_button_class %>
+            </div>
+          <% else %>
+            <p class="admin-hint mt-3 text-ink-soft dark:text-ink-soft-dark">Retention can be updated by admins only.</p>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="close-event">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <div>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">What closing the event does</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">These steps run in order. Nothing is archived beyond the contact fields listed here.</p>
+        </div>
+      </div>
+
+      <div class="admin-panel-body flex flex-col gap-5">
+        <div class="<%= admin_notice_class(:danger) %>" role="note">
+          <p class="admin-notice-title">This cannot be undone</p>
+          <p>Every reservation is deleted. Contacts keep only name, email, mobile, and street, and only for the reservations that are copied.</p>
+        </div>
+
+        <ol class="list-decimal space-y-5 pl-5 text-ink dark:text-ink-dark">
+          <li>
+            <p class="font-semibold">Copy eligible reservations into contacts</p>
+            <p class="mt-1 text-ink-soft dark:text-ink-soft-dark">
+              <%= pluralize(@closure.copied_count, "reservation") %> with status <%= @closure.copied_status_labels.to_sentence %>
+              <%= @closure.copied_count == 1 ? "is" : "are" %> copied.
+              Each new contact stores name, email, mobile, and street. City, state, ZIP, unit, donation, route, and pickup notes are not copied.
+            </p>
+            <p class="mt-1 text-ink-soft dark:text-ink-soft-dark">
+              <%= pluralize(@closure.contacts_replaced_count, "existing contact") %>
+              <%= @closure.contacts_replaced_count == 1 ? "shares" : "share" %> an email with a copied reservation and
+              <%= @closure.contacts_replaced_count == 1 ? "is" : "are" %> replaced. The previous contact, including its marketing history, is deleted first.
+            </p>
+          </li>
+
+          <li>
+            <p class="font-semibold">Leave unfinished reservations out of the contact list</p>
+            <p class="mt-1 text-ink-soft dark:text-ink-soft-dark">
+              <%= pluralize(@closure.discarded_count, "reservation") %> still on <%= @closure.discarded_status_labels.to_sentence %>
+              <%= @closure.discarded_count == 1 ? "is" : "are" %> not copied. <%= @closure.discarded_count == 1 ? "It is" : "They are" %> deleted with the rest.
+            </p>
+          </li>
+
+          <li>
+            <p class="font-semibold">Delete every reservation</p>
+            <p class="mt-1 text-ink-soft dark:text-ink-soft-dark">
+              All <%= pluralize(@closure.reservation_count, "reservation") %> are deleted, including the ones just copied.
+              Donation records stay, no longer linked to a reservation. Logs stay, no longer linked to a reservation.
+              SMS messages, routes, zones, drivers, route boundaries, settings, users, and email templates stay.
+            </p>
+          </li>
+
+          <li>
+            <p class="font-semibold">Remove contacts past retention</p>
+            <p class="mt-1 text-ink-soft dark:text-ink-soft-dark">
+              Contacts created more than <%= pluralize(@closure.retention_months, "month") %> ago are deleted.
+              That is <%= pluralize(@closure.contacts_removed_count, "contact") %> right now.
+              Contacts just copied from this event are new, so they stay. A contact replaced in the first step is recreated and stays.
+            </p>
+          </li>
+
+          <li>
+            <p class="font-semibold">Clear marketing email history</p>
+            <p class="mt-1 text-ink-soft dark:text-ink-soft-dark">
+              Every contact that remains has the Marketing email 1 and Marketing email 2 sent dates cleared, so those emails can be sent again for the next event.
+            </p>
+          </li>
+        </ol>
+
+        <% if Current.user&.admin? %>
+          <div class="admin-danger-zone border-danger-border bg-danger-bg dark:border-danger-border-dark dark:bg-danger-bg-dark" data-controller="dialog">
+            <div class="admin-toolbar">
+              <div>
+                <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Accept and close</h3>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Open the confirmation, then type <%= EventClosure::CONFIRMATION_WORD %> to accept. The event closes only after that.</p>
+              </div>
+              <button type="button" class="<%= admin_button_class(variant: :danger) %>" data-action="dialog#open">Confirm</button>
+            </div>
+
+            <dialog data-dialog-target="dialog"
+                    data-action="click->dialog#backdrop"
+                    aria-labelledby="close_event_dialog_title"
+                    class="fixed inset-0 m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-line bg-surface p-0 text-ink backdrop:bg-black/40 open:flex open:flex-col dark:border-line-dark dark:bg-surface-dark dark:text-ink-dark">
+              <%= form_with url: admin_close_event_path, method: :post, class: "flex flex-col" do %>
+                <div class="border-b border-line px-5 py-4 dark:border-line-dark">
+                  <h2 id="close_event_dialog_title" class="text-base font-semibold text-ink dark:text-ink-dark">Confirm</h2>
+                  <p class="mt-1 text-sm text-ink-soft dark:text-ink-soft-dark">Closing the event runs every step above. This cannot be undone.</p>
+                </div>
+
+                <div class="flex flex-col gap-4 px-5 py-5">
+                  <div class="admin-field">
+                    <%= label_tag :confirmation, "Type #{EventClosure::CONFIRMATION_WORD} to accept", class: "admin-label text-ink dark:text-ink-dark" %>
+                    <%= text_field_tag :confirmation, nil,
+                        class: admin_input_class,
+                        required: true,
+                        pattern: EventClosure::CONFIRMATION_WORD,
+                        title: "Type #{EventClosure::CONFIRMATION_WORD} exactly to accept.",
+                        autocomplete: "off",
+                        spellcheck: false %>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-end gap-3 border-t border-line px-5 py-4 dark:border-line-dark">
+                  <button type="button" class="<%= admin_button_class(variant: :secondary) %>" data-action="dialog#close">Cancel</button>
+                  <%= submit_tag "Close this event", class: admin_button_class(variant: :danger) %>
+                </div>
+              <% end %>
+            </dialog>
+          </div>
+        <% else %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Only admins can close the event.</p>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</div>

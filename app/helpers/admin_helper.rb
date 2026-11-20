@@ -3,7 +3,7 @@ module AdminHelper
   ADMIN_NAV_GROUPS = {
     "Operations" => %w[reservations pickups donations sms],
     "Content" => %w[marketing marketing_email_templates marketing_images reservation_email_templates contacts],
-    "System" => %w[settings configuration drivers routes zones users thanks logs data]
+    "System" => %w[settings configuration drivers routes zones users thanks logs data operations]
   }.freeze
 
   ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink hover:bg-stone dark:text-ink-soft-dark dark:hover:text-ink-dark dark:hover:bg-stone-dark".freeze
@@ -64,6 +64,8 @@ module AdminHelper
       "pickups"
     when "thanks"
       "site_content"
+    when "operations"
+      "operations"
     when "logs"
       "system"
     else

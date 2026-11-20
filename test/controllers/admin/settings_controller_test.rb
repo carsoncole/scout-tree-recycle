@@ -245,6 +245,34 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "CA", setting.phone_default_country
   end
 
+  test "retention update from the close event page returns there" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      section: "operations",
+      return_to: "close_event",
+      setting: { contact_retention_months: 18 }
+    }
+
+    assert_redirected_to admin_close_event_path
+    assert_equal "Settings were successfully updated.", flash[:notice]
+    assert_equal 18, Setting.first.reload.contact_retention_months
+  end
+
+  test "invalid retention from the close event page returns there" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      section: "operations",
+      return_to: "close_event",
+      setting: { contact_retention_months: 0 }
+    }
+
+    assert_redirected_to admin_close_event_path
+    assert_match "Contact retention months", flash[:alert]
+    assert_equal 24, Setting.first.reload.contact_retention_months
+  end
+
   test "should update marketing cooldown and contact retention" do
     sign_in
 

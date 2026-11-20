@@ -120,6 +120,7 @@ class Reservation < ApplicationRecord
 
   scope :completed, -> { where(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   scope :pickup_overview, -> { where(status: PICKUP_OVERVIEW_STATUSES) }
+  scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
   # Admin search across contact and address columns. Matches a
   # case-insensitive substring of name, email, street, street name, or city.
   scope :search, ->(query) {
@@ -133,7 +134,37 @@ class Reservation < ApplicationRecord
       pattern: pattern
     )
   }
-  scope :not_completed, -> { where.not(status: [ "routing", "pending_pickup", "picked_up", "missing", "cancelled" ]) }
+
+  ADMIN_SORT_COLUMNS = {
+    "name" => :name,
+    "email" => :email,
+    "address" => :street_name,
+    "status" => :status,
+    "created_at" => :created_at
+  }.freeze
+
+  # Admin reservations table: sort, optional status, and search. An unknown
+  # sort falls back to newest first. An unknown status is ignored.
+  def self.for_admin_index(sort:, direction:, status: nil, query: nil)
+    relation = includes(:route)
+    relation = admin_sorted(relation, sort, direction)
+    relation = relation.where(status: status) if status.present? && statuses.key?(status.to_s)
+    relation = relation.search(query) if query.present?
+    relation
+  end
+
+  def self.admin_sorted(relation, sort, direction)
+    return relation.order(created_at: :desc) unless ADMIN_SORT_COLUMNS.key?(sort.to_s) || sort.to_s == "route"
+
+    sort_direction = direction.to_s == "desc" ? :desc : :asc
+    if sort.to_s == "route"
+      relation.joins(:route).order("routes.name" => sort_direction)
+    else
+      relation.order(ADMIN_SORT_COLUMNS.fetch(sort.to_s) => sort_direction)
+    end
+  end
+  private_class_method :admin_sorted
+
   # Statuses copied into contacts when an event is closed. Every reservation
   # is deleted afterward, including statuses that are not in this list.
   MIGRATABLE_STATUSES = %w[routing pending_pickup picked_up missing cancelled imported].freeze

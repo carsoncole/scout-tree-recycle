@@ -1,5 +1,5 @@
 <%= content_for :title, @phone %>
-<%= turbo_stream_from "sms_thread_#{@phone.gsub(/[^0-9]/, '')}" %>
+<%= turbo_stream_from Sms.thread_stream_name(@phone) %>
 
 <%= render "admin/shared/page_header",
            title: @phone,

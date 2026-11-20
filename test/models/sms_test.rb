@@ -30,6 +30,24 @@ class SmsTest < ActiveSupport::TestCase
     assert_equal users(:admin), sms.reload.user
   end
 
+  test "thread helpers use the digits of the phone" do
+    assert_equal "12069230400", Sms.phone_digits("+1 (206) 923-0400")
+    assert_equal "sms-thread-12069230400", Sms.thread_dom_id("+12069230400")
+    assert_equal "sms_thread_12069230400", Sms.thread_stream_name("+12069230400")
+  end
+
+  test "mark_viewed! marks only that phone and thread_for returns its messages" do
+    phone = "+12065550199"
+    unread = Sms.create!(phone: phone, body: "Hi", direction: :incoming, viewed: false)
+    other = Sms.create!(phone: "+12065550198", body: "Other", direction: :incoming, viewed: false)
+
+    Sms.mark_viewed!(phone)
+
+    assert unread.reload.viewed?
+    assert_not other.reload.viewed?
+    assert_equal [ unread ], Sms.thread_for(phone).to_a
+  end
+
   test "creating sms does not create a send job if sms is disabled" do
     Setting.instance.update(is_sms_enabled: false)
     sms = Sms.new(phone: "1234567890", body: "Hello, world!")

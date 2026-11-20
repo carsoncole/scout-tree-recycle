@@ -512,4 +512,28 @@ class ReservationTest < ActiveSupport::TestCase
       reservations(:pending_pickup_1).resend_email!("unknown")
     end
   end
+
+  test "for_admin_index filters by status and search and ignores an unknown status" do
+    matches = Reservation.for_admin_index(sort: "name", direction: "asc", status: "picked_up", query: "jones")
+
+    assert_includes matches, reservations(:picked_up_1)
+    assert_not_includes matches, reservations(:pending_pickup_1)
+
+    unknown_status = Reservation.for_admin_index(sort: "created_at", direction: "desc", status: "bogus")
+    assert_includes unknown_status, reservations(:pending_pickup_1)
+    assert_includes unknown_status, reservations(:picked_up_1)
+  end
+
+  test "for_admin_index falls back to newest first for an unknown sort" do
+    sql = Reservation.for_admin_index(sort: "nope", direction: "asc").to_sql
+
+    assert_match(/ORDER BY "reservations"\."created_at" DESC/, sql)
+  end
+
+  test "for_admin_index sorts by route name" do
+    names = Reservation.for_admin_index(sort: "route", direction: "asc").map { |reservation| reservation.route.name }
+
+    assert_equal names.sort, names
+    assert_includes names, "Lower Manhattan"
+  end
 end

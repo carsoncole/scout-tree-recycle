@@ -1,9 +1,9 @@
 <% expanded = true if defined?(show_page) && show_page %>
 <% expanded ||= false %>
 
-<%= turbo_stream_from "sms_thread_#{phone.gsub(/[^0-9]/, '')}" %>
+<%= turbo_stream_from Sms.thread_stream_name(phone) %>
 
-<turbo-frame id="sms-thread-<%= phone.gsub(/[^0-9]/, '') %>">
+<turbo-frame id="<%= Sms.thread_dom_id(phone) %>">
   <% unviewed_count = smses.count { |sms| !sms.viewed } %>
   <div class="admin-thread border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" data-controller="sms-thread" data-sms-thread-phone-value="<%= phone %>">
     <div class="admin-thread-header border-line dark:border-line-dark"
@@ -61,11 +61,11 @@
         </div>
 
         <%= form_with url: admin_sms_path, scope: :sms, class: "admin-form",
-                      data: { turbo_frame: "sms-thread-#{phone.gsub(/[^0-9]/, '')}" } do |f| %>
+                      data: { turbo_frame: Sms.thread_dom_id(phone) } do |f| %>
           <%= f.hidden_field :phone, value: phone %>
           <div class="admin-field">
             <%= f.label :body, "Reply", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.text_area :body, rows: 2, class: admin_textarea_class, placeholder: "Type your reply...", id: "reply-textarea-#{phone.gsub(/[^0-9]/, '')}" %>
+            <%= f.text_area :body, rows: 2, class: admin_textarea_class, placeholder: "Type your reply...", id: "reply-textarea-#{Sms.phone_digits(phone)}" %>
           </div>
 
           <div class="flex flex-wrap items-center justify-end gap-3">

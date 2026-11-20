@@ -1,4 +1,19 @@
 class Admin::MarketingController < Admin::BaseController
+  include EmailTemplateResponses
+
+  MARKETING_SENDS = {
+    1 => {
+      disabled: "Emailing is disabled. Enable email notifications in Settings to send marketing emails.",
+      job: SendMarketingEmail1Job,
+      template: "marketing_email_1"
+    },
+    2 => {
+      disabled: "Emailing is disabled. Enable emailing in Settings to send marketing emails.",
+      job: SendMarketingEmail2Job,
+      template: "marketing_email_2"
+    }
+  }.freeze
+
   def index
     @pagy, @contacts = pagy(Contact.order(:email))
     @marketing_1_count = Contact.where(marketing_1_email_sent_at: nil).count
@@ -17,45 +32,11 @@ class Admin::MarketingController < Admin::BaseController
   end
 
   def send_marketing_email_1
-    setting = Setting.instance
-
-    if !setting.is_emailing_enabled?
-      redirect_to admin_marketing_index_path, alert: "Emailing is disabled. Enable email notifications in Settings to send marketing emails."
-    elsif (message = setting.email_configuration_alert(purpose: "sending marketing emails"))
-      redirect_to admin_marketing_index_path, alert: message
-    elsif MarketingEmailTemplate.published.find_by(name: "marketing_email_1").nil?
-      redirect_to admin_marketing_index_path, alert: "Marketing email 1 is not published. Edit the template and publish it before sending."
-    else
-      count_to_be_sent = Contact.where(marketing_1_email_sent_at: nil).count
-      if count_to_be_sent.zero?
-        redirect_to admin_marketing_index_path, alert: "No contacts are eligible for Marketing email 1."
-      else
-        SendMarketingEmail1Job.perform_later
-        queued_count = setting.email_batch_size(count_to_be_sent)
-        redirect_to admin_marketing_index_path, notice: "#{queued_count} of #{count_to_be_sent} marketing #1 emails queued to be sent."
-      end
-    end
+    queue_marketing_email(1)
   end
 
   def send_marketing_email_2
-    setting = Setting.instance
-
-    if !setting.is_emailing_enabled?
-      redirect_to admin_marketing_index_path, alert: "Emailing is disabled. Enable emailing in Settings to send marketing emails."
-    elsif (message = setting.email_configuration_alert(purpose: "sending marketing emails"))
-      redirect_to admin_marketing_index_path, alert: message
-    elsif MarketingEmailTemplate.published.find_by(name: "marketing_email_2").nil?
-      redirect_to admin_marketing_index_path, alert: "Marketing email 2 is not published. Edit the template and publish it before sending."
-    else
-      count_to_be_sent = Contact.where(marketing_2_email_sent_at: nil).count
-      if count_to_be_sent.zero?
-        redirect_to admin_marketing_index_path, alert: "No contacts are eligible for Marketing email 2."
-      else
-        SendMarketingEmail2Job.perform_later
-        queued_count = setting.email_batch_size(count_to_be_sent)
-        redirect_to admin_marketing_index_path, notice: "#{queued_count} of #{count_to_be_sent} marketing #2 emails queued to be sent."
-      end
-    end
+    queue_marketing_email(2)
   end
 
   # Sends the published marketing email to an admin address so they can see
@@ -67,16 +48,8 @@ class Admin::MarketingController < Admin::BaseController
       return
     end
 
-    email = params[:email].to_s.strip
-    if email.blank?
-      redirect_to admin_marketing_index_path, alert: "Enter an email address for the test message."
-      return
-    end
-
-    if (message = Setting.instance.email_configuration_alert(purpose: "sending a test email"))
-      redirect_to admin_marketing_index_path, alert: message
-      return
-    end
+    email = validated_test_email(admin_marketing_index_path)
+    return unless email
 
     unless template.published?
       redirect_to admin_marketing_index_path, alert: "#{template.name.humanize} is not published. Edit the template and publish it before sending a test."
@@ -99,6 +72,28 @@ class Admin::MarketingController < Admin::BaseController
   end
 
   private
+
+  def queue_marketing_email(number)
+    campaign = MARKETING_SENDS.fetch(number)
+    setting = Setting.instance
+
+    if !setting.is_emailing_enabled?
+      redirect_to admin_marketing_index_path, alert: campaign[:disabled]
+    elsif (message = setting.email_configuration_alert(purpose: "sending marketing emails"))
+      redirect_to admin_marketing_index_path, alert: message
+    elsif MarketingEmailTemplate.published.find_by(name: campaign[:template]).nil?
+      redirect_to admin_marketing_index_path, alert: "Marketing email #{number} is not published. Edit the template and publish it before sending."
+    else
+      count_to_be_sent = Contact.where(Contact::MARKETING_EMAIL_COLUMNS.fetch(number) => nil).count
+      if count_to_be_sent.zero?
+        redirect_to admin_marketing_index_path, alert: "No contacts are eligible for Marketing email #{number}."
+      else
+        campaign[:job].perform_later
+        queued_count = setting.email_batch_size(count_to_be_sent)
+        redirect_to admin_marketing_index_path, notice: "#{queued_count} of #{count_to_be_sent} marketing ##{number} emails queued to be sent."
+      end
+    end
+  end
 
   def marketing_email_template(name)
     name = name.to_s

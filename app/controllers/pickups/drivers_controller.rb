@@ -7,26 +7,16 @@ module Pickups
     end
 
     def home
-      @status_counts = Reservation.pickup_overview.group(:route_id, :status).count
-
       @zones = Zone.ordered.includes(routes: :points)
       @unzoned_routes = Route.unzoned.ordered.includes(:points)
       @all_routes = @zones.flat_map(&:routes) + @unzoned_routes
 
-      pickup_reservations = Reservation.pickup_overview
-                                     .where.not(latitude: nil, longitude: nil)
-                                     .includes(:route)
-      @all_reservations = pickup_reservations
-      @reservations_by_zone_id = pickup_reservations
-        .select { |reservation| reservation.route&.zone_id }
-        .group_by { |reservation| reservation.route.zone_id }
-      @unzoned_reservations = pickup_reservations
-        .select { |reservation| reservation.route && reservation.route.zone_id.nil? }
-
-      @coordinate_less_counts = Reservation.pickup_overview
-        .where("latitude IS NULL OR longitude IS NULL")
-        .group(:route_id)
-        .count
+      map = PickupMap.new
+      @status_counts = map.status_counts
+      @all_reservations = map.plotted_reservations
+      @reservations_by_zone_id = map.plotted_by_zone_id
+      @unzoned_reservations = map.unzoned_plotted
+      @coordinate_less_counts = map.coordinate_less_counts
     end
 
     def index

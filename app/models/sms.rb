@@ -22,6 +22,26 @@ class Sms < ApplicationRecord
   # most recent reservation for that number.
   after_create :log_sms!
 
+  def self.phone_digits(phone)
+    phone.to_s.gsub(/[^0-9]/, "")
+  end
+
+  def self.thread_dom_id(phone)
+    "sms-thread-#{phone_digits(phone)}"
+  end
+
+  def self.thread_stream_name(phone)
+    "sms_thread_#{phone_digits(phone)}"
+  end
+
+  def self.thread_for(phone)
+    includes(:user).where(phone: phone).order(:created_at)
+  end
+
+  def self.mark_viewed!(phone)
+    where(phone: phone, viewed: false).update_all(viewed: true)
+  end
+
   def self.grouped_by_phone_for_index
     # Get all SMS messages ordered by creation time descending
     all_smses = includes(:user).order(created_at: :desc)
@@ -160,12 +180,12 @@ class Sms < ApplicationRecord
       # Broadcast to the specific thread if it exists. The thread partial is only
       # rendered on the conversation page, where it should stay expanded so the
       # newest message remains visible after the update.
-      broadcast_replace_to "sms_thread_#{phone.gsub(/[^0-9]/, '')}",
-        target: "sms-thread-#{phone.gsub(/[^0-9]/, '')}",
+      broadcast_replace_to thread_stream_name(phone),
+        target: thread_dom_id(phone),
         partial: "admin/sms/thread",
         locals: {
           phone: phone,
-          smses: Sms.includes(:user).where(phone: phone).order(:created_at),
+          smses: thread_for(phone),
           expanded: true,
           show_page: true
         }

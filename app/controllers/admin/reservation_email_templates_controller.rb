@@ -1,4 +1,6 @@
 class Admin::ReservationEmailTemplatesController < Admin::BaseController
+  include EmailTemplateResponses
+
   before_action :set_template, only: [ :edit, :update, :preview, :send_test, :publish, :unpublish, :restore_default ]
 
   def index
@@ -39,17 +41,8 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
   end
 
   def send_test
-    email = params[:email].to_s.strip
-
-    if email.blank?
-      redirect_to send_test_redirect_path, alert: "Enter an email address for the test message."
-      return
-    end
-
-    if (message = Setting.instance.email_configuration_alert(purpose: "sending a test email"))
-      redirect_to send_test_redirect_path, alert: message
-      return
-    end
+    email = validated_test_email(send_test_redirect_path)
+    return unless email
 
     source = params[:source].to_s == "published" ? :published : :draft
     if source == :published && !@template.published?
@@ -176,24 +169,5 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
   def source_logo_alt(source)
     alt = source == :published ? @template.published_logo_alt : @template.logo_alt
     alt.presence || @template.logo_alt
-  end
-
-  def set_preview_headers
-    response.headers["X-Robots-Tag"] = "noindex, nofollow"
-    response.headers["Cache-Control"] = "no-store"
-    response.headers["Content-Security-Policy"] = "default-src 'none'; style-src 'unsafe-inline'; img-src * data:; font-src * data:;"
-  end
-
-  def preview_error_html(error)
-    <<~HTML
-      <!DOCTYPE html>
-      <html>
-        <head><meta charset="utf-8"><title>Preview error</title></head>
-        <body style="margin: 0; padding: 24px; font-family: system-ui, sans-serif; color: #742a2a; background: #fff5f5;">
-          <h1 style="margin: 0 0 8px; font-size: 18px;">This template could not be previewed.</h1>
-          <pre style="white-space: pre-wrap; font-size: 13px;">#{ERB::Util.html_escape(error.message)}</pre>
-        </body>
-      </html>
-    HTML
   end
 end

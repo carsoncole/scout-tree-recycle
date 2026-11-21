@@ -2,7 +2,7 @@
 <%= render "admin/shared/page_header",
            eyebrow: "First run",
            title: "Initial Application Setup",
-           description: "Please configure the required settings to continue." %>
+           description: "Create your administrator account to get started. The only thing required at this time is the administrator account details." %>
 
 <div class="admin-settings-layout">
   <%= render "admin/settings/sidebar" %>
@@ -13,7 +13,7 @@
       <div class="admin-panel-body">
         <div class="admin-form">
           <div class="admin-field" id="organization_name_section">
-            <%= f.label :organization_name, "Organization Name", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= f.label :organization_name, "Organization Name (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
             <%= f.text_field :organization_name,
                 class: admin_input_class(error: @setting&.errors[:organization_name].any?) %>
             <% if @setting&.errors[:organization_name].any? %>
@@ -22,14 +22,14 @@
           </div>
 
           <div class="admin-field">
-            <%= f.label :site_url, "Site URL", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= f.label :site_url, "Site URL (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
             <%= f.url_field :site_url, class: admin_input_class, placeholder: "https://example.com" %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Used for links in emails, such as password resets.</p>
           </div>
 
           <div class="admin-field-grid admin-field-grid--two">
             <div class="admin-field" id="default_city_section">
-              <%= f.label :default_city, "Default City", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= f.label :default_city, "Default City (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
               <%= f.text_field :default_city,
                   class: admin_input_class(error: @setting&.errors[:default_city].any?) %>
               <% if @setting&.errors[:default_city].any? %>
@@ -38,7 +38,7 @@
             </div>
 
             <div class="admin-field" id="default_state_section">
-              <%= f.label :default_state, "Default State", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= f.label :default_state, "Default State (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
               <%= f.select :default_state, options_for_select(us_states), { include_blank: true },
                   class: admin_select_class(error: @setting&.errors[:default_state].any?) %>
               <% if @setting&.errors[:default_state].any? %>
@@ -49,7 +49,7 @@
 
           <div class="admin-field-grid admin-field-grid--three">
             <div class="admin-field" id="event_pickup_start_section">
-              <%= f.label :event_pickup_start, "Event Pickup Start", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= f.label :event_pickup_start, "Event Pickup Start (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
               <%= f.datetime_field :event_pickup_start,
                   class: admin_input_class(error: @setting&.errors[:event_pickup_start].any?) %>
               <% if @setting&.errors[:event_pickup_start].any? %>
@@ -58,7 +58,7 @@
             </div>
 
             <div class="admin-field" id="event_pickup_end_section">
-              <%= f.label :event_pickup_end, "Event Pickup End", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= f.label :event_pickup_end, "Event Pickup End (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
               <%= f.datetime_field :event_pickup_end,
                   class: admin_input_class(error: @setting&.errors[:event_pickup_end].any?) %>
               <% if @setting&.errors[:event_pickup_end].any? %>
@@ -67,7 +67,7 @@
             </div>
 
             <div class="admin-field" id="sign_up_deadline_section">
-              <%= f.label :event_sign_up_deadline, "Sign Up Deadline", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= f.label :event_sign_up_deadline, "Sign Up Deadline (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
               <%= f.datetime_field :event_sign_up_deadline,
                   class: admin_input_class(error: @setting&.errors[:event_sign_up_deadline].any?) %>
               <% if @setting&.errors[:event_sign_up_deadline].any? %>
@@ -81,12 +81,12 @@
             <div class="flex flex-col gap-6">
               <div>
                 <h2 class="admin-section-title text-ink dark:text-ink-dark">Administrator account</h2>
-                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Create the initial admin user to sign in and manage the application.</p>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Create the initial admin user to sign in and manage the application. Email and password are required.</p>
               </div>
 
               <%= fields_for :admin_user, @admin_user || User.new do |af| %>
                 <div class="admin-field" id="admin_email_section">
-                  <%= af.label :email, "Admin Email", class: "admin-label text-ink dark:text-ink-dark" %>
+                  <%= af.label :email, "Admin Email (required)", class: "admin-label text-ink dark:text-ink-dark" %>
                   <%= af.email_field :email, autocomplete: "username", required: true,
                       class: admin_input_class(error: @admin_user&.errors[:email].any?) %>
                   <% if @admin_user&.errors[:email].any? %>
@@ -96,7 +96,7 @@
 
                 <div class="admin-field-grid admin-field-grid--two">
                   <div class="admin-field" id="admin_password_section">
-                    <%= af.label :password, "Admin Password", class: "admin-label text-ink dark:text-ink-dark" %>
+                    <%= af.label :password, "Admin Password (required)", class: "admin-label text-ink dark:text-ink-dark" %>
                     <%= af.password_field :password, autocomplete: "new-password", required: true,
                         class: admin_input_class(error: @admin_user&.errors[:password].any?) %>
                     <% if @admin_user&.errors[:password].any? %>
@@ -105,7 +105,7 @@
                   </div>
 
                   <div class="admin-field" id="admin_password_confirmation_section">
-                    <%= af.label :password_confirmation, "Confirm Admin Password", class: "admin-label text-ink dark:text-ink-dark" %>
+                    <%= af.label :password_confirmation, "Confirm Admin Password (required)", class: "admin-label text-ink dark:text-ink-dark" %>
                     <%= af.password_field :password_confirmation, autocomplete: "new-password", required: true,
                         class: admin_input_class(error: @admin_user&.errors[:password_confirmation].any?) %>
                     <% if @admin_user&.errors[:password_confirmation].any? %>

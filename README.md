@@ -4,6 +4,24 @@ Tree Recycle is a Rails application for running a Christmas tree recycling fundr
 
 Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of Troop 1564 on Bainbridge Island, WA.
 
+## Features
+
+**Public site.** Families reserve a tree pickup and can update or cancel it. They can donate by card, cash, or check, skip the donation, or donate without a reservation. The site also has About and privacy pages, a thank-you gallery, a maintenance page, and a pickup-day notice that can replace the signup form.
+
+**Admin.** Organizers work from one back office:
+
+- Reservations, with address lookup and assignment onto routes. Routes can also be assigned by hand.
+- Zones, routes, and drivers.
+- A pickup overview and a printable PDF of pickups still waiting.
+- Donation records and charts of reservations and donations.
+- Text-message conversations and an email inbox, including replies.
+- Two marketing campaigns, plus editable reservation emails for confirmation, cancellation, and a missing tree.
+- Settings for the event dates, the organization, the public pages, email, texts, donations, and routing.
+- Admin accounts, error logs, spreadsheet import and export, and a close-event step that keeps contacts for the next year.
+- A view of background jobs, such as mail, texts, and geocoding.
+
+**Driver pickups.** Drivers open a separate site with a shared key. They see routes on a map, update a stop as picked up or missing, mark favorite routes, and print pickup lists.
+
 The site is usually busy for about six weeks, often late November through early January, and quiet the rest of the year. Reservations, donations, users, and settings live in PostgreSQL. I've used Neon in Production, because I wanted to use as little resources as possible when the site is not busy (most of the year). With this setup the database can pause after a few quiet minutes and wake on the next visit. Any PostgreSQL host works. Background jobs and live admin updates stay on the server's disk.
 
 ## What you need

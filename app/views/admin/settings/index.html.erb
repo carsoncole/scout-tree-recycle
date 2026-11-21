@@ -1,7 +1,16 @@
 <%= content_for :title, "Settings" %>
 <%= render "admin/shared/page_header",
            title: "Settings",
-           description: "Manage event details, feature toggles, and portal access." %>
+           description: "Manage event details, feature toggles, and portal access." do %>
+  <%= link_to pickups_root_path, target: "_blank", rel: "noopener", class: admin_button_class(variant: :secondary) do %>
+    Pickups Portal
+    <%= external_link_icon %>
+  <% end %>
+  <%= link_to root_path, target: "_blank", rel: "noopener", class: admin_button_class(variant: :secondary) do %>
+    Website
+    <%= external_link_icon %>
+  <% end %>
+<% end %>
 
 <%= render "admin/settings/configuration_status" %>
 

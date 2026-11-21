@@ -172,7 +172,28 @@ Without Stripe configured, the donation form still accepts cash/check or no-dona
 2. In `/admin/settings` → Email, enable emailing and enter the **From Address** plus SMTP **address**, **port**, **username**, **password**, **authentication** (`plain`, `login`, or `cram_md5`), and **encryption** (`STARTTLS` is recommended; `TLS` and `None` are also supported).
 3. Verify **Site URL** is set so email links point at the public host.
 
-SMTP settings are stored in the database and applied to Action Mailer at runtime, so changes take effect without a restart. In development and test, mail is not delivered by SMTP.
+SMTP settings are stored in the database and applied to Action Mailer at runtime, so changes take effect without a restart. In development and test, mail is not delivered by SMTP. Template and marketing mail keep using this SMTP setup. Those sends are recorded in the admin outbox as headers only (to, from, subject, message id, and the mailer action). The body is not stored.
+
+#### Inbound email (Resend)
+
+Inbound mail uses Action Mailbox. The provider-specific piece is the Resend ingress; switching providers later means pointing ingress at another adapter and keeping the same mailbox.
+
+1. In the Resend dashboard, create a webhook for the `email.received` event only. Resend posts metadata, and the app fetches the raw message with the API key.
+2. Production webhook URL: `https://treerecycle.net/rails/action_mailbox/resend/inbound_emails`
+3. Store the secrets with `bin/rails credentials:edit`, then restart. The app does not read these from the environment:
+
+   ```yaml
+   resend:
+     api_key: re_...
+   action_mailbox:
+     resend_signing_secret: whsec_...
+   ```
+
+4. In development, expose the app through a tunnel and add that host to `config.hosts` in `config/environments/development.rb`. The webhook path is the same. Development and test do not deliver outbound mail by SMTP.
+
+Received messages are listed at `/admin/mail/received_emails`. Attachments and inline images are discarded before the raw message is stored. A direct message is linked to a matching contact and the latest reservation with that address. A reply to a recorded outbound message keeps that message's reservation and contact links.
+
+Manual messages and replies are sent from `/admin/mail/outbound_emails/new` and from a received message. Those keep the full plain-text body. Replies set `In-Reply-To` and `References`.
 
 #### Marketing email templates
 

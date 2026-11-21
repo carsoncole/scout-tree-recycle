@@ -21,6 +21,13 @@ class DataReset
   # Every application table, ordered so foreign keys are satisfied:
   # child rows are removed before the rows they reference.
   TABLES = %w[
+    mails_outbound_emails
+    mails_received_emails
+    active_storage_attachments
+    active_storage_variant_records
+    action_mailbox_inbound_emails
+    active_storage_blobs
+    active_storage_db_files
     logs
     donations
     driver_routes

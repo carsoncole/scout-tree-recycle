@@ -56,6 +56,8 @@ gem "geokit" # geocoding and geospatial queries
 gem "liquid" # safe templating for admin-edited marketing emails
 gem "premailer-rails" # inline CSS in marketing emails at send time
 gem "faker" # sample data generation (SampleData.load!)
+gem "resend", "~> 1.14" # Action Mailbox ingress for inbound email
+gem "active_storage_db", "~> 1.6" # store Active Storage bytes in Postgres
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

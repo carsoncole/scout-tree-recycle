@@ -72,6 +72,9 @@ class DataResetTest < ActiveSupport::TestCase
     result = DataReset.new(scope: "all", user: users(:admin)).perform!
 
     assert result.signed_out
+    assert_includes DataReset::TABLES, "mails_outbound_emails"
+    assert_includes DataReset::TABLES, "mails_received_emails"
+    assert_includes DataReset::TABLES, "active_storage_db_files"
 
     # The reset intentionally leaves a record of itself in the logs and
     # reinstalls the default email templates. Everything else is empty.

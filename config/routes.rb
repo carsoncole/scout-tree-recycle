@@ -94,6 +94,14 @@ Rails.application.routes.draw do
     resources :pickups, only: [ :index ]
     get "pickups/report", to: "pickups#report", as: :pickups_report
 
+    # Mail archive. Manual sends and replies live here. Template mail stays on its mailers.
+    namespace :mail, module: :mails do
+      resources :received_emails, only: [ :index, :show, :update ] do
+        resources :replies, only: [ :create ]
+      end
+      resources :outbound_emails, only: [ :index, :show, :new, :create, :update ]
+    end
+
     # SMS
     resources :sms, only: [ :index, :create ] do
       collection do
@@ -198,6 +206,9 @@ Rails.application.routes.draw do
     post "stripe-webhook", to: "v1/donations#stripe_webhook"
     post "sms/reply", to: "v1/sms#reply"
   end
+
+  # Blob URLs for database-backed Active Storage. The mail screens do not link here.
+  mount ActiveStorageDB::Engine => "/active_storage_db"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

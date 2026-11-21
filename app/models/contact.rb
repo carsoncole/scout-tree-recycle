@@ -18,6 +18,8 @@ class Contact < ApplicationRecord
     "street" => %w[address street_address pickup_address]
   }.freeze
 
+  include Mails::Correspondable
+
   scope :marketing_subscribed, -> { where(is_unsubscribed_from_marketing: false) }
   scope :marketing_unsubscribed, -> { where(is_unsubscribed_from_marketing: true) }
 

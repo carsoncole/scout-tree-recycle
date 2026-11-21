@@ -55,6 +55,8 @@
                   <span class="admin-nav-badge bg-ink text-surface dark:bg-ink-dark dark:text-page-dark"><%= unviewed_sms_count %></span>
                 <% end %>
               <% end %>
+              <%= link_to "Mail", admin_mail_received_emails_path,
+                          class: admin_nav_class(%w[received_emails outbound_emails replies].include?(controller_name)) %>
             </div>
 
             <span class="admin-nav-divider bg-line dark:bg-line-dark" aria-hidden="true"></span>
@@ -78,20 +80,6 @@
               <%= link_to "Jobs", admin_mission_control_jobs_path,
                           class: admin_nav_class(false) %>
             </div>
-
-            <span class="admin-nav-divider bg-line dark:bg-line-dark" aria-hidden="true"></span>
-
-            <%= link_to pickups_root_path, target: "_blank", rel: "noopener",
-                        class: "#{admin_nav_class(false)} gap-1.5" do %>
-              Pickups Portal
-              <%= external_link_icon %>
-            <% end %>
-
-            <%= link_to root_path, target: "_blank", rel: "noopener",
-                        class: "#{admin_nav_class(false)} gap-1.5" do %>
-              Website
-              <%= external_link_icon %>
-            <% end %>
           </nav>
           <% end %>
 

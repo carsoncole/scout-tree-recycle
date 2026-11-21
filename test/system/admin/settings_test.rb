@@ -9,6 +9,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_url
 
     assert_selector "h1", text: "Settings"
+    assert_link "Pickups Portal", href: pickups_root_path
+    assert_link "Website", href: root_path
   end
 
   test "settings sidebar links to each section" do

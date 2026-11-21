@@ -1,0 +1,43 @@
+<%= content_for :title, "Mail" %>
+<%= render "admin/shared/page_header",
+           title: "Mail",
+           description: "Sent mail. Template sends keep headers only. Manual sends and replies keep the message." do %>
+  <%= link_to "New email", new_admin_mail_outbound_email_path, class: admin_button_class %>
+<% end %>
+
+<div class="flex flex-col gap-6">
+  <%= render "admin/mails/tabs" %>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-table-wrap">
+      <table class="admin-table min-w-[48rem] text-ink dark:text-ink-dark">
+        <thead>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Date</th>
+            <th scope="col" class="<%= admin_th_class %>">To</th>
+            <th scope="col" class="<%= admin_th_class %>">Subject</th>
+            <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @outbound_emails.each do |email| %>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.sent_at&.strftime("%b %-d, %Y %-l:%M %p") || "—" %></td>
+              <td class="<%= admin_td_class %>"><%= email.to_addresses.presence || "—" %></td>
+              <td class="<%= admin_td_class %>">
+                <%= link_to email.subject.presence || "(no subject)", admin_mail_outbound_email_path(email), class: admin_link_class %>
+              </td>
+              <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.type_label %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? && @pagy.count.positive? %>
+
+    <% if @outbound_emails.empty? %>
+      <%= render "admin/shared/empty_state", message: "No sent emails." %>
+    <% end %>
+  </section>
+</div>

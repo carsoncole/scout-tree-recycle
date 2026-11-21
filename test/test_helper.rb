@@ -81,5 +81,19 @@ module ActiveSupport
         smtp_port: 587
       )
     end
+
+    # email_configured? stays true, but ApplicationMailer must not switch the
+    # process to SMTP while a mail archive test delivers a message.
+    def with_test_delivery
+      original = ApplicationMailer.instance_method(:apply_email_settings)
+      ApplicationMailer.define_method(:apply_email_settings) do
+        original.bind_call(self)
+        ActionMailer::Base.delivery_method = :test
+      end
+      yield
+    ensure
+      ApplicationMailer.define_method(:apply_email_settings, original) if original
+      ActionMailer::Base.delivery_method = :test
+    end
   end
 end

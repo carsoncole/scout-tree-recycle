@@ -28,8 +28,13 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Store uploaded files in Postgres (see config/storage.yml).
+  config.active_storage.service = :db
+
+  # Resend posts inbound mail metadata here. The signing secret and API key
+  # live in credentials, not in the environment. A tunnel host must be allowed
+  # below or the webhook is rejected.
+  config.action_mailbox.ingress = :resend
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false

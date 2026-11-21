@@ -230,6 +230,8 @@
     </div>
   </section>
 
+  <%= render "admin/mails/correspondence", record: @reservation %>
+
   <% missing_tree_notified = @reservation.missing_tree_sms_sent_at.present? || @reservation.missing_tree_email_sent_at.present? %>
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">

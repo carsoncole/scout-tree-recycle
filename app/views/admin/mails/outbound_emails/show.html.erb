@@ -1,0 +1,85 @@
+<%= content_for :title, @outbound_email.subject.presence || "Sent email" %>
+<%= render "admin/shared/page_header",
+           title: @outbound_email.subject.presence || "(no subject)",
+           description: "Sent #{@outbound_email.sent_at&.strftime("%b %-d, %Y at %-l:%M %p")}." do %>
+  <%= link_to "Back to outbox", admin_mail_outbound_emails_path, class: admin_button_class(variant: :secondary) %>
+<% end %>
+
+<div class="flex flex-col gap-6">
+  <%= render "admin/mails/tabs" %>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Message</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= @outbound_email.type_label %></p>
+      </div>
+    </div>
+    <div class="admin-panel-body">
+      <dl class="admin-detail-list">
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">From</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @outbound_email.from_address.presence || "—" %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">To</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @outbound_email.to_addresses.presence || "—" %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Reservation</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <% if @outbound_email.reservation %>
+              <%= link_to @outbound_email.reservation.email, admin_reservation_path(@outbound_email.reservation), class: admin_link_class %>
+            <% else %>
+              —
+            <% end %>
+          </dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Contact</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <% if @outbound_email.contact %>
+              <%= link_to @outbound_email.contact.email, admin_contact_path(@outbound_email.contact), class: admin_link_class %>
+            <% else %>
+              —
+            <% end %>
+          </dd>
+        </div>
+        <% if @outbound_email.received_email %>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">In reply to</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark">
+              <%= link_to @outbound_email.received_email.subject.presence || "Received email", admin_mail_received_email_path(@outbound_email.received_email), class: admin_link_class %>
+            </dd>
+          </div>
+        <% elsif @outbound_email.in_reply_to.present? %>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">In reply to</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @outbound_email.in_reply_to %></dd>
+          </div>
+        <% end %>
+      </dl>
+
+      <div class="mt-6 text-ink dark:text-ink-dark">
+        <% if @outbound_email.full_copy? %>
+          <% if @outbound_email.body.present? %>
+            <%= simple_format(@outbound_email.body) %>
+          <% else %>
+            <p class="text-ink-soft dark:text-ink-soft-dark">This message has no text body.</p>
+          <% end %>
+        <% else %>
+          <p class="text-ink-soft dark:text-ink-soft-dark">This send was recorded without the message body.</p>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Links</h2>
+    </div>
+    <div class="admin-panel-body">
+      <%= render "admin/mails/links_form", email: @outbound_email, url: admin_mail_outbound_email_path(@outbound_email) %>
+    </div>
+  </section>
+</div>

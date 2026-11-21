@@ -1,0 +1,16 @@
+<%= form_with url: url, method: :patch, class: "admin-form" do %>
+  <div class="admin-field-grid admin-field-grid--two">
+    <div class="admin-field">
+      <%= label_tag :reservation_email, "Reservation email", class: "admin-label text-ink dark:text-ink-dark" %>
+      <%= email_field_tag :reservation_email, email.reservation&.email, class: admin_input_class, autocomplete: "off" %>
+    </div>
+    <div class="admin-field">
+      <%= label_tag :contact_email, "Contact email", class: "admin-label text-ink dark:text-ink-dark" %>
+      <%= email_field_tag :contact_email, email.contact&.email, class: admin_input_class, autocomplete: "off" %>
+    </div>
+  </div>
+  <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave a field blank to clear it. An address has to match an existing reservation or contact.</p>
+  <div class="flex flex-wrap items-center justify-end gap-3">
+    <%= submit_tag "Update links", class: admin_button_class(variant: :secondary) %>
+  </div>
+<% end %>

@@ -28,6 +28,11 @@ module TreeRecycle
     # This app does not generate Active Storage variants; disable the processor
     # so deploys don't require the image_processing gem or image libraries.
     config.active_storage.variant_processor = :disabled
+
+    # Keep received raw messages. The default incinerates them after 30 days.
+    config.action_mailbox.incinerate = false
+    # Raw inbound mail is stored in Postgres, same as other Active Storage bytes.
+    config.action_mailbox.storage_service = :db
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

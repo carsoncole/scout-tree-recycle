@@ -58,4 +58,8 @@
       <%= link_to "Edit Contact", edit_admin_contact_path(@contact), class: admin_button_class %>
     </div>
   </section>
+
+  <div class="mt-6">
+    <%= render "admin/mails/correspondence", record: @contact %>
+  </div>
 </div>

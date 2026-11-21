@@ -12,6 +12,8 @@ class ApplicationMailer < ActionMailer::Base
   before_action :apply_email_settings
   before_action :configure_phonelib
   around_action :use_setting_time_zone
+  # Not a header. The mail archive reads this after a successful delivery.
+  after_action :remember_mail_action
 
   def email_logo_tag(width: 140, alt: nil, style: nil, filename: nil)
     attributes = []
@@ -69,6 +71,12 @@ class ApplicationMailer < ActionMailer::Base
       Rails.logger.warn(error.message)
       Rails.error.report(error, handled: true, severity: :warning, context: { site_url: setting.site_url })
     end
+  end
+
+  def remember_mail_action
+    return unless @_mail_was_called
+
+    message.instance_variable_set(:@mails_action, action_name)
   end
 
   def apply_email_settings

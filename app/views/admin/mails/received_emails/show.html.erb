@@ -1,0 +1,96 @@
+<%= content_for :title, @received_email.subject.presence || "Received email" %>
+<%= render "admin/shared/page_header",
+           title: @received_email.subject.presence || "(no subject)",
+           description: "Received #{@received_email.received_at&.strftime("%b %-d, %Y at %-l:%M %p")}." do %>
+  <%= link_to "Back to inbox", admin_mail_received_emails_path, class: admin_button_class(variant: :secondary) %>
+<% end %>
+
+<div class="flex flex-col gap-6">
+  <%= render "admin/mails/tabs" %>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Message</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= @received_email.type_label %></p>
+      </div>
+    </div>
+    <div class="admin-panel-body">
+      <dl class="admin-detail-list">
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">From</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @received_email.from_address.presence || "—" %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">To</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @received_email.to_addresses.presence || "—" %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Reservation</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <% if @received_email.reservation %>
+              <%= link_to @received_email.reservation.email, admin_reservation_path(@received_email.reservation), class: admin_link_class %>
+            <% else %>
+              —
+            <% end %>
+          </dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Contact</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <% if @received_email.contact %>
+              <%= link_to @received_email.contact.email, admin_contact_path(@received_email.contact), class: admin_link_class %>
+            <% else %>
+              —
+            <% end %>
+          </dd>
+        </div>
+        <% if (parent = @received_email.parent_outbound) %>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">In reply to</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark">
+              <%= link_to parent.subject.presence || parent.message_id, admin_mail_outbound_email_path(parent), class: admin_link_class %>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
+
+      <div class="mt-6 text-ink dark:text-ink-dark">
+        <% if @received_email.display_body.present? %>
+          <%= simple_format(@received_email.display_body) %>
+        <% else %>
+          <p class="text-ink-soft dark:text-ink-soft-dark">This message has no text body.</p>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Reply</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Sends a plain-text reply with threading headers.</p>
+      </div>
+    </div>
+    <div class="admin-panel-body">
+      <%= form_with url: admin_mail_received_email_replies_path(@received_email), class: "admin-form" do |form| %>
+        <div class="admin-field">
+          <%= form.label :body, "Reply", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= form.text_area :body, rows: 6, class: admin_textarea_class, required: true %>
+        </div>
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <%= form.submit "Send reply", class: admin_button_class %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Links</h2>
+    </div>
+    <div class="admin-panel-body">
+      <%= render "admin/mails/links_form", email: @received_email, url: admin_mail_received_email_path(@received_email) %>
+    </div>
+  </section>
+</div>

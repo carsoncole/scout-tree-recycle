@@ -1,0 +1,70 @@
+require "application_system_test_case"
+
+class Admin::MailsTest < ApplicationSystemTestCase
+  setup do
+    configure_email!
+  end
+
+  test "the inbox is empty until a message arrives" do
+    sign_in_as(users(:admin), true)
+    visit admin_mail_received_emails_path
+
+    assert_selector "h1", text: "Mail"
+    assert_text "No received emails."
+  end
+
+  test "composing and replying shows the mail on the reservation and contact" do
+    reservation = reservations(:picked_up_1)
+    contact = contacts(:name_and_email)
+
+    with_test_delivery do
+      sign_in_as(users(:admin), true)
+
+      visit admin_reservation_path(reservation)
+      click_link "New email"
+      assert_field "To", with: reservation.email
+
+      fill_in "Subject", with: "Pickup update"
+      fill_in "Message", with: "We will be there Saturday."
+      click_button "Send email"
+
+      assert_text "Email sent."
+      assert_text "Pickup update"
+      assert_text "We will be there Saturday."
+
+      visit admin_reservation_path(reservation)
+      assert_text "Pickup update"
+      visit admin_contact_path(contact)
+      assert_text "Pickup update"
+
+      visit admin_mail_outbound_emails_path
+      assert_text "Pickup update"
+      assert_text "Manual email"
+
+      received = receive_from(reservation.email)
+      visit admin_mail_received_email_path(received)
+      assert_text "Where should I leave the tree?"
+
+      fill_in "Reply", with: "Leave it by the curb."
+      click_button "Send reply"
+
+      assert_text "Reply sent."
+      assert_text "Leave it by the curb."
+      assert_text "Re: Where should I leave the tree?"
+    end
+  end
+
+  private
+
+  def receive_from(from)
+    mail = Mail.new do
+      from from
+      to "support@example.com"
+      subject "Where should I leave the tree?"
+      body "Where should I leave the tree?"
+    end
+    inbound = ActionMailbox::InboundEmail.create_and_extract_message_id!(mail.to_s, status: :processing)
+    ApplicationMailbox.route inbound
+    Mails::ReceivedEmail.find_by!(inbound_email: inbound)
+  end
+end

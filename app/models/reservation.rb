@@ -1,6 +1,7 @@
 # TODO Make sure that changing street, clearing route, clears coordinates, will reset was_automatically_geocoded/routedto false
 class Reservation < ApplicationRecord
   include Geocodable
+  include Mails::Correspondable
 
   attr_accessor :importing
 

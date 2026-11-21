@@ -1,0 +1,37 @@
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Correspondence</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Emails linked to this <%= record.class.model_name.human.downcase %>.</p>
+    </div>
+    <%= link_to "New email", new_admin_mail_outbound_email_path(to: record.email), class: admin_button_class(variant: :secondary, size: :small) %>
+  </div>
+  <% emails = record.correspondence_emails %>
+  <% if emails.empty? %>
+    <%= render "admin/shared/empty_state", message: "No emails are linked yet." %>
+  <% else %>
+    <div class="admin-table-wrap">
+      <table class="admin-table min-w-[40rem] text-ink dark:text-ink-dark">
+        <thead>
+          <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+            <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Date</th>
+            <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Type</th>
+            <th scope="col" class="<%= admin_th_class %>">With</th>
+            <th scope="col" class="<%= admin_th_class %>">Subject</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% emails.each do |email| %>
+            <% path = email.is_a?(Mails::ReceivedEmail) ? admin_mail_received_email_path(email) : admin_mail_outbound_email_path(email) %>
+            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+              <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.corresponded_at&.strftime("%b %-d, %Y %-l:%M %p") || "—" %></td>
+              <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.type_label %></td>
+              <td class="<%= admin_td_class %>"><%= email.correspondent.presence || "—" %></td>
+              <td class="<%= admin_td_class %>"><%= link_to email.subject.presence || "(no subject)", path, class: admin_link_class %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</section>

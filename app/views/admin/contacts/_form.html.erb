@@ -30,6 +30,16 @@
           <%= f.label :street, class: "admin-label text-ink dark:text-ink-dark" %>
           <%= f.text_field :street, class: admin_input_class, autocomplete: "street-address" %>
         </div>
+
+        <div class="admin-field">
+          <label class="flex items-start gap-3">
+            <%= f.check_box :is_unsubscribed_from_marketing, class: "mt-1 h-4 w-4 rounded border-line-strong text-sage focus:ring-sage dark:border-line-strong-dark dark:bg-stone-dark dark:text-sage-dark dark:focus:ring-sage-dark" %>
+            <span>
+              <span class="admin-label block text-ink dark:text-ink-dark">Unsubscribed from marketing emails</span>
+              <span class="admin-hint block text-ink-soft dark:text-ink-soft-dark">When checked, this contact is skipped by both marketing campaigns. Reservation and transactional emails are not affected.</span>
+            </span>
+          </label>
+        </div>
       </div>
     </div>
 

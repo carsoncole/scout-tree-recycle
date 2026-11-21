@@ -165,7 +165,7 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     configure_email!
     post admin_send_marketing_email_1_url
     assert_redirected_to admin_marketing_index_url
-    count_to_be_sent = Contact.where(marketing_1_email_sent_at: nil).count
+    count_to_be_sent = Contact.marketing_subscribed.where(marketing_1_email_sent_at: nil).count
     queued_count = [ Setting.instance.email_batch_quantity, count_to_be_sent ].min
     assert_equal "#{queued_count} of #{count_to_be_sent} marketing #1 emails queued to be sent.", flash[:notice]
   end
@@ -175,7 +175,7 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     sign_in
     post admin_send_marketing_email_2_url
     assert_redirected_to admin_marketing_index_url
-    count_to_be_sent = Contact.where(marketing_2_email_sent_at: nil).count
+    count_to_be_sent = Contact.marketing_subscribed.where(marketing_2_email_sent_at: nil).count
     queued_count = [ Setting.instance.email_batch_quantity, count_to_be_sent ].min
     assert_equal "#{queued_count} of #{count_to_be_sent} marketing #2 emails queued to be sent.", flash[:notice]
   end
@@ -191,6 +191,21 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to admin_marketing_index_url
     assert_equal "No contacts are eligible for Marketing email 1.", flash[:alert]
+  end
+
+  test "does not queue marketing email 1 when remaining contacts are unsubscribed" do
+    configure_email!
+    Contact.update_all(marketing_1_email_sent_at: Time.current)
+    contact = Contact.create!(name: "Unsubscribed", email: "unsubscribed@example.com", is_unsubscribed_from_marketing: true)
+    sign_in
+
+    assert_no_enqueued_jobs only: SendMarketingEmail1Job do
+      post admin_send_marketing_email_1_url
+    end
+
+    assert_redirected_to admin_marketing_index_url
+    assert_equal "No contacts are eligible for Marketing email 1.", flash[:alert]
+    assert contact.persisted?
   end
 
   test "does not queue marketing email 2 when no contacts are eligible" do

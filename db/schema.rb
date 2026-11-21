@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -22,10 +22,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.string "mobile"
     t.datetime "marketing_1_email_sent_at"
     t.datetime "marketing_2_email_sent_at"
+    t.boolean "is_unsubscribed_from_marketing", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_contacts_on_email"
-    t.index ["marketing_1_email_sent_at"], name: "index_contacts_on_marketing_1_email_sent_at"
+    t.index [ "email" ], name: "index_contacts_on_email"
+    t.index [ "marketing_1_email_sent_at" ], name: "index_contacts_on_marketing_1_email_sent_at"
   end
 
   create_table "donations", force: :cascade do |t|
@@ -50,7 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.string "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["reservation_id"], name: "index_donations_on_reservation_id"
+    t.index [ "reservation_id" ], name: "index_donations_on_reservation_id"
   end
 
   create_table "driver_routes", force: :cascade do |t|
@@ -58,8 +59,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.bigint "route_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["driver_id"], name: "index_driver_routes_on_driver_id"
-    t.index ["route_id"], name: "index_driver_routes_on_route_id"
+    t.index [ "driver_id" ], name: "index_driver_routes_on_driver_id"
+    t.index [ "route_id" ], name: "index_driver_routes_on_route_id"
   end
 
   create_table "drivers", force: :cascade do |t|
@@ -82,9 +83,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.datetime "updated_at", null: false
     t.string "log_type", default: "error", null: false
     t.uuid "reservation_id"
-    t.index ["is_viewed"], name: "index_logs_on_is_viewed"
-    t.index ["log_type"], name: "index_logs_on_log_type"
-    t.index ["reservation_id"], name: "index_logs_on_reservation_id"
+    t.index [ "is_viewed" ], name: "index_logs_on_is_viewed"
+    t.index [ "log_type" ], name: "index_logs_on_log_type"
+    t.index [ "reservation_id" ], name: "index_logs_on_reservation_id"
   end
 
   create_table "marketing_email_templates", force: :cascade do |t|
@@ -101,7 +102,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_marketing_email_templates_on_name", unique: true
+    t.index [ "name" ], name: "index_marketing_email_templates_on_name", unique: true
   end
 
   create_table "points", force: :cascade do |t|
@@ -111,7 +112,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.integer "order", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["route_id"], name: "index_points_on_route_id"
+    t.index [ "route_id" ], name: "index_points_on_route_id"
   end
 
   create_table "reservation_email_templates", force: :cascade do |t|
@@ -132,7 +133,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_reservation_email_templates_on_name", unique: true
+    t.index [ "name" ], name: "index_reservation_email_templates_on_name", unique: true
   end
 
   create_table "reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -169,15 +170,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.datetime "updated_at", null: false
     t.datetime "missing_tree_sms_sent_at"
     t.boolean "is_missing_tree_notifications_enabled", default: true, null: false
-    t.index ["created_at"], name: "index_reservations_on_created_at"
-    t.index ["email"], name: "index_reservations_on_email"
-    t.index ["mobile", "status"], name: "index_reservations_on_mobile_and_status"
-    t.index ["name"], name: "index_reservations_on_name"
-    t.index ["route_id"], name: "index_reservations_on_route_id"
-    t.index ["status", "email"], name: "index_reservations_on_status_and_email"
-    t.index ["status", "route_id"], name: "index_reservations_on_status_and_route_id"
-    t.index ["status"], name: "index_reservations_on_status"
-    t.index ["street_name", "house_number"], name: "index_reservations_on_street_name_and_house_number"
+    t.index [ "created_at" ], name: "index_reservations_on_created_at"
+    t.index [ "email" ], name: "index_reservations_on_email"
+    t.index [ "mobile", "status" ], name: "index_reservations_on_mobile_and_status"
+    t.index [ "name" ], name: "index_reservations_on_name"
+    t.index [ "route_id" ], name: "index_reservations_on_route_id"
+    t.index [ "status", "email" ], name: "index_reservations_on_status_and_email"
+    t.index [ "status", "route_id" ], name: "index_reservations_on_status_and_route_id"
+    t.index [ "status" ], name: "index_reservations_on_status"
+    t.index [ "street_name", "house_number" ], name: "index_reservations_on_street_name_and_house_number"
   end
 
   create_table "routes", force: :cascade do |t|
@@ -194,7 +195,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.integer "reservations_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_routes_on_name"
+    t.index [ "name" ], name: "index_routes_on_name"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -203,7 +204,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_sessions_on_user_id"
+    t.index [ "user_id" ], name: "index_sessions_on_user_id"
   end
 
   create_table "settings", force: :cascade do |t|
@@ -282,8 +283,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
-    t.index ["phone"], name: "index_messages_on_phone"
-    t.index ["user_id"], name: "index_sms_on_user_id"
+    t.index [ "phone" ], name: "index_messages_on_phone"
+    t.index [ "user_id" ], name: "index_sms_on_user_id"
   end
 
   create_table "thanks", force: :cascade do |t|
@@ -302,7 +303,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.datetime "updated_at", null: false
     t.datetime "last_login_at"
     t.boolean "is_emailed_error_logs", default: false, null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index [ "email" ], name: "index_users_on_email", unique: true
   end
 
   create_table "zones", force: :cascade do |t|
@@ -315,7 +316,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_140100) do
     t.decimal "longitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_zones_on_name"
+    t.index [ "name" ], name: "index_zones_on_name"
   end
 
   add_foreign_key "logs", "reservations", on_delete: :nullify

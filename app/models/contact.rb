@@ -17,6 +17,10 @@ class Contact < ApplicationRecord
     "mobile" => %w[phone phone_number mobile_phone cell cell_phone],
     "street" => %w[address street_address pickup_address]
   }.freeze
+
+  scope :marketing_subscribed, -> { where(is_unsubscribed_from_marketing: false) }
+  scope :marketing_unsubscribed, -> { where(is_unsubscribed_from_marketing: true) }
+
   validates :name, :email, presence: true
   validates :email, uniqueness: true
 
@@ -48,6 +52,10 @@ class Contact < ApplicationRecord
     return false if column.blank?
 
     update(column => nil)
+  end
+
+  def unsubscribe_from_marketing!
+    update!(is_unsubscribed_from_marketing: true)
   end
 
   def self.clear_email_flags!

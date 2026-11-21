@@ -1,0 +1,61 @@
+<%= content_for :title, "Contact" %>
+<%= render "admin/shared/page_header",
+           title: @contact.name.presence || @contact.email,
+           description: "Contact details and marketing status." do %>
+  <%= link_to "Edit Contact", edit_admin_contact_path(@contact), class: admin_button_class %>
+<% end %>
+
+<div class="admin-container--narrow admin-container--flush">
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Contact information</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Marketing eligibility and delivery status for this contact.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <dl class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Name</dt>
+          <dd class="text-ink dark:text-ink-dark"><%= @contact.name.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Email</dt>
+          <dd class="text-ink dark:text-ink-dark"><%= @contact.email.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Mobile</dt>
+          <dd class="text-ink dark:text-ink-dark"><%= @contact.mobile.present? ? Phonelib.parse(@contact.mobile).national : "—" %></dd>
+        </div>
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Street</dt>
+          <dd class="text-ink dark:text-ink-dark"><%= @contact.street.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Marketing emails</dt>
+          <dd>
+            <% if @contact.is_unsubscribed_from_marketing? %>
+              <span class="<%= admin_badge_class(:warning) %>">Unsubscribed</span>
+            <% else %>
+              <span class="<%= admin_badge_class(:positive) %>">Subscribed</span>
+            <% end %>
+          </dd>
+        </div>
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Marketing email 1</dt>
+          <dd class="text-ink dark:text-ink-dark"><%= @contact.marketing_1_email_sent_at.present? ? admin_marketing_sent_at(@contact.marketing_1_email_sent_at) : "Not sent" %></dd>
+        </div>
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Marketing email 2</dt>
+          <dd class="text-ink dark:text-ink-dark"><%= @contact.marketing_2_email_sent_at.present? ? admin_marketing_sent_at(@contact.marketing_2_email_sent_at) : "Not sent" %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="admin-panel-footer border-line dark:border-line-dark">
+      <%= link_to "Back to Marketing", admin_marketing_index_path, class: admin_button_class(variant: :secondary) %>
+      <%= link_to "Edit Contact", edit_admin_contact_path(@contact), class: admin_button_class %>
+    </div>
+  </section>
+</div>

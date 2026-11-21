@@ -131,7 +131,7 @@
 
   <div class="<%= admin_notice_class %>" role="note">
     <div>
-      <p><strong>Note:</strong> Any contacts with the same email as a newly confirmed reservation are removed automatically, so a row may disappear from this table once that contact reserves again.</p>
+      <p><strong>Note:</strong> Unsubscribed contacts are skipped by both marketing campaigns. Any contacts with the same email as a newly confirmed reservation are removed automatically (unless they have unsubscribed from marketing), so a row may disappear from this table once that contact reserves again.</p>
     </div>
   </div>
 
@@ -164,9 +164,14 @@
               <td class="<%= admin_td_class %>">
                 <%= contact.email %><br>
                 <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= contact.mobile.present? ? Phonelib.parse(contact.mobile).national : nil %></span>
+                <% if contact.is_unsubscribed_from_marketing? %>
+                  <br><span class="<%= admin_badge_class(:warning) %>">Unsubscribed</span>
+                <% end %>
               </td>
               <td class="<%= admin_td_class %>">
-                <% if contact.marketing_1_email_sent_at.present? %>
+                <% if contact.is_unsubscribed_from_marketing? %>
+                  <span class="<%= admin_badge_class(:neutral) %>">Skipped</span>
+                <% elsif contact.marketing_1_email_sent_at.present? %>
                   <div class="admin-table-inline">
                     <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= admin_marketing_sent_at(contact.marketing_1_email_sent_at) %></span>
                     <%= button_to clear_marketing_email_1_admin_contact_path(contact),
@@ -184,7 +189,9 @@
                 <% end %>
               </td>
               <td class="<%= admin_td_class %>">
-                <% if contact.marketing_2_email_sent_at.present? %>
+                <% if contact.is_unsubscribed_from_marketing? %>
+                  <span class="<%= admin_badge_class(:neutral) %>">Skipped</span>
+                <% elsif contact.marketing_2_email_sent_at.present? %>
                   <div class="admin-table-inline">
                     <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark"><%= admin_marketing_sent_at(contact.marketing_2_email_sent_at) %></span>
                     <%= button_to clear_marketing_email_2_admin_contact_path(contact),
@@ -203,6 +210,7 @@
               </td>
               <td class="<%= admin_td_class %>">
                 <div class="admin-table-actions">
+                  <%= link_to "Show", admin_contact_path(contact), class: admin_link_class %>
                   <%= link_to "Edit", edit_admin_contact_path(contact), class: admin_link_class %>
                   <%= button_to "Delete", admin_contact_path(contact),
                       method: :delete,

@@ -8,7 +8,15 @@ class SendMarketingEmail1JobTest < ActiveJob::TestCase
   end
 
   test "enqueues an email for each contact that has not received marketing email 1" do
-    assert_enqueued_emails Contact.where(marketing_1_email_sent_at: nil).count do
+    assert_enqueued_emails Contact.marketing_subscribed.where(marketing_1_email_sent_at: nil).count do
+      SendMarketingEmail1Job.perform_now
+    end
+  end
+
+  test "does not enqueue emails for unsubscribed contacts" do
+    Contact.marketing_subscribed.update_all(is_unsubscribed_from_marketing: true)
+
+    assert_no_enqueued_emails do
       SendMarketingEmail1Job.perform_now
     end
   end

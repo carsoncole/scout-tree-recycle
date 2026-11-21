@@ -284,7 +284,7 @@ class Reservation < ApplicationRecord
 
   # remove contact if it exists
   def remove_contact!
-    Contact.where(email: email).destroy_all
+    Contact.marketing_subscribed.where(email: email).destroy_all
   end
 
   def reset_status_to_routing_if_route_removed!
@@ -317,8 +317,9 @@ class Reservation < ApplicationRecord
 
   def self.migrate_reservations!
     Reservation.migratable.each do |r|
+      unsubscribed = Contact.where(email: r.email, is_unsubscribed_from_marketing: true).exists?
       Contact.where(email: r.email).destroy_all
-      Contact.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street)
+      Contact.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street, is_unsubscribed_from_marketing: unsubscribed)
     end
     Reservation.destroy_all
   end

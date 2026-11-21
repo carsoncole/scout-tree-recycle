@@ -4,8 +4,4 @@
   <% else %>
     <%= @email_footer %>
   <% end %>
-  <% if @contact.present? %>
-    <span class="text-gray-500 dark:text-gray-400">|</span>
-    <%= link_to "Unsubscribe", unsubscribe_contact_url(@contact), style: "text-decoration-line: none;" %>
-  <% end %>
 </div>

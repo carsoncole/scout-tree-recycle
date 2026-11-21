@@ -237,6 +237,16 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not Contact.find_by(email: "trip.wilson@example.com")
   end
 
+  test "preserves unsubscribed contact on routing" do
+    contact = contacts(:full)
+    contact.unsubscribe_from_marketing!
+    reservation = Reservation.create(name: "Trip Wilson", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "United States", status: "donation", email: contact.email)
+
+    reservation.routing!
+
+    assert Contact.find_by(email: contact.email).is_unsubscribed_from_marketing?
+  end
+
   test "normalizing of mobile number" do
     reservation = reservations(:routing_1)
     reservation.update(mobile: "1234567890")
@@ -307,6 +317,16 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not Reservation.find_by(email: "bob.jones@example.com")
     assert Contact.find_by(email: "bob.jones@example.com")
     assert_equal "Bobby Jones", Contact.find_by(email: "bob.jones@example.com").name
+  end
+
+  test "migration preserves marketing unsubscribe flag" do
+    reservation = reservations(:routing_1)
+    contact = Contact.create!(name: "Prior", email: reservation.email, is_unsubscribed_from_marketing: true)
+
+    Reservation.migrate_reservations!
+
+    migrated = Contact.find_by(email: reservation.email)
+    assert migrated.is_unsubscribed_from_marketing?
   end
 
   test "reset_geocoding! resets geocoding data AND routing data" do

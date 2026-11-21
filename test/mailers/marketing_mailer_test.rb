@@ -40,6 +40,8 @@ class MarketingMailerTest < ActionMailer::TestCase
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_1
 
     assert_match "Unsubscribe", mail.body.encoded
+    assert_equal "<#{unsubscribe_contact_url(contact)}>", mail.header["List-Unsubscribe"].value
+    assert_equal "List-Unsubscribe=One-Click", mail.header["List-Unsubscribe-Post"].value
         # TODO: Fix this encoding issue
         # assert_match "https://example.com", mail.body.encoded
       end
@@ -50,6 +52,8 @@ class MarketingMailerTest < ActionMailer::TestCase
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_2
 
     assert_match "Unsubscribe", mail.body.encoded
+    assert_equal "<#{unsubscribe_contact_url(contact)}>", mail.header["List-Unsubscribe"].value
+    assert_equal "List-Unsubscribe=One-Click", mail.header["List-Unsubscribe-Post"].value
     # TODO: Fix this encoding issue
     assert_match "https://example.com", mail.body.encoded
   end
@@ -60,6 +64,8 @@ class MarketingMailerTest < ActionMailer::TestCase
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_1
 
     assert_match "Unsubscribe", mail.body.encoded
+    assert_equal "<#{unsubscribe_contact_url(contact)}>", mail.header["List-Unsubscribe"].value
+    assert_equal "List-Unsubscribe=One-Click", mail.header["List-Unsubscribe-Post"].value
     assert_no_match "https://example.com", mail.body.encoded
     assert_match Setting.instance.organization_name, mail.body.encoded
   end
@@ -107,6 +113,30 @@ class MarketingMailerTest < ActionMailer::TestCase
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_2
 
     assert_emails 1 do
+      mail.deliver_now
+    end
+  end
+
+  test "marketing_email_1 does not send to unsubscribed contacts" do
+    Setting.instance.update(is_emailing_enabled: true)
+    contact = contacts(:full)
+    contact.unsubscribe_from_marketing!
+
+    mail = MarketingMailer.with(contact_id: contact.id).marketing_email_1
+
+    assert_no_emails do
+      mail.deliver_now
+    end
+  end
+
+  test "marketing_email_2 does not send to unsubscribed contacts" do
+    Setting.instance.update(is_emailing_enabled: true)
+    contact = contacts(:full)
+    contact.unsubscribe_from_marketing!
+
+    mail = MarketingMailer.with(contact_id: contact.id).marketing_email_2
+
+    assert_no_emails do
       mail.deliver_now
     end
   end

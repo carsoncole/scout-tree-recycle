@@ -81,4 +81,21 @@ class ContactTest < ActiveSupport::TestCase
     assert_not contact.clear_marketing_email!(3)
     assert contact.marketing_1_email_sent_at.present?
   end
+
+  test "is subscribed to marketing by default" do
+    contact = Contact.create!(name: "New Contact", email: "new-contact@example.com")
+    assert_not contact.is_unsubscribed_from_marketing?
+    assert_includes Contact.marketing_subscribed, contact
+    assert_not_includes Contact.marketing_unsubscribed, contact
+  end
+
+  test "unsubscribing from marketing sets the flag" do
+    contact = contacts(:full)
+
+    contact.unsubscribe_from_marketing!
+
+    assert contact.reload.is_unsubscribed_from_marketing?
+    assert_not_includes Contact.marketing_subscribed, contact
+    assert_includes Contact.marketing_unsubscribed, contact
+  end
 end

@@ -16,8 +16,8 @@ class Admin::MarketingController < Admin::BaseController
 
   def index
     @pagy, @contacts = pagy(Contact.order(:email))
-    @marketing_1_count = Contact.where(marketing_1_email_sent_at: nil).count
-    @marketing_2_count = Contact.where(marketing_2_email_sent_at: nil).count
+    @marketing_1_count = Contact.marketing_subscribed.where(marketing_1_email_sent_at: nil).count
+    @marketing_2_count = Contact.marketing_subscribed.where(marketing_2_email_sent_at: nil).count
     @marketing_email_templates = MarketingEmailTemplate.where(name: MarketingEmailTemplate::MARKETING_EMAIL_NAMES).index_by(&:name)
 
     setting = Setting.instance
@@ -84,7 +84,7 @@ class Admin::MarketingController < Admin::BaseController
     elsif MarketingEmailTemplate.published.find_by(name: campaign[:template]).nil?
       redirect_to admin_marketing_index_path, alert: "Marketing email #{number} is not published. Edit the template and publish it before sending."
     else
-      count_to_be_sent = Contact.where(Contact::MARKETING_EMAIL_COLUMNS.fetch(number) => nil).count
+      count_to_be_sent = Contact.marketing_subscribed.where(Contact::MARKETING_EMAIL_COLUMNS.fetch(number) => nil).count
       if count_to_be_sent.zero?
         redirect_to admin_marketing_index_path, alert: "No contacts are eligible for Marketing email #{number}."
       else

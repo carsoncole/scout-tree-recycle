@@ -1,5 +1,5 @@
 class Admin::ContactsController < Admin::BaseController
-  before_action :set_contact, only: [ :edit, :update, :destroy, :clear_marketing_email_1, :clear_marketing_email_2 ]
+  before_action :set_contact, only: [ :show, :edit, :update, :destroy, :clear_marketing_email_1, :clear_marketing_email_2 ]
 
   def new
     @contact = Contact.new
@@ -13,6 +13,9 @@ class Admin::ContactsController < Admin::BaseController
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def show
   end
 
   def edit
@@ -61,7 +64,7 @@ class Admin::ContactsController < Admin::BaseController
   end
 
   def contact_params
-    params.require(:contact).permit(:name, :email, :mobile, :street)
+    params.require(:contact).permit(:name, :email, :mobile, :street, :is_unsubscribed_from_marketing)
   end
 
   def clear_marketing_email!(marketing_email)

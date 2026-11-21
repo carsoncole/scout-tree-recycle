@@ -8,6 +8,7 @@ class MarketingMailer < ApplicationMailer
     setting = Setting.instance
     return unless setting.is_emailing_enabled?
     return unless setting.email_from_configured?
+    return if @contact.is_unsubscribed_from_marketing?
     return if @contact.marketing_1_email_sent_at?
 
     deliver_template("marketing_email_1", sent_at_attribute: :marketing_1_email_sent_at)
@@ -17,6 +18,7 @@ class MarketingMailer < ApplicationMailer
     setting = Setting.instance
     return unless setting.is_emailing_enabled?
     return unless setting.email_from_configured?
+    return if @contact.is_unsubscribed_from_marketing?
     return if @contact.marketing_2_email_sent_at?
     return if @contact.marketing_email_cooldown_active?
 
@@ -63,7 +65,6 @@ class MarketingMailer < ApplicationMailer
     return false if @template.nil?
 
     @setting = Setting.instance
-    @email_footer = @setting.organization_name
     @email_assigns = MarketingEmailTemplate::Renderer.new(contact: @contact, setting: @setting).assigns
 
     headers = {
@@ -72,6 +73,10 @@ class MarketingMailer < ApplicationMailer
       template_name: "templated_email"
     }
     headers[:from] = @template.published_from if @template.published_from.present?
+    if @contact&.persisted?
+      headers["List-Unsubscribe"] = "<#{unsubscribe_contact_url(@contact)}>"
+      headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
+    end
 
     @email_html = @template.render_body_html(@email_assigns, source: :published)
     @email_text = @template.render_body_text(@email_assigns, source: :published)

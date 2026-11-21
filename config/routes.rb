@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   resources :contacts, only: [] do
     member do
       get :unsubscribe
-      delete :destroy
+      post :unsubscribe
     end
   end
 
@@ -76,7 +76,7 @@ Rails.application.routes.draw do
       end
       resources :zones
     end
-    resources :contacts, only: [ :new, :create, :edit, :update, :destroy ] do
+    resources :contacts, only: [ :show, :new, :create, :edit, :update, :destroy ] do
       member do
         delete :clear_marketing_email_1
         delete :clear_marketing_email_2

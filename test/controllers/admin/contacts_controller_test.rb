@@ -7,6 +7,14 @@ class Admin::ContactsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get show" do
+    sign_in
+    get admin_contact_url(contacts(:full))
+    assert_response :success
+    assert_match "Marketing emails", response.body
+    assert_match "Subscribed", response.body
+  end
+
   test "should create contact" do
     sign_in
     assert_difference "Contact.count", 1 do
@@ -23,8 +31,25 @@ class Admin::ContactsControllerTest < ActionDispatch::IntegrationTest
     contact = Contact.find_by(email: "new.contact@example.com")
     assert contact, "expected email to be normalized to lowercase"
     assert_equal "New Contact", contact.name
+    assert_not contact.is_unsubscribed_from_marketing?
     assert_redirected_to admin_marketing_index_path
     assert_equal "Contact was successfully created.", flash[:notice]
+  end
+
+  test "should create unsubscribed contact" do
+    sign_in
+    assert_difference "Contact.count", 1 do
+      post admin_contacts_url, params: {
+        contact: {
+          name: "Opted Out",
+          email: "opted.out@example.com",
+          is_unsubscribed_from_marketing: "1"
+        }
+      }
+    end
+
+    contact = Contact.find_by(email: "opted.out@example.com")
+    assert contact.is_unsubscribed_from_marketing?
   end
 
   test "should not create contact with a duplicate email" do
@@ -60,7 +85,7 @@ class Admin::ContactsControllerTest < ActionDispatch::IntegrationTest
     contact = contacts(:full)
 
     patch admin_contact_url(contact), params: {
-      contact: { name: "Updated Name", street: "99 Oak Ave" }
+      contact: { name: "Updated Name", street: "99 Oak Ave", is_unsubscribed_from_marketing: "1" }
     }
 
     assert_redirected_to admin_marketing_index_path
@@ -70,6 +95,7 @@ class Admin::ContactsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Updated Name", contact.name
     assert_equal "99 Oak Ave", contact.street
     assert_equal "trip.wilson@example.com", contact.email
+    assert contact.is_unsubscribed_from_marketing?
   end
 
   test "should not update contact with an invalid email" do

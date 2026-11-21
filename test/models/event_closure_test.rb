@@ -34,7 +34,7 @@ class EventClosureTest < ActiveSupport::TestCase
     copied_email = reservations(:routing_1).email
     unfinished_email = reservations(:reservation_form_minimum).email
     contact = contacts(:full)
-    contact.update!(marketing_1_email_sent_at: Time.current, marketing_2_email_sent_at: Time.current)
+    contact.update!(marketing_1_email_sent_at: Time.current, marketing_2_email_sent_at: Time.current, is_unsubscribed_from_marketing: true)
     old = Contact.create!(name: "Old Gone", email: "old.gone@example.com", street: "2 Main")
     old.update_columns(created_at: 36.months.ago)
 
@@ -47,5 +47,6 @@ class EventClosureTest < ActiveSupport::TestCase
     contact.reload
     assert_nil contact.marketing_1_email_sent_at
     assert_nil contact.marketing_2_email_sent_at
+    assert contact.is_unsubscribed_from_marketing?
   end
 end

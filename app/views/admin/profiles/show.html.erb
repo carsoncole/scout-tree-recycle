@@ -3,102 +3,104 @@
            title: "Profile",
            description: "View your role and update your email address or password." %>
 
-<div class="admin-container--narrow admin-container--flush">
-  <%= form_with model: @user, url: admin_profile_path, class: "flex flex-col gap-6" do |form| %>
-    <%= render "shared/form_errors", object: @user %>
+<div class="admin-container--narrow admin-container--flush lg:max-w-5xl">
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
+    <%= form_with model: @user, url: admin_profile_path, class: "flex flex-col gap-6" do |form| %>
+      <%= render "shared/form_errors", object: @user %>
+
+      <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+        <div class="admin-panel-header border-line dark:border-line-dark">
+          <div>
+            <h2 class="admin-panel-title text-ink dark:text-ink-dark">Your account</h2>
+            <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Your role is assigned by an administrator.</p>
+          </div>
+        </div>
+
+        <div class="admin-panel-body">
+          <div class="admin-form">
+            <div class="admin-field">
+              <span class="admin-label text-ink dark:text-ink-dark">Role</span>
+              <div>
+                <span class="<%= admin_badge_class(@user.admin? ? "info" : "neutral") %>"><%= @user.role.titleize %></span>
+              </div>
+            </div>
+
+            <div class="admin-field">
+              <%= form.label :email, class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= form.email_field :email,
+                  required: true,
+                  autocomplete: "email",
+                  class: admin_input_class(error: @user.errors[:email].any?) %>
+            </div>
+
+            <div class="admin-field-grid admin-field-grid--two">
+              <div class="admin-field">
+                <%= form.label :password, "New password", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= form.password_field :password,
+                    autocomplete: "new-password",
+                    maxlength: 72,
+                    class: admin_input_class(error: @user.errors[:password].any?) %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to keep your current password.</p>
+              </div>
+
+              <div class="admin-field">
+                <%= form.label :password_confirmation, "Confirm new password", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= form.password_field :password_confirmation,
+                    autocomplete: "new-password",
+                    maxlength: 72,
+                    class: admin_input_class(error: @user.errors[:password_confirmation].any?) %>
+              </div>
+            </div>
+
+            <div class="admin-field">
+              <%= form.label :password_challenge, "Current password", class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= form.password_field :password_challenge,
+                  required: true,
+                  autocomplete: "current-password",
+                  maxlength: 72,
+                  class: admin_input_class(error: @user.errors[:password_challenge].any?) %>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Required to save changes to your email or password.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-panel-footer border-line dark:border-line-dark">
+          <%= form.submit "Save profile", class: admin_button_class %>
+        </div>
+      </section>
+    <% end %>
 
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Your account</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Your role is assigned by an administrator.</p>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Notifications</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Manage your notification preferences.</p>
         </div>
       </div>
-
       <div class="admin-panel-body">
-        <div class="admin-form">
-          <div class="admin-field">
-            <span class="admin-label text-ink dark:text-ink-dark">Role</span>
-            <div>
-              <span class="<%= admin_badge_class(@user.admin? ? "info" : "neutral") %>"><%= @user.role.titleize %></span>
+        <% if @email_configured %>
+          <div class="admin-toggle-list">
+            <div class="admin-toggle-row border-line dark:border-line-dark" data-controller="toggle" data-toggle-url="<%= toggle_admin_user_path(Current.user) %>" data-toggle-row>
+              <div class="admin-toggle-copy" data-toggle-copy>
+                <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Email me error logs</h3>
+              </div>
+              <div class="admin-toggle-control" data-toggle-control>
+                <label class="admin-switch" aria-label="Email me error logs">
+                  <%= check_box_tag "user[is_emailed_error_logs]", "1", Current.user.is_emailed_error_logs,
+                      class: "admin-switch-input peer",
+                      data: {
+                        toggle_target: "toggle",
+                        setting: "is_emailed_error_logs"
+                      } %>
+                  <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
+                </label>
+              </div>
             </div>
           </div>
-
-          <div class="admin-field">
-            <%= form.label :email, class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= form.email_field :email,
-                required: true,
-                autocomplete: "email",
-                class: admin_input_class(error: @user.errors[:email].any?) %>
-          </div>
-
-          <div class="admin-field-grid admin-field-grid--two">
-            <div class="admin-field">
-              <%= form.label :password, "New password", class: "admin-label text-ink dark:text-ink-dark" %>
-              <%= form.password_field :password,
-                  autocomplete: "new-password",
-                  maxlength: 72,
-                  class: admin_input_class(error: @user.errors[:password].any?) %>
-              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Leave blank to keep your current password.</p>
-            </div>
-
-            <div class="admin-field">
-              <%= form.label :password_confirmation, "Confirm new password", class: "admin-label text-ink dark:text-ink-dark" %>
-              <%= form.password_field :password_confirmation,
-                  autocomplete: "new-password",
-                  maxlength: 72,
-                  class: admin_input_class(error: @user.errors[:password_confirmation].any?) %>
-            </div>
-          </div>
-
-          <div class="admin-field">
-            <%= form.label :password_challenge, "Current password", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= form.password_field :password_challenge,
-                required: true,
-                autocomplete: "current-password",
-                maxlength: 72,
-                class: admin_input_class(error: @user.errors[:password_challenge].any?) %>
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Required to save changes to your email or password.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-panel-footer border-line dark:border-line-dark">
-        <%= form.submit "Save profile", class: admin_button_class %>
+        <% else %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Add a from address, SMTP address, and port under Email before these notifications can be sent.</p>
+        <% end %>
       </div>
     </section>
-  <% end %>
-
-  <section class="admin-panel mt-6 border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-    <div class="admin-panel-header border-line dark:border-line-dark">
-      <div>
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Notifications</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Manage your notification preferences.</p>
-      </div>
-    </div>
-    <div class="admin-panel-body">
-      <% if @email_configured %>
-        <div class="admin-toggle-list">
-          <div class="admin-toggle-row border-line dark:border-line-dark" data-controller="toggle" data-toggle-url="<%= toggle_admin_user_path(Current.user) %>" data-toggle-row>
-            <div class="admin-toggle-copy" data-toggle-copy>
-              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Email me error logs</h3>
-            </div>
-            <div class="admin-toggle-control" data-toggle-control>
-              <label class="admin-switch" aria-label="Email me error logs">
-                <%= check_box_tag "user[is_emailed_error_logs]", "1", Current.user.is_emailed_error_logs,
-                    class: "admin-switch-input peer",
-                    data: {
-                      toggle_target: "toggle",
-                      setting: "is_emailed_error_logs"
-                    } %>
-                <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      <% else %>
-        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Add a from address, SMTP address, and port under Email before these notifications can be sent.</p>
-      <% end %>
-    </div>
-  </section>
+  </div>
 </div>

@@ -1,0 +1,25 @@
+<tr id="<%= dom_id(email) %>" class="<%= "admin-mail-unread" unless email.is_read? %> hover:bg-table-hover dark:hover:bg-table-hover-dark">
+  <td class="<%= admin_td_class %> whitespace-nowrap">
+    <span class="inline-flex items-center gap-2">
+      <% unless email.is_read? %>
+        <span class="admin-unread-dot bg-sage dark:bg-sage-dark" aria-label="Unread"></span>
+      <% end %>
+      <%= email.received_at&.strftime("%b %-d, %Y %-l:%M %p") || "—" %>
+    </span>
+  </td>
+  <td class="<%= admin_td_class %>"><%= email.from_address.presence || "—" %></td>
+  <td class="<%= admin_td_class %>">
+    <%= link_to email.subject.presence || "(no subject)", admin_mail_received_email_path(email), class: admin_link_class %>
+  </td>
+  <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.type_label %></td>
+  <td class="<%= admin_td_class %> whitespace-nowrap">
+    <% if email.is_read? %>
+      <%= button_to "Mark unread", mark_unread_admin_mail_received_email_path(email),
+            method: :patch,
+            class: admin_button_class(variant: :quiet),
+            form: { class: "inline" } %>
+    <% else %>
+      <span class="text-ink-soft dark:text-ink-soft-dark">Unread</span>
+    <% end %>
+  </td>
+</tr>

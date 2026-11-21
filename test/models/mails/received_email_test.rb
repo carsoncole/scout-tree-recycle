@@ -92,6 +92,42 @@ class Mails::ReceivedEmailTest < ActiveSupport::TestCase
     assert_not_includes received.display_body, "<p>"
   end
 
+  test "a new message stays unread until it is opened, then can be marked unread" do
+    received = receive_from("trip.wilson@example.com", message_id: "unread-state@example.com")
+    assert_not received.is_read
+
+    streams = capture_turbo_stream_broadcasts(Mails::ReceivedEmail::STREAM) do
+      received.mark_read!
+    end
+
+    assert received.reload.is_read
+    targets = streams.map { |stream| stream["target"] }
+    assert_includes targets, "mail_unread_count"
+    assert_includes targets, ActionView::RecordIdentifier.dom_id(received)
+
+    assert_no_changes -> { received.reload.updated_at } do
+      received.mark_read!
+    end
+
+    streams = capture_turbo_stream_broadcasts(Mails::ReceivedEmail::STREAM) do
+      received.mark_unread!
+    end
+
+    assert_not received.reload.is_read
+    assert_includes streams.map { |stream| stream["target"] }, ActionView::RecordIdentifier.dom_id(received)
+  end
+
+  test "recording a message broadcasts the inbox row and the unread count" do
+    streams = capture_turbo_stream_broadcasts(Mails::ReceivedEmail::STREAM) do
+      receive_from("trip.wilson@example.com", message_id: "unread-broadcast@example.com")
+    end
+
+    actions = streams.map { |stream| [ stream["action"], stream["target"] ] }
+    assert_includes actions, [ "replace", "mail_unread_count" ]
+    assert_includes actions, [ "prepend", "received_email_rows" ]
+    assert_includes actions, [ "remove", "received_emails_empty" ]
+  end
+
   private
 
   def receive_from(from, message_id:, in_reply_to: nil)

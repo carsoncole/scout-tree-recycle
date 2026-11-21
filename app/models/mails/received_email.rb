@@ -7,7 +7,14 @@ module Mails
     belongs_to :contact, optional: true
     has_many :outbound_emails, class_name: "Mails::OutboundEmail", dependent: :nullify
 
+    # Signed-in admin pages subscribe to this stream for the nav badge and inbox.
+    STREAM = "mails_received"
+
     scope :recent_first, -> { order(received_at: :desc, id: :desc) }
+    scope :unread, -> { where(is_read: false) }
+
+    after_commit :broadcast_new_received_email, on: :create
+    after_commit :broadcast_read_state, on: :update
 
     def self.record_inbound!(inbound_email)
       return if inbound_email.blank?
@@ -58,6 +65,15 @@ module Mails
       in_reply_to.present? ? "Reply" : "Received"
     end
 
+    # Opening the message page marks it read. The inbox can set it back.
+    def mark_read!
+      update!(is_read: true) unless is_read?
+    end
+
+    def mark_unread!
+      update!(is_read: false) if is_read?
+    end
+
     def parent_outbound
       return if in_reply_to.blank?
 
@@ -90,6 +106,36 @@ module Mails
     end
 
     private
+
+    def broadcast_new_received_email
+      broadcast_unread_count
+      broadcast_prepend_to STREAM,
+        target: "received_email_rows",
+        partial: "admin/mails/received_emails/row",
+        locals: { email: self }
+      broadcast_remove_to STREAM, target: "received_emails_empty"
+    rescue StandardError => error
+      Rails.logger.error("Received email broadcast failed: #{error.message}")
+    end
+
+    def broadcast_read_state
+      return unless saved_change_to_is_read?
+
+      broadcast_unread_count
+      broadcast_replace_to STREAM,
+        target: self,
+        partial: "admin/mails/received_emails/row",
+        locals: { email: self }
+    rescue StandardError => error
+      Rails.logger.error("Received email broadcast failed: #{error.message}")
+    end
+
+    def broadcast_unread_count
+      broadcast_replace_to STREAM,
+        target: "mail_unread_count",
+        partial: "admin/mails/unread_count",
+        locals: { count: self.class.unread.count }
+    end
 
     def strip_html(html)
       ActionController::Base.helpers.strip_tags(html.to_s)

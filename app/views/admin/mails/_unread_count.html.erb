@@ -1,0 +1,5 @@
+<span id="mail_unread_count">
+  <% if count.to_i.positive? %>
+    <span class="admin-nav-badge bg-ink text-surface dark:bg-ink-dark dark:text-page-dark" aria-label="<%= pluralize(count, "unread email") %>"><%= count %></span>
+  <% end %>
+</span>

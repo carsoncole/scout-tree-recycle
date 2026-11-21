@@ -97,6 +97,9 @@ Rails.application.routes.draw do
     # Mail archive. Manual sends and replies live here. Template mail stays on its mailers.
     namespace :mail, module: :mails do
       resources :received_emails, only: [ :index, :show, :update ] do
+        member do
+          patch :mark_unread
+        end
         resources :replies, only: [ :create ]
       end
       resources :outbound_emails, only: [ :index, :show, :new, :create, :update ]

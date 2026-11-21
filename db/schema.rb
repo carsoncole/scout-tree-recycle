@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_21_093706) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_21_153000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -168,9 +168,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_21_093706) do
     t.datetime "received_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_read", default: false, null: false
     t.index ["contact_id"], name: "index_mails_received_emails_on_contact_id"
     t.index ["in_reply_to"], name: "index_mails_received_emails_on_in_reply_to"
     t.index ["inbound_email_id"], name: "index_mails_received_emails_on_inbound_email_id", unique: true
+    t.index ["is_read"], name: "index_mails_received_emails_on_is_read"
     t.index ["message_id"], name: "index_mails_received_emails_on_message_id"
     t.index ["reservation_id"], name: "index_mails_received_emails_on_reservation_id"
   end

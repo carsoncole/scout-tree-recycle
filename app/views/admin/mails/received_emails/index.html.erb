@@ -15,19 +15,11 @@
             <th scope="col" class="<%= admin_th_class %>">From</th>
             <th scope="col" class="<%= admin_th_class %>">Subject</th>
             <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Type</th>
+            <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Read</th>
           </tr>
         </thead>
-        <tbody>
-          <% @received_emails.each do |email| %>
-            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.received_at&.strftime("%b %-d, %Y %-l:%M %p") || "—" %></td>
-              <td class="<%= admin_td_class %>"><%= email.from_address.presence || "—" %></td>
-              <td class="<%= admin_td_class %>">
-                <%= link_to email.subject.presence || "(no subject)", admin_mail_received_email_path(email), class: admin_link_class %>
-              </td>
-              <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.type_label %></td>
-            </tr>
-          <% end %>
+        <tbody id="received_email_rows">
+          <%= render partial: "admin/mails/received_emails/row", collection: @received_emails, as: :email %>
         </tbody>
       </table>
     </div>
@@ -35,7 +27,9 @@
     <%= render "admin/shared/pagination", pagy: @pagy if @pagy.present? && @pagy.count.positive? %>
 
     <% if @received_emails.empty? %>
-      <%= render "admin/shared/empty_state", message: "No received emails." %>
+      <div id="received_emails_empty">
+        <%= render "admin/shared/empty_state", message: "No received emails." %>
+      </div>
     <% end %>
   </section>
 </div>

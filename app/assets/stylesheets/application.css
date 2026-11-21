@@ -2449,6 +2449,11 @@
   border-radius: 50%;
 }
 
+tr.admin-mail-unread,
+tr.admin-mail-unread .admin-link {
+  font-weight: 650;
+}
+
 .admin-conversation-actions {
   display: flex;
   align-items: center;

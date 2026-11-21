@@ -2731,7 +2731,7 @@ tr.admin-mail-unread .admin-link {
 
 @media (min-width: 1100px) {
   .admin-account {
-    margin-left: 0;
+    margin-left: auto;
   }
 }
 

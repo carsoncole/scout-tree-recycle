@@ -14,7 +14,17 @@
         <div class="admin-toggle-list">
           <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
             <div class="admin-toggle-copy" data-toggle-copy>
-              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Enable Pickups Portal</h3>
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">
+                Enable Pickups Portal
+                <span class="<%= admin_badge_class("info") %> ml-2 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-3" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.6 9h16.8M3.6 15h16.8" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a15.3 15.3 0 0 1 4 9 15.3 15.3 0 0 1-4 9 15.3 15.3 0 0 1-4-9 15.3 15.3 0 0 1 4-9Z" />
+                  </svg>
+                  Website
+                </span>
+              </h3>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Make the driver portal available at <code>/pickups</code>.</p>
               <%= link_to "View Pickups Portal", pickups_root_path, target: "_blank", rel: "noopener", class: admin_link_class %>
             </div>

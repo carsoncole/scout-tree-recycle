@@ -80,4 +80,57 @@ class DonationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "should redirect donation without reservation when stripe is not configured" do
+    Setting.instance.update(stripe_secret_key: nil, stripe_price_id: nil)
+
+    get donation_without_reservation_url
+
+    assert_redirected_to root_url
+    assert_equal "Online donations are not configured yet.", flash[:alert]
+  end
+
+  test "should create donation without reservation" do
+    Setting.instance.update(stripe_secret_key: "sk_test_123", stripe_price_id: "price_123")
+    fake_session = Struct.new(:url).new("https://checkout.stripe.test/session")
+    captured_args = nil
+    original = Stripe::Checkout::Session.method(:create)
+
+    Stripe::Checkout::Session.define_singleton_method(:create) do |args|
+      captured_args = args
+      fake_session
+    end
+
+    begin
+      get donation_without_reservation_url
+    ensure
+      Stripe::Checkout::Session.define_singleton_method(:create, original)
+    end
+
+    assert_redirected_to "https://checkout.stripe.test/session"
+    assert_equal root_url, captured_args[:cancel_url]
+    assert_equal success_url(driver: false), captured_args[:success_url]
+  end
+
+  test "should use pickups root as cancel url for driver donation without reservation" do
+    Setting.instance.update(stripe_secret_key: "sk_test_123", stripe_price_id: "price_123")
+    fake_session = Struct.new(:url).new("https://checkout.stripe.test/session")
+    captured_args = nil
+    original = Stripe::Checkout::Session.method(:create)
+
+    Stripe::Checkout::Session.define_singleton_method(:create) do |args|
+      captured_args = args
+      fake_session
+    end
+
+    begin
+      get donation_without_reservation_url(driver: "true")
+    ensure
+      Stripe::Checkout::Session.define_singleton_method(:create, original)
+    end
+
+    assert_redirected_to "https://checkout.stripe.test/session"
+    assert_equal pickups_root_url, captured_args[:cancel_url]
+    assert_equal success_url(driver: true), captured_args[:success_url]
+  end
 end

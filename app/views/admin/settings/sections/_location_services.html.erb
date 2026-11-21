@@ -14,7 +14,16 @@
         <div class="admin-toggle-list">
           <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
             <div class="admin-toggle-copy" data-toggle-copy>
-              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Enable Automatic Routing</h3>
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">
+                Enable Automatic Routing
+                <span class="<%= admin_badge_class("info") %> ml-2 align-middle">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-3" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                  </svg>
+                  Location
+                </span>
+              </h3>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">When disabled, pickups must be routed manually.</p>
             </div>
             <div class="admin-toggle-control" data-toggle-control>

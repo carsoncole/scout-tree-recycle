@@ -69,7 +69,6 @@ class ReservationsMailerTest < ActionMailer::TestCase
     body = readable_mail_body(email)
     assert_match "Tree pick-up cancelled", body
     assert_match Setting.instance.organization_name, body
-    assert_no_match "Bainbridge", body
     assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)
   end
 

@@ -3,6 +3,11 @@
 # rake task and the admin "Load Sample Data" action (LoadSampleDataJob).
 # Intended for development/demo use.
 class SampleData
+  SAMPLE_CITY = "Bainbridge Island"
+  SAMPLE_STATE = "WA"
+  SAMPLE_ZIP = "98110"
+  SAMPLE_COUNTRY = "United States"
+
   def self.load!
     require "faker"
 
@@ -68,29 +73,16 @@ class SampleData
       "cancelled", "missing"
     ]
 
-    high_school_route = Route.find_by(name: "High School")
-    if high_school_route
-      Reservation.find_or_create_by!(email: "carson4@example.com", street: "1760 Susan Place NW") do |reservation|
-        reservation.importing = true
-        reservation.name = "Carson Cole"
-        reservation.status = "pending_pickup"
-        reservation.city = "Bainbridge Island"
-        reservation.state = "WA"
-        reservation.zip = "98110"
-        reservation.latitude = 47.640116544273
-        reservation.longitude = -122.527945480555
-        reservation.route = high_school_route
-        reservation.was_automatically_routed = true
-        reservation.was_automatically_geocoded = true
-      end
-    end
-
     streets = Datasets::SeedData::STREETS.dup
     50.times do
       street = streets.delete_at(rand(streets.length)) || Faker::Address.street_address
       r = Reservation.new(
         status: weighted_reservation_types.sample,
         street: street,
+        city: SAMPLE_CITY,
+        state: SAMPLE_STATE,
+        zip: SAMPLE_ZIP,
+        country: SAMPLE_COUNTRY,
         email: Faker::Internet.unique.email,
         name: Faker::Name.name,
         mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample,

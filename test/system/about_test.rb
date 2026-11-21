@@ -79,14 +79,14 @@ class AboutTest < ApplicationSystemTestCase
 
   test "should display on day of pickup info" do
     setting = Setting.instance
-    setting.organization_name = "Troop 222"
+    setting.organization_name = "Troop 100"
     setting.on_day_of_pickup_instructions = "Some instructions"
     setting.save
 
     visit about_url
-    assert_selector "h2", text: "Troop 222"
+    assert_selector "h2", text: "Troop 100"
     assert_text "Some instructions"
-    assert_text "Troop 222"
+    assert_text "Troop 100"
   end
 
   test "should display about event info" do

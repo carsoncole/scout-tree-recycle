@@ -214,16 +214,16 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_section_path("organization")
 
     within "section.admin-panel", text: "Organization" do
-      fill_in "Organization Name", with: "Troop 200"
-      fill_in "Organization URL", with: "https://troop200.example.com"
+      fill_in "Organization Name", with: "Troop 100"
+      fill_in "Organization URL", with: "https://troop100.example.com"
       click_on "Save Organization Settings"
     end
 
     assert_text "Settings were successfully updated"
 
     setting = Setting.instance.reload
-    assert_equal "Troop 200", setting.organization_name
-    assert_equal "https://troop200.example.com", setting.organization_url
+    assert_equal "Troop 100", setting.organization_name
+    assert_equal "https://troop100.example.com", setting.organization_url
   end
 
   test "site details panel saves its settings" do
@@ -561,7 +561,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     # Complete first-run setup: the site relaunches down for maintenance with
     # reservations closed until an admin turns them on.
-    fill_in "Organization Name", with: "Troop 200"
+    fill_in "Organization Name", with: "Troop 100"
     fill_in "Site URL", with: "https://example.com"
     fill_in "Default City", with: "Anytown"
     select "New York", from: "Default State"

@@ -1,5 +1,18 @@
 class Admin::ContactsController < Admin::BaseController
-  before_action :set_contact, only: [ :show, :edit, :update, :destroy, :clear_marketing_email_1, :clear_marketing_email_2 ]
+  MARKETING_SENDS = {
+    1 => {
+      template: "marketing_email_1",
+      mailer_action: :marketing_email_1,
+      disabled: "Emailing is disabled. Enable email notifications in Settings to send marketing emails."
+    },
+    2 => {
+      template: "marketing_email_2",
+      mailer_action: :marketing_email_2,
+      disabled: "Emailing is disabled. Enable emailing in Settings to send marketing emails."
+    }
+  }.freeze
+
+  before_action :set_contact, only: [ :show, :edit, :update, :destroy, :clear_marketing_email_1, :clear_marketing_email_2, :send_marketing_email_1, :send_marketing_email_2 ]
 
   def new
     @contact = Contact.new
@@ -42,6 +55,14 @@ class Admin::ContactsController < Admin::BaseController
     clear_marketing_email!(2)
   end
 
+  def send_marketing_email_1
+    send_marketing_email!(1)
+  end
+
+  def send_marketing_email_2
+    send_marketing_email!(2)
+  end
+
   def destroy_all
     unless Current.user.admin?
       redirect_to admin_marketing_index_path, alert: "You are not authorized to delete all contacts."
@@ -72,6 +93,24 @@ class Admin::ContactsController < Admin::BaseController
       redirect_to admin_marketing_index_path, notice: "Marketing email #{marketing_email} sent date was cleared."
     else
       redirect_to admin_marketing_index_path, alert: "Marketing email #{marketing_email} sent date could not be cleared."
+    end
+  end
+
+  def send_marketing_email!(number)
+    campaign = MARKETING_SENDS.fetch(number)
+    setting = Setting.instance
+
+    if !setting.is_emailing_enabled?
+      redirect_to admin_marketing_index_path, alert: campaign[:disabled]
+    elsif (message = setting.email_configuration_alert(purpose: "sending marketing emails"))
+      redirect_to admin_marketing_index_path, alert: message
+    elsif MarketingEmailTemplate.published.find_by(name: campaign[:template]).nil?
+      redirect_to admin_marketing_index_path, alert: "Marketing email #{number} is not published. Edit the template and publish it before sending."
+    elsif !@contact.eligible_for_marketing_email?(number)
+      redirect_to admin_marketing_index_path, alert: "Contact is not eligible for Marketing email #{number}."
+    else
+      MarketingMailer.with(contact_id: @contact.id).public_send(campaign[:mailer_action]).deliver_later
+      redirect_to admin_marketing_index_path, notice: "Marketing email #{number} queued for #{@contact.email}."
     end
   end
 end

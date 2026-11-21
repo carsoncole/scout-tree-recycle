@@ -184,6 +184,15 @@
                       <%= admin_trash_icon %>
                     <% end %>
                   </div>
+                <% elsif contact.eligible_for_marketing_email?(1) %>
+                  <%= button_to send_marketing_email_1_admin_contact_path(contact),
+                      class: "admin-icon-action text-ink-soft hover:text-sage-deep dark:text-ink-soft-dark dark:hover:text-sage-deep-dark",
+                      form_class: "admin-icon-form",
+                      title: "Send Marketing email 1 to #{contact.email}",
+                      aria: { label: "Send Marketing email 1 to #{contact.email}" },
+                      data: { turbo_confirm: "Send Marketing email 1 to #{contact.email}? This cannot be undone." } do %>
+                    <%= admin_mail_icon %>
+                  <% end %>
                 <% else %>
                   <span class="<%= admin_badge_class(:neutral) %>">Not sent</span>
                 <% end %>
@@ -204,6 +213,15 @@
                       <%= admin_trash_icon %>
                     <% end %>
                   </div>
+                <% elsif contact.eligible_for_marketing_email?(2) %>
+                  <%= button_to send_marketing_email_2_admin_contact_path(contact),
+                      class: "admin-icon-action text-ink-soft hover:text-sage-deep dark:text-ink-soft-dark dark:hover:text-sage-deep-dark",
+                      form_class: "admin-icon-form",
+                      title: "Send Marketing email 2 to #{contact.email}",
+                      aria: { label: "Send Marketing email 2 to #{contact.email}" },
+                      data: { turbo_confirm: "Send Marketing email 2 to #{contact.email}? This cannot be undone." } do %>
+                    <%= admin_mail_icon %>
+                  <% end %>
                 <% else %>
                   <span class="<%= admin_badge_class(:neutral) %>">Not sent</span>
                 <% end %>

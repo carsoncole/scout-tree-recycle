@@ -92,17 +92,17 @@ class MarketingMailerTest < ActionMailer::TestCase
     assert_match "contact_id=#{contact.id}", mail.body.encoded
   end
 
-  test "marketing_email_2 does not send during the cooldown window" do
+  test "marketing_email_2 sends during the cooldown window when not yet sent" do
     Setting.instance.update(is_emailing_enabled: true, marketing_email_cooldown_days: 7)
     contact = contacts(:full)
     contact.update(marketing_1_email_sent_at: 1.day.ago, marketing_2_email_sent_at: nil)
 
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_2
 
-    assert_no_emails do
+    assert_emails 1 do
       mail.deliver_now
     end
-    assert_nil contact.reload.marketing_2_email_sent_at
+    assert contact.reload.marketing_2_email_sent_at.present?
   end
 
   test "marketing_email_2 sends after the cooldown window" do

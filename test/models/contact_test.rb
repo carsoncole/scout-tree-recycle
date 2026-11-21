@@ -82,6 +82,34 @@ class ContactTest < ActiveSupport::TestCase
     assert contact.marketing_1_email_sent_at.present?
   end
 
+  test "eligible for marketing email 1 when subscribed and not yet sent" do
+    contact = contacts(:full)
+    contact.update!(is_unsubscribed_from_marketing: false, marketing_1_email_sent_at: nil)
+
+    assert contact.eligible_for_marketing_email?(1)
+
+    contact.update!(marketing_1_email_sent_at: 1.day.ago)
+    assert_not contact.eligible_for_marketing_email?(1)
+  end
+
+  test "not eligible for marketing emails when unsubscribed" do
+    contact = contacts(:full)
+    contact.unsubscribe_from_marketing!
+
+    assert_not contact.eligible_for_marketing_email?(1)
+    assert_not contact.eligible_for_marketing_email?(2)
+  end
+
+  test "eligible for marketing email 2 when subscribed and not yet sent" do
+    contact = contacts(:full)
+    contact.update!(marketing_2_email_sent_at: nil, marketing_1_email_sent_at: 1.day.ago)
+
+    assert contact.eligible_for_marketing_email?(2)
+
+    contact.update!(marketing_2_email_sent_at: 1.day.ago)
+    assert_not contact.eligible_for_marketing_email?(2)
+  end
+
   test "is subscribed to marketing by default" do
     contact = Contact.create!(name: "New Contact", email: "new-contact@example.com")
     assert_not contact.is_unsubscribed_from_marketing?

@@ -150,8 +150,36 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     assert_nil contact.reload.marketing_1_email_sent_at
 
     within "tr", text: contact.email do
-      assert_text "Not sent"
       assert_no_button "Clear Marketing email 1 sent date"
+      assert_selector "form[action='#{send_marketing_email_1_admin_contact_path(contact)}'] button"
+    end
+  end
+
+  test "sending an individual marketing email from the contacts table" do
+    configure_email!
+    contact = contacts(:full)
+    contact.update!(marketing_1_email_sent_at: nil)
+
+    visit admin_marketing_index_url
+
+    within "tr", text: contact.email do
+      accept_confirm do
+        find("form[action='#{send_marketing_email_1_admin_contact_path(contact)}'] button").click
+      end
+    end
+
+    assert_text "Marketing email 1 queued for #{contact.email}."
+  end
+
+  test "does not show send buttons for marketing emails already sent" do
+    contact = contacts(:full)
+    contact.update!(marketing_1_email_sent_at: Time.current, marketing_2_email_sent_at: Time.current)
+
+    visit admin_marketing_index_url
+
+    within "tr", text: contact.email do
+      assert_no_selector "form[action='#{send_marketing_email_1_admin_contact_path(contact)}']"
+      assert_no_selector "form[action='#{send_marketing_email_2_admin_contact_path(contact)}']"
     end
   end
 

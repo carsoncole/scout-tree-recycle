@@ -20,7 +20,6 @@ class MarketingMailer < ApplicationMailer
     return unless setting.email_from_configured?
     return if @contact.is_unsubscribed_from_marketing?
     return if @contact.marketing_2_email_sent_at?
-    return if @contact.marketing_email_cooldown_active?
 
     deliver_template("marketing_email_2", sent_at_attribute: :marketing_2_email_sent_at)
   end

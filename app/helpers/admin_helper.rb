@@ -298,6 +298,23 @@ module AdminHelper
     end
   end
 
+  def admin_mail_icon
+    tag.svg(
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": 1.6,
+      class: "admin-icon",
+      aria: { hidden: true }
+    ) do
+      tag.path(
+        d: "M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5",
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round"
+      )
+    end
+  end
+
   # Shows the year only for sends from previous years to keep table cells compact.
   def admin_marketing_sent_at(time)
     time = time.in_time_zone

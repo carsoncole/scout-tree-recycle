@@ -140,6 +140,121 @@ class Admin::ContactsControllerTest < ActionDispatch::IntegrationTest
     assert_nil contact.marketing_2_email_sent_at
   end
 
+  test "should send marketing email 1 to an eligible contact" do
+    configure_email!
+    sign_in
+    contact = contacts(:full)
+    contact.update!(marketing_1_email_sent_at: nil)
+
+    assert_enqueued_emails 1 do
+      post send_marketing_email_1_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Marketing email 1 queued for #{contact.email}.", flash[:notice]
+  end
+
+  test "should send marketing email 2 to an eligible contact" do
+    configure_email!
+    sign_in
+    contact = contacts(:full)
+    contact.update!(
+      marketing_1_email_sent_at: (Setting.instance.marketing_email_cooldown_days + 1).days.ago,
+      marketing_2_email_sent_at: nil
+    )
+
+    assert_enqueued_emails 1 do
+      post send_marketing_email_2_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Marketing email 2 queued for #{contact.email}.", flash[:notice]
+  end
+
+  test "does not send marketing email 1 when contact already received it" do
+    configure_email!
+    sign_in
+    contact = contacts(:full)
+    contact.update!(marketing_1_email_sent_at: 1.day.ago)
+
+    assert_no_enqueued_emails do
+      post send_marketing_email_1_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Contact is not eligible for Marketing email 1.", flash[:alert]
+  end
+
+  test "should send marketing email 2 even when marketing email 1 was sent recently" do
+    configure_email!
+    sign_in
+    contact = contacts(:full)
+    contact.update!(marketing_1_email_sent_at: 1.day.ago, marketing_2_email_sent_at: nil)
+
+    assert_enqueued_emails 1 do
+      post send_marketing_email_2_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Marketing email 2 queued for #{contact.email}.", flash[:notice]
+  end
+
+  test "does not send marketing email 1 to an unsubscribed contact" do
+    configure_email!
+    sign_in
+    contact = contacts(:full)
+    contact.unsubscribe_from_marketing!
+
+    assert_no_enqueued_emails do
+      post send_marketing_email_1_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Contact is not eligible for Marketing email 1.", flash[:alert]
+  end
+
+  test "does not send individual marketing email when emailing is disabled" do
+    Setting.instance.update!(is_emailing_enabled: false)
+    sign_in
+    contact = contacts(:full)
+
+    assert_no_enqueued_emails do
+      post send_marketing_email_1_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Emailing is disabled. Enable email notifications in Settings to send marketing emails.", flash[:alert]
+  end
+
+  test "does not send individual marketing email when email settings are incomplete" do
+    configure_email!
+    Setting.instance.update!(smtp_address: nil)
+    sign_in
+    contact = contacts(:full)
+
+    assert_no_enqueued_emails do
+      post send_marketing_email_1_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal Setting.instance.email_configuration_alert(purpose: "sending marketing emails"), flash[:alert]
+  end
+
+  test "does not send individual marketing email when template is unpublished" do
+    configure_email!
+    marketing_email_templates(:marketing_email_1).unpublish!
+    sign_in
+    contact = contacts(:full)
+    contact.update!(marketing_1_email_sent_at: nil)
+
+    assert_no_enqueued_emails do
+      post send_marketing_email_1_admin_contact_url(contact)
+    end
+
+    assert_redirected_to admin_marketing_index_path
+    assert_equal "Marketing email 1 is not published. Edit the template and publish it before sending.", flash[:alert]
+  end
+
   test "should get destroy" do
     sign_in
     delete admin_contact_url(contacts(:full))

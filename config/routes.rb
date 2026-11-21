@@ -80,6 +80,8 @@ Rails.application.routes.draw do
       member do
         delete :clear_marketing_email_1
         delete :clear_marketing_email_2
+        post :send_marketing_email_1
+        post :send_marketing_email_2
       end
       collection do
         delete :destroy_all

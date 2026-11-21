@@ -54,6 +54,21 @@ class Contact < ApplicationRecord
     update(column => nil)
   end
 
+  # True when this contact can be sent the given marketing email now.
+  # Excludes unsubscribed contacts and already-sent emails.
+  def eligible_for_marketing_email?(marketing_email)
+    return false if is_unsubscribed_from_marketing?
+
+    case marketing_email.to_i
+    when 1
+      marketing_1_email_sent_at.nil?
+    when 2
+      marketing_2_email_sent_at.nil?
+    else
+      false
+    end
+  end
+
   def unsubscribe_from_marketing!
     update!(is_unsubscribed_from_marketing: true)
   end

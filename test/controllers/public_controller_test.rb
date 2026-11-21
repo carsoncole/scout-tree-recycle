@@ -167,4 +167,19 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_includes response.body, File.basename(image, ".*")
     end
+
+    test "should include facebook open graph metadata on public pages" do
+      get root_url
+
+      assert_response :success
+      title = css_select("title").first.text
+      description = css_select("meta[name='description']").first["content"]
+
+      assert_select "meta[property='og:title'][content=?]", title
+      assert_select "meta[property='og:description'][content=?]", description
+      assert_select "meta[property='og:type'][content='website']"
+      assert_select "meta[property='og:url'][content=?]", "http://www.example.com/"
+      assert_select "meta[property='og:site_name'][content=?]", Setting.instance.organization_name
+      assert_select "meta[property='og:image'][content^='http'][content*=?]", "tree-4c-bc"
+    end
 end

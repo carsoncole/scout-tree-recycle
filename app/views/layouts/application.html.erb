@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for(:title) || default_page_name %></title>
+    <% page_title = content_for(:title) || default_page_name %>
+    <% page_description = content_for?(:description) ? yield(:description) : setting&.about_event_description_text %>
+    <% page_image = image_url(setting&.home_page_image_name || Setting::DEFAULT_HOME_PAGE_IMAGE) %>
+    <% page_url = request.base_url + request.path %>
+    <% site_name = setting&.organization_name.presence || default_page_name %>
+    <title><%= page_title %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : setting&.about_event_description_text %>">
+    <meta name="description" content="<%= page_description %>">
+    <meta property="og:title" content="<%= page_title %>">
+    <meta property="og:description" content="<%= page_description %>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<%= page_url %>">
+    <meta property="og:image" content="<%= page_image %>">
+    <meta property="og:site_name" content="<%= site_name %>">
     <meta name="theme-color" content="#4c6a57">
     <meta name="theme-color" content="#171a14" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">

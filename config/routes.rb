@@ -126,6 +126,8 @@ Rails.application.routes.draw do
       get :export
       patch :schedule
       post :email_export
+      get :export_settings
+      post :import_settings
     end
 
     # Data management (delete all reservations/contacts, reset all data)

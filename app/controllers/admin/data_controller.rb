@@ -44,6 +44,37 @@ class Admin::DataController < Admin::BaseController
       disposition: "attachment"
   end
 
+  def export_settings
+    setting = Setting.instance
+    return redirect_to admin_data_path, alert: "No settings are available to export." if setting.nil?
+
+    send_data SettingTransfer.export(setting),
+      filename: "settings-#{Time.current.strftime("%Y%m%d-%H%M%S")}.json",
+      type: "application/json; charset=utf-8",
+      disposition: "attachment"
+  end
+
+  def import_settings
+    file = params[:file]
+    unless file.respond_to?(:read)
+      return redirect_to admin_data_path, alert: "Please choose a settings JSON file to import."
+    end
+
+    json = file.read
+    if json.bytesize > SettingTransfer::MAX_FILE_SIZE
+      return redirect_to admin_data_path, alert: "Settings file is too large (maximum 1 MB)."
+    end
+
+    json = json.force_encoding("UTF-8").scrub
+    result = SettingTransfer.new(json: json, user: Current.user).import
+
+    if result.success?
+      redirect_to admin_data_path, notice: "Settings imported successfully."
+    else
+      redirect_to admin_data_path, alert: result.errors.to_sentence
+    end
+  end
+
   def schedule
     setting = Setting.instance
     return redirect_to admin_data_path, alert: "Complete the initial settings before scheduling exports." if setting.nil?

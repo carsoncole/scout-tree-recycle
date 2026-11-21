@@ -213,4 +213,85 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_data_url
     assert_equal Setting.instance.email_configuration_alert(purpose: "emailing the export"), flash[:alert]
   end
+
+  test "should export settings as json" do
+    sign_in
+    setting = Setting.instance
+    setting.update!(smtp_password: "secret-password")
+
+    get export_settings_admin_data_url
+
+    assert_response :success
+    assert_equal "application/json", response.media_type
+    assert_includes response.headers["Content-Disposition"], "settings-"
+    assert_includes response.headers["Content-Disposition"], ".json"
+
+    payload = JSON.parse(response.body)
+    assert_equal "tree-recycle-settings", payload["format"]
+    assert_equal 1, payload["version"]
+    assert_equal setting.organization_name, payload.dig("setting", "organization_name")
+    assert_equal "secret-password", payload.dig("setting", "smtp_password")
+    assert_not payload["setting"].key?("id")
+    assert_not payload["setting"].key?("created_at")
+  end
+
+  test "should import settings json" do
+    sign_in
+    setting = Setting.instance
+    payload = JSON.parse(SettingTransfer.export(setting))
+    payload["setting"]["organization_name"] = "Imported Troop"
+    payload["setting"]["default_city"] = "Portland"
+
+    file = settings_upload(payload.to_json)
+
+    post import_settings_admin_data_url, params: { file: file }
+
+    assert_redirected_to admin_data_url
+    assert_equal "Settings imported successfully.", flash[:notice]
+    assert_equal "Imported Troop", setting.reload.organization_name
+    assert_equal "Portland", setting.default_city
+  end
+
+  test "should reject invalid settings import" do
+    sign_in
+    original_name = Setting.instance.organization_name
+    file = settings_upload("{not json")
+
+    post import_settings_admin_data_url, params: { file: file }
+
+    assert_redirected_to admin_data_url
+    assert_equal "Settings file is not valid JSON.", flash[:alert]
+    assert_equal original_name, Setting.instance.reload.organization_name
+  end
+
+  test "should require a settings file to import" do
+    sign_in
+
+    post import_settings_admin_data_url
+
+    assert_redirected_to admin_data_url
+    assert_equal "Please choose a settings JSON file to import.", flash[:alert]
+  end
+
+  test "non-admin users cannot export or import settings" do
+    sign_in users(:user)
+
+    get export_settings_admin_data_url
+    assert_redirected_to admin_data_url
+    assert_equal "You are not authorized to perform this data action.", flash[:alert]
+
+    file = settings_upload("{}")
+    post import_settings_admin_data_url, params: { file: file }
+    assert_redirected_to admin_data_url
+    assert_equal "You are not authorized to perform this data action.", flash[:alert]
+  end
+
+  private
+
+  def settings_upload(json, filename: "settings.json")
+    file = Tempfile.new([ "settings", ".json" ])
+    file.write(json)
+    file.rewind
+    Rack::Test::UploadedFile.new(file.path, "application/json", original_filename: filename)
+  end
 end

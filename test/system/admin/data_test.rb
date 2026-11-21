@@ -10,6 +10,7 @@ class Admin::DataTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Data"
     assert_text "Import contacts"
     assert_text "Export reservations"
+    assert_text "Settings backup"
     assert_link "System Logs"
   end
 
@@ -68,5 +69,23 @@ class Admin::DataTest < ApplicationSystemTestCase
     ActionMailer::Base.perform_deliveries = original_perform_deliveries
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.smtp_settings = {}
+  end
+
+  test "importing settings json" do
+    payload = JSON.parse(SettingTransfer.export(Setting.instance))
+    payload["setting"]["organization_name"] = "Imported Troop"
+    file = Tempfile.new([ "settings", ".json" ])
+    file.write(payload.to_json)
+    file.rewind
+
+    visit admin_data_url
+    attach_file "Settings JSON file", file.path
+    click_button "Import Settings JSON"
+
+    assert_text "Settings imported successfully."
+    assert_equal "Imported Troop", Setting.instance.reload.organization_name
+  ensure
+    file&.close
+    file&.unlink
   end
 end

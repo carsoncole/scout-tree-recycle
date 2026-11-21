@@ -46,6 +46,34 @@ class Admin::MailsTest < ApplicationSystemTestCase
     end
   end
 
+  test "inbox rows link the reservation and contact when they are present" do
+    reservation = reservations(:picked_up_1)
+    contact = contacts(:name_and_email)
+    sign_in_as(users(:admin), true)
+    receive_from(reservation.email)
+    receive_from("stranger@example.com")
+
+    visit admin_mail_received_emails_path
+    within "tr", text: reservation.email do
+      assert_link "Reservation", href: admin_reservation_path(reservation)
+      assert_link "Contact", href: admin_contact_path(contact)
+      click_link "Reservation"
+    end
+    assert_current_path admin_reservation_path(reservation)
+
+    visit admin_mail_received_emails_path
+    within "tr", text: reservation.email do
+      click_link "Contact"
+    end
+    assert_current_path admin_contact_path(contact)
+
+    visit admin_mail_received_emails_path
+    within "tr", text: "stranger@example.com" do
+      assert_no_link "Reservation"
+      assert_no_link "Contact"
+    end
+  end
+
   test "the inbox is empty until a message arrives" do
     sign_in_as(users(:admin), true)
     visit admin_mail_received_emails_path

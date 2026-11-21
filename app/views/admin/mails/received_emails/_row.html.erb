@@ -13,6 +13,20 @@
   </td>
   <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.type_label %></td>
   <td class="<%= admin_td_class %> whitespace-nowrap">
+    <% if email.reservation || email.contact %>
+      <div class="inline-flex flex-nowrap items-center gap-x-3">
+        <% if email.reservation %>
+          <%= link_to "Reservation", admin_reservation_path(email.reservation), class: admin_link_class %>
+        <% end %>
+        <% if email.contact %>
+          <%= link_to "Contact", admin_contact_path(email.contact), class: admin_link_class %>
+        <% end %>
+      </div>
+    <% else %>
+      —
+    <% end %>
+  </td>
+  <td class="<%= admin_td_class %> whitespace-nowrap">
     <%= form_with url: read_admin_mail_received_email_path(email), method: :patch, html: { class: "inline" } do %>
       <%= label_tag dom_id(email, :is_read), class: "inline-flex" do %>
         <%= check_box_tag :is_read, "1", email.is_read?,

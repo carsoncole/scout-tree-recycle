@@ -4,7 +4,7 @@ module Admin
       before_action :set_received_email, only: [ :show, :update, :read, :destroy ]
 
       def index
-        @pagy, @received_emails = pagy(::Mails::ReceivedEmail.recent_first)
+        @pagy, @received_emails = pagy(::Mails::ReceivedEmail.recent_first.includes(:reservation, :contact))
       end
 
       def show

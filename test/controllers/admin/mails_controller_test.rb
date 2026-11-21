@@ -18,6 +18,37 @@ class Admin::MailsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#mail_unread_count .admin-nav-badge", count: 0
   end
 
+  test "the inbox links a reservation and a contact when they are present" do
+    sign_in
+    reservation = reservations(:picked_up_1)
+    contact = contacts(:name_and_email)
+    both = receive_from(reservation.email)
+    reservation_only = receive_from(reservations(:reservation_form_minimum).email)
+    contact_only = receive_from(contacts(:full).email)
+    neither = receive_from("stranger@example.com")
+
+    get admin_mail_received_emails_url
+    assert_response :success
+
+    assert_select row_selector(both) do
+      assert_select "a[href=?]", admin_reservation_path(reservation), text: "Reservation"
+      assert_select "a[href=?]", admin_contact_path(contact), text: "Contact"
+    end
+    assert_select row_selector(reservation_only) do
+      assert_select "a", text: "Reservation"
+      assert_select "a", text: "Contact", count: 0
+    end
+    assert_select row_selector(contact_only) do
+      assert_select "a", text: "Contact"
+      assert_select "a", text: "Reservation", count: 0
+    end
+    assert_select row_selector(neither) do
+      assert_select "a", text: "Reservation", count: 0
+      assert_select "a", text: "Contact", count: 0
+      assert_select "td", text: /\A\s*—\s*\z/
+    end
+  end
+
   test "opening a message marks it read and the inbox checkbox sets both states" do
     sign_in
     received = receive_from("reader@example.com")
@@ -198,6 +229,10 @@ class Admin::MailsControllerTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def row_selector(email)
+    "##{ActionView::RecordIdentifier.dom_id(email)}"
+  end
 
   def receive_from(from)
     mail = Mail.new do

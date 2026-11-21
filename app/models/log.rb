@@ -26,8 +26,8 @@ class Log < ApplicationRecord
   def notify_admins!
     setting = Setting.instance
     return unless log_type == "error"
-    return unless setting&.is_log_notifications_enabled != false
     return unless setting&.email_configured?
+    return unless User.where(is_emailed_error_logs: true).exists?
 
     LogNotificationJob.perform_later(log_id: id)
   rescue StandardError => e

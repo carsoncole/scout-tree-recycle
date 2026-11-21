@@ -68,6 +68,30 @@ class UserTest < ActiveSupport::TestCase
     assert_not_equal user.password_digest, other.password_digest
   end
 
+  test "defaults error log emails to off for non-admin users" do
+    user = User.new(email: "invite@example.com", password: "password123456789", role: "user")
+
+    assert_not user.is_emailed_error_logs
+  end
+
+  test "defaults error log emails to on for new admins" do
+    user = User.new(email: "invite@example.com", password: "password123456789", role: "admin")
+
+    assert user.is_emailed_error_logs
+  end
+
+  test "created admin has error log emails enabled by default" do
+    user = User.create!(email: "invite@example.com", password: "password123456789", role: "admin")
+
+    assert user.reload.is_emailed_error_logs?
+  end
+
+  test "created non-admin has error log emails disabled by default" do
+    user = User.create!(email: "invite@example.com", password: "password123456789", role: "user")
+
+    assert_not user.reload.is_emailed_error_logs?
+  end
+
   test "account setup token resolves to the user" do
     user = users(:admin)
 

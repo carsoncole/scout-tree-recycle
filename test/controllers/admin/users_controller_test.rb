@@ -69,8 +69,54 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
       post admin_users_url, params: { user: { email: "test@example.com", role: "admin" } }
     end
 
-    assert_equal "admin", User.find_by!(email: "test@example.com").role
+    user = User.find_by!(email: "test@example.com")
+    assert_equal "admin", user.role
+    assert user.is_emailed_error_logs?
     assert_redirected_to admin_users_url
+  end
+
+  test "created non-admin user defaults error log emails to off" do
+    sign_in
+
+    post admin_users_url, params: { user: { email: "test@example.com", role: "user" } }
+
+    assert_not User.find_by!(email: "test@example.com").is_emailed_error_logs?
+  end
+
+  test "admin can toggle error log emails for a user" do
+    sign_in
+
+    patch toggle_admin_user_url(users(:user)), params: { setting: "is_emailed_error_logs", value: true }, as: :json
+
+    assert_response :success
+    assert users(:user).reload.is_emailed_error_logs?
+  end
+
+  test "non-admin can toggle their own error log emails" do
+    sign_in(users(:user))
+
+    patch toggle_admin_user_url(users(:user)), params: { setting: "is_emailed_error_logs", value: true }, as: :json
+
+    assert_response :success
+    assert users(:user).reload.is_emailed_error_logs?
+  end
+
+  test "non-admin cannot toggle error log emails for another user" do
+    sign_in(users(:user))
+
+    patch toggle_admin_user_url(users(:admin_2)), params: { setting: "is_emailed_error_logs", value: false }, as: :json
+
+    assert_response :unauthorized
+    assert users(:admin_2).reload.is_emailed_error_logs?
+  end
+
+  test "toggle rejects an unknown user setting" do
+    sign_in
+
+    patch toggle_admin_user_url(users(:user)), params: { setting: "role", value: "admin" }, as: :json
+
+    assert_response :unprocessable_entity
+    assert_equal "user", users(:user).reload.role
   end
 
   test "created user cannot authenticate with a password posted at creation" do

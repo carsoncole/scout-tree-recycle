@@ -21,6 +21,8 @@ class User < ApplicationRecord
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
+  after_initialize :apply_default_error_log_notification, if: :new_record?
+
   def admin?
     role == "admin"
   end
@@ -69,5 +71,11 @@ class User < ApplicationRecord
     end
 
     update(attributes)
+  end
+
+  private
+
+  def apply_default_error_log_notification
+    self.is_emailed_error_logs = true if admin?
   end
 end

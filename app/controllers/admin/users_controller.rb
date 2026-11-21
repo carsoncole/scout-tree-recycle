@@ -1,6 +1,6 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [ :edit, :update, :destroy ]
-  before_action :require_admin_access, except: [ :index ]
+  before_action :set_user, only: [ :edit, :update, :destroy, :toggle ]
+  before_action :require_admin_access, except: [ :index, :toggle ]
   before_action :require_configured_email, only: [ :create ]
 
   def index
@@ -39,6 +39,23 @@ class Admin::UsersController < Admin::BaseController
     else
       @user.destroy
       redirect_to admin_users_path, notice: "User was successfully deleted."
+    end
+  end
+
+  def toggle
+    unless Current.user&.admin? || @user == Current.user
+      return render json: { success: false, errors: [ "You are not authorized to update this user." ] }, status: :unauthorized
+    end
+
+    unless params[:setting] == "is_emailed_error_logs"
+      return render json: { success: false, errors: [ "Invalid setting." ] }, status: :unprocessable_entity
+    end
+
+    @user.is_emailed_error_logs = params[:value]
+    if @user.save
+      render json: { success: true }
+    else
+      render json: { success: false, errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

@@ -58,17 +58,13 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "error log notifications do not depend on the email feature switch" do
+  test "system settings no longer include the error notification toggle" do
     sign_in
-    Setting.instance.update!(is_emailing_enabled: false, smtp_address: nil, smtp_port: nil)
 
     get admin_settings_section_path("system")
 
     assert_response :success
-    assert_select "input[name='setting[is_log_notifications_enabled]']" do |inputs|
-      assert_nil inputs.first["disabled"]
-    end
-    assert_match "Add a from address, SMTP address, and port under Email", response.body
+    assert_select "input[name='setting[is_log_notifications_enabled]']", count: 0
   end
 
   test "should get each settings section" do

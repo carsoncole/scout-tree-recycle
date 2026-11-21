@@ -4,13 +4,16 @@ admin:
   email: one@example.com
   password_digest: <%= password_digest %>
   role: admin
+  is_emailed_error_logs: true
 
 admin_2:
   email: two@example.com
   password_digest: <%= password_digest %>
   role: admin
+  is_emailed_error_logs: true
 
 user:
   email: three@example.com
   password_digest: <%= password_digest %>
   role: user
+  is_emailed_error_logs: false

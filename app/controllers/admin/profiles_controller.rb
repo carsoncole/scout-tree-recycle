@@ -2,6 +2,7 @@ class Admin::ProfilesController < Admin::BaseController
   before_action :set_user
 
   def show
+    @email_configured = Setting.instance&.email_configured?
   end
 
   def update
@@ -9,6 +10,7 @@ class Admin::ProfilesController < Admin::BaseController
       sign_out_other_sessions if @user.password_digest_previously_changed?
       redirect_to admin_profile_path, notice: "Profile was successfully updated."
     else
+      @email_configured = Setting.instance&.email_configured?
       render :show, status: :unprocessable_entity
     end
   end

@@ -70,4 +70,30 @@ class LogsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_logs_url
     assert_equal "Type DELETE to confirm deletion of all logs.", flash[:alert]
   end
+
+  test "shows error email notification toggle for the current user when email is configured" do
+    sign_in
+    configure_email!
+
+    get admin_logs_url
+
+    assert_response :success
+    assert_select "h2", text: "Error email notifications"
+    assert_select "input[data-setting='is_emailed_error_logs']", count: 1
+    assert_select "h3", text: "Email me error logs"
+    assert_no_match users(:admin_2).email, response.body
+    assert_no_match users(:user).email, response.body
+    assert_no_match "Add a from address, SMTP address, and port under Email", response.body
+  end
+
+  test "shows email configuration hint when email is not configured" do
+    sign_in
+    Setting.instance.update!(email_from_address: nil, smtp_address: nil, smtp_port: nil)
+
+    get admin_logs_url
+
+    assert_response :success
+    assert_match "Add a from address, SMTP address, and port under Email before these notifications can be sent.", response.body
+    assert_select "input[data-setting='is_emailed_error_logs']", count: 0
+  end
 end

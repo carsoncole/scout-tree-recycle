@@ -49,28 +49,7 @@
           </label>
         </div>
       </div>
-      <div class="admin-toggle-row border-line dark:border-line-dark" data-toggle-row>
-        <div class="admin-toggle-copy" data-toggle-copy>
-          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Send error messages to admins</h3>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Admins will receive email notifications when system errors are logged.</p>
-        </div>
-        <div class="admin-toggle-control" data-toggle-control>
-          <label class="admin-switch" id="log-notifications-toggle" aria-label="Send error messages to admins">
-            <%= check_box_tag "setting[is_log_notifications_enabled]", "1", setting.is_log_notifications_enabled,
-                class: "admin-switch-input peer",
-                data: {
-                  testid: "log-notifications-toggle",
-                  toggle_target: "toggle",
-                  setting: "is_log_notifications_enabled"
-                } %>
-            <span class="admin-switch-track bg-line-strong after:bg-surface peer-checked:bg-sage peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink dark:bg-line-strong-dark dark:after:bg-surface-dark dark:peer-checked:bg-sage-dark dark:peer-focus-visible:outline-ink-dark" aria-hidden="true"></span>
-          </label>
-        </div>
-      </div>
     </div>
-    <% unless setting.email_configured? %>
-      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Add a from address, SMTP address, and port under Email before these notifications can be sent.</p>
-    <% end %>
   </div>
 </section>
 

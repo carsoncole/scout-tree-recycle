@@ -7,6 +7,7 @@ class Admin::LogsController < Admin::BaseController
     scope = scope.of_type(@selected_log_type) if Log::TYPES.include?(@selected_log_type)
 
     @pagy, @logs = pagy(scope)
+    @email_configured = Setting.instance&.email_configured?
     Log.where(is_viewed: false).update_all(is_viewed: true)
   end
 

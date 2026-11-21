@@ -3,13 +3,25 @@ require "test_helper"
 class LogNotificationJobTest < ActiveJob::TestCase
   include ActionMailer::TestHelper
 
-  test "sends to every admin when the email feature is off" do
+  test "sends to every opted-in user when the email feature is off" do
     configure_email!(enabled: false)
     sent = capture_smtp_deliveries do
       LogNotificationJob.perform_now(log_id: logs(:one).id)
     end
 
     assert_equal [ "one@example.com", "two@example.com" ], sent.flat_map { |message| message[:to] }.sort
+  end
+
+  test "sends only to users with error log emails enabled" do
+    configure_email!(enabled: false)
+    users(:admin).update!(is_emailed_error_logs: false)
+    users(:user).update!(is_emailed_error_logs: true)
+
+    sent = capture_smtp_deliveries do
+      LogNotificationJob.perform_now(log_id: logs(:one).id)
+    end
+
+    assert_equal [ "three@example.com", "two@example.com" ], sent.flat_map { |message| message[:to] }.sort
   end
 
   test "keeps the subject on one line" do
@@ -51,7 +63,7 @@ class LogNotificationJobTest < ActiveJob::TestCase
 
   test "records an error log when the notification email cannot connect" do
     configure_email!
-    Setting.instance.update!(is_log_notifications_enabled: true, smtp_password: "super-secret-password")
+    Setting.instance.update!(smtp_password: "super-secret-password")
     original_deliver = Mail::SMTP.instance_method(:deliver!)
     Mail::SMTP.send(:define_method, :deliver!) { |*| raise Net::OpenTimeout, "execution expired" }
 

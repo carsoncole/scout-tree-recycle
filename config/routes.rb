@@ -61,7 +61,11 @@ Rails.application.routes.draw do
     get "configuration", to: "configuration#index", as: :configuration
     scope path: "settings" do
       resources :drivers, except: [ :show ]
-      resources :users, except: [ :show ]
+      resources :users, except: [ :show ] do
+        member do
+          patch :toggle
+        end
+      end
       resources :thanks, except: [ :show ]
       resources :routes do
         resources :points, only: [ :create, :destroy ]

@@ -86,6 +86,7 @@ Rails.application.routes.draw do
       end
     end
     resources :donations, only: [ :index, :show, :destroy ]
+    resource :analytics, only: [ :show ], controller: "analytics"
 
     # Pickups (operational overview and driver backup report)
     resources :pickups, only: [ :index ]

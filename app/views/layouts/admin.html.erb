@@ -47,6 +47,8 @@
                           class: admin_nav_class(controller_name == "pickups") %>
               <%= link_to "Donations", admin_donations_path,
                           class: admin_nav_class(controller_name == "donations") %>
+              <%= link_to "Analytics", admin_analytics_path,
+                          class: admin_nav_class(controller_name == "analytics") %>
               <%= link_to admin_sms_path, class: admin_nav_class(controller_name == "sms") do %>
                 SMS
                 <% if unviewed_sms_count.positive? %>

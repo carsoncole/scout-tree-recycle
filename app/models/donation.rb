@@ -7,6 +7,8 @@ class Donation < ApplicationRecord
   # Payment statuses reported by Stripe that mean the donation was made.
   PAID_PAYMENT_STATUSES = %w[paid succeeded].freeze
 
+  scope :received, -> { where(payment_status: PAID_PAYMENT_STATUSES) }
+
   # Records a donation log when the donation is paid. Donations without a
   # reservation (general donations) have no reservation to associate.
   after_save :log_donation_made!, if: -> {

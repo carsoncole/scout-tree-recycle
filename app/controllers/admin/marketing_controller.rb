@@ -21,12 +21,11 @@ class Admin::MarketingController < Admin::BaseController
     @marketing_email_templates = MarketingEmailTemplate.where(name: MarketingEmailTemplate::MARKETING_EMAIL_NAMES).index_by(&:name)
 
     setting = Setting.instance
+    @emailing_enabled = setting.is_emailing_enabled?
     @email_batch_quantity = setting.email_batch_quantity
     @marketing_1_batch_size = setting.email_batch_size(@marketing_1_count)
     @marketing_2_batch_size = setting.email_batch_size(@marketing_2_count)
-    if !setting.is_emailing_enabled?
-      flash.now[:alert] = "Emailing is disabled. Enable email notifications in Settings to send marketing emails."
-    elsif (message = setting.email_configuration_alert(purpose: "sending marketing emails"))
+    if @emailing_enabled && (message = setting.email_configuration_alert(purpose: "sending marketing emails"))
       flash.now[:alert] = message
     end
   end

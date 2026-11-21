@@ -34,6 +34,8 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
   end
 
   test "confirms the number of contacts before sending a marketing email" do
+    configure_email!
+
     visit admin_marketing_index_url
 
     within "section", text: "Marketing email 2" do

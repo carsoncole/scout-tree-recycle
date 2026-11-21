@@ -11,6 +11,12 @@
 <% template_2 = @marketing_email_templates["marketing_email_2"] %>
 
 <div class="flex flex-col gap-6">
+  <% unless @emailing_enabled %>
+    <div class="<%= admin_notice_class(:warning) %>" role="note">
+      <p>Marketing emailing is disabled. You can enable marketing emailing in <%= link_to "Settings", admin_settings_section_path("email"), class: admin_link_class %>.</p>
+    </div>
+  <% end %>
+
   <div class="grid gap-5 md:grid-cols-2">
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-panel-header border-line dark:border-line-dark">
@@ -53,7 +59,8 @@
 
           <div class="flex flex-wrap items-center justify-start gap-3">
             <%= button_to admin_send_marketing_email_1_path,
-                class: admin_button_class,
+                class: [ admin_button_class, "disabled:cursor-not-allowed disabled:opacity-50" ],
+                disabled: !@emailing_enabled,
                 data: { turbo_confirm: admin_marketing_send_confirm("Marketing Email 1", @marketing_1_batch_size) } do %>
               Send Marketing Email 1
             <% end %>
@@ -111,7 +118,8 @@
 
           <div class="flex flex-wrap items-center justify-start gap-3">
             <%= button_to admin_send_marketing_email_2_path,
-                class: admin_button_class,
+                class: [ admin_button_class, "disabled:cursor-not-allowed disabled:opacity-50" ],
+                disabled: !@emailing_enabled,
                 data: { turbo_confirm: admin_marketing_send_confirm("Marketing Email 2", @marketing_2_batch_size) } do %>
               Send Marketing Email 2
             <% end %>

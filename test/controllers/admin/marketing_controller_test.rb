@@ -26,7 +26,11 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     Setting.instance.update(is_emailing_enabled: false)
     sign_in
     get admin_marketing_index_url
-    assert_equal "Emailing is disabled. Enable email notifications in Settings to send marketing emails.", flash[:alert]
+    assert_nil flash[:alert]
+    assert_select "form[action=?] button[disabled]", admin_send_marketing_email_1_path, count: 1
+    assert_select "form[action=?] button[disabled]", admin_send_marketing_email_2_path, count: 1
+    assert_select "a[href=?]", admin_settings_section_path("email"), text: "Settings"
+    assert_select "p", /Marketing emailing is disabled.*enable marketing emailing in/i
   end
 
   test "should get index with incomplete email settings" do
@@ -52,16 +56,18 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index asks for confirmation with the number of emails before sending" do
-    Setting.instance.update!(email_batch_quantity: 2)
+    Setting.instance.update!(is_emailing_enabled: true, email_batch_quantity: 2)
     sign_in
 
     get admin_marketing_index_url
 
     assert_response :success
-    assert_select "button[data-turbo-confirm=?]",
+    assert_select "form[action=?] button:not([disabled])[data-turbo-confirm=?]",
+      admin_send_marketing_email_1_path,
       "Send Marketing Email 1 to 2 contacts? Contacts who already received it will be skipped. This cannot be undone.",
       count: 1
-    assert_select "button[data-turbo-confirm=?]",
+    assert_select "form[action=?] button:not([disabled])[data-turbo-confirm=?]",
+      admin_send_marketing_email_2_path,
       "Send Marketing Email 2 to 2 contacts? Contacts who already received it will be skipped. This cannot be undone.",
       count: 1
   end

@@ -18,7 +18,7 @@ class Admin::MailsControllerTest < ActionDispatch::IntegrationTest
     assert_select "#mail_unread_count .admin-nav-badge", count: 0
   end
 
-  test "opening a message marks it read and the inbox can mark it unread" do
+  test "opening a message marks it read and the inbox checkbox sets both states" do
     sign_in
     received = receive_from("reader@example.com")
 
@@ -26,7 +26,14 @@ class Admin::MailsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "#mail_unread_count .admin-nav-badge", text: "1"
     assert_select "tr.admin-mail-unread .admin-unread-dot"
+    assert_select "input[type=checkbox][name=is_read][checked]", count: 0
     assert_select "button", text: "Mark unread", count: 0
+
+    patch read_admin_mail_received_email_url(received), params: { is_read: "1" }, as: :turbo_stream
+    assert_response :success
+    assert received.reload.is_read
+    assert_no_match "admin-mail-unread", response.body
+    assert_match "checked", response.body
 
     get admin_mail_received_email_url(received)
     assert_response :success
@@ -35,19 +42,24 @@ class Admin::MailsControllerTest < ActionDispatch::IntegrationTest
     get admin_mail_received_emails_url
     assert_select "#mail_unread_count .admin-nav-badge", count: 0
     assert_select "tr.admin-mail-unread", count: 0
-    assert_select "button", text: "Mark unread"
+    assert_select "input[type=checkbox][name=is_read][checked]"
 
-    patch mark_unread_admin_mail_received_email_url(received), as: :turbo_stream
+    patch read_admin_mail_received_email_url(received), as: :turbo_stream
     assert_response :success
     assert_not received.reload.is_read
     assert_match "admin-mail-unread", response.body
     assert_match "mail_unread_count", response.body
 
     received.mark_read!
-    patch mark_unread_admin_mail_received_email_url(received)
+    patch read_admin_mail_received_email_url(received), params: { is_read: "0" }
     assert_redirected_to admin_mail_received_emails_url
     assert_not received.reload.is_read
     assert_equal "Marked as unread.", flash[:notice]
+
+    patch read_admin_mail_received_email_url(received), params: { is_read: "1" }
+    assert_redirected_to admin_mail_received_emails_url
+    assert received.reload.is_read
+    assert_equal "Marked as read.", flash[:notice]
   end
 
   test "compose stores a full outbox row linked to the reservation" do

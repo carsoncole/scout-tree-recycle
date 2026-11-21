@@ -13,13 +13,14 @@
   </td>
   <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.type_label %></td>
   <td class="<%= admin_td_class %> whitespace-nowrap">
-    <% if email.is_read? %>
-      <%= button_to "Mark unread", mark_unread_admin_mail_received_email_path(email),
-            method: :patch,
-            class: admin_button_class(variant: :quiet),
-            form: { class: "inline" } %>
-    <% else %>
-      <span class="text-ink-soft dark:text-ink-soft-dark">Unread</span>
+    <%= form_with url: read_admin_mail_received_email_path(email), method: :patch, html: { class: "inline" } do %>
+      <%= label_tag dom_id(email, :is_read), class: "inline-flex" do %>
+        <%= check_box_tag :is_read, "1", email.is_read?,
+              id: dom_id(email, :is_read),
+              class: "admin-checkbox accent-sage dark:accent-sage-dark",
+              onchange: "this.form.requestSubmit()" %>
+        <span class="sr-only">Read</span>
+      <% end %>
     <% end %>
   </td>
 </tr>

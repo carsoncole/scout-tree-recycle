@@ -5,11 +5,29 @@ class Admin::MailsTest < ApplicationSystemTestCase
     configure_email!
   end
 
-  test "unread mail is emphasized until it is opened and can be marked unread" do
+  test "unread mail is emphasized until it is read and the checkbox sets both states" do
     sign_in_as(users(:admin), true)
     receive_from("form.minimum@example.com")
 
     visit admin_mail_received_emails_path
+    assert_selector "tr.admin-mail-unread", text: "Where should I leave the tree?"
+    within "#mail_unread_count" do
+      assert_text "1"
+    end
+    within "tr", text: "Where should I leave the tree?" do
+      assert_unchecked_field "Read"
+      check "Read"
+    end
+
+    assert_no_selector "tr.admin-mail-unread"
+    within "#mail_unread_count" do
+      assert_no_text "1"
+    end
+    within "tr", text: "Where should I leave the tree?" do
+      assert_checked_field "Read"
+      uncheck "Read"
+    end
+
     assert_selector "tr.admin-mail-unread", text: "Where should I leave the tree?"
     within "#mail_unread_count" do
       assert_text "1"
@@ -20,14 +38,11 @@ class Admin::MailsTest < ApplicationSystemTestCase
 
     visit admin_mail_received_emails_path
     assert_no_selector "tr.admin-mail-unread"
+    within "tr", text: "Where should I leave the tree?" do
+      assert_checked_field "Read"
+    end
     within "#mail_unread_count" do
       assert_no_text "1"
-    end
-
-    click_button "Mark unread"
-    assert_selector "tr.admin-mail-unread", text: "Where should I leave the tree?"
-    within "#mail_unread_count" do
-      assert_text "1"
     end
   end
 

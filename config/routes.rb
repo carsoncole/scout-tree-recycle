@@ -98,7 +98,7 @@ Rails.application.routes.draw do
     namespace :mail, module: :mails do
       resources :received_emails, only: [ :index, :show, :update ] do
         member do
-          patch :mark_unread
+          patch :read
         end
         resources :replies, only: [ :create ]
       end

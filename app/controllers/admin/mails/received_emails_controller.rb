@@ -1,7 +1,7 @@
 module Admin
   module Mails
     class ReceivedEmailsController < BaseController
-      before_action :set_received_email, only: [ :show, :update, :mark_unread ]
+      before_action :set_received_email, only: [ :show, :update, :read ]
 
       def index
         @pagy, @received_emails = pagy(::Mails::ReceivedEmail.recent_first)
@@ -15,8 +15,13 @@ module Admin
         update_links(@received_email)
       end
 
-      def mark_unread
-        @received_email.mark_unread!
+      def read
+        if ActiveModel::Type::Boolean.new.cast(params[:is_read])
+          @received_email.mark_read!
+        else
+          @received_email.mark_unread!
+        end
+
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: [
@@ -32,7 +37,10 @@ module Admin
               )
             ]
           end
-          format.html { redirect_to admin_mail_received_emails_path, notice: "Marked as unread." }
+          format.html do
+            notice = @received_email.is_read? ? "Marked as read." : "Marked as unread."
+            redirect_to admin_mail_received_emails_path, notice: notice
+          end
         end
       end
 

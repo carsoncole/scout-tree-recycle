@@ -96,13 +96,13 @@ Rails.application.routes.draw do
 
     # Mail archive. Manual sends and replies live here. Template mail stays on its mailers.
     namespace :mail, module: :mails do
-      resources :received_emails, only: [ :index, :show, :update ] do
+      resources :received_emails, only: [ :index, :show, :update, :destroy ] do
         member do
           patch :read
         end
         resources :replies, only: [ :create ]
       end
-      resources :outbound_emails, only: [ :index, :show, :new, :create, :update ]
+      resources :outbound_emails, only: [ :index, :show, :new, :create, :update, :destroy ]
     end
 
     # SMS

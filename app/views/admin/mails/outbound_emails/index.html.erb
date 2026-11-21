@@ -17,6 +17,7 @@
             <th scope="col" class="<%= admin_th_class %>">To</th>
             <th scope="col" class="<%= admin_th_class %>">Subject</th>
             <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Type</th>
+            <th scope="col" class="<%= admin_th_class %> whitespace-nowrap"><span class="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
@@ -28,6 +29,16 @@
                 <%= link_to email.subject.presence || "(no subject)", admin_mail_outbound_email_path(email), class: admin_link_class %>
               </td>
               <td class="<%= admin_td_class %> whitespace-nowrap"><%= email.type_label %></td>
+              <td class="<%= admin_td_class %> whitespace-nowrap">
+                <%= button_to admin_mail_outbound_email_path(email),
+                      method: :delete,
+                      class: admin_button_class(variant: :danger, size: :small),
+                      aria: { label: "Delete email" },
+                      form: { data: { turbo_confirm: "Are you sure you want to delete this email?" } } do %>
+                  <%= admin_trash_icon %>
+                  <span class="sr-only">Delete</span>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>

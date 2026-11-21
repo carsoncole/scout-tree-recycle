@@ -23,4 +23,14 @@
       <% end %>
     <% end %>
   </td>
+  <td class="<%= admin_td_class %> whitespace-nowrap">
+    <%= button_to admin_mail_received_email_path(email),
+          method: :delete,
+          class: admin_button_class(variant: :danger, size: :small),
+          aria: { label: "Delete email" },
+          form: { data: { turbo_confirm: "Are you sure you want to delete this email?" } } do %>
+      <%= admin_trash_icon %>
+      <span class="sr-only">Delete</span>
+    <% end %>
+  </td>
 </tr>

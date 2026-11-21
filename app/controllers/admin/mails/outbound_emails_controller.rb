@@ -1,7 +1,7 @@
 module Admin
   module Mails
     class OutboundEmailsController < BaseController
-      before_action :set_outbound_email, only: [ :show, :update ]
+      before_action :set_outbound_email, only: [ :show, :update, :destroy ]
 
       def index
         @pagy, @outbound_emails = pagy(::Mails::OutboundEmail.recent_first)
@@ -38,6 +38,11 @@ module Admin
 
       def update
         update_links(@outbound_email)
+      end
+
+      def destroy
+        @outbound_email.destroy!
+        redirect_to admin_mail_outbound_emails_path, notice: "Email deleted.", status: :see_other
       end
 
       private

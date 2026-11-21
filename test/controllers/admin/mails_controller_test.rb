@@ -170,6 +170,33 @@ class Admin::MailsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/Email settings are working/, response.body)
   end
 
+  test "destroy removes a received email" do
+    sign_in
+    received = receive_from("delete-me@example.com")
+
+    assert_difference -> { Mails::ReceivedEmail.count }, -1 do
+      delete admin_mail_received_email_url(received)
+    end
+
+    assert_redirected_to admin_mail_received_emails_url
+    assert_equal "Email deleted.", flash[:notice]
+  end
+
+  test "destroy removes an outbound email" do
+    sign_in
+    with_test_delivery do
+      SettingsMailer.test_email("person@example.com").deliver_now
+    end
+    outbound = Mails::OutboundEmail.order(:id).last
+
+    assert_difference -> { Mails::OutboundEmail.count }, -1 do
+      delete admin_mail_outbound_email_url(outbound)
+    end
+
+    assert_redirected_to admin_mail_outbound_emails_url
+    assert_equal "Email deleted.", flash[:notice]
+  end
+
   private
 
   def receive_from(from)

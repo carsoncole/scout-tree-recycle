@@ -1,7 +1,7 @@
 module Admin
   module Mails
     class ReceivedEmailsController < BaseController
-      before_action :set_received_email, only: [ :show, :update, :read ]
+      before_action :set_received_email, only: [ :show, :update, :read, :destroy ]
 
       def index
         @pagy, @received_emails = pagy(::Mails::ReceivedEmail.recent_first)
@@ -42,6 +42,11 @@ module Admin
             redirect_to admin_mail_received_emails_path, notice: notice
           end
         end
+      end
+
+      def destroy
+        @received_email.destroy!
+        redirect_to admin_mail_received_emails_path, notice: "Email deleted.", status: :see_other
       end
 
       private

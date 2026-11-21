@@ -9,9 +9,9 @@ Message: <%= @log.message %>
 <% if @log.error_type.present? %>
 Error Type: <%= @log.error_type %>
 <% end %>
-<% if @log.context.present? %>
+<% if @context_json.present? %>
 Context:
-<%= JSON.pretty_generate(@log.context) %>
+<%= @context_json %>
 <% end %>
 Environment: <%= @log.environment %>
 

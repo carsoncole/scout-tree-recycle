@@ -58,7 +58,6 @@
           <label class="admin-switch" id="log-notifications-toggle" aria-label="Send error messages to admins">
             <%= check_box_tag "setting[is_log_notifications_enabled]", "1", setting.is_log_notifications_enabled,
                 class: "admin-switch-input peer",
-                disabled: !setting.is_emailing_enabled?,
                 data: {
                   testid: "log-notifications-toggle",
                   toggle_target: "toggle",
@@ -69,8 +68,8 @@
         </div>
       </div>
     </div>
-    <% unless setting.is_emailing_enabled? %>
-      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Enable and configure Email to send error notifications to admins.</p>
+    <% unless setting.email_configured? %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Add a from address, SMTP address, and port under Email before these notifications can be sent.</p>
     <% end %>
   </div>
 </section>

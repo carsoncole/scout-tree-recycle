@@ -12,6 +12,6 @@ class LogsMailerPreview < ActionMailer::Preview
       severity: "error",
       is_viewed: true
     )
-    LogsMailer.with(log_id: log.id).log_message_email
+    LogsMailer.with(log_id: log.id, user_id: User.where(role: "admin").pick(:id)).log_message_email
   end
 end

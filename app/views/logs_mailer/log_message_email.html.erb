@@ -58,12 +58,12 @@
                             </td>
                           </tr>
                         <% end %>
-                        <% if @log.context.present? %>
+                        <% if @context_json.present? %>
                           <tr>
                             <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
                               <span style="font-family: Arial, sans-serif; font-size: 14px; color: #6b7280;">Context:</span>
                               <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
-                                <pre style="margin: 0; white-space: pre-wrap;"><%= JSON.pretty_generate(@log.context) %></pre>
+                                <pre style="margin: 0; white-space: pre-wrap;"><%= @context_json %></pre>
                               </span>
                             </td>
                           </tr>

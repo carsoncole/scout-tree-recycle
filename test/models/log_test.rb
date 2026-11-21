@@ -29,6 +29,14 @@ class LogTest < ActiveSupport::TestCase
     end
   end
 
+  test "enqueues a notification when the email feature is off but SMTP is configured" do
+    configure_email!(enabled: false)
+
+    assert_enqueued_jobs 1, only: LogNotificationJob do
+      Log.create!(message: "Something happened", error_type: "TestError", severity: "error")
+    end
+  end
+
   test "does not enqueue a notification for non-error log types" do
     configure_email!
 

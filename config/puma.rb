@@ -34,7 +34,7 @@ port ENV.fetch("PORT", 3000)
 plugin :tmp_restart
 
 # Run the Solid Queue supervisor inside of Puma for single-server deployments.
-# Jobs are stored in SQLite on the Kamal volume, so this poller does not touch Neon.
+# Jobs are stored in SQLite on the Kamal volume
 plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.

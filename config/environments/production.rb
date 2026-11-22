@@ -54,7 +54,7 @@ Rails.application.configure do
   # In-process cache. One web process, and this avoids a Solid Cache database.
   config.cache_store = :memory_store
 
-  # Solid Queue stores jobs in SQLite (see database.yml), not Neon.
+  # Solid Queue stores jobs in SQLite (see database.yml).
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 

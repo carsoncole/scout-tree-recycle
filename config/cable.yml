@@ -9,7 +9,6 @@ test:
   adapter: test
 
 # Solid Cable uses the SQLite cable database on the Kamal volume.
-# Polling stays on that file and does not wake Neon.
 production:
   adapter: solid_cable
   connects_to:

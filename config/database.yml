@@ -17,17 +17,16 @@ test:
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: ep-lingering-grass-bfyzkrkf.c-5.us-west-2.aws.neon.tech
-  username: neondb_owner
-  password: <%= Rails.application.credentials.dig(:neon_database, :password) %>
+  host: <%= Rails.application.credentials.dig(:database, :host) %>
+  username: <%= Rails.application.credentials.dig(:database, :username) %>
+  password: <%= Rails.application.credentials.dig(:database, :password) %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 production:
   primary: &primary_production
     <<: *default
     database: scout_tree_recycle_production
-    password: <%= Rails.application.credentials.dig(:neon_database, :password) %>
-    # Drop idle connections before Neon suspends the compute.
+    password: <%= Rails.application.credentials.dig(:database, :password) %>
     idle_timeout: 60
   queue: &sqlite
     adapter: sqlite3

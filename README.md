@@ -17,12 +17,10 @@ Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of
 - Text-message conversations and an email inbox, including replies.
 - Two marketing campaigns, plus editable reservation emails for confirmation, cancellation, and a missing tree.
 - Settings for the event dates, the organization, the public pages, email, texts, donations, and routing.
-- Admin accounts, error logs, spreadsheet import, zip backups and restores, and a close-event step that keeps contacts for the next year.
+- Admin accounts, error logs, a contact CSV import, zip backups and restores, and a close-event step that keeps contacts for the next year.
 - A view of background jobs, such as mail, texts, and geocoding.
 
 **Driver pickups.** Drivers open a separate site with a shared key. They see routes on a map, update a stop as picked up or missing, mark favorite routes, and print pickup lists.
-
-The site is usually busy for about six weeks, often late November through early January, and quiet the rest of the year. Reservations, donations, users, and settings live in PostgreSQL. I've used Neon in Production, because I wanted to use as little resources as possible when the site is not busy (most of the year). With this setup the database can pause after a few quiet minutes and wake on the next visit. Any PostgreSQL host works. Background jobs and live admin updates stay on the server's disk.
 
 ## What you need
 
@@ -50,46 +48,9 @@ cd scout-tree-recycle
 
 ## 2. Install Ruby and Rails
 
-This app uses Ruby 4.0.10, the version in `.ruby-version`. Install it with [mise](https://mise.jdx.dev/), following the [Rails install guide](https://guides.rubyonrails.org/install_ruby_on_rails.html).
+This app uses Ruby 4.0.10, the version in `.ruby-version`. Chruby works great for handling Ruby versions on Mac. [Rails install guide](https://guides.rubyonrails.org/install_ruby_on_rails.html).
 
-### macOS
-
-```sh
-xcode-select --install
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-brew install openssl@3 libyaml gmp rust
-curl https://mise.run | sh
-echo 'eval "$(~/.local/bin/mise activate)"' >> ~/.zshrc
-source ~/.zshrc
-mise use -g ruby@4.0.10
-```
-
-On an Intel Mac, Homebrew is at `/usr/local/bin`. Use that path in the `export PATH` line.
-
-### Ubuntu
-
-```sh
-sudo apt update
-sudo apt install build-essential rustc libssl-dev libyaml-dev zlib1g-dev libgmp-dev git
-curl https://mise.run | sh
-echo 'eval "$(~/.local/bin/mise activate)"' >> ~/.bashrc
-source ~/.bashrc
-mise use -g ruby@4.0.10
-```
-
-### Windows
-
-Install Ubuntu with WSL using the Rails guide linked above. Then run the Ubuntu commands in that Ubuntu terminal.
-
-Open a new terminal and install Rails 8.1:
-
-```sh
-ruby --version
-gem install rails -v 8.1.4.1
-rails --version
-```
+When both are installed, run a check on your console:
 
 `ruby --version` prints `ruby 4.0.10`. `rails --version` prints `Rails 8.1.4.1`.
 
@@ -116,6 +77,8 @@ sudo -u postgres createuser -s $USER
 
 The last command lets your user create the development databases.
 
+On Windows, use Ubuntu on WSL and follow the Ubuntu steps above.
+
 ## 4. Configure the database
 
 Install the libraries the app uses:
@@ -128,20 +91,14 @@ Open `config/database.yml`.
 
 The `development` and `test` sections are for your computer. They use PostgreSQL on `localhost` and these database names:
 
-- `scout-tree-recycle-development`
-- `scout-tree-recycle-test`
+- `scout_tree_recycle_development`
+- `scout_tree_recycle_test`
 
 Add a `username` and `password` there if your local server asks for them.
 
-The `default` and `production` sections are for the public site. Set:
+The public site uses the `production` section. Its database name is `scout_tree_recycle_production`, under `production` → `primary` → `database`. Change that name if yours is different. Leave `idle_timeout: 60` so unused connections close.
 
-- `host` to your database host
-- `username` to your database user
-- `database` under `production` → `primary` to your database name
-
-Leave `idle_timeout: 60`. Unused connections close, which lets the database pause while the site is quiet.
-
-Create that empty database in your provider's dashboard, and allow the server to connect. Put the password in Rails credentials, below. The name `neon_database` matches this file.
+Create that empty database and allow the server to connect. The host, username, and password are not in this file. Rails credentials supply them, under the key `database`.
 
 Rails stores secrets in `config/credentials.yml.enc`. The key that opens it is `config/master.key`. Git ignores the key. Keep a copy somewhere safe. Deploy sends it to the server.
 
@@ -154,10 +111,12 @@ EDITOR="nano" bin/rails credentials:edit
 
 If someone already gave you `config/master.key`, put that file in `config/` and skip the `rm` line. Run the `credentials:edit` command on its own.
 
-In nano, add the password, then press Ctrl+O, Enter, and Ctrl+X:
+In nano, add the database host, username, and password, then press Ctrl+O, Enter, and Ctrl+X:
 
 ```yaml
-neon_database:
+database:
+  host: your-host
+  username: your-username
   password: your-database-password
 ```
 
@@ -171,7 +130,7 @@ bin/dev
 
 `db:prepare` inside setup creates the local databases. `db:seed` loads the built-in email templates. The site is at [http://localhost:3000](http://localhost:3000).
 
-On the first visit, open [http://localhost:3000/admin/settings/new](http://localhost:3000/admin/settings/new). Enter the organization name, the public site URL (email links use it), the event dates, and the first admin email and password. Sign in later at [http://localhost:3000/admin](http://localhost:3000/admin).
+On the first visit, the app opens the initial setup page at [http://localhost:3000/admin/settings/new](http://localhost:3000/admin/settings/new). Only the admin email, password, and password confirmation are required. Sign in later at [http://localhost:3000/admin](http://localhost:3000/admin).
 
 Stop the server with Ctrl+C. Start it again with `bin/dev`.
 
@@ -189,7 +148,7 @@ Edit `config/deploy.yml`:
 
 | Setting | Set it to |
 | --- | --- |
-| `image` | Your image name, such as `yourname/tree_recycle` |
+| `image` | Your image name, such as `yourname/scout-tree-recycle` |
 | `servers` → `web` | The server's IP address |
 | `registry` → `username` | Your Docker Hub username |
 | `proxy` → `host` | Your domain, such as `treerecycle.example.org` |
@@ -202,7 +161,7 @@ Create the secrets file Kamal reads. Git ignores it.
 cp .kamal/secrets.sample .kamal/secrets
 ```
 
-Open `.kamal/secrets`. Set `KAMAL_REGISTRY_PASSWORD` to your Docker Hub access token. Leave the `RAILS_MASTER_KEY` line as it is. It reads `config/master.key`.
+Open `.kamal/secrets`. Replace `$KAMAL_REGISTRY_PASSWORD` with your Docker Hub access token, or export that variable in the shell before you deploy. Leave the `RAILS_MASTER_KEY` line as it is. It reads `config/master.key`.
 
 From the project folder:
 
@@ -235,7 +194,11 @@ Deploys keep the server disk that holds background jobs and live admin updates. 
 
 ## Email
 
-Outgoing mail is configured in **Admin → Settings → Email**. The values are saved in the database and used on the next message.
+Outgoing mail uses any SMTP server. The settings are saved under **Admin → Settings → Email** and used on the next message.
+
+Replies in **Admin → Mail**, together with outgoing mail, require [Resend](https://resend.com). Any other service, including Gmail, can send marketing messages, confirmations, and the other outgoing mail. Read and answer those messages in that service. They do not appear in the admin inbox.
+
+### Send with any SMTP service
 
 1. Turn on **Enable Email**.
 2. Set **From Address** to the address recipients should see, such as `Anytown Tree Recycle <trees@example.org>`.
@@ -244,18 +207,20 @@ Outgoing mail is configured in **Admin → Settings → Email**. The values are 
    - **Username** and **Password**
    - **Authentication**: Plain, Login, or CRAM-MD5
    - **Encryption**: STARTTLS on port 587 is the usual choice. TLS encrypts the connection from the start, often on port 465. None sends without encryption.
+
+   Gmail uses `smtp.gmail.com`, port **587**, encryption **STARTTLS**, and authentication **Plain** or **Login**. The username is the full Gmail address. The password is a Google app password.
 4. Set **Site URL** to the public `https://` address of the site. Links in emails use it. That field is on the first-run form and under **Settings → Site Details**.
 5. Click **Save Email Settings**, then **Send Test Email**.
 
-Mail can go out once **From Address**, **SMTP Address**, and **Port** are filled in. Reservation and marketing messages also need **Enable Email** turned on. Error notices to admins send when those three fields are set. New admin users receive them. Turn that off on a user's row under Settings.
+A test message, admin error notices, mail composed in **Admin → Mail**, and a cancellation notice can go out once **From Address**, **SMTP Address**, and **Port** are filled in. Confirmation, missing-tree, and marketing messages also need **Enable Email** turned on. New admin users receive error notices. Each person turns that off with **Email me error logs** on **Logs** or on their profile.
 
 `bin/rails db:seed` loads the built-in reservation and marketing templates. Edit them under **Admin → Marketing**.
 
 ### Resend
 
-[Resend](https://resend.com) can send the outgoing mail and deliver replies into **Admin → Mail**.
+[Resend](https://resend.com) delivers replies into **Admin → Mail**. Use it when you want that inbox as well as outgoing mail.
 
-For SMTP, the host is `smtp.resend.com`, the username is `resend`, and the password is the API key alone. DigitalOcean blocks outbound connections on ports 25, 465, and 587. On that host, use port **2465** with encryption **TLS**, or port **2587** with **STARTTLS**.
+For SMTP, the host is `smtp.resend.com`, the username is `resend`, and the password is the API key alone. Use port **587** with encryption **STARTTLS**, or port **465** with **TLS**. Some servers block outbound ports 25, 465, and 587. Resend also accepts port **2465** with **TLS**, or port **2587** with **STARTTLS**.
 
 Replies are a separate webhook. In the Resend dashboard, add a webhook for the `email.received` event only, posted to:
 

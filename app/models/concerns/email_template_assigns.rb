@@ -44,9 +44,11 @@ module EmailTemplateAssigns
       "pickup_end_month_day_year" => formatted_time(setting.event_pickup_end, "%B %-d, %Y"),
       "pickup_end_time" => formatted_time(setting.event_pickup_end, "%-I:%M %p"),
       "pickup_end_time_compact" => formatted_time(setting.event_pickup_end, "%-l:%M%P"),
+      "sign_up_deadline" => formatted_time(setting.event_sign_up_deadline, "%A, %B %-d, %Y at %-I:%M %p"),
       "sign_up_deadline_date" => formatted_time(setting.event_sign_up_deadline, "%A, %B %-d, %Y"),
       "sign_up_deadline_weekday" => formatted_time(setting.event_sign_up_deadline, "%A, %B %-d"),
-      "sign_up_deadline_short" => formatted_time(setting.event_sign_up_deadline, "%B %-d")
+      "sign_up_deadline_short" => formatted_time(setting.event_sign_up_deadline, "%B %-d"),
+      "sign_up_deadline_time" => formatted_time(setting.event_sign_up_deadline, "%-I:%M %p")
     }
   end
 
@@ -81,7 +83,12 @@ module EmailTemplateAssigns
   def formatted_time(time, format)
     return "" if time.blank?
 
-    time.in_time_zone.strftime(format)
+    time.in_time_zone(local_time_zone).strftime(format)
+  end
+
+  # Event times are stored in UTC and shown in the time zone from Settings.
+  def local_time_zone
+    ActiveSupport::TimeZone[setting.time_zone.to_s] || Time.zone
   end
 
   def helpers

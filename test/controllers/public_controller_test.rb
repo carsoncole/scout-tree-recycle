@@ -6,6 +6,21 @@ class PublicControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
+    test "prefills the reservation form from a marketing preview link" do
+      get root_url, params: {
+        name: "Susan Banks",
+        email: "susan@example.com",
+        street: "123 Main St",
+        mobile: "+11234567890"
+      }
+
+      assert_response :success
+      assert_select "input[name=?][value=?]", "reservation[name]", "Susan Banks"
+      assert_select "input[name=?][value=?]", "reservation[email]", "susan@example.com"
+      assert_select "input[name=?][value=?]", "reservation[street]", "123 Main St"
+      assert_select "input[name=?][value=?]", "reservation[mobile]", "+11234567890"
+    end
+
     test "home header leaves out the reserve shortcut that other pages keep" do
       get root_url
 

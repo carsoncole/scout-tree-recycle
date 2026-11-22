@@ -12,7 +12,7 @@ We will collect your tree on {{ event.pickup_start_weekday }} and recycle it. Th
 
 Pickup date: {{ event.pickup_start_date }}
 Pickup time: {{ event.pickup_start_time }} to {{ event.pickup_end_time }}
-Reserve by: {{ event.sign_up_deadline_date }}
+Reserve by: {{ event.sign_up_deadline }}
 
 Reserve a tree pickup: {{ urls.registration }}
 

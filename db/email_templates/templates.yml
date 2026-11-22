@@ -12,6 +12,6 @@ marketing_email_1:
 marketing_email_2:
   description: "Reminds contacts who received the first email, and have not reserved, that the signup deadline is approaching."
   from: ""
-  subject: "Reminder: reserve your tree pickup by {{ event.sign_up_deadline_short }}"
+  subject: "Reminder: reserve your tree pickup by {{ event.sign_up_deadline_short }} at {{ event.sign_up_deadline_time }}"
   html_file: marketing_email_2.html
   text_file: marketing_email_2.text

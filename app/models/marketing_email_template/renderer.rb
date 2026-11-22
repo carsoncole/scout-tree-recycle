@@ -37,9 +37,22 @@ class MarketingEmailTemplate
     end
 
     def registration_url
-      return url_helpers.root_url(**url_options) if contact.id.blank?
+      if contact.id.present?
+        url_helpers.root_url(contact_id: contact.id, **url_options)
+      else
+        url_helpers.root_url(**registration_prefill_params, **url_options)
+      end
+    end
 
-      url_helpers.root_url(contact_id: contact.id, **url_options)
+    # Previews can use an unsaved sample contact. The reservation page reads
+    # these fields when there is no contact id to look up.
+    def registration_prefill_params
+      {
+        name: contact.name.to_s.strip.presence,
+        email: contact.email.to_s.strip.presence,
+        street: contact.street.to_s.strip.presence,
+        mobile: contact.mobile.to_s.strip.presence
+      }.compact
     end
 
     def unsubscribe_url

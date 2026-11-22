@@ -201,6 +201,7 @@ class MarketingEmailTemplateTest < ActiveSupport::TestCase
     assert_includes announcement_html, event.fetch("pickup_start_date")
     assert_includes announcement_html, event.fetch("pickup_start_time")
     assert_includes announcement_html, event.fetch("pickup_end_time")
+    assert_includes announcement_html, event.fetch("sign_up_deadline")
     assert_includes announcement_html, event.fetch("sign_up_deadline_date")
     assert_includes announcement_html, @assigns.dig("urls", "registration")
     assert_not_includes announcement.body_html.downcase, "unsubscribe"
@@ -208,13 +209,14 @@ class MarketingEmailTemplateTest < ActiveSupport::TestCase
 
     reminder = templates.fetch("marketing_email_2")
     reminder_html = reminder.render_body_html(@assigns, source: :published)
-    assert_equal "Reminder: reserve your tree pickup by {{ event.sign_up_deadline_short }}", reminder.subject
+    assert_equal "Reminder: reserve your tree pickup by {{ event.sign_up_deadline_short }} at {{ event.sign_up_deadline_time }}", reminder.subject
     assert_includes reminder_html, "have not seen a signup"
     assert_includes reminder_html, "Deadline approaching"
     assert_includes reminder_html, "Reserve a tree pickup"
     assert_includes reminder_html, "tree-4c-bc"
     assert_equal 1, reminder_html.scan(/<img\b/i).size
     assert_includes reminder_html, event.fetch("pickup_start_date")
+    assert_includes reminder_html, event.fetch("sign_up_deadline")
     assert_includes reminder_html, event.fetch("sign_up_deadline_weekday")
     assert_includes reminder_html, event.fetch("sign_up_deadline_date")
     assert_not_includes reminder.body_html.downcase, "unsubscribe"
@@ -258,12 +260,40 @@ class MarketingEmailTemplateTest < ActiveSupport::TestCase
     assert_not_includes @template.render_body_html(@assigns, source: :draft), "Unsubscribe"
   end
 
+  test "registration link carries unsaved preview contact details" do
+    contact = MarketingEmailTemplate.sample_contact
+    url = MarketingEmailTemplate::Renderer.new(contact: contact).assigns.dig("urls", "registration")
+    params = Rack::Utils.parse_query(URI.parse(url).query)
+
+    assert_nil params["contact_id"]
+    assert_equal contact.name, params["name"]
+    assert_equal contact.email, params["email"]
+    assert_equal contact.street, params["street"]
+    assert_equal contact.mobile, params["mobile"]
+  end
+
   test "still names the unsubscribe link when the contact has not been saved" do
     assigns = MarketingEmailTemplate::Renderer.new(contact: MarketingEmailTemplate.sample_contact).assigns
     html = @template.render_message_html(assigns, source: :draft)
 
     assert_includes html, "Unsubscribe"
     assert_not_includes html, %(href="")
+  end
+
+  test "formats the sign-up deadline in the setting time zone" do
+    setting = Setting.instance
+    setting.update!(
+      time_zone: "Eastern Time (US & Canada)",
+      event_sign_up_deadline: Time.utc(2099, 1, 6, 4, 59)
+    )
+
+    event = Time.use_zone("UTC") do
+      MarketingEmailTemplate::Renderer.new(contact: @contact, setting: setting).assigns.fetch("event")
+    end
+
+    assert_equal "Monday, January 5, 2099 at 11:59 PM", event.fetch("sign_up_deadline")
+    assert_equal "11:59 PM", event.fetch("sign_up_deadline_time")
+    assert_equal "Monday, January 5, 2099", event.fetch("sign_up_deadline_date")
   end
 
   test "includes image variables in the available template variables" do

@@ -96,6 +96,10 @@ class Admin::MarketingEmailTemplatesControllerTest < ActionDispatch::Integration
 
     assert_response :success
     assert_includes response.body, "Susan Banks"
+    assert_includes response.body, "name=Susan+Banks"
+    assert_includes response.body, "email=susan%40example.com"
+    assert_includes response.body, "street=123+Main+St"
+    assert_includes response.body, "mobile=%2B11234567890"
   end
 
   test "should publish a template" do

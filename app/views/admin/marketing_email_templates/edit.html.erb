@@ -128,7 +128,7 @@
 
             <iframe class="admin-preview-frame border-line bg-white dark:border-line-dark"
                     title="Email template preview"
-                    sandbox
+                    sandbox="allow-popups allow-popups-to-escape-sandbox"
                     src="<%= preview_admin_marketing_email_template_path(@template, contact_id: @selected_contact.id, source: @preview_source) %>"></iframe>
 
             <details>

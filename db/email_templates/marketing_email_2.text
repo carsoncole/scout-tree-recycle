@@ -6,13 +6,13 @@ There is still time to reserve
 Hello {{ contact.name }},
 
 {% endif %}
-We wrote when reservations opened. We have not seen a signup from you yet, and the deadline is {{ event.sign_up_deadline_weekday }}.
+We wrote when reservations opened. We have not seen a signup from you yet, and the deadline is {{ event.sign_up_deadline }}.
 
-{{ setting.organization_name }} picks up trees on {{ event.pickup_start_weekday }}. Reserve by {{ event.sign_up_deadline_date }} if you would like us to collect yours.
+{{ setting.organization_name }} picks up trees on {{ event.pickup_start_weekday }}. Reserve by {{ event.sign_up_deadline }} if you would like us to collect yours.
 
 Pickup date: {{ event.pickup_start_date }}
 Pickup time: {{ event.pickup_start_time }} to {{ event.pickup_end_time }}
-Reserve by: {{ event.sign_up_deadline_date }}
+Reserve by: {{ event.sign_up_deadline }}
 
 Reserve a tree pickup: {{ urls.registration }}
 

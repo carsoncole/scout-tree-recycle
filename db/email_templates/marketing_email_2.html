@@ -148,7 +148,7 @@
 </style>
 
 <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;color:#f6f3ea;">
-  The deadline to reserve a tree pickup is {{ event.sign_up_deadline_weekday }}.
+  The deadline to reserve a tree pickup is {{ event.sign_up_deadline }}.
 </div>
 
 <table class="email-wrapper" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f6f3ea">
@@ -172,9 +172,9 @@
               <p class="email-text">Hello {{ contact.name | escape }},</p>
             {% endif %}
 
-            <p class="email-text">We wrote when reservations opened. We have not seen a signup from you yet, and the deadline is {{ event.sign_up_deadline_weekday }}.</p>
+            <p class="email-text">We wrote when reservations opened. We have not seen a signup from you yet, and the deadline is {{ event.sign_up_deadline }}.</p>
 
-            <p class="email-text">{{ setting.organization_name }} picks up trees on {{ event.pickup_start_weekday }}. Reserve by {{ event.sign_up_deadline_date }} if you would like us to collect yours.</p>
+            <p class="email-text">{{ setting.organization_name }} picks up trees on {{ event.pickup_start_weekday }}. Reserve by {{ event.sign_up_deadline }} if you would like us to collect yours.</p>
 
             <table class="email-details" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
               <tr>
@@ -192,7 +192,7 @@
               <tr>
                 <td class="email-detail">
                   <p class="email-detail-label">Reserve by</p>
-                  <p class="email-detail-value">{{ event.sign_up_deadline_date }}</p>
+                  <p class="email-detail-value">{{ event.sign_up_deadline }}</p>
                 </td>
               </tr>
             </table>

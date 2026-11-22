@@ -1,4 +1,4 @@
-class DataMailer < ApplicationMailer
+class DataMailer < AdminMailer
   # Delivers the reservations CSV export as an attachment to any address.
   def reservations_export_email(recipient)
     @setting = Setting.instance

@@ -4,6 +4,16 @@ Tree Recycle is a Rails application for running a Christmas tree recycling fundr
 
 Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of Troop 1564 on Bainbridge Island, WA.
 
+## Screenshots
+
+Families reserve a pickup on a short form. They enter a name, address, and email, and can add a mobile number and a note about where to find the tree.
+
+![The reservation form, with fields for name, street address, email, mobile number, and a pickup note.](docs/images/reservation-form.png)
+
+The two built-in marketing emails. The first says reservations are open. The second reminds people who have not signed up that the deadline is near. Organizers edit both under **Admin → Marketing**.
+
+![Two marketing emails side by side. One announces that reservations are open. The other is a deadline reminder.](docs/images/marketing-emails.png)
+
 ## Features
 
 **Public site.** Families reserve a tree pickup and can update or cancel it. They can donate by card, cash, or check, skip the donation, or donate without a reservation. The site also has About and privacy pages, a thank-you gallery, a maintenance page, and a pickup-day notice that can replace the signup form.

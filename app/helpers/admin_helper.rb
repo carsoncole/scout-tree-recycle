@@ -81,7 +81,7 @@ module AdminHelper
   end
 
   def admin_settings_nav_items
-    section_items = Setting::SECTIONS.map do |key, metadata|
+    section_items = Setting::SECTIONS.reject { |key, _| key == "system" }.map do |key, metadata|
       {
         key: key,
         label: metadata[:label],
@@ -90,14 +90,20 @@ module AdminHelper
       }
     end
 
-    section_items + [
-      {
-        key: "users",
-        label: "Users",
-        description: "Manage system users and their permissions.",
-        path: admin_users_path
-      }
-    ]
+    section_items << {
+      key: "users",
+      label: "Users",
+      description: "Manage system users and their permissions.",
+      path: admin_users_path
+    }
+
+    system = Setting::SECTIONS.fetch("system")
+    section_items << {
+      key: "system",
+      label: system[:label],
+      description: system[:description],
+      path: admin_settings_section_path("system")
+    }
   end
 
   def admin_settings_active_key

@@ -47,7 +47,7 @@ class Setting < ApplicationRecord
     },
     "site_content" => {
       label: "Site Content",
-      description: "Headline, home page image, and supporting copy shown on the public site."
+      description: "Headline, home page image, supporting copy, and the default email logo."
     },
     "pickups" => {
       label: "Pickups Portal",
@@ -71,7 +71,7 @@ class Setting < ApplicationRecord
     },
     "system" => {
       label: "System",
-      description: "Take the public site down for maintenance, show the pickup notice, review system errors, and manage the default email logo."
+      description: "Take the public site down for maintenance, show the pickup notice, and review system errors."
     }
   }.freeze
 

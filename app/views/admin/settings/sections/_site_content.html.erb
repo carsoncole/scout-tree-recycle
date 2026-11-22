@@ -133,3 +133,33 @@
     <% end %>
   </div>
 </section>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="email-logo">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Default Email Logo</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Logo shown at the top of system emails such as account setup, error notifications, and data exports. Marketing and reservation emails use their own logos.</p>
+    </div>
+  </div>
+  <div class="admin-panel-body">
+    <%= form_tag admin_setting_path(setting), method: :patch, class: "admin-form" do %>
+      <%= hidden_field_tag :section, "site_content" %>
+
+      <div class="admin-field admin-field--spaced">
+        <%= label_tag "setting[mailer_logo]", "Logo Image", class: "admin-label text-ink dark:text-ink-dark" %>
+        <%= select_tag "setting[mailer_logo]",
+            options_for_select(MarketingEmailTemplate.available_images, setting.mailer_logo_name),
+            class: admin_select_class %>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Images come from app/assets/images. <%= link_to "View available images", admin_marketing_images_path, class: admin_link_class %>.</p>
+      </div>
+
+      <div class="admin-image-preview admin-image-preview--settings border-line bg-stone dark:border-line-dark dark:bg-stone-dark">
+        <%= image_tag setting.mailer_logo_name, alt: "Default email logo preview" %>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-end gap-3">
+        <%= submit_tag "Save Email Logo", class: admin_button_class %>
+      </div>
+    <% end %>
+  </div>
+</section>

@@ -1,9 +1,4 @@
-class UsersMailer < ApplicationMailer
-  # The template is a complete HTML document. Skipping the shared mailer
-  # layout keeps the viewport meta in the document head so clients size
-  # the message to the window instead of nesting a second document.
-  layout false
-
+class UsersMailer < AdminMailer
   # Records the delivery in the system log, like the reservation emails.
   # Connection failures are recorded separately by EmailDeliveryErrorSubscriber.
   after_deliver :log_account_setup_email

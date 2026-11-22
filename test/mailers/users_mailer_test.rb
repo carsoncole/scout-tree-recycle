@@ -1,6 +1,16 @@
 require "test_helper"
 
 class UsersMailerTest < ActionMailer::TestCase
+  # apply_site_url sets class-level default_url_options from Settings; restore
+  # them so later suites do not generate links with this test's site URL.
+  setup do
+    @original_default_url_options = ActionMailer::Base.default_url_options
+  end
+
+  teardown do
+    ActionMailer::Base.default_url_options = @original_default_url_options
+  end
+
   test "account_created sends a password setup link to the new user" do
     user = users(:user)
     mail = UsersMailer.account_created(user)

@@ -1,4 +1,4 @@
-class LogsMailer < ApplicationMailer
+class LogsMailer < AdminMailer
   def log_message_email
     @log = Log.find(params[:log_id])
     @user = User.find(params[:user_id])

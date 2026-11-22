@@ -1,95 +1,62 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>New Log Entry</title>
-  </head>
-  <body style="margin: 0; padding: 0; background-color: #f3f4f6;">
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr>
-        <td style="padding: 20px 0 30px 0;">
-          <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-            <!-- Header -->
-            <tr>
-              <td align="center" style="padding: 40px 0 30px 0;">
-                <%= email_logo_tag width: 140, style: "display: block;" %>
-              </td>
-            </tr>
+<h1 style="<%= admin_heading_style %>">New Log Entry</h1>
 
-            <!-- Main Content -->
-            <tr>
-              <td style="padding: 0 40px 40px 40px;">
-                <h1 style="font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; color: #1f2937; margin: 0 0 30px 0; text-align: center;">
-                  New Log Entry
-                </h1>
+<!-- Log Details Box -->
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; border-radius: 6px; margin-bottom: 30px;">
+  <tr>
+    <td style="padding: 20px;">
+      <h2 style="font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: bold; color: #1f2937; margin: 0 0 15px 0;">
+        Log Details
+      </h2>
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+            <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #6b7280;">Severity:</span>
+            <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
+              <%= @log.severity&.titleize %>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+            <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #6b7280;">Message:</span>
+            <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
+              <%= @log.message %>
+            </span>
+          </td>
+        </tr>
+        <% if @log.error_type.present? %>
+          <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #6b7280;">Error Type:</span>
+              <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
+                <%= @log.error_type %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+        <% if @context_json.present? %>
+          <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #6b7280;">Context:</span>
+              <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
+                <pre style="margin: 0; white-space: pre-wrap;"><%= @context_json %></pre>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td style="padding: 8px 0;">
+            <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #6b7280;">Environment:</span>
+            <span style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
+              <%= @log.environment %>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
-                <!-- Log Details Box -->
-                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; border-radius: 6px; margin-bottom: 30px;">
-                  <tr>
-                    <td style="padding: 20px;">
-                      <h2 style="font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; color: #1f2937; margin: 0 0 15px 0;">
-                        Log Details
-                      </h2>
-                      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                        <tr>
-                          <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-                            <span style="font-family: Arial, sans-serif; font-size: 14px; color: #6b7280;">Severity:</span>
-                            <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
-                              <%= @log.severity&.titleize %>
-                            </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-                            <span style="font-family: Arial, sans-serif; font-size: 14px; color: #6b7280;">Message:</span>
-                            <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
-                              <%= @log.message %>
-                            </span>
-                          </td>
-                        </tr>
-                        <% if @log.error_type.present? %>
-                          <tr>
-                            <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-                              <span style="font-family: Arial, sans-serif; font-size: 14px; color: #6b7280;">Error Type:</span>
-                              <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
-                                <%= @log.error_type %>
-                              </span>
-                            </td>
-                          </tr>
-                        <% end %>
-                        <% if @context_json.present? %>
-                          <tr>
-                            <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-                              <span style="font-family: Arial, sans-serif; font-size: 14px; color: #6b7280;">Context:</span>
-                              <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
-                                <pre style="margin: 0; white-space: pre-wrap;"><%= @context_json %></pre>
-                              </span>
-                            </td>
-                          </tr>
-                        <% end %>
-                        <tr>
-                          <td style="padding: 8px 0;">
-                            <span style="font-family: Arial, sans-serif; font-size: 14px; color: #6b7280;">Environment:</span>
-                            <span style="font-family: Arial, sans-serif; font-size: 14px; color: #1f2937; font-weight: 500; float: right;">
-                              <%= @log.environment %>
-                            </span>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-
-                <!-- Footer -->
-                <p style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; color: #6b7280; margin: 0; text-align: center;">
-                  This email was sent to <%= @user.email %>. If you have any questions, please contact the system administrator.
-                </p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html> 
+<p style="<%= admin_muted_style %>">
+  This email was sent to <%= @user.email %>. If you have any questions, please contact the system administrator.
+</p>

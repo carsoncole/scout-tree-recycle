@@ -13,19 +13,15 @@ class SettingsMailerTest < ActionMailer::TestCase
     assert_includes mail.body.encoded, "Troop 100"
 
     html = mail.html_part.body.decoded
-    assert_match(/src="cid:[^"]+"/, html)
+    assert_includes html, "Troop 100 Tree Recycle"
+    assert_includes html, "Arial, Helvetica, sans-serif"
+    assert_no_match(/<img/i, html)
     assert_no_match(/localhost/, html)
-    logo = mail.attachments.find { |part| part.filename == Setting::DEFAULT_MAILER_LOGO }
-    assert logo&.inline?
   end
 
-  test "test_email uses the configured default mailer logo" do
-    Setting.instance.update!(mailer_logo: "tree-4c-bc.png")
-
+  test "test_email does not attach any images" do
     mail = SettingsMailer.test_email("qa@example.com")
 
-    logo = mail.attachments.find { |part| part.filename == "tree-4c-bc.png" }
-    assert logo&.inline?
-    assert_nil mail.attachments.find { |part| part.filename == Setting::DEFAULT_MAILER_LOGO }
+    assert_empty mail.attachments
   end
 end

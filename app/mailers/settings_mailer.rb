@@ -1,4 +1,4 @@
-class SettingsMailer < ApplicationMailer
+class SettingsMailer < AdminMailer
   def test_email(recipient)
     @setting = Setting.instance
     organization_name = @setting&.organization_name.presence || "Tree Recycle"

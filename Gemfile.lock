@@ -517,6 +517,7 @@ DEPENDENCIES
   rails (~> 8.1)
   resend (~> 1.14)
   rubocop-rails-omakase
+  rubyzip
   selenium-webdriver
   solid_cable
   solid_cache

@@ -229,6 +229,29 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal image, setting.home_page_image_name
   end
 
+  test "backup slug uses the home page header" do
+    setting = Setting.new(home_page_header: "Troop 100 Tree Recycle")
+
+    assert_equal "troop-100-tree-recycle", setting.backup_slug
+  end
+
+  test "backup slug falls back when the home page header is blank" do
+    setting = Setting.new(home_page_header: "")
+
+    assert_equal "scout-tree-recycle", setting.backup_slug
+  end
+
+  test "backup dataset keys sanitize the saved selection" do
+    setting = Setting.instance
+    setting.backup_datasets = "settings,unknown"
+
+    assert_equal [ "settings" ], setting.backup_dataset_keys
+
+    setting.backup_dataset_keys = %w[reservations settings reservations]
+
+    assert_equal "reservations,settings", setting.backup_datasets
+  end
+
   test "mailer logo defaults to the small logo for a new setting" do
     assert_equal Setting::DEFAULT_MAILER_LOGO, Setting.new.mailer_logo_name
     assert_equal Setting::DEFAULT_MAILER_LOGO, Setting.new(mailer_logo: "").mailer_logo_name
@@ -360,35 +383,36 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal({}, setting.site_url_options)
   end
 
-  test "reservations export schedule requires email and time when enabled" do
+  test "backup schedule requires email, time, and datasets when enabled" do
     setting = Setting.instance
-    setting.update(is_reservations_export_schedule_enabled: true, reservations_export_email: "", reservations_export_time: "")
+    setting.update(is_backup_schedule_enabled: true, backup_email: "", backup_time: "", backup_datasets: "")
 
     assert_not setting.valid?
-    assert setting.errors[:reservations_export_email].present?
-    assert setting.errors[:reservations_export_time].present?
+    assert setting.errors[:backup_email].present?
+    assert setting.errors[:backup_time].present?
+    assert setting.errors[:backup_datasets].present?
 
-    setting.update(reservations_export_email: "exports@example.com", reservations_export_time: "06:00")
+    setting.update(backup_email: "exports@example.com", backup_time: "06:00", backup_datasets: "reservations")
 
     assert setting.valid?
-    assert setting.reservations_export_schedule_configured?
+    assert setting.backup_schedule_configured?
   end
 
-  test "reservations export schedule rejects an invalid email or time" do
+  test "backup schedule rejects an invalid email or time" do
     setting = Setting.instance
 
-    setting.reservations_export_email = "not-an-email"
+    setting.backup_email = "not-an-email"
     assert_not setting.valid?
-    assert setting.errors[:reservations_export_email].present?
+    assert setting.errors[:backup_email].present?
 
-    setting.reservations_export_email = "exports@example.com"
-    setting.reservations_export_time = "6am"
+    setting.backup_email = "exports@example.com"
+    setting.backup_time = "6am"
     assert_not setting.valid?
-    assert setting.errors[:reservations_export_time].present?
+    assert setting.errors[:backup_time].present?
   end
 
-  test "reservations_export_time_options covers every half hour" do
-    options = Setting.reservations_export_time_options
+  test "backup_time_options covers every half hour" do
+    options = Setting.backup_time_options
 
     assert_equal 48, options.size
     assert_equal [ "12:00 AM", "00:00" ], options.first
@@ -396,54 +420,54 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal [ "11:30 PM", "23:30" ], options.last
   end
 
-  test "reservations_export_due? is true once the send time has passed and not yet sent today" do
+  test "backup_due? is true once the send time has passed and not yet sent today" do
     setting = Setting.instance
     setting.update!(
-      is_reservations_export_schedule_enabled: true,
-      reservations_export_email: "exports@example.com",
-      reservations_export_time: "06:00",
-      reservations_export_last_sent_at: nil
+      is_backup_schedule_enabled: true,
+      backup_email: "exports@example.com",
+      backup_time: "06:00",
+      backup_last_sent_at: nil
     )
 
     travel_to Time.zone.parse("2026-11-18 05:59") do
-      assert_not setting.reservations_export_due?
+      assert_not setting.backup_due?
     end
     travel_to Time.zone.parse("2026-11-18 06:00") do
-      assert setting.reservations_export_due?
+      assert setting.backup_due?
     end
   end
 
-  test "reservations_export_due? is false when disabled, unconfigured, or already sent today" do
+  test "backup_due? is false when disabled, unconfigured, or already sent today" do
     setting = Setting.instance
 
-    setting.update!(is_reservations_export_schedule_enabled: false, reservations_export_email: "exports@example.com", reservations_export_time: "06:00")
+    setting.update!(is_backup_schedule_enabled: false, backup_email: "exports@example.com", backup_time: "06:00")
     travel_to Time.zone.parse("2026-11-18 12:00") do
-      assert_not setting.reservations_export_due?
+      assert_not setting.backup_due?
     end
 
-    setting.update!(is_reservations_export_schedule_enabled: true, reservations_export_time: "06:00")
-    setting.reservations_export_email = ""
+    setting.update!(is_backup_schedule_enabled: true, backup_time: "06:00")
+    setting.backup_email = ""
     setting.save(validate: false)
     travel_to Time.zone.parse("2026-11-18 12:00") do
-      assert_not setting.reservations_export_due?
+      assert_not setting.backup_due?
     end
 
-    setting.update!(reservations_export_email: "exports@example.com", reservations_export_last_sent_at: Time.zone.parse("2026-11-18 06:05"))
+    setting.update!(backup_email: "exports@example.com", backup_last_sent_at: Time.zone.parse("2026-11-18 06:05"))
     travel_to Time.zone.parse("2026-11-18 12:00") do
-      assert_not setting.reservations_export_due?
+      assert_not setting.backup_due?
     end
     travel_to Time.zone.parse("2026-11-19 06:00") do
-      assert setting.reservations_export_due?
+      assert setting.backup_due?
     end
   end
 
-  test "mark_reservations_export_sent! records the send time" do
+  test "mark_backup_sent! records the send time" do
     setting = Setting.instance
-    setting.update!(reservations_export_last_sent_at: nil)
+    setting.update!(backup_last_sent_at: nil)
     sent_at = Time.zone.parse("2026-11-18 06:15")
 
-    setting.mark_reservations_export_sent!(sent_at)
+    setting.mark_backup_sent!(sent_at)
 
-    assert_equal sent_at, setting.reload.reservations_export_last_sent_at
+    assert_equal sent_at, setting.reload.backup_last_sent_at
   end
 end

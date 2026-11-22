@@ -54,6 +54,7 @@ gem "twilio-ruby" # sms sending
 gem "stripe" # payment processing
 gem "geokit" # geocoding and geospatial queries
 gem "liquid" # safe templating for admin-edited marketing emails
+gem "rubyzip" # zip backups of reservations and settings
 gem "premailer-rails" # inline CSS in marketing emails at send time
 gem "faker" # sample data generation (SampleData.load!)
 gem "resend", "~> 1.14" # Action Mailbox ingress for inbound email

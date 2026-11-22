@@ -26,11 +26,11 @@ class Setting < ApplicationRecord
   DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT = "Thanks to you, our organization can keep adventuring, leading, and giving back to the community. We'll put your donation to good use."
   DEFAULT_HOME_PAGE_IMAGE = "tree-4c-bc.png"
   DEFAULT_MAILER_LOGO = "fleur-de-lis-2024-logo-4c-bc-small.png"
-  DEFAULT_RESERVATIONS_EXPORT_TIME = "06:00"
-  RESERVATIONS_EXPORT_TIME_FORMAT = /\A([01]\d|2[0-3]):[0-5]\d\z/
+  DEFAULT_BACKUP_TIME = "06:00"
+  BACKUP_TIME_FORMAT = /\A([01]\d|2[0-3]):[0-5]\d\z/
 
-  # Half-hour send times offered for the daily reservations CSV export.
-  RESERVATIONS_EXPORT_TIMES = (0..47).map { |slot| format("%02d:%02d", slot / 2, (slot % 2) * 30) }.freeze
+  # Half-hour send times offered for the daily backup email.
+  BACKUP_TIMES = (0..47).map { |slot| format("%02d:%02d", slot / 2, (slot % 2) * 30) }.freeze
 
   SECTIONS = {
     "event" => {
@@ -110,8 +110,8 @@ class Setting < ApplicationRecord
   attribute :suggested_donation, :integer, default: DEFAULT_SUGGESTED_DONATION
   attribute :is_maintenance_mode, :boolean, default: true
   attribute :is_pickup_notice_enabled, :boolean, default: false
-  attribute :is_reservations_export_schedule_enabled, :boolean, default: false
-  attribute :reservations_export_time, :string, default: DEFAULT_RESERVATIONS_EXPORT_TIME
+  attribute :is_backup_schedule_enabled, :boolean, default: false
+  attribute :backup_time, :string, default: DEFAULT_BACKUP_TIME
 
   normalizes :phone_default_country, with: ->(country) { country.to_s.strip.upcase.presence }
 
@@ -123,9 +123,10 @@ class Setting < ApplicationRecord
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
   validates :marketing_email_cooldown_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :contact_retention_months, numericality: { only_integer: true, greater_than: 0 }
-  validates :reservations_export_email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" }, allow_blank: true
-  validates :reservations_export_time, format: { with: RESERVATIONS_EXPORT_TIME_FORMAT, message: "must be a valid time (HH:MM)" }, allow_blank: true
-  validate :reservations_export_schedule_is_complete
+  validates :backup_email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" }, allow_blank: true
+  validates :backup_time, format: { with: BACKUP_TIME_FORMAT, message: "must be a valid time (HH:MM)" }, allow_blank: true
+  validate :backup_schedule_is_complete
+  validate :backup_datasets_are_present
   validate :home_page_image_is_available
   validate :mailer_logo_is_available
 
@@ -189,37 +190,51 @@ class Setting < ApplicationRecord
     mailer_logo.presence || DEFAULT_MAILER_LOGO
   end
 
+  # Slug used for backup filenames, named after the site header so backups
+  # from different troops are easy to tell apart.
+  def backup_slug
+    home_page_header.to_s.parameterize.presence || Backup::FALLBACK_SLUG
+  end
+
   def self.instance
     first
   end
 
-  # Select options for the daily export send time, labeled like "6:00 AM".
-  def self.reservations_export_time_options
-    RESERVATIONS_EXPORT_TIMES.map do |time|
+  # Select options for the daily backup send time, labeled like "6:00 AM".
+  def self.backup_time_options
+    BACKUP_TIMES.map do |time|
       [ Time.parse(time).strftime("%-l:%M %p"), time ]
     end
   end
 
-  def reservations_export_schedule_configured?
-    is_reservations_export_schedule_enabled? &&
-      reservations_export_email.present? && reservations_export_time.present?
+  def backup_dataset_keys
+    Backup.sanitize_dataset_keys(backup_datasets.to_s.split(","))
   end
 
-  # True when the daily export should be sent for the given local time: the
+  def backup_dataset_keys=(keys)
+    self.backup_datasets = Backup.sanitize_dataset_keys(keys).join(",")
+  end
+
+  def backup_schedule_configured?
+    is_backup_schedule_enabled? &&
+      backup_email.present? && backup_time.present? && backup_dataset_keys.any?
+  end
+
+  # True when the daily backup should be sent for the given local time: the
   # schedule is enabled, the send time has passed today, and it has not
   # already been sent today.
-  def reservations_export_due?(now = Time.current)
-    return false unless reservations_export_schedule_configured?
+  def backup_due?(now = Time.current)
+    return false unless backup_schedule_configured?
 
-    hour, minute = reservations_export_time.split(":").map(&:to_i)
+    hour, minute = backup_time.split(":").map(&:to_i)
     return false if now < now.beginning_of_day + hour.hours + minute.minutes
 
-    last_sent = reservations_export_last_sent_at&.in_time_zone(now.time_zone)
+    last_sent = backup_last_sent_at&.in_time_zone(now.time_zone)
     last_sent.nil? || last_sent.to_date != now.to_date
   end
 
-  def mark_reservations_export_sent!(at = Time.current)
-    update!(reservations_export_last_sent_at: at)
+  def mark_backup_sent!(at = Time.current)
+    update!(backup_last_sent_at: at)
   end
 
   def sms_configured?
@@ -447,11 +462,15 @@ class Setting < ApplicationRecord
     lookup.remove_instance_variable(:@client)
   end
 
-  def reservations_export_schedule_is_complete
-    return unless is_reservations_export_schedule_enabled?
+  def backup_schedule_is_complete
+    return unless is_backup_schedule_enabled?
 
-    errors.add(:reservations_export_email, "is required to schedule the daily export") if reservations_export_email.blank?
-    errors.add(:reservations_export_time, "is required to schedule the daily export") if reservations_export_time.blank?
+    errors.add(:backup_email, "is required to schedule the daily backup") if backup_email.blank?
+    errors.add(:backup_time, "is required to schedule the daily backup") if backup_time.blank?
+  end
+
+  def backup_datasets_are_present
+    errors.add(:backup_datasets, "must include at least one dataset") if backup_dataset_keys.empty?
   end
 
   def home_page_image_is_available

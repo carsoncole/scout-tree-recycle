@@ -17,7 +17,7 @@ Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of
 - Text-message conversations and an email inbox, including replies.
 - Two marketing campaigns, plus editable reservation emails for confirmation, cancellation, and a missing tree.
 - Settings for the event dates, the organization, the public pages, email, texts, donations, and routing.
-- Admin accounts, error logs, spreadsheet import and export, and a close-event step that keeps contacts for the next year.
+- Admin accounts, error logs, spreadsheet import, zip backups and restores, and a close-event step that keeps contacts for the next year.
 - A view of background jobs, such as mail, texts, and geocoding.
 
 **Driver pickups.** Drivers open a separate site with a shared key. They see routes on a map, update a stop as picked up or missing, mark favorite routes, and print pickup lists.

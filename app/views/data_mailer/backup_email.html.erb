@@ -1,0 +1,7 @@
+<h1 style="<%= admin_heading_style %>">Data backup</h1>
+
+<p style="<%= admin_paragraph_style %>">The attached zip file contains a backup of <%= @dataset_labels.to_sentence %>.</p>
+
+<p style="<%= admin_paragraph_style %>">Store this file securely. A settings backup includes sensitive credentials such as SMTP, Twilio, Stripe, AWS, and driver portal passwords.</p>
+
+<p style="<%= admin_paragraph_style %>">Sent by <%= @setting&.organization_name.presence || "Tree Recycle" %>. No action is needed.</p>

@@ -4,7 +4,16 @@ class SettingTransfer
   FORMAT = "tree-recycle-settings"
   VERSION = 1
   MAX_FILE_SIZE = 1.megabyte
-  EXCLUDED_ATTRIBUTES = %w[id created_at updated_at reservations_export_last_sent_at].freeze
+  EXCLUDED_ATTRIBUTES = %w[id created_at updated_at backup_last_sent_at].freeze
+
+  # Older exports used the reservations-export column names. Keep accepting
+  # those keys so backups made before the backups section still restore.
+  LEGACY_ATTRIBUTE_NAMES = {
+    "is_reservations_export_schedule_enabled" => "is_backup_schedule_enabled",
+    "reservations_export_email" => "backup_email",
+    "reservations_export_time" => "backup_time",
+    "reservations_export_last_sent_at" => "backup_last_sent_at"
+  }.freeze
 
   Result = Struct.new(:setting, :errors, keyword_init: true) do
     def success?
@@ -44,6 +53,7 @@ class SettingTransfer
       return failure([ "Settings file is invalid: missing setting data." ])
     end
 
+    setting_attrs = normalize_legacy_attributes(setting_attrs)
     attrs = setting_attrs.slice(*self.class.exportable_attributes)
     setting = Setting.instance || Setting.new
 
@@ -58,6 +68,17 @@ class SettingTransfer
   end
 
   private
+
+  def normalize_legacy_attributes(setting_attrs)
+    return setting_attrs unless setting_attrs.is_a?(Hash)
+
+    setting_attrs.dup.tap do |attrs|
+      LEGACY_ATTRIBUTE_NAMES.each do |legacy, current|
+        attrs[current] = attrs[legacy] if attrs.key?(legacy) && !attrs.key?(current)
+        attrs.delete(legacy)
+      end
+    end
+  end
 
   def parse_payload
     payload = JSON.parse(@json)

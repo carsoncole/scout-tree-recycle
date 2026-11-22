@@ -124,11 +124,14 @@ Rails.application.routes.draw do
     # System data
     resource :data, only: [ :show ], controller: "data" do
       post :import
-      get :export
-      patch :schedule
-      post :email_export
-      get :export_settings
-      post :import_settings
+    end
+
+    # Data backups and restores
+    resource :backups, only: [ :create ], controller: "backups" do
+      post :email
+      post :schedule
+      post :restore_settings
+      post :restore_reservations
     end
 
     # Data management (delete all reservations/contacts, reset all data)

@@ -9,7 +9,7 @@ class SettingTransferTest < ActiveSupport::TestCase
     assert_not_includes attrs, "id"
     assert_not_includes attrs, "created_at"
     assert_not_includes attrs, "updated_at"
-    assert_not_includes attrs, "reservations_export_last_sent_at"
+    assert_not_includes attrs, "backup_last_sent_at"
   end
 
   test "export returns a versioned json envelope with portable setting attributes" do
@@ -27,7 +27,7 @@ class SettingTransferTest < ActiveSupport::TestCase
     assert_not payload["setting"].key?("id")
     assert_not payload["setting"].key?("created_at")
     assert_not payload["setting"].key?("updated_at")
-    assert_not payload["setting"].key?("reservations_export_last_sent_at")
+    assert_not payload["setting"].key?("backup_last_sent_at")
   end
 
   test "import updates the existing singleton setting" do
@@ -42,6 +42,27 @@ class SettingTransferTest < ActiveSupport::TestCase
     assert result.success?
     assert_equal "Imported Troop", setting.reload.organization_name
     assert_equal "Portland", setting.default_city
+  end
+
+  test "import accepts legacy reservations export attribute names" do
+    setting = Setting.instance
+    payload = {
+      "format" => "tree-recycle-settings",
+      "version" => 1,
+      "setting" => {
+        "reservations_export_email" => "legacy@example.com",
+        "reservations_export_time" => "07:30",
+        "is_reservations_export_schedule_enabled" => true
+      }
+    }
+
+    result = SettingTransfer.new(json: payload.to_json).import
+
+    assert result.success?
+    setting.reload
+    assert_equal "legacy@example.com", setting.backup_email
+    assert_equal "07:30", setting.backup_time
+    assert setting.is_backup_schedule_enabled?
   end
 
   test "import creates a setting when none exists" do
@@ -119,18 +140,18 @@ class SettingTransferTest < ActiveSupport::TestCase
 
   test "import returns validation errors and does not persist invalid changes" do
     setting = Setting.instance
-    original_name = setting.organization_name
+    original_time_zone = setting.time_zone
 
     payload = {
       "format" => "tree-recycle-settings",
       "version" => 1,
-      "setting" => { "organization_name" => "" }
+      "setting" => { "time_zone" => "Invalid/Zone" }
     }
 
     result = SettingTransfer.new(json: payload.to_json).import
 
     assert_not result.success?
-    assert result.errors.any? { |error| error.include?("Organization name") }
-    assert_equal original_name, setting.reload.organization_name
+    assert result.errors.any? { |error| error.include?("Time zone is not included in the list") }
+    assert_equal original_time_zone, setting.reload.time_zone
   end
 end

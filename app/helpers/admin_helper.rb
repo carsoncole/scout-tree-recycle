@@ -41,7 +41,7 @@ module AdminHelper
     { area: "System", label: "Configuration report", user: true, admin: true },
     { area: "System", label: "Jobs dashboard, including retry, discard, and queue pause", user: true, admin: true },
     { area: "Data", label: "View the data page and database settings", user: true, admin: true },
-    { area: "Data", label: "Import contacts, export, schedule, or email reservations, and back up or restore settings", user: false, admin: true },
+    { area: "Data", label: "Import contacts, download or email backups, restore settings or reservations, and manage data", user: false, admin: true },
     { area: "Data", label: "Delete all reservations or all contacts", user: false, admin: true },
     { area: "Data", label: "Reset all data to default (danger zone)", user: false, admin: true },
     { area: "Users", label: "View the user list and these privileges", user: true, admin: true },

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_22_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_22_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -363,13 +363,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_22_020000) do
     t.text "donations_page_how_to_donate"
     t.text "donations_new_page_content"
     t.text "donations_success_page_content"
-    t.boolean "is_reservations_export_schedule_enabled", default: false, null: false
-    t.string "reservations_export_email"
-    t.string "reservations_export_time", default: "06:00", null: false
-    t.datetime "reservations_export_last_sent_at"
+    t.boolean "is_backup_schedule_enabled", default: false, null: false
+    t.string "backup_email"
+    t.string "backup_time", default: "06:00", null: false
+    t.datetime "backup_last_sent_at"
     t.boolean "is_maintenance_mode", default: true, null: false
     t.boolean "is_pickup_notice_enabled", default: false, null: false
     t.string "mailer_logo", default: "fleur-de-lis-2024-logo-4c-bc-small.png", null: false
+    t.string "backup_datasets", default: "reservations,settings", null: false
   end
 
   create_table "sms", force: :cascade do |t|

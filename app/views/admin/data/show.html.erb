@@ -1,11 +1,11 @@
 <%= content_for :title, "Data" %>
 <%= render "admin/shared/page_header",
            title: "Data",
-           description: "Import contacts, export reservation data as CSV, back up settings, manage data, and review database settings." %>
+           description: "Import contacts, download or restore reservations and settings backups, manage data, and review database settings." %>
 
 <div class="flex flex-col gap-6">
   <% if Current.user&.admin? %>
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="import-contacts">
       <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
           <h2 class="admin-panel-title text-ink dark:text-ink-dark">Import contacts</h2>
@@ -65,88 +65,151 @@
       </div>
     </section>
 
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="backups">
       <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Export reservations</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download all reservations as a CSV file, or email the export on a daily schedule.</p>
-        </div>
-      </div>
-      <div class="admin-panel-body">
-        <p class="admin-hint admin-hint--spaced text-ink-soft dark:text-ink-soft-dark">Exports every reservation with its mapped fields and route name.</p>
-
-        <% if @setting %>
-          <%= form_with model: @setting, url: schedule_admin_data_path, method: :patch, class: "admin-form" do |f| %>
-            <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
-              <div class="admin-field-grid admin-field-grid--two gap-5">
-                <div class="admin-field">
-                  <%= f.label :reservations_export_email, "Email address", class: "admin-label text-ink dark:text-ink-dark" %>
-                  <%= f.email_field :reservations_export_email, class: admin_input_class, placeholder: "recipient@example.com" %>
-                  <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The address that receives the reservations CSV export.</p>
-                </div>
-                <div class="admin-field">
-                  <%= f.label :reservations_export_time, "Daily send time", class: "admin-label text-ink dark:text-ink-dark" %>
-                  <%= f.select :reservations_export_time, Setting.reservations_export_time_options, {}, class: admin_select_class %>
-                  <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Sent every day at this time in the configured time zone.</p>
-                </div>
-              </div>
-
-              <label class="admin-check-row text-ink dark:text-ink-dark" for="setting_is_reservations_export_schedule_enabled">
-                <%= f.check_box :is_reservations_export_schedule_enabled, class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
-                <span>Email the export daily</span>
-              </label>
-            </div>
-
-            <div class="flex flex-wrap items-center justify-end gap-3">
-              <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
-                          class: admin_button_class(variant: "secondary"),
-                          data: { turbo: false } %>
-              <%= f.submit "Email Export Now", formaction: email_export_admin_data_path, formmethod: :post,
-                          class: admin_button_class %>
-              <%= f.submit "Save Daily Schedule", class: admin_button_class(variant: "secondary") %>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="flex flex-wrap items-center justify-end gap-3">
-            <%= link_to "Export Reservations CSV", export_admin_data_path(format: :csv),
-                        class: admin_button_class,
-                        data: { turbo: false } %>
-          </div>
-        <% end %>
-      </div>
-    </section>
-
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Settings backup</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Export all settings to a JSON file, or restore settings from a previous export on a fresh install.</p>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Backups</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download or email a zip backup of reservations and settings, or restore from a previous backup.</p>
         </div>
       </div>
       <div class="admin-panel-body">
         <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
           <div>
             <p class="admin-notice-title">Sensitive file</p>
-            <p>Settings exports include sensitive credentials such as SMTP, Twilio, Stripe, AWS, and driver portal passwords. Store the file securely. Importing overwrites current setting values.</p>
+            <p>Backups include sensitive data. Settings backups contain credentials such as SMTP, Twilio, Stripe, AWS, and driver portal passwords. Store backup files securely and keep them outside this application.</p>
           </div>
         </div>
 
-        <%= form_with url: import_settings_admin_data_path, method: :post, multipart: true, class: "admin-form" do %>
+        <% selected_datasets = @setting&.backup_dataset_keys.presence || Backup.dataset_keys %>
+        <% if @setting %>
           <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
-            <div class="admin-field">
-              <%= label_tag :settings_file, "Settings JSON file", class: "admin-label text-ink dark:text-ink-dark" %>
-              <%= file_field_tag :file, id: "settings_file", accept: ".json,application/json", class: admin_input_class %>
-              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Upload a JSON file previously exported from this page. Maximum 1 MB.</p>
+            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Download a backup</h3>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Save a zip file you can keep outside the application.</p>
+
+            <%= form_with url: admin_backups_path, method: :post, class: "admin-form", data: { turbo: false } do %>
+              <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "download" %>
+
+              <div class="flex flex-wrap items-center justify-end gap-3">
+                <%= submit_tag "Download Backup (.zip)", class: admin_button_class %>
+              </div>
+              <p class="admin-hint mt-3 text-ink-soft dark:text-ink-soft-dark">
+                The zip is named after your event header, for example <span class="font-mono">troop-100-tree-recycle-backup-20261122-120000.zip</span>.
+                When no header is set it is named <span class="font-mono">scout-tree-recycle-backup-....zip</span>.
+              </p>
+            <% end %>
+          </div>
+
+          <div class="admin-form-section border-line dark:border-line-dark">
+            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Email a backup now</h3>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Send the selected backup immediately.</p>
+
+            <%= form_with model: @setting, url: email_admin_backups_path, method: :post, class: "admin-form", data: { turbo: false } do |f| %>
+              <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "email" %>
+
+              <div class="admin-field mt-4">
+                <%= f.label :backup_email, "Send this backup to", for: "backup_email_now", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= f.email_field :backup_email, id: "backup_email_now", class: admin_input_class, placeholder: "recipient@example.com" %>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-end gap-3">
+                <%= f.submit "Email Backup Now", class: admin_button_class %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="admin-form-section border-line dark:border-line-dark">
+            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Daily backup schedule</h3>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Email the selected backup automatically once a day.</p>
+
+            <%= form_with model: @setting, url: schedule_admin_backups_path, method: :post, class: "admin-form" do |f| %>
+              <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "schedule" %>
+
+              <div class="admin-field-grid admin-field-grid--two gap-5 mt-4">
+                <div class="admin-field">
+                  <%= f.label :backup_email, "Daily backup email address", for: "backup_email_schedule", class: "admin-label text-ink dark:text-ink-dark" %>
+                  <%= f.email_field :backup_email, id: "backup_email_schedule", class: admin_input_class, placeholder: "recipient@example.com" %>
+                </div>
+                <div class="admin-field">
+                  <%= f.label :backup_time, "Daily send time", class: "admin-label text-ink dark:text-ink-dark" %>
+                  <%= f.select :backup_time, Setting.backup_time_options, {}, class: admin_select_class %>
+                  <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Sent every day at this time in the configured time zone.</p>
+                </div>
+              </div>
+
+              <label class="admin-check-row text-ink dark:text-ink-dark" for="setting_is_backup_schedule_enabled">
+                <%= f.check_box :is_backup_schedule_enabled, class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
+                <span>Email the backup daily</span>
+              </label>
+
+              <div class="flex flex-wrap items-center justify-end gap-3">
+                <%= f.submit "Save Daily Schedule", class: admin_button_class %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
+            <div>
+              <p class="admin-notice-title">Settings required</p>
+              <p>Complete the initial settings before backing up settings. You can still download reservations.</p>
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center justify-end gap-3">
-            <%= link_to "Export Settings JSON", export_settings_admin_data_path,
-                        class: admin_button_class(variant: "secondary"),
-                        data: { turbo: false } %>
-            <%= submit_tag "Import Settings JSON", class: admin_button_class %>
-          </div>
+          <%= form_with url: admin_backups_path, method: :post, class: "admin-form", data: { turbo: false } do %>
+            <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
+              <label class="admin-check-row text-ink dark:text-ink-dark" for="datasets_reservations">
+                <%= check_box_tag "datasets[]", "reservations", true,
+                    id: "datasets_reservations", class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
+                <span>Reservations</span>
+              </label>
+            </div>
+            <div class="flex flex-wrap items-center justify-end gap-3">
+              <%= submit_tag "Download Backup (.zip)", class: admin_button_class %>
+            </div>
+          <% end %>
         <% end %>
+
+        <div class="admin-form-section border-line dark:border-line-dark">
+          <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Restore from a backup</h3>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Settings and reservations restore independently, so you can restore only the part you need.</p>
+
+          <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
+            <div>
+              <p class="admin-notice-title">Event finished?</p>
+              <p>
+                If this event is over, do not restore reservations. Import the reservations CSV through
+                <%= link_to "Import contacts", admin_data_path(anchor: "import-contacts"), class: admin_link_class %>
+                so supporters are kept for next year. <%= link_to "Close Event", admin_close_event_path, class: admin_link_class %>
+                does this automatically from the current reservations.
+              </p>
+            </div>
+          </div>
+
+          <div class="admin-field-grid admin-field-grid--two gap-5">
+            <div class="admin-field">
+              <h4 class="admin-label text-ink dark:text-ink-dark">Restore settings</h4>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Overwrites current settings, including credentials.</p>
+
+              <%= form_with url: restore_settings_admin_backups_path, method: :post, multipart: true, class: "admin-form" do %>
+                <%= label_tag :backup_settings_file, "Settings JSON file", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= file_field_tag :file, id: "backup_settings_file", accept: ".json,application/json", class: admin_input_class %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Choose <span class="font-mono">settings.json</span> from a backup zip. Maximum 1 MB.</p>
+                <%= submit_tag "Restore Settings", class: admin_button_class %>
+              <% end %>
+            </div>
+
+            <div class="admin-field">
+              <h4 class="admin-label text-ink dark:text-ink-dark">Restore reservations</h4>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Updates reservations that match by email and adds missing ones. Never deletes reservations.</p>
+
+              <%= form_with url: restore_reservations_admin_backups_path, method: :post, multipart: true, class: "admin-form" do %>
+                <%= label_tag :backup_reservations_file, "Reservations CSV file", class: "admin-label text-ink dark:text-ink-dark" %>
+                <%= file_field_tag :file, id: "backup_reservations_file", accept: ".csv,text/csv", class: admin_input_class %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Choose <span class="font-mono">reservations.csv</span> from a backup zip. Maximum 10 MB. Runs in the background; results are recorded in the System Logs.</p>
+                <%= submit_tag "Restore Reservations", class: admin_button_class %>
+              <% end %>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -232,7 +295,7 @@
         </div>
         <div class="<%= admin_notice_class("danger") %> mt-4" role="alert">
           <div>
-            <p><strong>Warning:</strong> This is the most destructive action in the application. There is no undo and no backup. Export anything you need first from the <%= link_to "Data page", admin_data_path, class: admin_link_class %>.</p>
+            <p><strong>Warning:</strong> This is the most destructive action in the application. There is no undo and no automatic backup. Download a backup first from the <%= link_to "Backups section", admin_data_path(anchor: "backups"), class: admin_link_class %>.</p>
           </div>
         </div>
       </div>
@@ -246,7 +309,7 @@
         </div>
       </div>
       <div class="admin-panel-body">
-        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">You can view this page, but importing contacts, exporting reservations, scheduling exports, emailing exports, settings backup, and data management actions are available to admins only.</p>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">You can view this page, but importing contacts, backing up or restoring data, and data management actions are available to admins only.</p>
       </div>
     </section>
   <% end %>

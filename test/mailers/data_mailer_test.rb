@@ -1,21 +1,44 @@
 require "test_helper"
 
 class DataMailerTest < ActionMailer::TestCase
-  test "reservations_export_email delivers the csv export to the requested address" do
+  test "backup_email delivers the zip backup to the requested address" do
     Setting.instance.update!(email_from_address: "Troop 100 <troop100@example.com>")
 
-    mail = DataMailer.reservations_export_email("qa@example.com")
+    mail = DataMailer.backup_email("qa@example.com", datasets: %w[reservations settings])
 
     assert_equal [ "qa@example.com" ], mail.to
     assert_equal [ "troop100@example.com" ], mail.from
-    assert_equal "Reservations CSV export from Troop 100", mail.subject
-    assert_includes mail.html_part.body.decoded, "Reservations CSV export"
-    assert_includes mail.text_part.body.decoded, "Sent by Troop 100"
+    assert_equal "Data backup from Troop 100", mail.subject
+    assert_includes mail.html_part.body.decoded, "Data backup"
+    assert_includes mail.text_part.body.decoded, "Store this file securely"
 
-    csv = mail.attachments.find { |part| part.filename.start_with?("reservations-") }
-    assert csv
-    assert_equal "text/csv", csv.mime_type
-    assert_includes csv.body.decoded, "email"
-    assert_includes csv.body.decoded, reservations(:pending_pickup_1).email
+    attachment = mail.attachments.find { |part| part.filename.end_with?(".zip") }
+    assert attachment
+    assert_equal "application/zip", attachment.mime_type
+
+    files = zip_entries(attachment.body.decoded)
+    assert_includes files.keys, "settings.json"
+    assert_includes files.keys, "reservations.csv"
+    assert_includes files.fetch("reservations.csv"), reservations(:pending_pickup_1).email
+  end
+
+  test "backup_email can send only the selected dataset" do
+    mail = DataMailer.backup_email("qa@example.com", datasets: [ "settings" ])
+
+    attachment = mail.attachments.find { |part| part.filename.end_with?(".zip") }
+    files = zip_entries(attachment.body.decoded)
+
+    assert_includes files.keys, "settings.json"
+    assert_not_includes files.keys, "reservations.csv"
+  end
+
+  private
+
+  def zip_entries(body)
+    entries = {}
+    Zip::File.open_buffer(StringIO.new(body)) do |zip|
+      zip.each { |entry| entries[entry.name] = entry.get_input_stream.read }
+    end
+    entries
   end
 end

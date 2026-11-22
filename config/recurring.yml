@@ -1,10 +1,10 @@
 # Recurring tasks loaded by the Solid Queue supervisor (bin/jobs).
 development:
-  scheduled_reservations_export:
-    class: ReservationsExportScheduleJob
+  scheduled_backup:
+    class: BackupScheduleJob
     schedule: every 15 minutes
 
 production:
-  scheduled_reservations_export:
-    class: ReservationsExportScheduleJob
+  scheduled_backup:
+    class: BackupScheduleJob
     schedule: every 15 minutes

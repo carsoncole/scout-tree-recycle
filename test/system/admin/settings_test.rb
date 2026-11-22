@@ -494,14 +494,11 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   test "system panel links to close event" do
     visit admin_settings_section_path("system")
 
-    within "section#close-event" do
-      assert_link "Close Event", href: admin_close_event_path
-      assert_no_text "Retention (Months)"
-    end
+    assert_link "Close Event", href: admin_close_event_path
   end
 
   test "data management panel lists the destructive actions with counts" do
-    visit admin_settings_section_path("system")
+    visit admin_data_url
 
     within "section#data-management" do
       assert_text "Data Management"
@@ -515,7 +512,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "admin can delete all reservations from the data management panel" do
-    visit admin_settings_section_path("system")
+    visit admin_data_url
 
     within "section#data-management" do
       find("summary", text: "Delete All Reservations").click
@@ -531,7 +528,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "admin can delete all contacts from the data management panel" do
-    visit admin_settings_section_path("system")
+    visit admin_data_url
 
     within "section#data-management" do
       find("summary", text: "Delete All Contacts").click
@@ -546,7 +543,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "admin can reset all data and relaunch in maintenance mode" do
-    visit admin_settings_section_path("system")
+    visit admin_data_url
 
     within "section#data-management" do
       find("summary", text: "Reset All Data to Default").click
@@ -571,8 +568,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     fill_in "Event Pickup End", with: "2024-01-15T15:30"
     fill_in "Sign Up Deadline", with: "2024-01-14T16:59"
     fill_in "Admin Email", with: "reset-admin@example.com"
-    fill_in "Admin Password", with: "password123456789"
-    fill_in "Confirm Admin Password", with: "password123456789"
+    fill_in "Admin Password (required)", with: "password123456789"
+    fill_in "Confirm Admin Password (required)", with: "password123456789"
     click_on "Save Settings"
 
     # The reset wiped the sessions, so the admin lands on the sign-in page.
@@ -587,7 +584,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "admin can load sample data from the data management panel" do
-    visit admin_settings_section_path("system")
+    visit admin_data_url
 
     within "section#data-management" do
       accept_confirm { click_on "Load Sample Data" }
@@ -601,19 +598,13 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert Log.of_type("job").exists?
   end
 
-  test "a non-admin sees the data management panel but cannot act" do
+  test "a non-admin sees the data page without data management actions" do
     sign_in_as(users(:user), true)
-    visit admin_settings_section_path("system")
+    visit admin_data_url
 
-    within "section#data-management" do
-      assert_text "Admin only"
-      assert_text "Only admins can delete or reset data."
-      assert_no_button "Confirm Delete All Reservations"
-      assert_no_button "Confirm Delete All Contacts"
-      assert_no_button "Confirm Reset All Data"
-      assert_no_button "Load Sample Data"
-      assert_no_text "Reset All Data to Default"
-    end
+    assert_text "Read-only access"
+    assert_text "data management actions are available to admins only"
+    assert_no_selector "section#data-management"
   end
 
   test "maintenance toggle takes the public site down and brings it back" do

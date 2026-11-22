@@ -4,6 +4,8 @@ class Admin::DataController < Admin::BaseController
   def show
     @setting = Setting.instance
     @database_overview = DatabaseOverview.new
+    @reservations_count = Reservation.count
+    @contacts_count = Contact.count
   end
 
   def import
@@ -49,7 +51,7 @@ class Admin::DataController < Admin::BaseController
     return redirect_to admin_data_path, alert: "No settings are available to export." if setting.nil?
 
     send_data SettingTransfer.export(setting),
-      filename: "settings-#{Time.current.strftime("%Y%m%d-%H%M%S")}.json",
+      filename: "scout-tree-recycle-settings-#{Time.current.strftime("%Y%m%d-%H%M%S")}.json",
       type: "application/json; charset=utf-8",
       disposition: "attachment"
   end

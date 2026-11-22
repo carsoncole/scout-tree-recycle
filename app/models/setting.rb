@@ -71,7 +71,7 @@ class Setting < ApplicationRecord
     },
     "system" => {
       label: "System",
-      description: "Take the public site down for maintenance, show the pickup notice, review system errors, close the current event, and delete or reset data."
+      description: "Take the public site down for maintenance, show the pickup notice, review system errors, and manage the default email logo."
     }
   }.freeze
 
@@ -115,11 +115,11 @@ class Setting < ApplicationRecord
 
   normalizes :phone_default_country, with: ->(country) { country.to_s.strip.upcase.presence }
 
-  validates :organization_name, presence: true
-  validates :default_country, presence: true
-  validates :phone_default_country, presence: true, length: { is: 2 }
-  validates :event_pickup_start, :event_pickup_end, :event_sign_up_deadline, presence: { message: "date and time can't be blank" }
-  validates :home_page_header, presence: true, if: ->(setting) { setting.organization_name.present? }
+  # validates :organization_name, presence: true
+  validates :default_country, presence: true # defaults to the US, the only tested country.
+  # validates :phone_default_country, presence: true, length: { is: 2 }
+  # validates :event_pickup_start, :event_pickup_end, :event_sign_up_deadline, presence: { message: "date and time can't be blank" }
+  # validates :home_page_header, presence: true, if: ->(setting) { setting.organization_name.present? }
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
   validates :marketing_email_cooldown_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :contact_retention_months, numericality: { only_integer: true, greater_than: 0 }

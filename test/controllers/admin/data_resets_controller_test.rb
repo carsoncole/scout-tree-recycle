@@ -21,7 +21,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "reservations" }, confirmation: "DELETE" }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal "You are not authorized to delete or reset data.", flash[:alert]
   end
 
@@ -32,7 +32,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "sample_data" } }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal "You are not authorized to delete or reset data.", flash[:alert]
   end
 
@@ -41,7 +41,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
 
     post admin_data_reset_path, params: { data_reset: { scope: "users" }, confirmation: "RESET ALL" }
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal "Unknown data reset action.", flash[:alert]
   end
 
@@ -52,7 +52,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "reservations" }, confirmation: "RESET ALL" }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal "Type DELETE to confirm this destructive action.", flash[:alert]
   end
 
@@ -63,7 +63,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "contacts" }, confirmation: "delete me" }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal "Type DELETE to confirm this destructive action.", flash[:alert]
   end
 
@@ -75,7 +75,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "reservations" }, confirmation: "DELETE" }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal 0, Reservation.count
     assert_match "#{deleted_count} reservations have been deleted", flash[:notice]
     assert_nil Donation.first&.reservation_id
@@ -89,7 +89,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "contacts" }, confirmation: "delete" }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal 0, Contact.count
     assert_match "#{deleted_count} contacts have been deleted", flash[:notice]
   end
@@ -101,7 +101,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "all" }, confirmation: "RESET" }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_equal "Type RESET ALL to confirm this destructive action.", flash[:alert]
   end
 
@@ -137,7 +137,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "sample_data" } }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_match "queued", flash[:notice]
   end
 
@@ -150,7 +150,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_operator Reservation.count, :>, 50
     assert_operator Contact.count, :>, 100
     assert Log.of_type("job").where(error_type: "LoadSampleDataJob").exists?
@@ -165,7 +165,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
       post admin_data_reset_path, params: { data_reset: { scope: "all" }, confirmation: "RESET ALL" }
     end
 
-    assert_redirected_to admin_settings_section_path("system")
+    assert_redirected_to admin_data_path
     assert_match "The data reset could not be completed", flash[:alert]
     assert_equal reservations_count, Reservation.count
     assert_equal users_count, User.count

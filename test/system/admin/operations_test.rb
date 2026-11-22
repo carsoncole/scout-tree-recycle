@@ -39,11 +39,12 @@ class Admin::OperationsTest < ApplicationSystemTestCase
 
   test "a non-admin can read the close event page but cannot confirm it" do
     sign_in_as(users(:user), true)
-    visit admin_settings_section_path("system")
+    visit admin_data_url
 
-    assert_no_link "Close Event"
-    assert_text "Only admins can close the event"
-    click_link "View close event"
+    within "section#close-event" do
+      assert_text "Only admins can close the event"
+      click_link "View close event"
+    end
 
     assert_text "What closing the event does"
     assert_text "Retention can be updated by admins only."

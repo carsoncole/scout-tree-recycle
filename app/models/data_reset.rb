@@ -1,5 +1,5 @@
 # Deletes or fully resets application data. Backs the admin data management
-# controls on /admin/settings/system. Destructive operations require a typed
+# controls on /admin/data. Destructive operations require a typed
 # confirmation word that is validated server-side (see Admin::DataResetsController).
 #
 # Loading sample data is additive rather than destructive, so it is not a

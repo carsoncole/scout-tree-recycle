@@ -12,33 +12,10 @@
   <% end %>
 <% end %>
 
-<%= render "admin/settings/configuration_status" %>
-
 <div class="admin-settings-layout">
   <%= render "admin/settings/sidebar" %>
 
   <div class="flex flex-col gap-6">
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Settings sections</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Choose a section to review and update its settings.</p>
-        </div>
-      </div>
-
-      <div class="admin-panel-body">
-        <ul class="grid gap-3 md:grid-cols-2">
-          <% admin_settings_nav_items.each do |item| %>
-            <li>
-              <%= link_to item[:path],
-                  class: "block h-full rounded border border-line bg-surface p-4 hover:bg-stone dark:border-line-dark dark:bg-surface-dark dark:hover:bg-stone-dark" do %>
-                <span class="admin-section-title text-ink dark:text-ink-dark"><%= item[:label] %></span>
-                <span class="mt-1 block text-sm text-ink-soft dark:text-ink-soft-dark"><%= item[:description] %></span>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-    </section>
+    <%= render "admin/settings/configuration_status" %>
   </div>
 </div>

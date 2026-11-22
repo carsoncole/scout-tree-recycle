@@ -147,8 +147,6 @@ class Admin::SettingsController < Admin::BaseController
       @routes_count = Route.count
     when "system"
       @unviewed_logs_count = Log.where(is_viewed: false).count
-      @reservations_count = Reservation.count
-      @contacts_count = Contact.count
     end
   end
 

@@ -20,7 +20,7 @@ class Admin::OperationsController < Admin::BaseController
       message: "Event closed. Reservations were copied into contacts and cleared for the next event.",
       context: { user: Current.user.email }
     )
-    redirect_to admin_settings_section_path("system"),
+    redirect_to admin_data_path,
       notice: "Event closed. Reservations were copied into contacts and cleared for the next event."
   end
 end

@@ -6,7 +6,7 @@ class LogsMailer < AdminMailer
 
     mail(
       to: @user.email,
-      subject: "New Log Entry: #{subject_message(@log)}"
+      subject: "New Error Log Entry: #{subject_message(@log)}"
     )
   end
 

@@ -66,23 +66,22 @@ class SampleData
     end
 
     # Sample reservations
-    weighted_reservation_types = [
-      "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup", "pending_pickup",
-      "routing", "routing", "routing", "routing", "routing", "routing",
-      "donation", "reservation_form",
-      "cancelled", "missing"
-    ]
+    Datasets::SeedData::ADDRESSES.each do |address|
+      route = Route.find_by!(name: address[:route_name]) if address[:route_name].present?
+      street = "#{address[:house_number]} #{address[:street_name]}".strip
 
-    streets = Datasets::SeedData::STREETS.dup
-    50.times do
-      street = streets.delete_at(rand(streets.length)) || Faker::Address.street_address
       r = Reservation.new(
-        status: weighted_reservation_types.sample,
+        status: route ? "pending_pickup" : "routing",
         street: street,
+        house_number: address[:house_number],
+        street_name: address[:street_name],
         city: SAMPLE_CITY,
         state: SAMPLE_STATE,
         zip: SAMPLE_ZIP,
         country: SAMPLE_COUNTRY,
+        latitude: address[:latitude],
+        longitude: address[:longitude],
+        is_manually_geocoded: address[:latitude].present? && address[:longitude].present?,
         email: Faker::Internet.unique.email,
         name: Faker::Name.name,
         mobile: [ Faker::PhoneNumber.cell_phone, nil ].sample,
@@ -92,21 +91,12 @@ class SampleData
       # callbacks that send emails/SMS, enqueue routing jobs, or write logs.
       r.importing = true
 
-      route = Route.all.sample if r.status == "pending_pickup"
-
-      r.was_automatically_geocoded = true if r.routing? && [ 0, 1, 2, 3 ].sample == 0
-
-      if r.status == "pending_pickup" && route
-        point_count = route.points.count
-        if point_count.positive?
-          point = route.points.order(:order).offset(rand(point_count)).first
-          if point
-            r.latitude = point.latitude.to_f + rand(-0.002..0.002)
-            r.longitude = point.longitude.to_f + rand(-0.002..0.002)
-          end
-        end
+      if route
         r.route = route
+        r.is_manually_routed = true
+        r.was_automatically_routed = false
       end
+
       r.save!
     end
 

@@ -19,6 +19,7 @@ class MarketingEmailTemplate < ApplicationRecord
     { name: "setting.home_page_header", description: "Home page header from Settings.", example: "Troop 100 Tree Recycle" },
     { name: "setting.suggested_donation", description: "Suggested donation amount as a number.", example: "25" },
     { name: "setting.suggested_donation_currency", description: "Suggested donation amount formatted as currency.", example: "$25" },
+    { name: "setting.contact_email", description: "Contact email from Settings. Blank when none is configured.", example: "help@example.org" },
     { name: "event.pickup_start_date", description: "Pickup start date including the weekday and year.", example: "Saturday, January 6, 2099" },
     { name: "event.pickup_start_weekday", description: "Pickup start date including the weekday.", example: "Saturday, January 6" },
     { name: "event.pickup_start_short", description: "Pickup start month and day.", example: "January 6" },
@@ -31,7 +32,7 @@ class MarketingEmailTemplate < ApplicationRecord
     { name: "event.sign_up_deadline_weekday", description: "Sign-up deadline including the weekday.", example: "Friday, January 5" },
     { name: "event.sign_up_deadline_short", description: "Sign-up deadline month and day.", example: "January 5" },
     { name: "urls.registration", description: "Reservation page pre-filled with this contact's details.", example: "https://example.org/?contact_id=..." },
-    { name: "urls.unsubscribe", description: "This contact's unsubscribe link. Blank when previewing without a saved contact.", example: "https://example.org/contacts/.../unsubscribe" },
+    { name: "urls.unsubscribe", description: "This contact's unsubscribe link. Added automatically at the bottom of every marketing email, so it does not need to be placed in the template. Blank when previewing without a saved contact.", example: "https://example.org/contacts/.../unsubscribe" },
     { name: "urls.home", description: "Site home page.", example: "https://example.org/" },
     { name: "urls.organization", description: "Organization website. Blank when none is configured.", example: "https://example.org" }
   ].freeze
@@ -86,6 +87,16 @@ class MarketingEmailTemplate < ApplicationRecord
     Contact.new(name: "Susan Banks", email: "susan@example.com", street: "123 Main St", mobile: "+11234567890")
   end
 
+  # The editable template plus the required unsubscribe footer. Preview, test
+  # sends, and live sends all use this so the link cannot be left out.
+  def render_message_html(assigns = {}, source: :draft)
+    "#{render_body_html(assigns, source: source)}\n#{unsubscribe_footer_html(assigns)}"
+  end
+
+  def render_message_text(assigns = {}, source: :draft)
+    [ render_body_text(assigns, source: source).to_s.rstrip, unsubscribe_footer_text(assigns) ].compact_blank.join("\n\n")
+  end
+
   def preview_html(assigns = {}, source: :draft)
     document = <<~HTML
       <!DOCTYPE html>
@@ -94,12 +105,45 @@ class MarketingEmailTemplate < ApplicationRecord
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
         </head>
-        <body style="margin: 0; padding: 0; background-color: #f7fafc;">
-          #{render_body_html(assigns, source: source)}
+        <body style="margin: 0; padding: 0; background-color: #f6f3ea;">
+          #{render_message_html(assigns, source: source)}
         </body>
       </html>
     HTML
 
     inline_css(document)
+  end
+
+  private
+
+  def unsubscribe_footer_html(assigns)
+    url = unsubscribe_url_from(assigns)
+    link = if url.present?
+      %(<a href="#{ERB::Util.html_escape(url)}" style="color:#7e8273;text-decoration:underline;">Unsubscribe</a>)
+    else
+      "Unsubscribe"
+    end
+
+    <<~HTML
+      <table class="email-unsubscribe" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f6f3ea">
+        <tr>
+          <td align="center" style="padding:32px 24px 56px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#7e8273;">
+            #{link}
+          </td>
+        </tr>
+      </table>
+    HTML
+  end
+
+  def unsubscribe_footer_text(assigns)
+    url = unsubscribe_url_from(assigns)
+    url.present? ? "Unsubscribe: #{url}" : "Unsubscribe"
+  end
+
+  def unsubscribe_url_from(assigns)
+    urls = assigns.to_h.stringify_keys["urls"]
+    return "" if urls.blank?
+
+    urls.to_h.stringify_keys["unsubscribe"].to_s
   end
 end

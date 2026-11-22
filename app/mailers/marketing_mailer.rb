@@ -34,8 +34,8 @@ class MarketingMailer < ApplicationMailer
     source = params[:source].to_s == "published" ? :published : :draft
 
     @email_assigns = MarketingEmailTemplate::Renderer.new(contact: @contact, setting: @setting).assigns
-    @email_html = @template.render_body_html(@email_assigns, source: source)
-    @email_text = @template.render_body_text(@email_assigns, source: source)
+    @email_html = @template.render_message_html(@email_assigns, source: source)
+    @email_text = @template.render_message_text(@email_assigns, source: source)
     subject = @template.render_subject(@email_assigns, source: source)
 
     from = source == :published ? @template.published_from : @template.from
@@ -77,8 +77,8 @@ class MarketingMailer < ApplicationMailer
       headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
     end
 
-    @email_html = @template.render_body_html(@email_assigns, source: :published)
-    @email_text = @template.render_body_text(@email_assigns, source: :published)
+    @email_html = @template.render_message_html(@email_assigns, source: :published)
+    @email_text = @template.render_message_text(@email_assigns, source: :published)
     @marketing_email_sent_at_attribute = sent_at_attribute
 
     mail(**headers)

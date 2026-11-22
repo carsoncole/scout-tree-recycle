@@ -185,6 +185,87 @@ class MarketingEmailTemplateTest < ActiveSupport::TestCase
     end
   end
 
+  test "default templates describe the event and a reservation button without an unsubscribe link" do
+    MarketingEmailTemplate.where(name: MarketingEmailTemplate.default_names).delete_all
+    templates = MarketingEmailTemplate.install_defaults!.index_by(&:name)
+    event = @assigns.fetch("event")
+
+    announcement = templates.fetch("marketing_email_1")
+    announcement_html = announcement.render_body_html(@assigns, source: :published)
+    assert_equal "Reservations are open for tree pickup on {{ event.pickup_start_short }}", announcement.subject
+    assert_includes announcement_html, "Reservations are open"
+    assert_includes announcement_html, "now taking reservations"
+    assert_includes announcement_html, "Reserve a tree pickup"
+    assert_includes announcement_html, "two-scouts-tree-4c-bc"
+    assert_equal 1, announcement_html.scan(/<img\b/i).size
+    assert_includes announcement_html, event.fetch("pickup_start_date")
+    assert_includes announcement_html, event.fetch("pickup_start_time")
+    assert_includes announcement_html, event.fetch("pickup_end_time")
+    assert_includes announcement_html, event.fetch("sign_up_deadline_date")
+    assert_includes announcement_html, @assigns.dig("urls", "registration")
+    assert_not_includes announcement.body_html.downcase, "unsubscribe"
+    assert_not_includes announcement.body_text.downcase, "unsubscribe"
+
+    reminder = templates.fetch("marketing_email_2")
+    reminder_html = reminder.render_body_html(@assigns, source: :published)
+    assert_equal "Reminder: reserve your tree pickup by {{ event.sign_up_deadline_short }}", reminder.subject
+    assert_includes reminder_html, "have not seen a signup"
+    assert_includes reminder_html, "Deadline approaching"
+    assert_includes reminder_html, "Reserve a tree pickup"
+    assert_includes reminder_html, "tree-4c-bc"
+    assert_equal 1, reminder_html.scan(/<img\b/i).size
+    assert_includes reminder_html, event.fetch("pickup_start_date")
+    assert_includes reminder_html, event.fetch("sign_up_deadline_weekday")
+    assert_includes reminder_html, event.fetch("sign_up_deadline_date")
+    assert_not_includes reminder.body_html.downcase, "unsubscribe"
+    assert_not_includes reminder.body_text.downcase, "unsubscribe"
+    assert_not_includes announcement_html, "If you have any questions"
+    assert_not_includes reminder_html, "If you have any questions"
+  end
+
+  test "default templates include the contact email when one is configured" do
+    Setting.instance.update!(contact_email: "help@example.org")
+    assigns = MarketingEmailTemplate::Renderer.new(contact: @contact).assigns
+    MarketingEmailTemplate.where(name: MarketingEmailTemplate.default_names).delete_all
+
+    MarketingEmailTemplate.install_defaults!.each do |template|
+      html = template.render_body_html(assigns, source: :published)
+      text = template.render_body_text(assigns, source: :published)
+
+      assert_includes html, "If you have any questions, email us at"
+      assert_includes html, "mailto:help@example.org"
+      assert_match(/\.email-org-link\s*\{[^}]*text-decoration:\s*none/m, html)
+      refute_match(/\.email-org-link\s*\{[^}]*text-decoration:\s*underline/m, html)
+      assert_includes html, assigns.dig("urls", "registration")
+      assert_includes assigns.dig("urls", "registration"), "contact_id=#{@contact.id}"
+      assert_includes text, "If you have any questions, email us at help@example.org."
+    end
+  end
+
+  test "appends an unsubscribe link when rendering a marketing message" do
+    @template.update!(body_html: "<p>Hello {{ contact.first_name }}</p>", body_text: "Hello {{ contact.first_name }}")
+    url = @assigns.dig("urls", "unsubscribe")
+
+    html = @template.render_message_html(@assigns, source: :draft)
+    text = @template.render_message_text(@assigns, source: :draft)
+
+    assert_includes html, "Hello Susan"
+    assert_includes html, %(href="#{ERB::Util.html_escape(url)}")
+    assert_includes html, ">Unsubscribe</a>"
+    assert_includes text, "Hello Susan"
+    assert_includes text, "Unsubscribe: #{url}"
+    assert_not_includes @template.body_html, "Unsubscribe"
+    assert_not_includes @template.render_body_html(@assigns, source: :draft), "Unsubscribe"
+  end
+
+  test "still names the unsubscribe link when the contact has not been saved" do
+    assigns = MarketingEmailTemplate::Renderer.new(contact: MarketingEmailTemplate.sample_contact).assigns
+    html = @template.render_message_html(assigns, source: :draft)
+
+    assert_includes html, "Unsubscribe"
+    assert_not_includes html, %(href="")
+  end
+
   test "includes image variables in the available template variables" do
     image = MarketingEmailTemplate.available_images.first
     variable_names = MarketingEmailTemplate.available_variables.map { |variable| variable[:name] }

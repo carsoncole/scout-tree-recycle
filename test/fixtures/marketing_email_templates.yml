@@ -13,12 +13,10 @@ marketing_email_1:
     <a href="{{ urls.registration }}">Reserve My Tree Pickup</a>
     <p>{{ setting.organization_name }}</p>
     {% if urls.organization != blank %}<a href="{{ urls.organization }}">{{ setting.organization_name }}</a>{% endif %}
-    {% if urls.unsubscribe != blank %}<a href="{{ urls.unsubscribe }}">Unsubscribe</a>{% endif %}
   body_text: |
     Support {{ setting.organization_name }}! - Tree Recycling
     {% if contact.has_name %}Hi {{ contact.name }}!{% endif %}
     Reserve My Tree Pickup: {{ urls.registration }}
-    {% if urls.unsubscribe != blank %}Unsubscribe: {{ urls.unsubscribe }}{% endif %}
   published_subject: "Tree recycling {{ event.pickup_start_short }}. Register today."
   published_body_html: |
     <style>
@@ -31,12 +29,10 @@ marketing_email_1:
     <a href="{{ urls.registration }}">Reserve My Tree Pickup</a>
     <p>{{ setting.organization_name }}</p>
     {% if urls.organization != blank %}<a href="{{ urls.organization }}">{{ setting.organization_name }}</a>{% endif %}
-    {% if urls.unsubscribe != blank %}<a href="{{ urls.unsubscribe }}">Unsubscribe</a>{% endif %}
   published_body_text: |
     Support {{ setting.organization_name }}! - Tree Recycling
     {% if contact.has_name %}Hi {{ contact.name }}!{% endif %}
     Reserve My Tree Pickup: {{ urls.registration }}
-    {% if urls.unsubscribe != blank %}Unsubscribe: {{ urls.unsubscribe }}{% endif %}
   published_at: "2026-01-01 00:00:00"
 
 marketing_email_2:
@@ -53,13 +49,11 @@ marketing_email_2:
     <a href="{{ urls.registration }}">Register for a tree pickup</a>
     <p>Register by {{ event.pickup_end_weekday }}.</p>
     {% if urls.organization != blank %}<a href="{{ urls.organization }}">{{ setting.organization_name }}</a>{% endif %}
-    {% if urls.unsubscribe != blank %}<a href="{{ urls.unsubscribe }}">Unsubscribe</a>{% endif %}
   body_text: |
     Reserve your Pickup Today
     {% if contact.has_name %}Hello {{ contact.name }},{% endif %}
     {{ setting.organization_name }} is picking up trees on {{ event.pickup_start_weekday }}.
     Register at {{ urls.registration }}
-    {% if urls.unsubscribe != blank %}Unsubscribe: {{ urls.unsubscribe }}{% endif %}
   published_subject: "Last call! Tree recycling {{ event.pickup_start_short }}. Register today."
   published_body_html: |
     <style>
@@ -71,13 +65,11 @@ marketing_email_2:
     <a href="{{ urls.registration }}">Register for a tree pickup</a>
     <p>Register by {{ event.pickup_end_weekday }}.</p>
     {% if urls.organization != blank %}<a href="{{ urls.organization }}">{{ setting.organization_name }}</a>{% endif %}
-    {% if urls.unsubscribe != blank %}<a href="{{ urls.unsubscribe }}">Unsubscribe</a>{% endif %}
   published_body_text: |
     Reserve your Pickup Today
     {% if contact.has_name %}Hello {{ contact.name }},{% endif %}
     {{ setting.organization_name }} is picking up trees on {{ event.pickup_start_weekday }}.
     Register at {{ urls.registration }}
-    {% if urls.unsubscribe != blank %}Unsubscribe: {{ urls.unsubscribe }}{% endif %}
   published_at: "2026-01-01 00:00:00"
 
 draft_template:

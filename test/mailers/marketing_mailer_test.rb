@@ -39,23 +39,26 @@ class MarketingMailerTest < ActionMailer::TestCase
     contact = contacts(:full)
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_1
 
-    assert_match "Unsubscribe", mail.body.encoded
+    assert_includes mail.html_part.body.decoded, "Unsubscribe"
+    assert_includes mail.html_part.body.decoded, unsubscribe_contact_url(contact)
+    assert_includes mail.text_part.body.decoded, "Unsubscribe: #{unsubscribe_contact_url(contact)}"
     assert_equal "<#{unsubscribe_contact_url(contact)}>", mail.header["List-Unsubscribe"].value
     assert_equal "List-Unsubscribe=One-Click", mail.header["List-Unsubscribe-Post"].value
-        # TODO: Fix this encoding issue
-        # assert_match "https://example.com", mail.body.encoded
-      end
+    # TODO: Fix this encoding issue
+    # assert_match "https://example.com", mail.body.encoded
+  end
 
   test "marketing_email_2 contains unsubscribe and organization link" do
     Setting.instance.update(is_emailing_enabled: true, organization_url: "https://example.com")
     contact = contacts(:full)
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_2
 
-    assert_match "Unsubscribe", mail.body.encoded
+    assert_includes mail.html_part.body.decoded, "Unsubscribe"
+    assert_includes mail.html_part.body.decoded, unsubscribe_contact_url(contact)
+    assert_includes mail.text_part.body.decoded, "Unsubscribe: #{unsubscribe_contact_url(contact)}"
     assert_equal "<#{unsubscribe_contact_url(contact)}>", mail.header["List-Unsubscribe"].value
     assert_equal "List-Unsubscribe=One-Click", mail.header["List-Unsubscribe-Post"].value
-    # TODO: Fix this encoding issue
-    assert_match "https://example.com", mail.body.encoded
+    assert_includes mail.html_part.body.decoded, "https://example.com"
   end
 
   test "marketing_email_1 contains unsubscribe no organization link" do
@@ -63,10 +66,11 @@ class MarketingMailerTest < ActionMailer::TestCase
     contact = contacts(:full)
     mail = MarketingMailer.with(contact_id: contact.id).marketing_email_1
 
-    assert_match "Unsubscribe", mail.body.encoded
+    assert_includes mail.html_part.body.decoded, "Unsubscribe"
+    assert_includes mail.html_part.body.decoded, unsubscribe_contact_url(contact)
     assert_equal "<#{unsubscribe_contact_url(contact)}>", mail.header["List-Unsubscribe"].value
     assert_equal "List-Unsubscribe=One-Click", mail.header["List-Unsubscribe-Post"].value
-    assert_no_match "https://example.com", mail.body.encoded
+    assert_not_includes mail.html_part.body.decoded, "https://example.com"
     assert_match Setting.instance.organization_name, mail.body.encoded
   end
 
@@ -237,6 +241,7 @@ class MarketingMailerTest < ActionMailer::TestCase
 
     assert mail.multipart?
     assert_includes mail.text_part.body.to_s, "Reserve My Tree Pickup: http://example.com"
+    assert_includes mail.text_part.body.to_s, "Unsubscribe: http://example.com/contacts/#{contacts(:full).id}/unsubscribe"
     assert_not_includes mail.text_part.body.to_s, "&amp;"
   end
 
@@ -266,6 +271,8 @@ class MarketingMailerTest < ActionMailer::TestCase
     assert_equal [ "qa@example.com" ], mail.to
     assert_equal "[TEST] Draft subject", mail.subject
     assert_match "Draft body for Susan Banks", mail.body.encoded
+    assert_includes mail.html_part.body.decoded, "Unsubscribe"
+    assert_includes mail.text_part.body.decoded, "Unsubscribe: #{unsubscribe_contact_url(contact)}"
     assert_nil contact.reload.marketing_1_email_sent_at
   end
 

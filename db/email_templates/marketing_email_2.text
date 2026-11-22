@@ -1,12 +1,29 @@
-Tree Pickup Time!
+Deadline approaching
 
-We noticed that you haven't signed up yet, so we are sending a friendly reminder that {{ setting.organization_name }} is picking up trees on {{ event.pickup_start_weekday }}.
+There is still time to reserve
 
-If you would like us to pick up a tree again this year, please register at {{ urls.registration }}. Once registered we will send you a confirmation email and then pick up your tree on {{ event.pickup_start_weekday }}.
+{% if contact.has_name %}
+Hello {{ contact.name }},
 
-Thank You,
+{% endif %}
+We wrote when reservations opened. We have not seen a signup from you yet, and the deadline is {{ event.sign_up_deadline_weekday }}.
+
+{{ setting.organization_name }} picks up trees on {{ event.pickup_start_weekday }}. Reserve by {{ event.sign_up_deadline_date }} if you would like us to collect yours.
+
+Pickup date: {{ event.pickup_start_date }}
+Pickup time: {{ event.pickup_start_time }} to {{ event.pickup_end_time }}
+Reserve by: {{ event.sign_up_deadline_date }}
+
+Reserve a tree pickup: {{ urls.registration }}
+
+If you already reserved, you can set this note aside. We will be there on pickup day.
+
+{% if setting.contact_email != blank %}
+If you have any questions, email us at {{ setting.contact_email }}.
+
+{% endif %}
+Thank you,
 {{ setting.organization_name }}
-
-{% if urls.unsubscribe != blank %}
-Unsubscribe: {{ urls.unsubscribe }}
+{% if urls.organization != blank %}
+{{ urls.organization }}
 {% endif %}

@@ -3,150 +3,207 @@
     width: 100%;
     border: 0;
     border-collapse: collapse;
+    background-color: #f6f3ea;
   }
 
-  .email-wrapper > tbody > tr > td {
-    padding: 0;
-    border: 0;
+  .email-outer {
+    padding: 48px 16px 16px;
+    background-color: #f6f3ea;
   }
 
-  .email-container {
+  .email-card {
     width: 100%;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 560px;
+    border: 1px solid #e3dfd2;
     border-collapse: collapse;
+    background-color: #fefdfa;
   }
 
-  .email-content {
-    padding: 0;
+  .email-image-cell {
+    padding: 56px 40px 8px;
+    background-color: #fefdfa;
+    text-align: center;
+  }
+
+  .email-image {
+    display: block;
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
     border: 0;
+  }
+
+  .email-copy {
+    padding: 28px 48px 64px;
+    background-color: #fefdfa;
     text-align: left;
   }
 
-  .email-logo {
-    margin: 16px auto 0;
-    text-align: center;
-  }
-
-  .email-logo img {
-    width: 140px;
-    max-width: 100%;
-    height: auto;
+  .email-eyebrow {
+    margin: 0 0 14px;
+    color: #4c6a57;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+    text-transform: uppercase;
   }
 
   .email-heading {
-    margin: 30px auto 70px;
-    color: #2d3748;
-    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 44px;
-    font-weight: 300;
-    line-height: 1.15;
-    text-align: center;
+    margin: 0 0 28px;
+    color: #262a20;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
   }
 
   .email-text {
     margin: 0 0 20px;
-    color: #4a5568;
-    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
+    color: #5c6155;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 17px;
     font-weight: 400;
+    line-height: 1.7;
+  }
+
+  .email-details {
+    width: 100%;
+    margin: 12px 0 0;
+    border-collapse: collapse;
+  }
+
+  .email-detail {
+    padding: 18px 0 0;
+  }
+
+  .email-detail-label {
+    margin: 0 0 4px;
+    color: #7e8273;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .email-detail-value {
+    margin: 0;
+    padding: 0 0 18px;
+    border-bottom: 1px solid #e3dfd2;
+    color: #262a20;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 17px;
     line-height: 1.5;
   }
 
-  .email-button-row {
-    width: 70%;
-    margin: 0 auto 30px;
-    text-align: center;
+  .email-button-wrap {
+    padding: 40px 0 4px;
+  }
+
+  .email-button-cell {
+    border-radius: 6px;
+    background-color: #4c6a57;
   }
 
   .email-button {
     display: inline-block;
-    padding: 8px 12px;
-    border: 1px solid #ed2939;
-    border-radius: 2px;
-    background-color: #ed2939;
-    color: #ffffff;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
+    padding: 16px 28px;
+    border: 1px solid #4c6a57;
+    border-radius: 6px;
+    background-color: #4c6a57;
+    color: #fefdfa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
     text-align: center;
     text-decoration: none;
   }
 
-  .email-list {
-    margin: 0 0 20px;
-    padding-left: 1.2em;
-    color: #4a5568;
-    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
+  .email-note {
+    margin: 32px 0 0;
+    color: #5c6155;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 17px;
     font-weight: 400;
-    line-height: 1.5;
-  }
-
-  .email-list li {
-    margin-bottom: 6px;
-  }
-
-  .email-list strong {
-    font-weight: 800;
+    line-height: 1.7;
   }
 
   .email-sign-off {
-    margin: 0 0 60px;
-    color: #4a5568;
-    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5;
+    margin: 28px 0 0;
+    color: #5c6155;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
   }
 
-  .email-footer {
-    margin: 0 0 25px;
-    color: #718096;
-    font-family: 'SF UI Display Medium', system, -apple-system, -webkit-system-font, 'SFNSText', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-
-  .email-footer a {
-    color: #718096;
+  .email-org-link {
+    color: #3a5342;
     text-decoration: none;
-  }
-
-  .email-footer-divider {
-    padding: 0 6px;
-    color: #a0aec0;
   }
 </style>
 
-<table class="email-wrapper" role="presentation" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-      <table class="email-container" role="presentation">
-        <tr>
-          <td class="email-content">
-            <div class="email-logo">
-              <img src="{{ images.fleur_de_lis_2024_logo_4c_bc }}" alt="Scouting America" width="140">
-            </div>
+<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;color:#f6f3ea;">
+  The deadline to reserve a tree pickup is {{ event.sign_up_deadline_weekday }}.
+</div>
 
-            <h1 class="email-heading">Reserve your Pickup Today</h1>
+<table class="email-wrapper" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f6f3ea">
+  <tr>
+    <td class="email-outer" align="center" bgcolor="#f6f3ea">
+      <!--[if mso]>
+      <table role="presentation" width="560" cellspacing="0" cellpadding="0" border="0" align="center"><tr><td>
+      <![endif]-->
+      <table class="email-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#fefdfa">
+        <tr>
+          <td class="email-image-cell" align="center" bgcolor="#fefdfa">
+            <img class="email-image" src="{{ images.tree_4c_bc }}" alt="A Christmas tree" width="200">
+          </td>
+        </tr>
+        <tr>
+          <td class="email-copy" bgcolor="#fefdfa">
+            <p class="email-eyebrow">Deadline approaching</p>
+            <h1 class="email-heading">There is still time to reserve</h1>
 
             {% if contact.has_name %}
               <p class="email-text">Hello {{ contact.name | escape }},</p>
             {% endif %}
 
-            <p class="email-text">We hope this message finds you well. As the new year begins, we wanted to remind you that the tree pickup service provided by {{ setting.organization_name }} is scheduled for {{ event.pickup_start_weekday }}.</p>
+            <p class="email-text">We wrote when reservations opened. We have not seen a signup from you yet, and the deadline is {{ event.sign_up_deadline_weekday }}.</p>
 
-            <p class="email-text">It appears that you haven't signed up for this year's tree pickup yet, and we didn't want you to miss the opportunity. To ensure a hassle-free experience, please take a moment to register on our website:</p>
+            <p class="email-text">{{ setting.organization_name }} picks up trees on {{ event.pickup_start_weekday }}. Reserve by {{ event.sign_up_deadline_date }} if you would like us to collect yours.</p>
 
-            <table class="email-button-row" role="presentation" cellspacing="0" cellpadding="0">
+            <table class="email-details" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
               <tr>
-                <td align="center">
-                  <table role="presentation" cellspacing="0" cellpadding="0">
+                <td class="email-detail">
+                  <p class="email-detail-label">Pickup date</p>
+                  <p class="email-detail-value">{{ event.pickup_start_date }}</p>
+                </td>
+              </tr>
+              <tr>
+                <td class="email-detail">
+                  <p class="email-detail-label">Pickup time</p>
+                  <p class="email-detail-value">{{ event.pickup_start_time }} to {{ event.pickup_end_time }}</p>
+                </td>
+              </tr>
+              <tr>
+                <td class="email-detail">
+                  <p class="email-detail-label">Reserve by</p>
+                  <p class="email-detail-value">{{ event.sign_up_deadline_date }}</p>
+                </td>
+              </tr>
+            </table>
+
+            <table class="email-button-row" role="presentation" cellspacing="0" cellpadding="0" border="0">
+              <tr>
+                <td class="email-button-wrap">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                     <tr>
-                      <td bgcolor="#ed2939" align="center" style="border-radius: 2px;">
-                        <a class="email-button" href="{{ urls.registration }}" target="_blank">Register for a tree pickup</a>
+                      <td class="email-button-cell" align="center" bgcolor="#4c6a57">
+                        <a class="email-button" href="{{ urls.registration }}" target="_blank">Reserve a tree pickup</a>
                       </td>
                     </tr>
                   </table>
@@ -154,39 +211,25 @@
               </tr>
             </table>
 
-            <p class="email-text">Here's a quick overview of the process:</p>
-
-            <ol class="email-list">
-              <li><strong>Register for a Tree Pickup:</strong> Simply visit our website and complete the registration process.</li>
-              <li><strong>Confirmation Email:</strong> Once registered, you will receive a confirmation email detailing the pickup logistics.</li>
-              <li><strong>Scheduled Pickup:</strong> Our team will be on standby to collect your tree on {{ event.pickup_start_weekday }}.</li>
-            </ol>
-
-            <p class="email-text">Please note that the deadline for reserving a pickup slot is {{ event.pickup_end_weekday }}.</p>
-
-            <p class="email-text">Your participation not only supports {{ setting.organization_name }} but also contributes to the environmentally friendly disposal of Christmas trees in our community.</p>
-
-            <p class="email-text">Thank you for considering our tree pickup service. We appreciate your support.</p>
+            <p class="email-note">If you already reserved, you can set this note aside. We will be there on pickup day.</p>
 
             <p class="email-sign-off">
-              Warm regards,<br>
-              {{ setting.organization_name }}
-            </p>
-
-            <div class="email-footer">
+              {% if setting.contact_email != blank %}
+                If you have any questions, email us at <a class="email-org-link" href="mailto:{{ setting.contact_email | escape }}">{{ setting.contact_email | escape }}</a>.<br><br>
+              {% endif %}
+              Thank you,<br>
               {% if urls.organization != blank %}
-                <a href="{{ urls.organization }}" target="_blank">{{ setting.organization_name }}</a>
+                <a class="email-org-link" href="{{ urls.organization }}">{{ setting.organization_name }}</a>
               {% else %}
                 {{ setting.organization_name }}
               {% endif %}
-              {% if urls.unsubscribe != blank %}
-                <span class="email-footer-divider">|</span>
-                <a href="{{ urls.unsubscribe }}" target="_blank">Unsubscribe</a>
-              {% endif %}
-            </div>
+            </p>
           </td>
         </tr>
       </table>
+      <!--[if mso]>
+      </td></tr></table>
+      <![endif]-->
     </td>
   </tr>
 </table>

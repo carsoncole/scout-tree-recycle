@@ -48,6 +48,12 @@
     </div>
 
     <div class="admin-panel-body">
+      <div class="<%= admin_notice_class(spaced: true) %>" role="note">
+        <div>
+          <p><strong>Unsubscribe is added automatically.</strong> Every marketing email includes an unsubscribe link at the bottom of the HTML and plain-text versions. Leave it out of this template. The link is required, and it is included even when it is not written here.</p>
+        </div>
+      </div>
+
       <div class="admin-form">
         <div class="admin-field">
           <%= f.text_area :body_html,
@@ -65,7 +71,7 @@
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">Plain-text body</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Optional, but recommended. If left blank, a plain-text version is generated from the HTML when the email is sent.</p>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Optional, but recommended. If left blank, a plain-text version is generated from the HTML when the email is sent. The unsubscribe line is added automatically and is not part of this field.</p>
       </div>
     </div>
 

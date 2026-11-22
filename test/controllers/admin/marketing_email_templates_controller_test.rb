@@ -17,6 +17,7 @@ class Admin::MarketingEmailTemplatesControllerTest < ActionDispatch::Integration
     get new_admin_marketing_email_template_url
 
     assert_response :success
+    assert_includes response.body, "Unsubscribe is added automatically."
   end
 
   test "should get edit" do
@@ -27,6 +28,7 @@ class Admin::MarketingEmailTemplatesControllerTest < ActionDispatch::Integration
 
     assert_response :success
     assert_includes response.body, "Available variables"
+    assert_includes response.body, "Unsubscribe is added automatically."
     assert_includes response.body, "Email template preview"
     assert_includes response.body, image_variable
   end
@@ -85,6 +87,8 @@ class Admin::MarketingEmailTemplatesControllerTest < ActionDispatch::Integration
     assert_response :success
     assert_includes response.body, "Hi Susan Banks!"
     assert_includes response.body, "color: #123456"
+    assert_includes response.body, "Unsubscribe"
+    assert_includes response.body, "/contacts/#{contacts(:full).id}/unsubscribe"
   end
 
   test "should preview with sample data for an invalid contact id" do

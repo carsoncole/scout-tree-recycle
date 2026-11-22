@@ -17,7 +17,7 @@ class Admin::MarketingEmailTemplatesController < Admin::BaseController
     @selected_contact = find_contact(params[:contact_id]) || @contacts.first || MarketingEmailTemplate.sample_contact
     @preview_source = params[:source].to_s == "published" && @template.published? ? :published : :draft
     @preview_subject = @template.render_subject(preview_assigns, source: @preview_source)
-    @preview_text = @template.render_body_text(preview_assigns, source: @preview_source)
+    @preview_text = @template.render_message_text(preview_assigns, source: @preview_source)
   rescue Liquid::Error => e
     @preview_error = e.message
     @preview_subject = ""

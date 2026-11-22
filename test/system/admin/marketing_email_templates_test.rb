@@ -15,6 +15,7 @@ class Admin::MarketingEmailTemplatesTest < ApplicationSystemTestCase
     end
 
     assert_selector "h1", text: "Edit Marketing Email 1"
+    assert_text "Unsubscribe is added automatically."
     assert_selector "h2", text: "Available variables"
     assert_field "Subject", with: template.subject
 

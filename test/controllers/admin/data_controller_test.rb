@@ -223,7 +223,7 @@ class Admin::DataControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_equal "application/json", response.media_type
-    assert_includes response.headers["Content-Disposition"], "settings-"
+    assert_includes response.headers["Content-Disposition"], "scout-tree-recycle-settings-"
     assert_includes response.headers["Content-Disposition"], ".json"
 
     payload = JSON.parse(response.body)

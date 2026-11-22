@@ -73,141 +73,135 @@
         </div>
       </div>
       <div class="admin-panel-body">
-        <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
-          <div>
-            <p class="admin-notice-title">Sensitive file</p>
-            <p>Backups include sensitive data. Settings backups contain credentials such as SMTP, Twilio, Stripe, AWS, and driver portal passwords. Store backup files securely and keep them outside this application.</p>
-          </div>
+        <div class="<%= admin_notice_class(:warning) %>" role="status">
+          <p><strong class="admin-notice-title">Sensitive file.</strong> Backups include credentials such as SMTP, Twilio, Stripe, AWS, and driver portal passwords. Store them securely outside this application.</p>
         </div>
 
         <% selected_datasets = @setting&.backup_dataset_keys.presence || Backup.dataset_keys %>
         <% if @setting %>
-          <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
-            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Download a backup</h3>
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Save a zip file you can keep outside the application.</p>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <section class="flex h-full flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Download</h3>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Save a zip named after your event header.</p>
 
-            <%= form_with url: admin_backups_path, method: :post, class: "admin-form", data: { turbo: false } do %>
-              <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "download" %>
-
-              <div class="flex flex-wrap items-center justify-end gap-3">
-                <%= submit_tag "Download Backup (.zip)", class: admin_button_class %>
-              </div>
-              <p class="admin-hint mt-3 text-ink-soft dark:text-ink-soft-dark">
-                The zip is named after your event header, for example <span class="font-mono">troop-100-tree-recycle-backup-20261122-120000.zip</span>.
-                When no header is set it is named <span class="font-mono">scout-tree-recycle-backup-....zip</span>.
-              </p>
-            <% end %>
-          </div>
-
-          <div class="admin-form-section border-line dark:border-line-dark">
-            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Email a backup now</h3>
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Send the selected backup immediately.</p>
-
-            <%= form_with model: @setting, url: email_admin_backups_path, method: :post, class: "admin-form", data: { turbo: false } do |f| %>
-              <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "email" %>
-
-              <div class="admin-field mt-4">
-                <%= f.label :backup_email, "Send this backup to", for: "backup_email_now", class: "admin-label text-ink dark:text-ink-dark" %>
-                <%= f.email_field :backup_email, id: "backup_email_now", class: admin_input_class, placeholder: "recipient@example.com" %>
-              </div>
-
-              <div class="flex flex-wrap items-center justify-end gap-3">
-                <%= f.submit "Email Backup Now", class: admin_button_class %>
-              </div>
-            <% end %>
-          </div>
-
-          <div class="admin-form-section border-line dark:border-line-dark">
-            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Daily backup schedule</h3>
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Email the selected backup automatically once a day.</p>
-
-            <%= form_with model: @setting, url: schedule_admin_backups_path, method: :post, class: "admin-form" do |f| %>
-              <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "schedule" %>
-
-              <div class="admin-field-grid admin-field-grid--two gap-5 mt-4">
-                <div class="admin-field">
-                  <%= f.label :backup_email, "Daily backup email address", for: "backup_email_schedule", class: "admin-label text-ink dark:text-ink-dark" %>
-                  <%= f.email_field :backup_email, id: "backup_email_schedule", class: admin_input_class, placeholder: "recipient@example.com" %>
+              <%= form_with url: admin_backups_path, method: :post, class: "mt-3 flex flex-1 flex-col gap-3", data: { turbo: false } do %>
+                <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "download" %>
+                <div class="mt-auto pt-1">
+                  <%= submit_tag "Download Backup (.zip)", class: admin_button_class(full: true) %>
                 </div>
+              <% end %>
+            </section>
+
+            <section class="flex h-full flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Email now</h3>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Send the selected backup immediately.</p>
+
+              <%= form_with model: @setting, url: email_admin_backups_path, method: :post, class: "mt-3 flex flex-1 flex-col gap-3", data: { turbo: false } do |f| %>
+                <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "email" %>
+
                 <div class="admin-field">
-                  <%= f.label :backup_time, "Daily send time", class: "admin-label text-ink dark:text-ink-dark" %>
-                  <%= f.select :backup_time, Setting.backup_time_options, {}, class: admin_select_class %>
-                  <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Sent every day at this time in the configured time zone.</p>
+                  <%= f.label :backup_email, "Send this backup to", for: "backup_email_now", class: "admin-label text-ink dark:text-ink-dark" %>
+                  <%= f.email_field :backup_email, id: "backup_email_now", class: admin_input_class, placeholder: "recipient@example.com" %>
                 </div>
-              </div>
 
-              <label class="admin-check-row text-ink dark:text-ink-dark" for="setting_is_backup_schedule_enabled">
-                <%= f.check_box :is_backup_schedule_enabled, class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
-                <span>Email the backup daily</span>
-              </label>
+                <div class="mt-auto pt-1">
+                  <%= f.submit "Email Backup Now", class: admin_button_class(full: true) %>
+                </div>
+              <% end %>
+            </section>
 
-              <div class="flex flex-wrap items-center justify-end gap-3">
-                <%= f.submit "Save Daily Schedule", class: admin_button_class %>
-              </div>
-            <% end %>
+            <section class="flex h-full flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark sm:col-span-2 xl:col-span-1">
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Daily schedule</h3>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Email the selected backup automatically once a day.</p>
+
+              <%= form_with model: @setting, url: schedule_admin_backups_path, method: :post, class: "mt-3 flex flex-1 flex-col gap-3" do |f| %>
+                <%= render "admin/backups/dataset_fields", selected: selected_datasets, scope: "schedule" %>
+
+                <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                  <div class="admin-field">
+                    <%= f.label :backup_email, "Daily backup email address", for: "backup_email_schedule", class: "admin-label text-ink dark:text-ink-dark" %>
+                    <%= f.email_field :backup_email, id: "backup_email_schedule", class: admin_input_class, placeholder: "recipient@example.com" %>
+                  </div>
+                  <div class="admin-field">
+                    <%= f.label :backup_time, "Daily send time", class: "admin-label text-ink dark:text-ink-dark" %>
+                    <%= f.select :backup_time, Setting.backup_time_options, {}, class: admin_select_class %>
+                  </div>
+                </div>
+
+                <label class="admin-check-row text-ink dark:text-ink-dark" for="setting_is_backup_schedule_enabled">
+                  <%= f.check_box :is_backup_schedule_enabled, class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
+                  <span>Email the backup daily</span>
+                </label>
+
+                <div class="mt-auto pt-1">
+                  <%= f.submit "Save Daily Schedule", class: admin_button_class(full: true) %>
+                </div>
+              <% end %>
+            </section>
           </div>
         <% else %>
-          <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
-            <div>
-              <p class="admin-notice-title">Settings required</p>
-              <p>Complete the initial settings before backing up settings. You can still download reservations.</p>
-            </div>
+          <div class="<%= admin_notice_class(:warning) %> mt-5" role="status">
+            <p><strong class="admin-notice-title">Settings required.</strong> Complete the initial settings before backing up settings. You can still download reservations.</p>
           </div>
 
-          <%= form_with url: admin_backups_path, method: :post, class: "admin-form", data: { turbo: false } do %>
-            <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
+          <section class="mt-4 flex flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
+            <%= form_with url: admin_backups_path, method: :post, class: "flex flex-col gap-3", data: { turbo: false } do %>
               <label class="admin-check-row text-ink dark:text-ink-dark" for="datasets_reservations">
                 <%= check_box_tag "datasets[]", "reservations", true,
                     id: "datasets_reservations", class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
                 <span>Reservations</span>
               </label>
-            </div>
-            <div class="flex flex-wrap items-center justify-end gap-3">
-              <%= submit_tag "Download Backup (.zip)", class: admin_button_class %>
-            </div>
-          <% end %>
+              <div>
+                <%= submit_tag "Download Backup (.zip)", class: admin_button_class(full: true) %>
+              </div>
+            <% end %>
+          </section>
         <% end %>
 
         <div class="admin-form-section border-line dark:border-line-dark">
           <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Restore from a backup</h3>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Settings and reservations restore independently, so you can restore only the part you need.</p>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Restore settings and reservations independently.</p>
 
-          <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
-            <div>
-              <p class="admin-notice-title">Event finished?</p>
-              <p>
-                If this event is over, do not restore reservations. Import the reservations CSV through
-                <%= link_to "Import contacts", admin_data_path(anchor: "import-contacts"), class: admin_link_class %>
-                so supporters are kept for next year. <%= link_to "Close Event", admin_close_event_path, class: admin_link_class %>
-                does this automatically from the current reservations.
-              </p>
-            </div>
+          <div class="<%= admin_notice_class(:warning) %> mt-4" role="status">
+            <p>
+              <strong class="admin-notice-title">Event finished?</strong>
+              If this event is over, do not restore reservations. Import the CSV through
+              <%= link_to "Import contacts", admin_data_path(anchor: "import-contacts"), class: admin_link_class %>
+              so supporters are kept for next year. <%= link_to "Close Event", admin_close_event_path, class: admin_link_class %>
+              does this automatically from the current reservations.
+            </p>
           </div>
 
-          <div class="admin-field-grid admin-field-grid--two gap-5">
-            <div class="admin-field">
-              <h4 class="admin-label text-ink dark:text-ink-dark">Restore settings</h4>
+          <div class="mt-4 grid gap-4 lg:grid-cols-2">
+            <section class="flex h-full flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
+              <h4 class="admin-toggle-title text-ink dark:text-ink-dark">Restore settings</h4>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Overwrites current settings, including credentials.</p>
 
-              <%= form_with url: restore_settings_admin_backups_path, method: :post, multipart: true, class: "admin-form" do %>
+              <%= form_with url: restore_settings_admin_backups_path, method: :post, multipart: true, class: "mt-3 flex flex-1 flex-col gap-2" do %>
                 <%= label_tag :backup_settings_file, "Settings JSON file", class: "admin-label text-ink dark:text-ink-dark" %>
-                <%= file_field_tag :file, id: "backup_settings_file", accept: ".json,application/json", class: admin_input_class %>
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <%= file_field_tag :file, id: "backup_settings_file", accept: ".json,application/json",
+                      class: "#{admin_input_class} min-w-0 flex-1" %>
+                  <%= submit_tag "Restore Settings", class: "#{admin_button_class} shrink-0" %>
+                </div>
                 <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Choose <span class="font-mono">settings.json</span> from a backup zip. Maximum 1 MB.</p>
-                <%= submit_tag "Restore Settings", class: admin_button_class %>
               <% end %>
-            </div>
+            </section>
 
-            <div class="admin-field">
-              <h4 class="admin-label text-ink dark:text-ink-dark">Restore reservations</h4>
+            <section class="flex h-full flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
+              <h4 class="admin-toggle-title text-ink dark:text-ink-dark">Restore reservations</h4>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Updates reservations that match by email and adds missing ones. Never deletes reservations.</p>
 
-              <%= form_with url: restore_reservations_admin_backups_path, method: :post, multipart: true, class: "admin-form" do %>
+              <%= form_with url: restore_reservations_admin_backups_path, method: :post, multipart: true, class: "mt-3 flex flex-1 flex-col gap-2" do %>
                 <%= label_tag :backup_reservations_file, "Reservations CSV file", class: "admin-label text-ink dark:text-ink-dark" %>
-                <%= file_field_tag :file, id: "backup_reservations_file", accept: ".csv,text/csv", class: admin_input_class %>
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <%= file_field_tag :file, id: "backup_reservations_file", accept: ".csv,text/csv",
+                      class: "#{admin_input_class} min-w-0 flex-1" %>
+                  <%= submit_tag "Restore Reservations", class: "#{admin_button_class} shrink-0" %>
+                </div>
                 <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Choose <span class="font-mono">reservations.csv</span> from a backup zip. Maximum 10 MB. Runs in the background; results are recorded in the System Logs.</p>
-                <%= submit_tag "Restore Reservations", class: admin_button_class %>
               <% end %>
-            </div>
+            </section>
           </div>
         </div>
       </div>

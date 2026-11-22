@@ -1,17 +1,16 @@
 <% selected = local_assigns.fetch(:selected, Backup.dataset_keys) %>
 <% scope = local_assigns.fetch(:scope, "default") %>
-<fieldset class="admin-field">
-  <legend class="admin-label text-ink dark:text-ink-dark">Include in the backup</legend>
-  <div class="mt-2 flex flex-col gap-2">
+<div class="admin-field">
+  <span class="admin-label text-ink dark:text-ink-dark">Include</span>
+  <div class="flex flex-wrap gap-2">
     <% Backup::DATASETS.each_value do |dataset| %>
-      <label class="admin-check-row text-ink dark:text-ink-dark" for="datasets_<%= dataset.key %>_<%= scope %>">
+      <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line-strong bg-surface px-3 py-1.5 text-sm text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark"
+             for="datasets_<%= dataset.key %>_<%= scope %>"
+             title="<%= dataset.description %>">
         <%= check_box_tag "datasets[]", dataset.key, selected.include?(dataset.key),
-            id: "datasets_#{dataset.key}_#{scope}", class: "admin-checkbox accent-sage dark:accent-sage-dark" %>
-        <span>
-          <span class="block font-medium"><%= dataset.label %></span>
-          <span class="admin-hint text-ink-soft dark:text-ink-soft-dark"><%= dataset.description %></span>
-        </span>
+            id: "datasets_#{dataset.key}_#{scope}", class: "h-4 w-4 accent-sage dark:accent-sage-dark" %>
+        <span class="font-medium"><%= dataset.label %></span>
       </label>
     <% end %>
   </div>
-</fieldset>
+</div>

@@ -1,13 +1,13 @@
 # Name of your application. Used to uniquely configure containers.
-service: tree_recycle
+service: scout-tree-recycle
 
 # Name of the container image.
-image: carsoncole/tree_recycle
+image: carsoncole/scout-tree-recycle
 
 # Deploy to these servers.
 servers:
   web:
-    - 206.189.172.249
+    - 138.68.42.162
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -53,7 +53,7 @@ aliases:
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
 volumes:
-  - "tree_recycle_storage:/rails/storage"
+  - "scout_tree_recycle_storage:/rails/storage"
 
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid

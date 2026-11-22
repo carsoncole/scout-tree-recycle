@@ -1,7 +1,7 @@
 development:
   host: localhost
   adapter: postgresql
-  database: scout-tree-recycle-development
+  database: scout_tree_recycle_development
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   encoding: unicode
   timeout: 5000
@@ -9,7 +9,7 @@ development:
 test:
   host: localhost
   adapter: postgresql
-  database: scout-tree-recycle-test
+  database: scout_tree_recycle_test
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   encoding: unicode
   timeout: 5000

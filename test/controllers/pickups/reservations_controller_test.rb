@@ -22,6 +22,30 @@ class Pickups::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/missing-tree text message/, @response.body)
   end
 
+  test "address links to Apple Maps directions on Apple devices" do
+    get pickups_route_reservation_url(@route, @reservation),
+        headers: { "HTTP_USER_AGENT" => "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Mobile/15E148 Safari/604.1" }
+
+    assert_response :success
+    assert_select "a[href='https://maps.apple.com/?daddr=40.7208%2C-73.993']", text: /770 Broadway/
+  end
+
+  test "address links to Google Maps directions on other devices" do
+    get pickups_route_reservation_url(@route, @reservation),
+        headers: { "HTTP_USER_AGENT" => "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36" }
+
+    assert_response :success
+    assert_select "a[href^='https://www.google.com/maps/dir/?api=1&destination=40.7208%2C-73.993']", text: /770 Broadway/
+  end
+
+  test "address directions fall back to the street address without coordinates" do
+    get pickups_route_reservation_url(routes(:two), reservations(:cancelled_1)),
+        headers: { "HTTP_USER_AGENT" => "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36" }
+
+    assert_response :success
+    assert_select "a[href^='https://www.google.com/maps/dir/?api=1&destination=33%20Hudson%20Yards%2C%20New%20York%2C%20NY%2C%20United%20States']", text: /33 Hudson Yards/
+  end
+
   test "show explains that an email is sent when there is no mobile number" do
     get pickups_route_reservation_url(@route, reservations(:pending_pickup_no_mobile))
     assert_response :success

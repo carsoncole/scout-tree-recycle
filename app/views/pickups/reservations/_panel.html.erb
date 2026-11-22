@@ -21,7 +21,13 @@
   <div class="flex flex-col gap-4">
     <div>
       <p class="admin-label text-ink dark:text-ink-dark">Address</p>
-      <p class="admin-detail-value text-ink dark:text-ink-dark"><%= [ reservation.street, reservation.unit.presence, reservation.city, reservation.state, reservation.zip.presence ].compact_blank.join(", ") %></p>
+      <p class="admin-detail-value">
+        <%= link_to maps_directions_url(reservation),
+                    target: "_blank",
+                    rel: "noopener",
+                    aria: { label: "Get directions to #{[ reservation.street, reservation.city, reservation.state ].compact_blank.join(', ')}" },
+                    class: "inline-flex items-start gap-1.5 text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" do %><%= map_pin_icon %><span><%= [ reservation.street, reservation.unit.presence, reservation.city, reservation.state, reservation.zip.presence ].compact_blank.join(", ") %></span><% end %>
+      </p>
     </div>
 
     <% if reservation.name.present? %>

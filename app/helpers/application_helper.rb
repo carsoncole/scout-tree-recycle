@@ -48,6 +48,50 @@ module ApplicationHelper
     end
   end
 
+  # Small map pin marking a link that opens directions.
+  def map_pin_icon(css_class: "size-4 shrink-0")
+    tag.svg(
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": 1.8,
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      class: css_class,
+      aria: { hidden: true }
+    ) do
+      tag.path(
+        d: "M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm4.5-.5c-.375 6-4.5 9.75-7.5 12-3-2.25-7.125-6-7.5-12C4.5 5.25 8.25 1.5 12 1.5s7.5 3.75 7.5 8.5Z"
+      )
+    end
+  end
+
+  # Directions link for a pickup address: Apple devices open maps.apple.com
+  # links in the native Maps app with the destination set; everything else
+  # gets a Google Maps directions URL. Geocoded reservations link their
+  # plotted coordinates; reservations without coordinates fall back to the
+  # full address string.
+  def maps_directions_url(reservation)
+    destination = if (coordinates = reservation.coordinates)
+                    coordinates.join(",")
+    else
+                    [ reservation.street, reservation.unit.presence, reservation.city,
+                      reservation.state, reservation.zip.presence, reservation.country ].compact_blank.join(", ")
+    end
+
+    if apple_maps_device?
+      "https://maps.apple.com/?daddr=#{ERB::Util.url_encode(destination)}"
+    else
+      "https://www.google.com/maps/dir/?api=1&destination=#{ERB::Util.url_encode(destination)}"
+    end
+  end
+
+  # Apple devices (iPhone, iPad, iPod, Mac) open maps.apple.com links in the
+  # native Maps app; other platforms do not.
+  def apple_maps_device?
+    request.user_agent.to_s.match?(/\b(iPhone|iPad|iPod|Macintosh)\b/)
+  end
+
   def surround_text(text, prefix = "", suffix = "")
     return "" if text.blank?
 

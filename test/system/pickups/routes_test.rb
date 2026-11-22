@@ -36,6 +36,25 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     end
   end
 
+  test "pickup dialog links the address to map directions" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    assert_selector "#route_status_badge", text: "2 pickups pending"
+
+    reservation = reservations(:pending_pickup_1)
+    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    assert_selector "dialog[open]"
+
+    within "dialog[open]" do
+      address_link = find("a", text: /770 Broadway/)
+      # The provider (Apple Maps or Google Maps) depends on the device; both
+      # link the pickup's plotted coordinates.
+      assert_match(/\Ahttps:\/\/(maps\.apple\.com\/\?daddr=|www\.google\.com\/maps\/dir\/\?api=1&destination=)/, address_link[:href])
+      assert_includes address_link[:href], "40.7208%2C-73.993"
+    end
+  end
+
   test "driver can mark a pickup picked from the map dialog" do
     sign_in_driver
 

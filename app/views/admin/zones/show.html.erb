@@ -38,11 +38,11 @@
       </div>
       <div class="admin-panel-body">
         <% route_polygons = @routes.flat_map { |route| route_boundary_polygon(route) } %>
-        <% reservation_markers = reservation_map_markers(@reservations) %>
-        <% if route_polygons.any? || reservation_markers.any? %>
+        <% markers = reservation_map_markers(@reservations) + location_markers_within(@routes) %>
+        <% if route_polygons.any? || markers.any? %>
           <%= render "shared/map",
                 polygons: route_polygons,
-                markers: reservation_markers,
+                markers: markers,
                 height_class: "h-96",
                 empty_message: "No map data available for this zone." %>
           <% routes_without_boundary = @routes.select { |route| route.points.length <= 3 } %>
@@ -52,7 +52,7 @@
             </p>
           <% end %>
         <% else %>
-          <%= render "admin/shared/empty_state", message: "No route boundaries or reservations with coordinates are available for this zone." %>
+          <%= render "admin/shared/empty_state", message: "No route boundaries, locations, or reservations with coordinates are available for this zone." %>
         <% end %>
       </div>
     </section>

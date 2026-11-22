@@ -68,6 +68,14 @@
           </div>
           <%= link_to "View routes", admin_routes_path, class: admin_button_class(variant: :secondary, size: :small) %>
         </div>
+
+        <div class="admin-toolbar admin-field--spaced">
+          <div>
+            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Locations <%= render "admin/settings/count_badge", count: @locations_count, label: "locations" %></h3>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Manage staging points, meeting places, and other map locations.</p>
+          </div>
+          <%= link_to "View locations", admin_locations_path, class: admin_button_class(variant: :secondary, size: :small) %>
+        </div>
       </div>
 
       <div class="admin-form-section border-line dark:border-line-dark">

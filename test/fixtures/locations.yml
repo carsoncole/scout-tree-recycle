@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+staging_point:
+  name: "Lower Manhattan Staging Point"
+  location_type: "Staging point"
+  latitude: 40.75000
+  longitude: -73.98000
+
+outside:
+  name: "Harbor Point"
+  location_type: "Meeting place"
+  latitude: 40.70000
+  longitude: -73.85000

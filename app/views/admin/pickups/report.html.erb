@@ -79,7 +79,7 @@
         <%# Large route map: boundary polygon plus every reservation on this sheet. %>
         <%= render "shared/map",
               polygons: (route ? route_boundary_polygon(route) : []),
-              markers: reservation_map_markers(reservations),
+              markers: reservation_map_markers(reservations) + (route ? location_markers_within([ route ]) : []),
               height_class: "h-[840px] print:break-inside-avoid",
               show_empty_message: false %>
       </div>

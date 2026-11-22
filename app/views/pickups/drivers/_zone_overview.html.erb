@@ -2,7 +2,7 @@
 <% name = zone ? zone.name : "No Zone" %>
 <% totals = pickup_status_totals(routes, status_counts) %>
 <% route_polygons = routes.flat_map { |route| route_boundary_polygon(route) } %>
-<% markers = pickups_overview_map_markers(reservations) %>
+<% markers = pickups_overview_map_markers(reservations) + location_markers_within(routes) %>
 
 <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
   <header class="admin-panel-header border-line dark:border-line-dark">
@@ -24,7 +24,7 @@
               markers: markers,
               height_class: "h-80",
               empty_message: "No map data available for #{name}." %>
-        <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">Blue outlines are route areas. Dots show reservations by status.</p>
+        <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">Blue outlines are route areas. Dots show reservations by status. Squares show locations such as tree drop-off staging points.</p>
       <% else %>
         <p class="px-6 py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">No route boundaries or pickup locations with coordinates are available for <%= name %>.</p>
       <% end %>

@@ -1,0 +1,47 @@
+<%= form_with(model: [:admin, location], class: "flex flex-col gap-6") do |f| %>
+  <%= render "shared/form_errors", object: location %>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Location information</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Name the location and set the map point where it belongs.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-form">
+        <div class="admin-field">
+          <%= f.label :name, class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= f.text_field :name, class: admin_input_class %>
+        </div>
+
+        <div class="admin-field">
+          <%= f.label :location_type, "Type", class: "admin-label text-ink dark:text-ink-dark" %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Optional, e.g. Staging point, Meeting place, Community center.</p>
+          <%= f.text_field :location_type, class: admin_input_class %>
+        </div>
+
+        <fieldset class="admin-field">
+          <legend class="admin-label text-ink dark:text-ink-dark">Coordinates</legend>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Locations inside a route's bounded area are shown as square markers on its maps.</p>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="admin-field">
+              <%= f.label :latitude, class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= f.number_field :latitude, step: :any, class: admin_input_class %>
+            </div>
+            <div class="admin-field">
+              <%= f.label :longitude, class: "admin-label text-ink dark:text-ink-dark" %>
+              <%= f.number_field :longitude, step: :any, class: admin_input_class %>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="admin-panel-footer border-line dark:border-line-dark">
+      <%= link_to "Cancel", admin_locations_path, class: admin_button_class(variant: :secondary) %>
+      <%= f.submit class: admin_button_class %>
+    </div>
+  </section>
+<% end %>

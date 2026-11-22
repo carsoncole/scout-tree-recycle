@@ -82,6 +82,8 @@ module ApplicationHelper
   }.freeze
   ROUTE_AREA_COLOR = "#3b82f6"
   ROUTE_AREA_STROKE = "#2563eb"
+  LOCATION_MARKER_COLOR = "#d97706"
+  LOCATION_MARKER_STROKE = "#b45309"
 
   def pickup_status_color(status)
     PICKUP_STATUS_COLORS.fetch(status.to_s, ROUTE_AREA_STROKE)
@@ -89,6 +91,10 @@ module ApplicationHelper
 
   def route_area_color
     ROUTE_AREA_COLOR
+  end
+
+  def location_marker_color
+    LOCATION_MARKER_COLOR
   end
 
   def pickup_status_swatches
@@ -126,6 +132,31 @@ module ApplicationHelper
         id: reservation.id
       }
     end
+  end
+
+  # Square markers for locations, so they read differently from the circular
+  # reservation points at every zoom level.
+  def location_map_markers(locations)
+    Array(locations).filter_map do |location|
+      next if location.latitude.blank? || location.longitude.blank?
+
+      popup = [ location.name, location.location_type.to_s.strip.titleize.presence ].compact_blank.join(" · ")
+
+      {
+        id: location.id,
+        lat: location.latitude.to_f,
+        lng: location.longitude.to_f,
+        shape: "square",
+        color: LOCATION_MARKER_STROKE,
+        fillColor: LOCATION_MARKER_COLOR,
+        popup: popup
+      }
+    end
+  end
+
+  # Locations inside the given routes' bounded areas, ready for shared/map.
+  def location_markers_within(routes)
+    location_map_markers(Location.within_routes(routes))
   end
 
   # Map data only: the route map dialog fetches pickup details from the server,

@@ -75,6 +75,7 @@ Rails.application.routes.draw do
         end
       end
       resources :zones
+      resources :locations
     end
     resources :contacts, only: [ :show, :new, :create, :edit, :update, :destroy ] do
       member do

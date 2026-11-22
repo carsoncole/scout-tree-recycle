@@ -6,22 +6,27 @@
 
 <% boundary_polygons = route_boundary_polygon(@route) %>
 <% pickup_markers = pickups_route_map_markers(@route, @pickup_reservations) %>
+<% location_markers = location_markers_within([ @route ]) %>
+<% markers = pickup_markers + location_markers %>
 
 <div data-controller="pickups-route"
      data-action="map:marker-selected@window->pickups-route#select">
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-body admin-panel-body--tight">
-      <% if boundary_polygons.any? || pickup_markers.any? %>
+      <% if boundary_polygons.any? || markers.any? %>
         <div data-pickups-route-target="mapWrap" data-action="pickups:marker-update@window->pickups-route#markerUpdated">
           <%= render "shared/map",
                 polygons: boundary_polygons,
-                markers: pickup_markers,
+                markers: markers,
                 height_class: "h-[calc(100dvh-12rem)] min-h-[24rem] lg:h-[calc(100dvh-14rem)]",
                 interactive: true,
                 empty_message: "No map data available for this route." %>
         </div>
         <% if pickup_markers.empty? %>
           <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark">No pending pickups on this route.</p>
+        <% end %>
+        <% if location_markers.any? %>
+          <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark">Squares show locations such as tree drop-off staging points. Tap one for details.</p>
         <% end %>
         <% if @missing_coordinates_count.positive? %>
           <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark"><%= pluralize(@missing_coordinates_count, "pending pickup") %> in this route do not have coordinates and are not shown on the map.</p>

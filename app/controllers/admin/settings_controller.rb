@@ -145,6 +145,7 @@ class Admin::SettingsController < Admin::BaseController
       @drivers_count = Driver.count
       @zones_count = Zone.count
       @routes_count = Route.count
+      @locations_count = Location.count
     when "system"
       @unviewed_logs_count = Log.where(is_viewed: false).count
     end

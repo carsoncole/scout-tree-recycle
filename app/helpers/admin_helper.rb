@@ -3,7 +3,7 @@ module AdminHelper
   ADMIN_NAV_GROUPS = {
     "Operations" => %w[reservations pickups donations analytics sms received_emails outbound_emails replies],
     "Content" => %w[marketing marketing_email_templates marketing_images reservation_email_templates contacts],
-    "System" => %w[settings configuration drivers routes zones users thanks logs data operations]
+    "System" => %w[settings configuration drivers routes zones locations users thanks logs data operations]
   }.freeze
 
   ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink hover:bg-stone dark:text-ink-soft-dark dark:hover:text-ink-dark dark:hover:bg-stone-dark".freeze
@@ -36,6 +36,7 @@ module AdminHelper
     { area: "Content", label: "Delete all contacts", user: false, admin: true },
     { area: "Content", label: "Thank-you message and supporter thanks", user: true, admin: true },
     { area: "Routing", label: "Routes, zones, drivers, and route points", user: true, admin: true },
+    { area: "Routing", label: "Locations — staging points, meeting places, and other map locations", user: true, admin: true },
     { area: "System", label: "Logs, including delete and delete all", user: true, admin: true },
     { area: "System", label: "Configuration report", user: true, admin: true },
     { area: "System", label: "Jobs dashboard, including retry, discard, and queue pause", user: true, admin: true },
@@ -110,7 +111,7 @@ module AdminHelper
     case controller_name
     when "settings"
       @section.presence || "overview"
-    when "drivers", "zones", "routes"
+    when "drivers", "zones", "routes", "locations"
       "pickups"
     when "thanks"
       "site_content"

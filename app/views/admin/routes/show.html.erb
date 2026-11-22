@@ -56,11 +56,11 @@
       </div>
       <div class="admin-panel-body">
         <% boundary_polygons = route_boundary_polygon(@route) %>
-        <% pickup_markers = reservation_map_markers(@pickup_reservations) %>
-        <% if boundary_polygons.any? || pickup_markers.any? %>
+        <% markers = reservation_map_markers(@pickup_reservations) + location_markers_within([ @route ]) %>
+        <% if boundary_polygons.any? || markers.any? %>
           <%= render "shared/map",
                 polygons: boundary_polygons,
-                markers: pickup_markers,
+                markers: markers,
                 empty_message: "No map data available for this route." %>
           <% if boundary_polygons.empty? && @route.points.any? %>
             <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">A bounded area requires more than 3 ordered points. Add more route points to display the route boundary.</p>

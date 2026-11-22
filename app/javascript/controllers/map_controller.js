@@ -139,7 +139,9 @@ export default class extends Controller {
 
       const stroke = marker.color || "#b91c1c"
       const fill = marker.fillColor || marker.color || "#ef4444"
-      const layer = L.circleMarker([lat, lng], {
+      const isSquare = marker.shape === "square"
+
+      const layer = isSquare ? this.squareLayer(lat, lng, stroke, fill) : L.circleMarker([lat, lng], {
         radius: this.interactiveValue ? 12 : 7,
         color: stroke,
         weight: 2,
@@ -147,7 +149,7 @@ export default class extends Controller {
         fillOpacity: 0.9
       })
 
-      if (this.interactiveValue) {
+      if (this.interactiveValue && !isSquare) {
         const select = () => this.dispatch("marker-selected", { detail: { marker } })
         layer.on("click", select)
       } else {
@@ -156,11 +158,11 @@ export default class extends Controller {
       }
 
       layer.addTo(this.layerGroup)
-      if (marker.id !== undefined && marker.id !== null) {
+      if (!isSquare && marker.id !== undefined && marker.id !== null) {
         this.markerLayers.set(String(marker.id), layer)
       }
 
-      if (this.interactiveValue) {
+      if (this.interactiveValue && !isSquare) {
         // Transparent companion circle over the dot so the tap target is
         // large enough for a finger on touch screens (~44px) while the
         // visible dot stays small and easy to tell apart at a glance.
@@ -195,6 +197,22 @@ export default class extends Controller {
         this.fitToBounds(combined)
       }
     }
+  }
+
+  // Locations render as fixed-size squares so they are visually distinct from
+  // the circular reservation dots at every zoom level. They are popup-only,
+  // never selectable pickup stops, and not registered in markerLayers.
+  squareLayer(lat, lng, stroke, fill) {
+    const size = 16
+    return L.marker([lat, lng], {
+      keyboard: true,
+      icon: L.divIcon({
+        className: "location-marker",
+        html: `<span style="display:block;width:${size}px;height:${size}px;border:2px solid ${stroke};background:${fill};border-radius:2px"></span>`,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2]
+      })
+    })
   }
 
   updateMarker(event) {

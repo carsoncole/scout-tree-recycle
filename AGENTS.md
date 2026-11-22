@@ -4,7 +4,7 @@ Tree recycling fundraiser reservations, donations and pickup management applicat
 
 ## Stack
 
-- Ruby on Rails 8.1.4
+- Ruby 4.0.10 and Rails 8.1.4.1
 - PostgreSQL, Hotwire, Tailwind CSS
 - Rails 8 session authentication (`has_secure_password`, no Devise)
 - Solid Queue, Solid Cache, Solid Cable

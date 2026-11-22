@@ -30,7 +30,7 @@ On your computer:
 
 - macOS, Ubuntu, or Windows with [Ubuntu on WSL](https://guides.rubyonrails.org/install_ruby_on_rails.html#install-ruby-on-windows)
 - Git
-- Ruby 3.4.7 and Rails 8.1
+- Ruby 4.0.10 and Rails 8.1.4.1
 - PostgreSQL 14 or newer, running on your computer
 
 To publish the site, also have:
@@ -50,7 +50,7 @@ cd scout-tree-recycle
 
 ## 2. Install Ruby and Rails
 
-This app uses Ruby 3.4.7, the version in `.ruby-version`. Install it with [mise](https://mise.jdx.dev/), following the [Rails install guide](https://guides.rubyonrails.org/install_ruby_on_rails.html).
+This app uses Ruby 4.0.10, the version in `.ruby-version`. Install it with [mise](https://mise.jdx.dev/), following the [Rails install guide](https://guides.rubyonrails.org/install_ruby_on_rails.html).
 
 ### macOS
 
@@ -63,7 +63,7 @@ brew install openssl@3 libyaml gmp rust
 curl https://mise.run | sh
 echo 'eval "$(~/.local/bin/mise activate)"' >> ~/.zshrc
 source ~/.zshrc
-mise use -g ruby@3.4.7
+mise use -g ruby@4.0.10
 ```
 
 On an Intel Mac, Homebrew is at `/usr/local/bin`. Use that path in the `export PATH` line.
@@ -76,7 +76,7 @@ sudo apt install build-essential rustc libssl-dev libyaml-dev zlib1g-dev libgmp-
 curl https://mise.run | sh
 echo 'eval "$(~/.local/bin/mise activate)"' >> ~/.bashrc
 source ~/.bashrc
-mise use -g ruby@3.4.7
+mise use -g ruby@4.0.10
 ```
 
 ### Windows
@@ -87,11 +87,11 @@ Open a new terminal and install Rails 8.1:
 
 ```sh
 ruby --version
-gem install rails -v 8.1.4
+gem install rails -v 8.1.4.1
 rails --version
 ```
 
-`ruby --version` prints `ruby 3.4.7`. `rails --version` prints `Rails 8.1.4`.
+`ruby --version` prints `ruby 4.0.10`. `rails --version` prints `Rails 8.1.4.1`.
 
 ## 3. Install PostgreSQL
 

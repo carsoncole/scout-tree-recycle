@@ -82,8 +82,8 @@ GEM
       public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.3)
     aws-eventstream (1.4.1)
-    aws-partitions (1.1307.0)
-    aws-sdk-core (3.269.0)
+    aws-partitions (1.1310.0)
+    aws-sdk-core (3.271.1)
       aws-eventstream (~> 1, >= 1.4.1)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -92,8 +92,8 @@ GEM
       jmespath (~> 1, >= 1.6.1)
       logger
       rexml (~> 3.4, >= 3.4.2)
-    aws-sdk-locationservice (1.103.0)
-      aws-sdk-core (~> 3, >= 3.269.0)
+    aws-sdk-locationservice (1.104.0)
+      aws-sdk-core (~> 3, >= 3.270.0)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
@@ -102,9 +102,9 @@ GEM
     bcrypt_pbkdf (1.1.2)
     bigdecimal (4.1.3)
     bindex (0.8.1)
-    bootsnap (1.26.1)
+    bootsnap (1.26.2)
       msgpack (~> 1.5)
-    brakeman (8.1.0)
+    brakeman (8.1.1)
       racc
     builder (3.3.0)
     capybara (3.40.0)
@@ -143,7 +143,7 @@ GEM
       logger
     faraday-net_http (3.5.0)
       net-http (~> 0.5)
-    ferrum (0.20.1)
+    ferrum (0.20.2)
       addressable (~> 2.5)
       base64 (~> 0.2)
       concurrent-ruby (~> 1.1)
@@ -160,7 +160,7 @@ GEM
     geokit (1.14.0)
     globalid (1.4.0)
       activesupport (>= 6.1)
-    httparty (0.25.0)
+    httparty (0.25.1)
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -262,12 +262,12 @@ GEM
     nokogiri (1.19.7-x86_64-linux-musl)
       racc (~> 1.4)
     ostruct (0.6.3)
-    pagy (43.8.3)
+    pagy (43.8.5)
       json
       uri
       yaml
     parallel (2.3.0)
-    parser (3.3.13.0)
+    parser (3.3.14.0)
       ast (~> 2.4.1)
       racc
     pg (1.7.0)
@@ -303,7 +303,7 @@ GEM
       nio4r (~> 2.0)
     raabro (1.5.0)
     racc (1.8.1)
-    rack (3.2.8)
+    rack (3.2.9)
     rack-session (2.1.2)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -370,7 +370,7 @@ GEM
       rubocop-ast (>= 1.49.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.52.0)
+    rubocop-ast (1.53.0)
       ast (~> 2.4)
       parser (>= 3.3.7.2)
       prism (>= 1.7)
@@ -430,7 +430,7 @@ GEM
     ssrf_filter (1.6.0)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
-    stripe (21.0.0)
+    stripe (21.1.0)
       bigdecimal
       logger
     strscan (3.1.8)
@@ -486,6 +486,7 @@ PLATFORMS
   arm-linux-musl
   arm64-darwin-24
   arm64-darwin-25
+  arm64-darwin-27
   x86_64-linux
   x86_64-linux-gnu
   x86_64-linux-musl
@@ -531,4 +532,4 @@ DEPENDENCIES
   web-console
 
 BUNDLED WITH
-   2.6.9
+  4.0.20

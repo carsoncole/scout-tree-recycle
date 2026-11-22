@@ -126,4 +126,25 @@ class ContactTest < ActiveSupport::TestCase
     assert_not_includes Contact.marketing_subscribed, contact
     assert_includes Contact.marketing_unsubscribed, contact
   end
+
+  test "search matches name, email, street, and mobile case-insensitively" do
+    assert_includes Contact.search("susan"), contacts(:full)
+    assert_includes Contact.search("TRIP.WILSON@EXAMPLE.COM"), contacts(:full)
+    assert_includes Contact.search("123 main"), contacts(:full)
+    assert_includes Contact.search("1234567890"), contacts(:full)
+    assert_empty Contact.search("no-such-contact")
+  end
+
+  test "search with a blank query returns all contacts" do
+    assert_equal Contact.count, Contact.search("").count
+    assert_equal Contact.count, Contact.search("   ").count
+    assert_equal Contact.count, Contact.search(nil).count
+  end
+
+  test "search combines with other scopes" do
+    contacts(:full).update!(is_unsubscribed_from_marketing: true)
+
+    assert_includes Contact.marketing_subscribed.search("trellis"), contacts(:no_mobile)
+    assert_not_includes Contact.marketing_subscribed.search("susan"), contacts(:full)
+  end
 end

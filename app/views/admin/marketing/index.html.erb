@@ -71,7 +71,7 @@
           </div>
 
           <% if template_1.present? %>
-            <%= render "test_email_form", template: template_1, contacts: @contacts %>
+            <%= render "test_email_form", template: template_1, contacts: @test_contacts %>
           <% end %>
         </div>
       </div>
@@ -130,7 +130,7 @@
           </div>
 
           <% if template_2.present? %>
-            <%= render "test_email_form", template: template_2, contacts: @contacts %>
+            <%= render "test_email_form", template: template_2, contacts: @test_contacts %>
           <% end %>
         </div>
       </div>
@@ -141,6 +141,14 @@
     <div>
       <p><strong>Note:</strong> Unsubscribed contacts are skipped by both marketing campaigns. Any contacts with the same email as a newly confirmed reservation are removed automatically (unless they have unsubscribed from marketing), so a row may disappear from this table once that contact reserves again.</p>
     </div>
+  </div>
+
+  <div class="admin-toolbar justify-end">
+    <%= form_with url: admin_marketing_index_path, method: :get, class: "flex max-w-sm items-center gap-2" do |form| %>
+      <%= form.label :q, "Search contacts", class: "sr-only" %>
+      <%= form.text_field :q, value: params[:q], placeholder: "Search name, email, or address", class: admin_input_class %>
+      <%= form.submit "Search", class: admin_button_class(variant: "secondary") %>
+    <% end %>
   </div>
 
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
@@ -259,13 +267,13 @@
       <%= render "admin/shared/empty_state", message: "No contacts are available for marketing." %>
     <% end %>
 
-    <% if @pagy.present? && @pagy.count.positive? %>
+    <% if @contacts_count.positive? %>
       <div class="admin-danger-zone border-danger-border bg-danger-bg dark:border-danger-border-dark dark:bg-danger-bg-dark" id="delete-all-contacts">
         <div class="admin-toolbar">
           <div>
             <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Delete all contacts</h3>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
-              This permanently deletes <strong class="text-ink dark:text-ink-dark"><%= pluralize(@pagy.count, "contact") %></strong>. Type DELETE to confirm.
+              This permanently deletes <strong class="text-ink dark:text-ink-dark"><%= pluralize(@contacts_count, "contact") %></strong>. Type DELETE to confirm.
             </p>
           </div>
 

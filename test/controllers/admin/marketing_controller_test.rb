@@ -278,4 +278,21 @@ class Admin::MarketingControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_marketing_index_url
     assert_equal "Marketing email 2 is not published. Edit the template and publish it before sending.", flash[:alert]
   end
+
+  test "should search contacts by name, email, or street" do
+    sign_in
+    get admin_marketing_index_url(q: "Susan")
+    assert_response :success
+    assert_select "table.admin-table tbody tr", count: 1
+    assert_select "table.admin-table tbody td", text: "Susan Banks"
+    assert_select "table.admin-table tbody td", text: "Bob Jones", count: 0
+    assert_select "input[name=?][value=?]", "q", "Susan"
+  end
+
+  test "search with no matches shows empty state" do
+    sign_in
+    get admin_marketing_index_url(q: "no-such-contact")
+    assert_response :success
+    assert_select "p", text: "No contacts are available for marketing."
+  end
 end

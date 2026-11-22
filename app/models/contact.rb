@@ -22,6 +22,16 @@ class Contact < ApplicationRecord
 
   scope :marketing_subscribed, -> { where(is_unsubscribed_from_marketing: false) }
   scope :marketing_unsubscribed, -> { where(is_unsubscribed_from_marketing: true) }
+  scope :search, ->(query) {
+    next if query.blank?
+
+    pattern = "%#{query.to_s.strip}%"
+    where(
+      "contacts.name ILIKE :pattern OR contacts.email ILIKE :pattern OR " \
+      "contacts.street ILIKE :pattern OR contacts.mobile ILIKE :pattern",
+      pattern: pattern
+    )
+  }
 
   validates :name, :email, presence: true
   validates :email, uniqueness: true

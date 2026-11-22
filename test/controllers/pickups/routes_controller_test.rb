@@ -61,7 +61,14 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/#{reservations(:picked_up_1).id}/, @response.body)
     assert_no_match(/#{reservations(:missing_1).id}/, @response.body)
     assert_no_match(/Reservation details/, @response.body)
-    assert_select "#pickup_reservation_dialog", count: 1
+    assert_select "#route_detail_dialog", count: 1
+
+    # Locations inside the boundary open the shared details dialog, and
+    # locations outside it are not plotted.
+    staging_point = locations(:staging_point)
+    assert_select "[data-map-markers-value*='pickups/locations/#{staging_point.id}']", count: 1
+    assert_select "[data-map-markers-value*='Location details']", count: 1
+    assert_select "[data-map-markers-value*='pickups/locations/#{locations(:outside).id}']", count: 0
   end
 
   test "should not get show without driver key" do

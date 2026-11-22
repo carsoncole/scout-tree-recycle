@@ -3,11 +3,15 @@ import { Controller } from "@hotwired/stimulus"
 // Route map page: opens the pickup details dialog when a map marker is
 // selected and keeps the map marker colors in sync after status updates.
 export default class extends Controller {
-  static targets = [ "dialog", "frame", "mapWrap" ]
+  static targets = [ "dialog", "frame", "mapWrap", "title" ]
 
   select(event) {
     const marker = event.detail?.marker || event.detail
     if (!marker || !marker.detail_url) return
+
+    if (this.hasTitleTarget) {
+      this.titleTarget.textContent = marker.dialog_title || "Pickup details"
+    }
 
     this.frameTarget.src = marker.detail_url
 

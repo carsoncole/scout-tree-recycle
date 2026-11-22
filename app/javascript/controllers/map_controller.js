@@ -149,8 +149,10 @@ export default class extends Controller {
         fillOpacity: 0.9
       })
 
-      if (this.interactiveValue && !isSquare) {
-        const select = () => this.dispatch("marker-selected", { detail: { marker } })
+      const selectable = this.interactiveValue && marker.detail_url
+      const select = () => this.dispatch("marker-selected", { detail: { marker } })
+
+      if (selectable) {
         layer.on("click", select)
       } else {
         const popup = marker.popup || marker.label || marker.name
@@ -161,27 +163,33 @@ export default class extends Controller {
       if (!isSquare && marker.id !== undefined && marker.id !== null) {
         this.markerLayers.set(String(marker.id), layer)
       }
+      if (isSquare && marker.id !== undefined && marker.id !== null) {
+        // Expose the location id on the square itself as well as its tap
+        // target. The square sits in Leaflet's marker pane above the overlay
+        // pane, so it receives clicks at the exact center.
+        const markerEl = layer.getElement()
+        if (markerEl) markerEl.setAttribute("data-location-id", String(marker.id))
+      }
 
-      if (this.interactiveValue && !isSquare) {
-        // Transparent companion circle over the dot so the tap target is
+      if (selectable) {
+        // Transparent companion circle over the marker so the tap target is
         // large enough for a finger on touch screens (~44px) while the
-        // visible dot stays small and easy to tell apart at a glance.
-        // Added after the dot so it is the topmost layer at the center.
+        // visible marker stays small and easy to tell apart at a glance.
+        // Added after the marker so it is the topmost layer at the center.
         const hit = L.circleMarker([lat, lng], {
           radius: 22,
           stroke: false,
           fillColor: "#000000",
           fillOpacity: 0,
-          className: "pickup-marker-hit",
+          className: isSquare ? "location-marker-hit" : "pickup-marker-hit",
           interactive: true
         })
-        const select = () => this.dispatch("marker-selected", { detail: { marker } })
         hit.on("click", select)
         hit.addTo(this.layerGroup)
-        // Mark the SVG element with the reservation id so tests and browser
-        // devtools can target a specific stop's tap target.
+        // Mark the SVG element with the marker id so tests and browser
+        // devtools can target a specific tap target.
         const hitEl = hit.getElement()
-        if (hitEl) hitEl.setAttribute("data-marker-id", String(marker.id))
+        if (hitEl) hitEl.setAttribute(isSquare ? "data-location-id" : "data-marker-id", String(marker.id))
       }
       // A coordinate far from the route boundary must not zoom the map out
       // to the world. The marker stays on the map for anyone who pans to it.
@@ -200,8 +208,9 @@ export default class extends Controller {
   }
 
   // Locations render as fixed-size squares so they are visually distinct from
-  // the circular reservation dots at every zoom level. They are popup-only,
-  // never selectable pickup stops, and not registered in markerLayers.
+  // the circular reservation dots at every zoom level. On the driver route map
+  // they open the shared details dialog; elsewhere they are popup-only. They
+  // are never pickup stops and are not registered in markerLayers.
   squareLayer(lat, lng, stroke, fill) {
     const size = 16
     return L.marker([lat, lng], {

@@ -55,6 +55,31 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     end
   end
 
+  test "location dialog shows details and links to map directions" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    assert_selector "#route_status_badge", text: "2 pickups pending"
+
+    location = locations(:staging_point)
+    find(".location-marker[data-location-id='#{location.id}']").click
+
+    assert_selector "dialog[open]"
+    within "dialog[open]" do
+      assert_selector "h2", text: "Location details"
+      assert_text location.name
+      assert_text location.location_type
+      assert_no_text "Latitude"
+      assert_no_text "Longitude"
+
+      # The provider (Apple Maps or Google Maps) depends on the device; both
+      # link the location's coordinates instead of showing them as text.
+      directions_link = find("a", text: /Get directions/)
+      assert_match(/\Ahttps:\/\/(maps\.apple\.com\/\?daddr=|www\.google\.com\/maps\/dir\/\?api=1&destination=)/, directions_link[:href])
+      assert_includes directions_link[:href], "40.75%2C-73.98"
+    end
+  end
+
   test "driver can mark a pickup picked from the map dialog" do
     sign_in_driver
 

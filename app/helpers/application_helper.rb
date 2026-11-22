@@ -66,9 +66,7 @@ module ApplicationHelper
     end
   end
 
-  # Directions link for a pickup address: Apple devices open maps.apple.com
-  # links in the native Maps app with the destination set; everything else
-  # gets a Google Maps directions URL. Geocoded reservations link their
+  # Directions link for a pickup address. Geocoded reservations link their
   # plotted coordinates; reservations without coordinates fall back to the
   # full address string.
   def maps_directions_url(reservation)
@@ -79,6 +77,17 @@ module ApplicationHelper
                       reservation.state, reservation.zip.presence, reservation.country ].compact_blank.join(", ")
     end
 
+    maps_directions_url_for(destination)
+  end
+
+  # Directions for a named map location, which stores only coordinates.
+  def location_directions_url(location)
+    maps_directions_url_for([ location.latitude, location.longitude ].join(","))
+  end
+
+  # Apple devices open maps.apple.com links in the native Maps app with the
+  # destination set; everything else gets a Google Maps directions URL.
+  def maps_directions_url_for(destination)
     if apple_maps_device?
       "https://maps.apple.com/?daddr=#{ERB::Util.url_encode(destination)}"
     else
@@ -201,6 +210,15 @@ module ApplicationHelper
   # Locations inside the given routes' bounded areas, ready for shared/map.
   def location_markers_within(routes)
     location_map_markers(Location.within_routes(routes))
+  end
+
+  # Locations on the driver route map open the shared details dialog instead
+  # of a map bubble, so they carry a detail URL and dialog title.
+  def pickups_route_location_markers(route)
+    location_map_markers(Location.within_routes([ route ])).each do |marker|
+      marker[:detail_url] = pickups_location_path(marker[:id])
+      marker[:dialog_title] = "Location details"
+    end
   end
 
   # Map data only: the route map dialog fetches pickup details from the server,

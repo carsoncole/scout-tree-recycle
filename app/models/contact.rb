@@ -4,6 +4,8 @@ class Contact < ApplicationRecord
     2 => :marketing_2_email_sent_at
   }.freeze
 
+  BLOCKED_MARKETING_EMAIL_DOMAINS = %w[test example].freeze
+
   IMPORTABLE_FIELDS = {
     "name" => "Name",
     "email" => "Email",
@@ -22,6 +24,9 @@ class Contact < ApplicationRecord
 
   scope :marketing_subscribed, -> { where(is_unsubscribed_from_marketing: false) }
   scope :marketing_unsubscribed, -> { where(is_unsubscribed_from_marketing: true) }
+  scope :with_marketable_email_domain, -> {
+    where.not("LOWER(email) ~ ?", "@([^@]+\\.)?(#{BLOCKED_MARKETING_EMAIL_DOMAINS.join('|')})$")
+  }
   scope :search, ->(query) {
     next if query.blank?
 
@@ -58,6 +63,15 @@ class Contact < ApplicationRecord
     marketing_1_email_sent_at > Setting.instance.marketing_email_cooldown_days.days.ago
   end
 
+  def self.blocked_marketing_email_domain?(email)
+    domain = email.to_s.strip.downcase.split("@", 2).last.to_s
+    BLOCKED_MARKETING_EMAIL_DOMAINS.any? { |blocked| domain == blocked || domain.end_with?(".#{blocked}") }
+  end
+
+  def marketable_email_domain?
+    !self.class.blocked_marketing_email_domain?(email)
+  end
+
   # Clears a single marketing email send time so the contact can be emailed again.
   def clear_marketing_email!(marketing_email)
     column = MARKETING_EMAIL_COLUMNS[marketing_email.to_i]
@@ -67,9 +81,10 @@ class Contact < ApplicationRecord
   end
 
   # True when this contact can be sent the given marketing email now.
-  # Excludes unsubscribed contacts and already-sent emails.
+  # Excludes unsubscribed contacts, blocked test/example domains, and already-sent emails.
   def eligible_for_marketing_email?(marketing_email)
     return false if is_unsubscribed_from_marketing?
+    return false unless marketable_email_domain?
 
     case marketing_email.to_i
     when 1

@@ -145,6 +145,42 @@ class MarketingMailerTest < ActionMailer::TestCase
     end
   end
 
+  test "marketing_email_1 does not send to test or example domains" do
+    Setting.instance.update(is_emailing_enabled: true)
+    contact = contacts(:full)
+    contact.update!(email: "jewel@orn.example")
+
+    assert_no_emails do
+      MarketingMailer.with(contact_id: contact.id).marketing_email_1.deliver_now
+    end
+    assert_nil contact.reload.marketing_1_email_sent_at
+  end
+
+  test "marketing_email_2 does not send to test or example domains" do
+    Setting.instance.update(is_emailing_enabled: true)
+    contact = contacts(:full)
+    contact.update!(email: "person@subdomain.test")
+
+    assert_no_emails do
+      MarketingMailer.with(contact_id: contact.id).marketing_email_2.deliver_now
+    end
+    assert_nil contact.reload.marketing_2_email_sent_at
+  end
+
+  test "test email does not send to test or example domains" do
+    template = marketing_email_templates(:marketing_email_1)
+    contact = contacts(:full)
+
+    assert_no_emails do
+      MarketingMailer.with(
+        template_id: template.id,
+        contact_id: contact.id,
+        email: "qa@orn.example",
+        source: "draft"
+      ).test_email.deliver_now
+    end
+  end
+
   test "uses the published template instead of the draft" do
     Setting.instance.update(is_emailing_enabled: true)
     template = marketing_email_templates(:marketing_email_1)

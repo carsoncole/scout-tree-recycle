@@ -7,7 +7,7 @@ class SendMarketingEmail1Job < ApplicationJob
     return unless setting.email_configured?
     return unless MarketingEmailTemplate.published.exists?(name: "marketing_email_1")
 
-    contacts = Contact.marketing_subscribed.where(marketing_1_email_sent_at: nil).order(:email).limit(setting.email_batch_quantity)
+    contacts = Contact.marketing_subscribed.with_marketable_email_domain.where(marketing_1_email_sent_at: nil).order(:email).limit(setting.email_batch_quantity)
     contacts.each do |contact|
       MarketingMailer.with(contact_id: contact.id).marketing_email_1.deliver_later
     end

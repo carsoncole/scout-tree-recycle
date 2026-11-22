@@ -21,6 +21,15 @@ class SendMarketingEmail1JobTest < ActiveJob::TestCase
     end
   end
 
+  test "does not enqueue emails for test or example domain contacts" do
+    Contact.marketing_subscribed.update_all(marketing_1_email_sent_at: Time.current)
+    Contact.create!(name: "Blocked", email: "blocked@orn.example")
+
+    assert_no_enqueued_emails do
+      SendMarketingEmail1Job.perform_now
+    end
+  end
+
   test "respects the configured batch quantity" do
     Setting.instance.update(email_batch_quantity: 1)
 

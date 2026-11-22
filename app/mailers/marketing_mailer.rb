@@ -38,9 +38,12 @@ class MarketingMailer < ApplicationMailer
     @email_text = @template.render_message_text(@email_assigns, source: source)
     subject = @template.render_subject(@email_assigns, source: source)
 
+    recipient = params[:email].presence || @contact.email
+    return if Contact.blocked_marketing_email_domain?(recipient)
+
     from = source == :published ? @template.published_from : @template.from
     headers = {
-      to: params[:email].presence || @contact.email,
+      to: recipient,
       subject: "[TEST] #{subject}",
       template_name: "templated_email"
     }
@@ -62,6 +65,7 @@ class MarketingMailer < ApplicationMailer
   def deliver_template(template_name, sent_at_attribute: nil)
     @template = MarketingEmailTemplate.published.find_by(name: template_name)
     return false if @template.nil?
+    return false if Contact.blocked_marketing_email_domain?(@contact.email)
 
     @setting = Setting.instance
     @email_assigns = MarketingEmailTemplate::Renderer.new(contact: @contact, setting: @setting).assigns

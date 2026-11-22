@@ -110,6 +110,38 @@ class ContactTest < ActiveSupport::TestCase
     assert_not contact.eligible_for_marketing_email?(2)
   end
 
+  test "not eligible for marketing emails when email domain is test or example" do
+    contact = contacts(:full)
+    contact.update!(email: "jewel@orn.example", marketing_1_email_sent_at: nil, marketing_2_email_sent_at: nil)
+
+    assert_not contact.eligible_for_marketing_email?(1)
+    assert_not contact.eligible_for_marketing_email?(2)
+    assert_not contact.marketable_email_domain?
+
+    contact.update!(email: "person@subdomain.test")
+    assert_not contact.marketable_email_domain?
+
+    contact.update!(email: "person@valid.org")
+    assert contact.marketable_email_domain?
+  end
+
+  test "blocked marketing email domain identifies test and example domains" do
+    assert Contact.blocked_marketing_email_domain?("jewel@orn.example")
+    assert Contact.blocked_marketing_email_domain?("user@test")
+    assert Contact.blocked_marketing_email_domain?("user@example")
+    assert Contact.blocked_marketing_email_domain?("user@foo.test")
+    assert_not Contact.blocked_marketing_email_domain?("user@example.com")
+    assert_not Contact.blocked_marketing_email_domain?("user@notexample.com")
+  end
+
+  test "with_marketable_email_domain excludes test and example domains" do
+    blocked = Contact.create!(name: "Blocked", email: "blocked@orn.example")
+    allowed = contacts(:full)
+
+    assert_not_includes Contact.with_marketable_email_domain, blocked
+    assert_includes Contact.with_marketable_email_domain, allowed
+  end
+
   test "is subscribed to marketing by default" do
     contact = Contact.create!(name: "New Contact", email: "new-contact@example.com")
     assert_not contact.is_unsubscribed_from_marketing?

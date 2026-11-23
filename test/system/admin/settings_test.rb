@@ -137,6 +137,62 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_selector "#email-status.border-danger-border"
   end
 
+  test "sms status makes clear what will not work when disabled" do
+    Setting.instance.update(is_sms_enabled: false)
+
+    visit admin_settings_url
+
+    within "#sms-status" do
+      assert_text "SMS disabled"
+      assert_text "Not sending"
+      assert_text "SMS is disabled"
+      assert_text "Sending texts from the SMS inbox"
+      assert_text "Automatic missing tree text notifications"
+      assert_text "Incoming replies are still recorded in the SMS inbox."
+      assert_link "SMS settings", href: admin_settings_section_path("sms")
+    end
+    assert_no_selector "#sms-status.border-danger-border"
+  end
+
+  test "sms status confirms sending when enabled and configured" do
+    Setting.instance.update(
+      is_sms_enabled: true,
+      twilio_account_sid: "AC123",
+      twilio_auth_token: "token",
+      twilio_from_number: "+15555550123"
+    )
+
+    visit admin_settings_url
+
+    within "#sms-status" do
+      assert_text "SMS enabled"
+      assert_text "Ready"
+      assert_text "Texts can be sent from the SMS inbox, missing tree notifications send automatically, and incoming replies are recorded."
+    end
+    assert_no_selector "#sms-status.border-danger-border"
+  end
+
+  test "sms status reports incomplete settings when enabled" do
+    Setting.instance.update(
+      is_sms_enabled: true,
+      twilio_account_sid: "",
+      twilio_auth_token: "",
+      twilio_from_number: ""
+    )
+
+    visit admin_settings_url
+
+    within "#sms-status" do
+      assert_text "SMS enabled"
+      assert_text "3 missing"
+      assert_text "SMS settings are incomplete"
+      assert_link "Twilio Account SID", href: admin_settings_section_path("sms")
+      assert_link "Twilio Auth Token", href: admin_settings_section_path("sms")
+      assert_link "Twilio From Number", href: admin_settings_section_path("sms")
+    end
+    assert_selector "#sms-status.border-danger-border"
+  end
+
   test "location services status makes clear what will not work when disabled" do
     Setting.instance.update(is_routing_enabled: false)
 
@@ -191,6 +247,60 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "AWS Region", href: admin_settings_section_path("location_services")
     end
     assert_selector "#location-status.border-danger-border"
+  end
+
+  test "donations status makes clear what will not work when disabled" do
+    Setting.instance.update(is_donations_enabled: false)
+
+    visit admin_settings_url
+
+    within "#donations-status" do
+      assert_text "Donations disabled"
+      assert_text "Offline only"
+      assert_text "Online donations are disabled"
+      assert_text "Online donation checkout"
+      assert_text "Stripe card payments"
+      assert_text "Automatic recording of completed donations"
+      assert_text "Customers can still choose cash or check at pickup, or continue without a donation."
+      assert_link "donations settings", href: admin_settings_section_path("donations")
+    end
+    assert_no_selector "#donations-status.border-danger-border"
+  end
+
+  test "donations status confirms online donations when ready" do
+    Setting.instance.update(
+      is_donations_enabled: true,
+      stripe_secret_key: "sk_test_123",
+      stripe_price_id: "price_123"
+    )
+
+    visit admin_settings_url
+
+    within "#donations-status" do
+      assert_text "Donations enabled"
+      assert_text "Ready"
+      assert_text "Customers can donate online through Stripe, and completed donations are recorded automatically."
+    end
+    assert_no_selector "#donations-status.border-danger-border"
+  end
+
+  test "donations status reports incomplete settings when enabled" do
+    Setting.instance.update(
+      is_donations_enabled: true,
+      stripe_secret_key: "",
+      stripe_price_id: ""
+    )
+
+    visit admin_settings_url
+
+    within "#donations-status" do
+      assert_text "Donations enabled"
+      assert_text "2 missing"
+      assert_text "Donation settings are incomplete"
+      assert_link "Stripe Secret Key", href: admin_settings_section_path("donations")
+      assert_link "Stripe Price ID", href: admin_settings_section_path("donations")
+    end
+    assert_selector "#donations-status.border-danger-border"
   end
 
   test "pickups setup status notes setup is only required when the portal is enabled" do

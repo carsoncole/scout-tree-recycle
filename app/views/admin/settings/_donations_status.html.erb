@@ -1,0 +1,57 @@
+<% donations_enabled = setting.is_donations_enabled? %>
+<% donations_ready = setting.stripe_configured? %>
+<% missing_donation_settings = donations_enabled ? setting.missing_required_settings.select { |item| item[:section] == "donations" } : [] %>
+<% alarm = donations_enabled && !donations_ready %>
+<section class="<%= admin_status_panel_class(alarm: alarm) %>" id="donations-status">
+  <div class="<%= admin_status_panel_header_class(alarm: alarm) %>">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Donations status</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Online card donations through Stripe. Manage <%= link_to "donations settings", admin_settings_section_path("donations"), class: admin_link_class %>.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="<%= admin_badge_class(donations_enabled ? "positive" : "neutral") %>">
+        <%= donations_enabled ? "Donations enabled" : "Donations disabled" %>
+      </span>
+      <% if donations_enabled %>
+        <span class="<%= admin_badge_class(donations_ready ? "positive" : "danger") %>">
+          <%= donations_ready ? "Ready" : "#{missing_donation_settings.size} missing" %>
+        </span>
+      <% else %>
+        <span class="<%= admin_badge_class("neutral") %>">Offline only</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <% if !donations_enabled %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">Online donations are disabled</p>
+          <p>These features will not work:</p>
+          <ul class="admin-setup-missing-list">
+            <li>Online donation checkout</li>
+            <li>Stripe card payments</li>
+            <li>Automatic recording of completed donations</li>
+          </ul>
+          <p class="mt-2">Customers can still choose cash or check at pickup, or continue without a donation.</p>
+        </div>
+      </div>
+    <% elsif missing_donation_settings.any? %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">Donation settings are incomplete</p>
+          <p>Online donations cannot work until these settings are added:</p>
+          <ul class="admin-setup-missing-list">
+            <% missing_donation_settings.each do |item| %>
+              <li><%= link_to item[:label], admin_settings_section_path(item[:section]), class: admin_link_class %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% else %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+        Customers can donate online through Stripe, and completed donations are recorded automatically.
+      </p>
+    <% end %>
+  </div>
+</section>

@@ -92,6 +92,24 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should show sms status on the settings overview" do
+    sign_in
+    Setting.instance.update!(
+      is_sms_enabled: true,
+      twilio_account_sid: "AC123",
+      twilio_auth_token: "token",
+      twilio_from_number: "+15555550123"
+    )
+    get admin_settings_path
+    assert_response :success
+
+    assert_select "#sms-status" do
+      assert_select ".admin-badge", text: "SMS enabled"
+      assert_select ".admin-badge", text: "Ready"
+      assert_select "a[href=?]", admin_settings_section_path("sms")
+    end
+  end
+
   test "should show location services status on the settings overview" do
     sign_in
     Setting.instance.update!(
@@ -108,6 +126,23 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
       assert_select ".admin-badge", text: "Routing enabled"
       assert_select ".admin-badge", text: "Ready"
       assert_select "a[href=?]", admin_settings_section_path("location_services")
+    end
+  end
+
+  test "should show donations status on the settings overview" do
+    sign_in
+    Setting.instance.update!(
+      is_donations_enabled: true,
+      stripe_secret_key: "sk_test_123",
+      stripe_price_id: "price_123"
+    )
+    get admin_settings_path
+    assert_response :success
+
+    assert_select "#donations-status" do
+      assert_select ".admin-badge", text: "Donations enabled"
+      assert_select ".admin-badge", text: "Ready"
+      assert_select "a[href=?]", admin_settings_section_path("donations")
     end
   end
 

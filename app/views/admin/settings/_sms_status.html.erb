@@ -1,0 +1,56 @@
+<% sms_enabled = setting.is_sms_enabled? %>
+<% sms_ready = setting.sms_configured? %>
+<% missing_sms_settings = sms_enabled ? setting.missing_required_settings.select { |item| item[:section] == "sms" } : [] %>
+<% alarm = sms_enabled && !sms_ready %>
+<section class="<%= admin_status_panel_class(alarm: alarm) %>" id="sms-status">
+  <div class="<%= admin_status_panel_header_class(alarm: alarm) %>">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">SMS status</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Outgoing texts and missing tree notifications through Twilio. Manage <%= link_to "SMS settings", admin_settings_section_path("sms"), class: admin_link_class %>.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="<%= admin_badge_class(sms_enabled ? "positive" : "neutral") %>">
+        <%= sms_enabled ? "SMS enabled" : "SMS disabled" %>
+      </span>
+      <% if sms_enabled %>
+        <span class="<%= admin_badge_class(sms_ready ? "positive" : "danger") %>">
+          <%= sms_ready ? "Ready" : "#{missing_sms_settings.size} missing" %>
+        </span>
+      <% else %>
+        <span class="<%= admin_badge_class("neutral") %>">Not sending</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <% if !sms_enabled %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">SMS is disabled</p>
+          <p>These features will not work:</p>
+          <ul class="admin-setup-missing-list">
+            <li>Sending texts from the SMS inbox</li>
+            <li>Automatic missing tree text notifications</li>
+          </ul>
+          <p class="mt-2">Incoming replies are still recorded in the SMS inbox.</p>
+        </div>
+      </div>
+    <% elsif missing_sms_settings.any? %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">SMS settings are incomplete</p>
+          <p>Text messages cannot send until these settings are added:</p>
+          <ul class="admin-setup-missing-list">
+            <% missing_sms_settings.each do |item| %>
+              <li><%= link_to item[:label], admin_settings_section_path(item[:section]), class: admin_link_class %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% else %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+        Texts can be sent from the SMS inbox, missing tree notifications send automatically, and incoming replies are recorded.
+      </p>
+    <% end %>
+  </div>
+</section>

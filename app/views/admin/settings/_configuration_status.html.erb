@@ -1,24 +1,22 @@
-<% missing_settings = setting.missing_required_settings %>
+<% missing_settings = admin_core_missing_settings(setting) %>
+<% sections = admin_core_configuration_sections(setting) %>
 <% alarm = missing_settings.any? %>
 <section class="<%= admin_status_panel_class(alarm: alarm) %>" id="configuration-status">
   <div class="<%= admin_status_panel_header_class(alarm: alarm) %>">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Configuration status</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Required settings needed for the application to run correctly.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Required settings for The Event, Organization, Site Details, and Site Content.</p>
     </div>
     <div class="flex items-center gap-3">
       <span class="<%= admin_badge_class(alarm ? "danger" : "positive") %>">
         <%= missing_settings.empty? ? "Ready" : "#{missing_settings.size} missing" %>
       </span>
-      <%= link_to "All settings", admin_configuration_path, class: admin_link_class %>
     </div>
   </div>
 
   <div class="admin-panel-body">
-    <% if missing_settings.empty? %>
-      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">All required settings are configured.</p>
-    <% else %>
-      <div class="<%= admin_notice_class(:warning) %>" role="status">
+    <% if missing_settings.any? %>
+      <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
         <div>
           <p class="admin-notice-title">Missing required settings</p>
           <ul class="admin-setup-missing-list">
@@ -29,5 +27,16 @@
         </div>
       </div>
     <% end %>
+
+    <ul class="grid gap-2 sm:grid-cols-2">
+      <% sections.each do |section| %>
+        <li class="flex flex-wrap items-center justify-between gap-2 rounded border border-line bg-stone px-3 py-2 dark:border-line-dark dark:bg-stone-dark">
+          <%= link_to section[:label], section[:path], class: admin_link_class %>
+          <span class="<%= admin_badge_class(section[:missing_count].zero? ? "positive" : "danger") %>">
+            <%= section[:missing_count].zero? ? "Ready" : "#{section[:missing_count]} missing" %>
+          </span>
+        </li>
+      <% end %>
+    </ul>
   </div>
 </section>

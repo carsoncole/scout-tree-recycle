@@ -54,16 +54,6 @@ class Admin::ConfigurationTest < ApplicationSystemTestCase
     end
   end
 
-  test "links from the settings overview" do
-    visit admin_settings_url
-
-    within "#configuration-status" do
-      click_on "All settings"
-    end
-
-    assert_selector "h1", text: "Configuration"
-  end
-
   test "settings sidebar links to the configuration page" do
     visit admin_settings_url
 

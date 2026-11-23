@@ -224,6 +224,30 @@ module AdminHelper
     "admin-badge admin-badge--#{variant} #{colors}"
   end
 
+  # Core configuration sections summarized on the settings overview.
+  ADMIN_CORE_CONFIGURATION_SECTIONS = %w[event organization site_details site_content].freeze
+
+  def admin_core_missing_settings(setting)
+    setting.missing_required_settings.select do |item|
+      ADMIN_CORE_CONFIGURATION_SECTIONS.include?(item[:section])
+    end
+  end
+
+  def admin_core_configuration_sections(setting)
+    missing_settings = admin_core_missing_settings(setting)
+
+    ADMIN_CORE_CONFIGURATION_SECTIONS.map do |key|
+      metadata = Setting::SECTIONS.fetch(key)
+
+      {
+        key: key,
+        label: metadata[:label],
+        path: admin_settings_section_path(key),
+        missing_count: missing_settings.count { |item| item[:section] == key }
+      }
+    end
+  end
+
   # Status panels change to the alarm palette when setup needs attention.
   def admin_status_panel_class(alarm: false)
     border = alarm ? "border-danger-border dark:border-danger-border-dark" : "border-line dark:border-line-dark"
@@ -293,6 +317,28 @@ module AdminHelper
     }.fetch(status.to_s, "neutral")
 
     admin_badge_class(variant)
+  end
+
+  def admin_address_check_badge(reservation)
+    variant = if reservation.address_match_verified?
+      "positive"
+    elsif reservation.address_match_unavailable? || reservation.geocoding_failed?
+      "danger"
+    elsif reservation.address_match_status.present?
+      "warning"
+    else
+      "neutral"
+    end
+
+    admin_badge_class(variant)
+  end
+
+  def admin_address_check_label(reservation)
+    return "Verified" if reservation.address_match_verified?
+    return "Needs review" if reservation.address_match_unavailable? || reservation.geocoding_failed?
+    return reservation.address_match_status.titleize if reservation.address_match_status.present?
+
+    "Not checked"
   end
 
   def admin_log_severity_badge(severity)

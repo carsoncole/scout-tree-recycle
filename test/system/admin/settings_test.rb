@@ -48,6 +48,14 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "#configuration-status" do
       assert_text "1 missing"
       assert_link "Site URL", href: admin_settings_section_path("site_details")
+      assert_link "The Event", href: admin_settings_section_path("event")
+      assert_link "Organization", href: admin_settings_section_path("organization")
+      assert_link "Site Details", href: admin_settings_section_path("site_details")
+      assert_link "Site Content", href: admin_settings_section_path("site_content")
+
+      within "li", text: "Site Details" do
+        assert_text "1 missing"
+      end
     end
     assert_selector "#configuration-status.border-danger-border"
 
@@ -56,7 +64,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "#configuration-status" do
       assert_text "Ready"
-      assert_text "All required settings are configured."
+      assert_link "The Event", href: admin_settings_section_path("event")
+      assert_link "Site Content", href: admin_settings_section_path("site_content")
     end
     assert_no_selector "#configuration-status.border-danger-border"
   end

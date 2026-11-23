@@ -511,6 +511,16 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "us-west-2", setting.aws_region
   end
 
+  test "a stored Places v2 API key is shown in the key field" do
+    Setting.instance.update!(aws_location_api_key: "v1.public.test")
+
+    visit admin_settings_section_path("location_services")
+
+    within "section#location-services" do
+      assert_field "API Key", with: "v1.public.test"
+    end
+  end
+
   test "system panel links to close event" do
     visit admin_settings_section_path("system")
 

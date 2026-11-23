@@ -92,15 +92,15 @@
             <span class="<%= admin_badge_class("positive") %> ml-2 align-middle">Configured</span>
           <% end %>
         </h3>
-        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Create an API key in the Amazon Location console and restrict it to <span class="font-medium">geo-places:SearchText</span>. Leave this blank to keep the saved key.</p>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Create an API key in the Amazon Location console and restrict it to <span class="font-medium">geo-places:SearchText</span>. The saved key is shown masked; enter a new key to replace it.</p>
 
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
             <%= label_tag "setting[aws_location_api_key]", "API Key", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= password_field_tag "setting[aws_location_api_key]", nil,
+            <%= password_field_tag "setting[aws_location_api_key]", setting.aws_location_api_key,
                 class: admin_input_class,
                 autocomplete: "new-password",
-                placeholder: setting.aws_location_api_key.present? ? "Saved — leave blank to keep" : "v1.public..." %>
+                placeholder: "v1.public..." %>
           </div>
         </div>
       </div>

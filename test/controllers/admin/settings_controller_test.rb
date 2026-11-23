@@ -222,6 +222,20 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal [ "[FILTERED]", "[FILTERED]" ], log.context.dig("changes", "smtp_password")
   end
 
+  test "masks resend credentials in configuration logs" do
+    sign_in users(:admin)
+    setting = Setting.first
+
+    patch admin_setting_path(setting), params: {
+      setting: { resend_api_key: "re_secret", resend_signing_secret: "whsec_secret" },
+      section: "email"
+    }
+
+    log = Log.where(log_type: "configuration").order(:created_at).last
+    assert_equal [ "[FILTERED]", "[FILTERED]" ], log.context.dig("changes", "resend_api_key")
+    assert_equal [ "[FILTERED]", "[FILTERED]" ], log.context.dig("changes", "resend_signing_secret")
+  end
+
   test "should update settings and display flash message" do
     sign_in
     get admin_settings_path
@@ -521,6 +535,59 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "smtp-password", setting.smtp_password
     assert_equal "plain", setting.smtp_authentication
     assert_equal "starttls", setting.smtp_encryption
+  end
+
+  test "should update resend credentials" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      section: "email",
+      setting: {
+        resend_api_key: "re_1234567890abcdefghijklmnop",
+        resend_signing_secret: "whsec_1234567890abcdefghijklmnop"
+      }
+    }
+
+    assert_redirected_to admin_settings_section_path("email")
+    setting = Setting.first.reload
+    assert_equal "re_1234567890abcdefghijklmnop", setting.resend_api_key
+    assert_equal "whsec_1234567890abcdefghijklmnop", setting.resend_signing_secret
+  end
+
+  test "should mask resend credentials on the email section" do
+    sign_in
+    api_key = "re_1234567890abcdefghijklmnop"
+    signing_secret = "whsec_1234567890abcdefghijklmnop"
+    Setting.first.update!(resend_api_key: api_key, resend_signing_secret: signing_secret)
+
+    get admin_settings_section_path("email")
+
+    assert_response :success
+    assert_select "input[name='setting[resend_api_key]'][value=?]", Setting.mask_credential(api_key)
+    assert_select "input[name='setting[resend_signing_secret]'][value=?]", Setting.mask_credential(signing_secret)
+    assert_no_match api_key, response.body
+    assert_no_match signing_secret, response.body
+  end
+
+  test "should not overwrite resend credentials when masked values are submitted" do
+    sign_in
+    setting = Setting.first
+    api_key = "re_1234567890abcdefghijklmnop"
+    signing_secret = "whsec_1234567890abcdefghijklmnop"
+    setting.update!(resend_api_key: api_key, resend_signing_secret: signing_secret)
+
+    patch admin_setting_path(setting), params: {
+      section: "email",
+      setting: {
+        resend_api_key: Setting.mask_credential(api_key),
+        resend_signing_secret: Setting.mask_credential(signing_secret)
+      }
+    }
+
+    assert_redirected_to admin_settings_section_path("email")
+    setting.reload
+    assert_equal api_key, setting.resend_api_key
+    assert_equal signing_secret, setting.resend_signing_secret
   end
 
   test "should send a test email using the saved smtp settings" do

@@ -32,8 +32,8 @@ Rails.application.configure do
   config.active_storage.service = :db
 
   # Resend posts inbound mail metadata here. The signing secret and API key
-  # live in credentials, not in the environment. A tunnel host must be allowed
-  # below or the webhook is rejected.
+  # live in admin settings, not in the environment. A tunnel host must be
+  # allowed below or the webhook is rejected.
   config.action_mailbox.ingress = :resend
 
   # Don't care if the mailer can't send.

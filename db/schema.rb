@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_23_130100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_215735) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -384,6 +384,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_130100) do
     t.string "backup_datasets", default: "reservations,settings,contacts", null: false
     t.string "location_provider", default: "places_v2", null: false
     t.string "aws_location_api_key"
+    t.string "resend_api_key"
+    t.string "resend_signing_secret"
   end
 
   create_table "sms", force: :cascade do |t|

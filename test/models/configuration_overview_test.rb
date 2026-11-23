@@ -73,6 +73,8 @@ class ConfigurationOverviewTest < ActiveSupport::TestCase
     assert entry_for(:aws_secret_access_key).secret
     assert entry_for(:aws_location_api_key).secret
     assert entry_for(:driver_secret_key).secret
+    assert entry_for(:resend_api_key).secret
+    assert entry_for(:resend_signing_secret).secret
     assert_not entry_for(:twilio_account_sid).secret
   end
 

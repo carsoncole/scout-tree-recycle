@@ -14,7 +14,7 @@
       </div>
       <div class="admin-panel-body">
         <div class="<%= admin_notice_class(:warning) %>" role="status">
-          <p><strong class="admin-notice-title">Sensitive file.</strong> Backups include credentials such as SMTP, Twilio, Stripe, AWS, and driver portal passwords. Store them securely outside this application.</p>
+          <p><strong class="admin-notice-title">Sensitive file.</strong> Backups include credentials such as SMTP, Twilio, Stripe, AWS, Resend, and driver portal passwords. Store them securely outside this application.</p>
         </div>
 
         <% selected_datasets = @setting&.backup_dataset_keys.presence || Backup.dataset_keys %>

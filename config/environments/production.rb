@@ -2,7 +2,7 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Resend posts inbound mail to /rails/action_mailbox/resend/inbound_emails.
-  # The signing secret and API key are Rails credentials, not environment variables.
+  # The signing secret and API key are stored in admin settings, not environment variables.
   config.action_mailbox.ingress = :resend
 
   # Settings specified here will take precedence over those in config/application.rb.

@@ -389,19 +389,16 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Pickups"
   end
 
-  test "new settings page should show errors if settings are not valid" do
+  test "new settings page saves when optional fields are blank" do
     Setting.destroy_all
     visit root_path
     fill_in "Organization Name", with: ""
     fill_in "Event Pickup Start", with: ""
     click_on "Save Settings"
 
-    within("#organization_name_section") do
-      assert_text "can't be blank"
-    end
-    within("#event_pickup_start_section") do
-      assert_text "can't be blank"
-    end
+    assert_selector ".flash", text: "Settings saved."
+    assert_selector "h1", text: "Settings"
+    assert Setting.exists?
   end
 
   # test "toggle settings" do
@@ -634,6 +631,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_field "Password"
       assert_field "Authentication"
       assert_field "Encryption"
+      assert_field "Resend API Key"
+      assert_field "Resend Webhook Signing Secret"
       assert_field "Days Between Marketing Emails"
       assert_button "Save Email Settings"
     end
@@ -652,6 +651,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       fill_in "Password", with: "smtp-password"
       select "Plain", from: "Authentication"
       select "STARTTLS (recommended)", from: "Encryption"
+      fill_in "Resend API Key", with: "re_1234567890abcdefghijklmnop"
+      fill_in "Resend Webhook Signing Secret", with: "whsec_1234567890abcdefghijklmnop"
       fill_in "Email Batch Quantity", with: "99"
       fill_in "Days Between Marketing Emails", with: "10"
       click_on "Save Email Settings"
@@ -666,6 +667,8 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "smtp-user", setting.smtp_user_name
     assert_equal "smtp-password", setting.smtp_password
     assert_equal "plain", setting.smtp_authentication
+    assert_equal "re_1234567890abcdefghijklmnop", setting.resend_api_key
+    assert_equal "whsec_1234567890abcdefghijklmnop", setting.resend_signing_secret
     assert_equal 99, setting.email_batch_quantity
     assert_equal 10, setting.marketing_email_cooldown_days
   end
@@ -1006,10 +1009,10 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_link "Users", href: admin_users_path
   end
 
-  test "system panel updates the default email logo" do
+  test "site content panel updates the default email logo" do
     image = MarketingEmailTemplate.available_images.first
 
-    visit admin_settings_section_path("system")
+    visit admin_settings_section_path("site_content")
 
     within "section#email-logo" do
       assert_field "Logo Image"

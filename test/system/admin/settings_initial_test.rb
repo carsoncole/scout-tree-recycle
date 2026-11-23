@@ -19,29 +19,19 @@ class Admin::SettingsInitialTest < ApplicationSystemTestCase
     click_button "Save"
   end
 
-  test "initial configuration with missing required fields" do
+  test "initial configuration allows optional fields to be blank" do
     visit root_path
+    assert_selector "h1", text: "Initial Application Setup"
 
     fill_in "Organization Name", with: ""
-    fill_in "Sign Up Deadline", with: "2024-01-15T14:30"
+    fill_in "Event Pickup Start", with: ""
+    fill_in "Event Pickup End", with: ""
+    fill_in "Sign Up Deadline", with: ""
 
-    click_button "Save"
+    click_button "Save Settings"
 
-    within "#organization_name_section" do
-      assert_text "can't be blank"
-    end
-
-    within "#event_pickup_start_section" do
-      assert_text "can't be blank"
-    end
-
-    within "#event_pickup_end_section" do
-      assert_text "can't be blank"
-    end
-
-    within "#sign_up_deadline_section" do
-      assert_no_text "data and time can't be blank"
-    end
+    assert_no_selector "h1", text: "Initial Application Setup"
+    assert Setting.exists?
   end
 
   test "initial configuration not accessible after configuration" do

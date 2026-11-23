@@ -238,18 +238,7 @@ Replies are a separate webhook. In the Resend dashboard, add a webhook for the `
 https://your-domain/rails/action_mailbox/resend/inbound_emails
 ```
 
-Put the API key and the webhook signing secret in Rails credentials, then deploy again so the server picks them up:
-
-```sh
-EDITOR="nano" bin/rails credentials:edit
-```
-
-```yaml
-resend:
-  api_key: re_...
-action_mailbox:
-  resend_signing_secret: whsec_...
-```
+Enter the API key and webhook signing secret under **Admin → Settings → Email** in the **Inbound Email - Resend** section. They are stored in the application database.
 
 The API key is how the app downloads the full message after Resend calls the webhook. It is separate from the SMTP password. To try inbound mail on your computer, expose the app through a tunnel and add that host to `config.hosts` in `config/environments/development.rb`.
 

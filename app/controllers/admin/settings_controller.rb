@@ -16,7 +16,7 @@ class Admin::SettingsController < Admin::BaseController
 
   # Secret credentials are rendered masked, so an unchanged masked value must
   # not be persisted back over the real credential.
-  MASKED_CREDENTIAL_SETTINGS = %i[stripe_secret_key].freeze
+  MASKED_CREDENTIAL_SETTINGS = %i[stripe_secret_key resend_api_key resend_signing_secret].freeze
 
   def index
     load_pickup_counts
@@ -233,6 +233,8 @@ class Admin::SettingsController < Admin::BaseController
       :smtp_encryption,
       :stripe_secret_key,
       :stripe_price_id,
+      :resend_api_key,
+      :resend_signing_secret,
       :aws_access_key_id,
       :aws_secret_access_key,
       :aws_region,

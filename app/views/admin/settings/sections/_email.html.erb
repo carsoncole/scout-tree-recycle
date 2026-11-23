@@ -84,6 +84,22 @@
       </div>
 
       <div class="admin-form-section border-line dark:border-line-dark">
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">Inbound Email - Resend</h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Used for inbound email delivered to the Mail inbox. Find these values in your Resend dashboard. They are stored in the application database.</p>
+
+        <div class="admin-field-grid admin-field-grid--two">
+          <div class="admin-field">
+            <%= label_tag "setting[resend_api_key]", "Resend API Key", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= text_field_tag "setting[resend_api_key]", Setting.mask_credential(setting.resend_api_key), class: admin_input_class, placeholder: "re_...", autocomplete: "off" %>
+          </div>
+          <div class="admin-field">
+            <%= label_tag "setting[resend_signing_secret]", "Resend Webhook Signing Secret", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= text_field_tag "setting[resend_signing_secret]", Setting.mask_credential(setting.resend_signing_secret), class: admin_input_class, placeholder: "whsec_...", autocomplete: "off" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-form-section border-line dark:border-line-dark">
         <h3 class="admin-section-title text-ink dark:text-ink-dark">Marketing</h3>
         <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Controls batch size and how soon the second marketing email can follow the first for the same person.</p>
 
@@ -132,18 +148,6 @@
           </div>
         </div>
       <% end %>
-    </div>
-
-    <div class="admin-form-section admin-form-section--spaced border-line dark:border-line-dark">
-      <h3 class="admin-section-title text-ink dark:text-ink-dark">Inbound email</h3>
-      <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Resend can deliver inbound mail into the Mail inbox. SMTP settings above are unchanged. In the Resend dashboard, add a webhook for the <span class="font-medium">email.received</span> event only.</p>
-      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Production URL: https://treerecycle.net/rails/action_mailbox/resend/inbound_emails</p>
-      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Store the API key and webhook signing secret with <span class="font-medium">bin/rails credentials:edit</span>, then restart the app. Do not put them in the environment or in these settings.</p>
-      <pre class="admin-hint overflow-x-auto text-ink dark:text-ink-dark">resend:
-  api_key: re_...
-action_mailbox:
-  resend_signing_secret: whsec_...</pre>
-      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">In development, point the webhook at a tunnel and allow that host in config/environments/development.rb. The API key is what Resend uses to fetch the full message after the webhook.</p>
     </div>
   </div>
 </section>

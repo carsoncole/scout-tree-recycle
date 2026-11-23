@@ -5,7 +5,7 @@ class PrivaciesTest < ApplicationSystemTestCase
     visit privacy_url
 
     assert_selector "h1", text: "Privacy Policy"
-    assert_text "we will remove your email address from our mailing list"
+    assert_text "we will stop sending you marketing emails"
 
     click_link "Back to Home"
     assert_text "Make a Reservation"

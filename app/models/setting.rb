@@ -98,6 +98,8 @@ class Setting < ApplicationRecord
     aws_secret_access_key
     aws_location_api_key
     driver_secret_key
+    resend_api_key
+    resend_signing_secret
   ].freeze
 
   CREDENTIAL_MASK = "••••"

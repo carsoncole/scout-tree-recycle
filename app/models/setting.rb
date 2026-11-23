@@ -96,8 +96,11 @@ class Setting < ApplicationRecord
     smtp_password
     stripe_secret_key
     aws_secret_access_key
+    aws_location_api_key
     driver_secret_key
   ].freeze
+
+  enum :location_provider, { places_v1: "places_v1", places_v2: "places_v2" }, default: :places_v1
 
   attribute :on_day_of_pickup_instructions, :string, default: DEFAULT_PICKUP_INSTRUCTIONS
   attribute :about_event_description, :string, default: DEFAULT_ABOUT_EVENT_DESCRIPTION
@@ -260,10 +263,15 @@ class Setting < ApplicationRecord
     end
 
     if is_routing_enabled?
-      missing << { attribute: :aws_access_key_id, label: "AWS Access Key ID", section: "location_services" } if aws_access_key_id.blank?
-      missing << { attribute: :aws_secret_access_key, label: "AWS Secret Access Key", section: "location_services" } if aws_secret_access_key.blank?
-      missing << { attribute: :aws_region, label: "AWS Region", section: "location_services" } if aws_region.blank?
-      missing << { attribute: :aws_location_index_name, label: "AWS Place Index Name", section: "location_services" } if aws_location_index_name.blank?
+      if places_v2?
+        missing << { attribute: :aws_location_api_key, label: "AWS Location API Key", section: "location_services" } if aws_location_api_key.blank?
+        missing << { attribute: :aws_region, label: "AWS Region", section: "location_services" } if aws_region.blank?
+      else
+        missing << { attribute: :aws_access_key_id, label: "AWS Access Key ID", section: "location_services" } if aws_access_key_id.blank?
+        missing << { attribute: :aws_secret_access_key, label: "AWS Secret Access Key", section: "location_services" } if aws_secret_access_key.blank?
+        missing << { attribute: :aws_region, label: "AWS Region", section: "location_services" } if aws_region.blank?
+        missing << { attribute: :aws_location_index_name, label: "AWS Place Index Name", section: "location_services" } if aws_location_index_name.blank?
+      end
     end
 
     if is_pickups_site_enabled? && driver_secret_key.blank?
@@ -334,12 +342,17 @@ class Setting < ApplicationRecord
   end
 
   def location_service_configured?
-    aws_access_key_id.present? && aws_secret_access_key.present? &&
-      aws_region.present? && aws_location_index_name.present?
+    if places_v2?
+      aws_location_api_key.present? && aws_region.present?
+    else
+      aws_access_key_id.present? && aws_secret_access_key.present? &&
+        aws_region.present? && aws_location_index_name.present?
+    end
   end
 
   def configure_location_service!
     return false unless location_service_configured?
+    return true if places_v2?
 
     apply_location_client!
     true
@@ -349,6 +362,12 @@ class Setting < ApplicationRecord
   # sent through so the SDK or the service can reject it, instead of stopping
   # locally and reporting a successful geocode.
   def prepare_location_search!
+    if places_v2?
+      return false unless aws_location_api_key.present? && aws_region.present?
+
+      return true
+    end
+
     return false unless aws_access_key_id.present? && aws_secret_access_key.present? && aws_region.present?
 
     apply_location_client!

@@ -153,14 +153,18 @@ class ConfigurationOverview
       entries: [
         { attribute: :is_routing_enabled, label: "Automatic Routing",
           note: "Master switch for geocoding and route assignment." },
-        { attribute: :aws_access_key_id, label: "Access Key ID", conditional_on: :is_routing_enabled,
-          note: "Amazon Location Service credential." },
-        { attribute: :aws_secret_access_key, label: "Secret Access Key", conditional_on: :is_routing_enabled, secret: true,
-          note: "Amazon Location Service credential." },
+        { attribute: :location_provider, label: "Provider", conditional_on: :is_routing_enabled,
+          note: "Legacy Places v1 or the Places v2 API key." },
+        { attribute: :aws_access_key_id, label: "Access Key ID", conditional_on: :is_routing_enabled, provider: :places_v1,
+          note: "Amazon Location Service credential for the legacy provider." },
+        { attribute: :aws_secret_access_key, label: "Secret Access Key", conditional_on: :is_routing_enabled, provider: :places_v1, secret: true,
+          note: "Amazon Location Service credential for the legacy provider." },
+        { attribute: :aws_location_index_name, label: "Place Index Name", conditional_on: :is_routing_enabled, provider: :places_v1,
+          note: "The Amazon Location Service place index used by the legacy provider." },
+        { attribute: :aws_location_api_key, label: "API Key", conditional_on: :is_routing_enabled, provider: :places_v2, secret: true,
+          note: "Amazon Location Service Places v2 credential." },
         { attribute: :aws_region, label: "Region", conditional_on: :is_routing_enabled,
-          note: "AWS region of the place index." },
-        { attribute: :aws_location_index_name, label: "Place Index Name", conditional_on: :is_routing_enabled,
-          note: "The Amazon Location Service place index." }
+          note: "AWS region used by the selected provider." }
       ]
     }
   }.freeze
@@ -205,6 +209,10 @@ class ConfigurationOverview
   end
 
   def status_for(spec, value)
+    if spec[:provider] && @setting.location_provider != spec[:provider].to_s
+      return :not_needed
+    end
+
     if spec[:required]
       return value.blank? ? :missing : :configured
     end

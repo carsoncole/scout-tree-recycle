@@ -329,6 +329,7 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
 
     patch admin_setting_path(Setting.first), params: {
       setting: {
+        location_provider: "places_v1",
         aws_access_key_id: "AKIATEST",
         aws_secret_access_key: "secret",
         aws_region: "us-east-1",
@@ -338,10 +339,42 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to admin_settings_path
     setting = Setting.first.reload
+    assert_equal "places_v1", setting.location_provider
     assert_equal "AKIATEST", setting.aws_access_key_id
     assert_equal "secret", setting.aws_secret_access_key
     assert_equal "us-east-1", setting.aws_region
     assert_equal "test-index", setting.aws_location_index_name
+  end
+
+  test "should update the Places v2 provider and API key" do
+    sign_in
+
+    patch admin_setting_path(Setting.first), params: {
+      setting: {
+        location_provider: "places_v2",
+        aws_location_api_key: "v1.public.test",
+        aws_region: "us-west-2"
+      }
+    }
+
+    assert_redirected_to admin_settings_path
+    setting = Setting.first.reload
+    assert_equal "places_v2", setting.location_provider
+    assert_equal "v1.public.test", setting.aws_location_api_key
+    assert_equal "us-west-2", setting.aws_region
+  end
+
+  test "a blank Places v2 API key keeps the saved key" do
+    sign_in
+    setting = Setting.first
+    setting.update!(aws_location_api_key: "v1.public.old")
+
+    patch admin_setting_path(setting), params: {
+      setting: { aws_location_api_key: "" }
+    }
+
+    assert_redirected_to admin_settings_path
+    assert_equal "v1.public.old", setting.reload.aws_location_api_key
   end
 
   test "should update email settings" do

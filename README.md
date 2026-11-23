@@ -261,7 +261,9 @@ Turn each one on under **Admin → Settings**. With a service off, that feature 
 | --- | --- | --- |
 | [Twilio](https://www.twilio.com) | Text messages | Settings → SMS. Set the number's incoming webhook to `https://your-domain/api/v1/sms/reply`. |
 | [Stripe](https://stripe.com) | Card donations | Settings → Donations. Add a webhook at `https://your-domain/api/v1/stripe-webhook` for `checkout.session.completed`, `charge.refunded`, `charge.updated`, and `payment_intent` events. |
-| [Amazon Location Service](https://aws.amazon.com/location/) | Address lookup and automatic routes | Settings → Location Services. |
+| [Amazon Location Service](https://aws.amazon.com/location/) | Address lookup and automatic routes | Settings → Location Services. Use the legacy Places v1 access key and place index, or switch to a Places v2 API key restricted to `geo-places:SearchText`. Switching providers only affects future geocoding. |
+
+Places v2 calls `SearchText` with `IntendedUse=Storage` because the app keeps the returned coordinates on reservations. Restrict the API key to the `SearchText` action and the Places v2 default provider.
 
 ## Tests
 

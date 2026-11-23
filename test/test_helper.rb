@@ -66,11 +66,42 @@ module ActiveSupport
 
     def configure_location_service!
       Setting.instance.update(
+        location_provider: "places_v1",
         aws_access_key_id: "AKIATEST",
         aws_secret_access_key: "secret",
         aws_region: "us-west-2",
         aws_location_index_name: "tree_recycle"
       )
+    end
+
+    def configure_places_v2!
+      Setting.instance.update!(
+        location_provider: "places_v2",
+        aws_location_api_key: "v1.public.test",
+        aws_region: "us-west-2"
+      )
+    end
+
+    def with_stubbed_location_search(results)
+      search = Object.new
+      search.define_singleton_method(:search) { |_address| results }
+
+      original = LocationSearch.method(:new)
+      LocationSearch.define_singleton_method(:new) { |*_args, **_kwargs| search }
+      yield
+    ensure
+      LocationSearch.define_singleton_method(:new, original) if original
+    end
+
+    def with_stubbed_location_search_error(error)
+      search = Object.new
+      search.define_singleton_method(:search) { |_address| raise error }
+
+      original = LocationSearch.method(:new)
+      LocationSearch.define_singleton_method(:new) { |*_args, **_kwargs| search }
+      yield
+    ensure
+      LocationSearch.define_singleton_method(:new, original) if original
     end
 
     def configure_email!(enabled: true)

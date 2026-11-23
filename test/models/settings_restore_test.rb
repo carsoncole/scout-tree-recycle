@@ -6,6 +6,8 @@ class SettingsRestoreTest < ActiveSupport::TestCase
 
     assert_includes attrs, "organization_name"
     assert_includes attrs, "smtp_password"
+    assert_includes attrs, "aws_location_api_key"
+    assert_includes attrs, "location_provider"
     assert_not_includes attrs, "id"
     assert_not_includes attrs, "created_at"
     assert_not_includes attrs, "updated_at"

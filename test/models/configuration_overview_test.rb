@@ -71,8 +71,24 @@ class ConfigurationOverviewTest < ActiveSupport::TestCase
     assert entry_for(:smtp_password).secret
     assert entry_for(:stripe_secret_key).secret
     assert entry_for(:aws_secret_access_key).secret
+    assert entry_for(:aws_location_api_key).secret
     assert entry_for(:driver_secret_key).secret
     assert_not entry_for(:twilio_account_sid).secret
+  end
+
+  test "legacy and Places v2 credentials are only needed for the selected provider" do
+    @setting.update!(is_routing_enabled: true, location_provider: "places_v2", aws_location_api_key: "v1.public.test", aws_region: "us-west-2")
+
+    assert_equal :configured, entry_for(:aws_location_api_key).status
+    assert_equal :not_needed, entry_for(:aws_access_key_id).status
+    assert_equal :not_needed, entry_for(:aws_secret_access_key).status
+    assert_equal :not_needed, entry_for(:aws_location_index_name).status
+
+    @setting.update!(location_provider: "places_v1")
+
+    assert_equal :not_needed, entry_for(:aws_location_api_key).status
+    assert_equal :missing, entry_for(:aws_access_key_id).status
+    assert_equal :missing, entry_for(:aws_secret_access_key).status
   end
 
   test "reports optional unset values" do

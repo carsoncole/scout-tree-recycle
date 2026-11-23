@@ -34,7 +34,7 @@ class Backup
     "settings" => Dataset.new(
       key: "settings",
       label: "Settings",
-      description: "All settings, including credentials such as SMTP, Twilio, Stripe, AWS, and driver passwords.",
+      description: "All settings, including credentials such as SMTP, Twilio, Stripe, AWS access keys and API keys, and driver passwords.",
       filename: "settings.json",
       content: ->(setting) { SettingsRestore.export(setting) },
       count: ->(setting) { setting ? 1 : 0 }

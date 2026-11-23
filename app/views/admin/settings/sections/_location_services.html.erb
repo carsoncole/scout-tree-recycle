@@ -2,7 +2,7 @@
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Location Services</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Geocode reservation and route addresses with Amazon Location Service.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Geocode reservation and route addresses with Amazon Location Service. Pick the legacy Places v1 access or the Places v2 API key.</p>
     </div>
   </div>
 
@@ -43,8 +43,30 @@
       </div>
 
       <div class="admin-form-section border-line dark:border-line-dark">
-        <h3 class="admin-section-title text-ink dark:text-ink-dark">AWS credentials</h3>
-        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Find these values in your AWS account. They are stored in the application database. If Location Services is not configured, reservations will need to be manually assigned to routes.</p>
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">Provider</h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Only the selected provider is used. Switching changes future geocoding only; existing addresses are not re-geocoded.</p>
+
+        <div class="admin-field-grid admin-field-grid--two">
+          <div class="admin-field">
+            <%= label_tag "setting[location_provider]", "Provider", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= select_tag "setting[location_provider]",
+                options_for_select([
+                  [ "Legacy — Places v1 (AWS access key)", "places_v1" ],
+                  [ "Places v2 (API key)", "places_v2" ]
+                ], setting.location_provider),
+                class: admin_select_class %>
+          </div>
+          <div class="admin-field">
+            <%= label_tag "setting[aws_region]", "Region", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= text_field_tag "setting[aws_region]", setting.aws_region, class: admin_input_class, autocomplete: "off", placeholder: "us-west-2" %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Used by both providers.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-form-section border-line dark:border-line-dark">
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">Legacy — Places v1</h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Uses an AWS access key and a place index. This is the default until you switch providers.</p>
 
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
@@ -56,13 +78,29 @@
             <%= password_field_tag "setting[aws_secret_access_key]", setting.aws_secret_access_key, class: admin_input_class, autocomplete: "new-password" %>
           </div>
           <div class="admin-field">
-            <%= label_tag "setting[aws_region]", "Region", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[aws_region]", setting.aws_region, class: admin_input_class, autocomplete: "off", placeholder: "us-west-2" %>
-          </div>
-          <div class="admin-field">
             <%= label_tag "setting[aws_location_index_name]", "Place Index Name", class: "admin-label text-ink dark:text-ink-dark" %>
             <%= text_field_tag "setting[aws_location_index_name]", setting.aws_location_index_name, class: admin_input_class, autocomplete: "off", placeholder: "tree_recycle" %>
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The Amazon Location Service place index used for address lookups.</p>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The Amazon Location Service place index used by the legacy provider.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-form-section border-line dark:border-line-dark">
+        <h3 class="admin-section-title text-ink dark:text-ink-dark">
+          Places v2 — API key
+          <% if setting.aws_location_api_key.present? %>
+            <span class="<%= admin_badge_class("positive") %> ml-2 align-middle">Configured</span>
+          <% end %>
+        </h3>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Create an API key in the Amazon Location console and restrict it to <span class="font-medium">geo-places:SearchText</span>. Leave this blank to keep the saved key.</p>
+
+        <div class="admin-field-grid admin-field-grid--two">
+          <div class="admin-field">
+            <%= label_tag "setting[aws_location_api_key]", "API Key", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= password_field_tag "setting[aws_location_api_key]", nil,
+                class: admin_input_class,
+                autocomplete: "new-password",
+                placeholder: setting.aws_location_api_key.present? ? "Saved — leave blank to keep" : "v1.public..." %>
           </div>
         </div>
       </div>

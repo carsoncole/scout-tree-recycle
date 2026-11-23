@@ -228,8 +228,12 @@ class Admin::SettingsController < Admin::BaseController
       :aws_secret_access_key,
       :aws_region,
       :aws_location_index_name,
+      :aws_location_api_key,
+      :location_provider,
       :driver_secret_key,
       :email_batch_quantity
-    )
+    ).tap do |permitted|
+      permitted.delete(:aws_location_api_key) if permitted[:aws_location_api_key].blank?
+    end
   end
 end

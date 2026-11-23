@@ -44,13 +44,15 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.sms_configured?
   end
 
-  test "AWS location settings have no default values" do
+  test "AWS location settings have no default values except the legacy provider" do
     setting = Setting.new
 
     assert_nil setting.aws_access_key_id
     assert_nil setting.aws_secret_access_key
     assert_nil setting.aws_region
     assert_nil setting.aws_location_index_name
+    assert_nil setting.aws_location_api_key
+    assert_equal "places_v1", setting.location_provider
   end
 
   test "sms_quick_response_list splits and strips lines" do
@@ -340,6 +342,43 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal "AKIATEST", api_key[:access_key_id]
     assert_equal "tree_recycle", Geocoder.config[:amazon_location_service][:index_name]
     assert_equal "us-west-2", Aws.config[:region]
+  end
+
+  test "Places v2 is configured with an API key and region" do
+    setting = Setting.instance
+    setting.update!(
+      location_provider: "places_v2",
+      aws_location_api_key: nil,
+      aws_region: "us-west-2",
+      aws_access_key_id: nil,
+      aws_secret_access_key: nil,
+      aws_location_index_name: nil
+    )
+
+    assert_not setting.location_service_configured?
+
+    setting.update!(aws_location_api_key: "v1.public.test")
+
+    assert setting.location_service_configured?
+    assert setting.configure_location_service!
+    assert setting.prepare_location_search!
+  end
+
+  test "Places v2 requires an API key and region when routing is enabled" do
+    setting = Setting.instance
+    setting.update!(
+      is_routing_enabled: true,
+      location_provider: "places_v2",
+      aws_location_api_key: nil,
+      aws_region: nil
+    )
+
+    missing = setting.missing_required_settings.map { |item| item[:attribute] }
+    assert_includes missing, :aws_location_api_key
+    assert_includes missing, :aws_region
+    assert_not_includes missing, :aws_access_key_id
+    assert_not_includes missing, :aws_secret_access_key
+    assert_not_includes missing, :aws_location_index_name
   end
 
   test "location_search_options limits lookups to the route area" do

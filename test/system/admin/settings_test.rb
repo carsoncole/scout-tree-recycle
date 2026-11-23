@@ -462,12 +462,14 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     within "section#location-services" do
       assert_selector "#routing-toggle"
+      assert_selector "select[name='setting[location_provider]']"
       assert_field "Access Key ID"
       assert_field "Secret Access Key"
       assert_field "Region", placeholder: "us-west-2"
       assert_field "Place Index Name", placeholder: "tree_recycle"
+      assert_field "API Key"
       assert_button "Save Location Services Settings"
-      assert_text "If Location Services is not configured, reservations will need to be manually assigned to routes."
+      assert_text "Only the selected provider is used."
     end
   end
 
@@ -489,6 +491,24 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_equal "secret-test", setting.aws_secret_access_key
     assert_equal "us-east-1", setting.aws_region
     assert_equal "test-index", setting.aws_location_index_name
+  end
+
+  test "location services panel saves the Places v2 provider and API key" do
+    visit admin_settings_section_path("location_services")
+
+    within "section#location-services" do
+      select "Places v2 (API key)", from: "Provider"
+      fill_in "API Key", with: "v1.public.test"
+      fill_in "Region", with: "us-west-2"
+      click_on "Save Location Services Settings"
+    end
+
+    assert_text "Settings were successfully updated"
+
+    setting = Setting.instance.reload
+    assert_equal "places_v2", setting.location_provider
+    assert_equal "v1.public.test", setting.aws_location_api_key
+    assert_equal "us-west-2", setting.aws_region
   end
 
   test "system panel links to close event" do

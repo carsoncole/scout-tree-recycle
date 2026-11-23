@@ -6,7 +6,7 @@
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email status</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Reservation, missing tree, and marketing email delivery.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Reservation, missing tree, and marketing email delivery. Manage <%= link_to "email settings", admin_settings_section_path("email"), class: admin_link_class %>.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
       <span class="<%= admin_badge_class(email_enabled ? "positive" : "neutral") %>">
@@ -19,7 +19,6 @@
       <% else %>
         <span class="<%= admin_badge_class("neutral") %>">Not sending</span>
       <% end %>
-      <%= link_to "Email settings", admin_settings_section_path("email"), class: admin_link_class %>
     </div>
   </div>
 

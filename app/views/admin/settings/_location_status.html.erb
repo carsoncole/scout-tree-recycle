@@ -5,7 +5,7 @@
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Location services status</h2>
-      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Automatic routing and address verification through Amazon Location Service.</p>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Automatic routing and address verification through Amazon Location Service. Manage <%= link_to "location settings", admin_settings_section_path("location_services"), class: admin_link_class %>.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
       <span class="<%= admin_badge_class("info") %>"><%= setting.places_v2? ? "Places v2" : "Places v1" %></span>
@@ -19,7 +19,6 @@
       <% else %>
         <span class="<%= admin_badge_class("neutral") %>">Manual routing</span>
       <% end %>
-      <%= link_to "Location settings", admin_settings_section_path("location_services"), class: admin_link_class %>
     </div>
   </div>
 

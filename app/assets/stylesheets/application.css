@@ -1437,10 +1437,6 @@
   align-items: start;
 }
 
-.admin-settings-status {
-  margin-bottom: 1.5rem;
-}
-
 .admin-setup-missing-list {
   display: grid;
   gap: 0.2rem;

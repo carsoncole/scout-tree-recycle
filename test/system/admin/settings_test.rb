@@ -91,7 +91,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Missing tree notifications"
       assert_text "Marketing emails"
       assert_text "Cancellation notices, test emails, password resets, account setup, and backup emails are not affected by this setting."
-      assert_link "Email settings", href: admin_settings_section_path("email")
+      assert_link "email settings", href: admin_settings_section_path("email")
     end
   end
 
@@ -146,7 +146,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Address verification during signup"
       assert_text "Geocode and Route actions on reservations"
       assert_text "Reservations can still be assigned to routes manually."
-      assert_link "Location settings", href: admin_settings_section_path("location_services")
+      assert_link "location settings", href: admin_settings_section_path("location_services")
     end
   end
 
@@ -196,7 +196,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Pickups disabled"
       assert_text "Not required"
       assert_text "The Pickups Portal is disabled, so these items are not needed yet."
-      assert_link "Pickups settings", href: admin_settings_section_path("pickups")
+      assert_link "pickups settings", href: admin_settings_section_path("pickups")
       assert_no_selector "table"
     end
   end
@@ -211,7 +211,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Ready"
       assert_text "3 zones, 6 routes, and 2 drivers are set up."
       assert_text "The Pickups Portal is ready for drivers."
-      assert_link "Pickups settings", href: admin_settings_section_path("pickups")
+      assert_link "pickups settings", href: admin_settings_section_path("pickups")
       assert_no_selector "table"
     end
   end
@@ -227,7 +227,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "#pickups-status" do
       assert_text "3 missing"
       assert_text "Missing pickups setup"
-      assert_link "Pickups settings", href: admin_settings_section_path("pickups")
+      assert_link "pickups settings", href: admin_settings_section_path("pickups")
       assert_selector "table"
       assert_text "Not added", count: 3
       assert_link "Zones", href: admin_zones_path

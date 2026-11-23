@@ -156,10 +156,11 @@ class Reservation < ApplicationRecord
 
   # Admin reservations table: sort, optional status, and search. An unknown
   # sort falls back to newest first. An unknown status is ignored.
-  def self.for_admin_index(sort:, direction:, status: nil, query: nil)
+  def self.for_admin_index(sort:, direction:, status: nil, query: nil, address_check: nil)
     relation = includes(:route)
     relation = admin_sorted(relation, sort, direction)
     relation = relation.where(status: status) if status.present? && statuses.key?(status.to_s)
+    relation = relation.needs_address_review if address_check == "needs_review"
     relation = relation.search(query) if query.present?
     relation
   end
@@ -188,6 +189,14 @@ class Reservation < ApplicationRecord
     where(latitude: nil).
     or(Reservation.routing.where(longitude: nil)).
     or(Reservation.routing.where(route_id: nil))
+  }
+
+  # Reservations an organizer should look at before pickup day. Includes both
+  # failed submit-time checks and routed reservations with no usable coords.
+  scope :needs_address_review, -> {
+    active = where.not(status: %w[cancelled imported])
+    active.where(address_match_status: "unavailable").
+      or(active.where(status: %w[routing pending_pickup], latitude: nil))
   }
 
   # Orders reservations by street address for the operational pickups pages.

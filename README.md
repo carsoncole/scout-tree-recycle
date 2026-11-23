@@ -20,7 +20,7 @@ The two built-in marketing emails. The first says reservations are open. The sec
 
 **Admin.** Organizers work from one back office:
 
-- Reservations, with address lookup and assignment onto routes. Routes can also be assigned by hand.
+- Reservations, with address verification review, lookup, and assignment onto routes. Routes can also be assigned by hand.
 - Zones, routes, and drivers.
 - A pickup overview and a printable PDF of pickups still waiting.
 - Donation records and charts of reservations and donations.

@@ -143,14 +143,57 @@
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">Address information</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Coordinates are used for routing and driver maps.</p>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Verification uses the configured pickup city, state, and country. Coordinates are used for routing and driver maps.</p>
       </div>
-      <%= button_to "Geocode Address", geocode_admin_reservation_path(@reservation),
-          method: :post,
-          class: admin_button_class(variant: :secondary, size: :small) %>
+      <div class="flex flex-wrap gap-2">
+        <%= button_to "Geocode Address", geocode_admin_reservation_path(@reservation),
+            method: :post,
+            class: admin_button_class(variant: :secondary, size: :small) %>
+        <%= button_to "Re-verify Address", verify_address_admin_reservation_path(@reservation),
+            method: :post,
+            class: admin_button_class(variant: :secondary, size: :small) %>
+      </div>
     </div>
     <div class="admin-panel-body">
+      <% if @reservation.address_match_unavailable? || @reservation.geocoding_failed? %>
+        <div class="<%= admin_notice_class(:warning) %>" role="status">
+          <div>
+            <p class="admin-notice-title">Address needs review</p>
+            <p>This address did not match the pickup area or could not be geocoded. Re-verify it, or assign the route manually.</p>
+          </div>
+        </div>
+      <% end %>
+
       <dl class="admin-detail-list">
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Address check</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <span class="<%= admin_address_check_badge(@reservation) %>"><%= admin_address_check_label(@reservation) %></span>
+            <% if @reservation.address_match_score.present? %>
+              <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark">
+                <%= number_to_percentage(@reservation.address_match_score * 100, precision: 0) %> match
+              </span>
+            <% end %>
+          </dd>
+        </div>
+        <% if @reservation.submitted_address.present? %>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Submitted address</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.submitted_address %></dd>
+          </div>
+        <% end %>
+        <% if @reservation.formatted_address.present? %>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Verified address</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.formatted_address %></dd>
+          </div>
+        <% end %>
+        <% if @reservation.address_verified_at.present? %>
+          <div class="admin-detail border-line dark:border-line-dark">
+            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Verified at</dt>
+            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.address_verified_at.in_time_zone.strftime("%B %-d, %Y at %-l:%M %p") %></dd>
+          </div>
+        <% end %>
         <div class="admin-detail border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Street</dt>
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @reservation.street %></dd>

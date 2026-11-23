@@ -9,7 +9,7 @@
 
 ### Reservation flow
 
-- Surface unverified or out-of-area addresses on the admin reservation pages so organizers can review them before pickup day.
+- Consider a batch re-verification or bulk address-validation job for historical reservations. Individual verification, the needs-review filter, and manual re-verification are implemented.
 
 ### Controllers and REST
 

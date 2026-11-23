@@ -1,12 +1,13 @@
 class Admin::ReservationsController < Admin::BaseController
-  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode, :route, :assign_route, :resend_email ]
+  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode, :verify_address, :route, :assign_route, :resend_email ]
 
   def index
     @reservations = Reservation.for_admin_index(
       sort: params[:sort],
       direction: params[:direction],
       status: params[:status],
-      query: params[:q]
+      query: params[:q],
+      address_check: params[:address_check]
     )
     @pagy, @reservations = pagy(@reservations)
     flash.now[:alert] = "Reservations are CLOSED." unless Reservation.open?
@@ -44,6 +45,21 @@ class Admin::ReservationsController < Admin::BaseController
       redirect_to admin_reservation_path(@reservation), notice: "Reservation was successfully geocoded."
     else
       redirect_to admin_reservation_path(@reservation), alert: "Geocoding was not successful."
+    end
+  end
+
+  def verify_address
+    unless Setting.instance.address_verification_available?
+      redirect_to admin_reservation_path(@reservation),
+                  alert: "Address verification requires automatic routing and Places v2."
+      return
+    end
+
+    if @reservation.verify_address!
+      redirect_to admin_reservation_path(@reservation), notice: "Address verified for the pickup area."
+    else
+      redirect_to admin_reservation_path(@reservation),
+                  alert: "Address could not be verified for the pickup area. It will need manual routing."
     end
   end
 

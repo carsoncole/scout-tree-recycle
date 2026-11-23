@@ -22,6 +22,18 @@ class ReservationTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordNotFound) { Reservation.find_by_public_token!("not-a-real-token") }
   end
 
+  test "needs_address_review includes unavailable and ungeocoded routing reservations" do
+    unavailable = reservations(:pending_pickup_1)
+    unavailable.update_columns(address_match_status: "unavailable")
+
+    reviewable = Reservation.needs_address_review
+
+    assert_includes reviewable, unavailable
+    assert_includes reviewable, reservations(:routing_1)
+    assert_not_includes reviewable, reservations(:picked_up_1)
+    assert_not_includes reviewable, reservations(:cancelled_1)
+  end
+
   test "imported status is valid and reports routing status" do
     reservation = Reservation.new(name: "Imported", street: "1 Main", city: "New York", state: "NY", country: "United States", email: "imported.status@example.com", status: "imported")
     assert reservation.valid?

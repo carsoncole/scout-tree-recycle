@@ -30,6 +30,18 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Icky Jones", response.body
   end
 
+  test "should filter reservations that need an address review" do
+    sign_in
+    reservable = reservations(:pending_pickup_1)
+    reservable.update_columns(address_match_status: "unavailable")
+
+    get admin_reservations_url(address_check: "needs_review")
+
+    assert_response :success
+    assert_match reservable.name, response.body
+    assert_no_match reservations(:picked_up_1).name, response.body
+  end
+
   test "should combine search with a status filter" do
     sign_in
     get admin_reservations_url(q: "Jones", status: "pending_pickup")
@@ -61,6 +73,77 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "form[action=?] select[name=?]", assign_route_admin_reservation_path(reservations(:pending_pickup_1)), "reservation[route_id]"
     assert_select "input[type=checkbox][name=?]", "reservation[is_missing_tree_notifications_enabled]"
+  end
+
+  test "show displays address verification details and a re-verify button" do
+    sign_in
+    reservation = reservations(:pending_pickup_1)
+    reservation.update_columns(
+      address_match_status: "unavailable",
+      address_match_score: 0.42,
+      submitted_address: "123 Main Street, New York, NY, United States",
+      formatted_address: "123 Main Street, New York, NY 10001, United States"
+    )
+
+    get admin_reservation_url(reservation)
+
+    assert_response :success
+    assert_select ".admin-badge", text: "Needs review"
+    assert_match "123 Main Street, New York, NY, United States", response.body
+    assert_match "123 Main Street, New York, NY 10001, United States", response.body
+    assert_select "form[action=?] button", verify_address_admin_reservation_path(reservation), text: "Re-verify Address"
+  end
+
+  test "should re-verify an address against the pickup area" do
+    sign_in
+    configure_address_verification!
+    reservation = reservations(:routing_1)
+
+    with_stubbed_location_search([ verified_address_result ]) do
+      post verify_address_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Address verified for the pickup area.", flash[:notice]
+    reservation.reload
+    assert reservation.address_match_verified?
+    assert reservation.geocoded?
+  end
+
+  test "re-verifying an out-of-area address records a failure" do
+    sign_in
+    configure_address_verification!
+    reservation = reservations(:routing_1)
+    out_of_area = verified_address_result(
+      locality: "Seattle",
+      region: "Washington",
+      region_code: "WA",
+      region_name: "Washington"
+    )
+
+    with_stubbed_location_search([ out_of_area ]) do
+      post verify_address_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Address could not be verified for the pickup area. It will need manual routing.", flash[:alert]
+    reservation.reload
+    assert reservation.address_match_unavailable?
+    assert_nil reservation.latitude
+  end
+
+  test "does not re-verify when routing is disabled" do
+    sign_in
+    Setting.instance.update!(is_routing_enabled: false)
+    reservation = reservations(:routing_1)
+
+    with_stubbed_location_search([ verified_address_result ]) do
+      post verify_address_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Address verification requires automatic routing and Places v2.", flash[:alert]
+    assert_nil reservation.reload.address_match_status
   end
 
   test "should get show with the reservation's logs" do

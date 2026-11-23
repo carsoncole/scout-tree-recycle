@@ -1,8 +1,7 @@
 module AdminHelper
   # Top-nav groups. Each entry is [label, [controller names]].
   ADMIN_NAV_GROUPS = {
-    "Operations" => %w[reservations pickups donations analytics sms received_emails outbound_emails replies],
-    "Content" => %w[marketing marketing_email_templates marketing_images reservation_email_templates contacts],
+    "Operations" => %w[reservations pickups donations analytics sms received_emails outbound_emails replies marketing marketing_email_templates marketing_images reservation_email_templates contacts],
     "System" => %w[settings configuration drivers routes zones locations users thanks logs data operations]
   }.freeze
 
@@ -32,9 +31,9 @@ module AdminHelper
   # :user and :admin are true when that role is allowed.
   ADMIN_ROLE_PRIVILEGES = [
     { area: "Operations", label: "Reservations, pickups, donations, analytics, SMS, and mail", user: true, admin: true },
-    { area: "Content", label: "Marketing, templates, images, and contacts", user: true, admin: true },
-    { area: "Content", label: "Delete all contacts", user: false, admin: true },
-    { area: "Content", label: "Thank-you message and supporter thanks", user: true, admin: true },
+    { area: "Operations", label: "Marketing, templates, images, and contacts", user: true, admin: true },
+    { area: "Operations", label: "Delete all contacts", user: false, admin: true },
+    { area: "Operations", label: "Thank-you message and supporter thanks", user: true, admin: true },
     { area: "Routing", label: "Routes, zones, drivers, and route points", user: true, admin: true },
     { area: "Routing", label: "Locations — staging points, meeting places, and other map locations", user: true, admin: true },
     { area: "System", label: "Logs, including delete and delete all", user: true, admin: true },

@@ -706,6 +706,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_settings_section_path("system")
     within "section#system" do
       assert_link "System Logs", href: admin_logs_path
+      assert_link "Jobs", href: admin_mission_control_jobs_path
       assert_selector "#maintenance-mode-toggle"
       assert_selector "#pickup-notice-toggle"
     end
@@ -717,7 +718,6 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     visit admin_settings_url
     assert_link "Data", href: admin_data_path
-    assert_link "Jobs", href: admin_mission_control_jobs_path
     assert_link "Users", href: admin_users_path
   end
 

@@ -61,12 +61,6 @@
                 Mail
                 <%= render "admin/mails/unread_count", count: Mails::ReceivedEmail.unread.count %>
               <% end %>
-            </div>
-
-            <span class="admin-nav-divider bg-line dark:bg-line-dark" aria-hidden="true"></span>
-
-            <div class="admin-nav-group">
-              <span class="admin-nav-group-label text-muted dark:text-muted-dark">Content</span>
               <%= link_to "Marketing", admin_marketing_index_path,
                           class: admin_nav_class(%w[marketing marketing_email_templates marketing_images reservation_email_templates contacts].include?(controller_name)) %>
             </div>
@@ -81,8 +75,6 @@
                           class: admin_nav_class(controller_name == "logs") %>
               <%= link_to "Data", admin_data_path,
                           class: admin_nav_class(controller_name == "data") %>
-              <%= link_to "Jobs", admin_mission_control_jobs_path,
-                          class: admin_nav_class(false) %>
             </div>
           </nav>
           <% end %>

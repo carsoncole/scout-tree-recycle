@@ -1,9 +1,10 @@
 require "test_helper"
 
 class BackupTest < ActiveSupport::TestCase
-  test "registry exposes reservations and settings" do
-    assert_equal %w[reservations settings], Backup.dataset_keys
+  test "registry exposes reservations, contacts and settings" do
+    assert_equal %w[reservations contacts settings], Backup.dataset_keys
     assert_equal "reservations.csv", Backup::DATASETS.fetch("reservations").filename
+    assert_equal "contacts.csv", Backup::DATASETS.fetch("contacts").filename
     assert_equal "settings.json", Backup::DATASETS.fetch("settings").filename
   end
 
@@ -25,18 +26,20 @@ class BackupTest < ActiveSupport::TestCase
   end
 
   test "zip contains a manifest and the selected dataset files" do
-    files = zip_entries(Backup.new(datasets: %w[reservations settings]).to_zip)
+    files = zip_entries(Backup.new(datasets: %w[reservations contacts settings]).to_zip)
 
-    assert_equal %w[manifest.json reservations.csv settings.json], files.keys.sort
+    assert_equal %w[contacts.csv manifest.json reservations.csv settings.json], files.keys.sort
 
     manifest = JSON.parse(files.fetch("manifest.json"))
     assert_equal Backup::FORMAT, manifest["format"]
     assert_equal Backup::VERSION, manifest["version"]
     assert_equal "Troop 100 Tree Recycle", manifest["home_page_header"]
-    assert_equal %w[reservations settings], manifest["datasets"].map { |dataset| dataset["key"] }
+    assert_equal %w[reservations contacts settings], manifest["datasets"].map { |dataset| dataset["key"] }
     assert_equal Reservation.count, manifest.dig("datasets", 0, "record_count")
+    assert_equal Contact.count, manifest.dig("datasets", 1, "record_count")
 
     assert_includes files.fetch("reservations.csv"), reservations(:pending_pickup_1).email
+    assert_includes files.fetch("contacts.csv"), contacts(:full).email
     assert_equal Setting.instance.organization_name, JSON.parse(files.fetch("settings.json")).dig("setting", "organization_name")
   end
 

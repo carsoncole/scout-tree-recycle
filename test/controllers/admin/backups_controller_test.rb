@@ -17,6 +17,9 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
 
     post restore_reservations_admin_backups_url
     assert_redirected_to new_admin_session_url
+
+    post restore_contacts_admin_backups_url
+    assert_redirected_to new_admin_session_url
   end
 
   test "non-admin users cannot download, email, schedule, or restore" do
@@ -41,12 +44,16 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
     post restore_reservations_admin_backups_url
     assert_redirected_to admin_data_url
     assert_equal "You are not authorized to perform this data action.", flash[:alert]
+
+    post restore_contacts_admin_backups_url
+    assert_redirected_to admin_data_url
+    assert_equal "You are not authorized to perform this data action.", flash[:alert]
   end
 
   test "downloads a zip with the selected datasets and a manifest" do
     sign_in
 
-    post admin_backups_url, params: { datasets: %w[reservations settings] }
+    post admin_backups_url, params: { datasets: %w[reservations contacts settings] }
 
     assert_response :success
     assert_equal "application/zip", response.media_type
@@ -57,14 +64,18 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
 
     assert_includes files.keys, "manifest.json"
     assert_includes files.keys, "reservations.csv"
+    assert_includes files.keys, "contacts.csv"
     assert_includes files.keys, "settings.json"
 
     manifest = JSON.parse(files.fetch("manifest.json"))
     assert_equal "tree-recycle-backup", manifest["format"]
     assert_equal 1, manifest["version"]
+    assert_equal %w[reservations contacts settings], manifest["datasets"].map { |dataset| dataset["key"] }
     assert_equal Reservation.count, manifest.dig("datasets", 0, "record_count")
+    assert_equal Contact.count, manifest.dig("datasets", 1, "record_count")
 
     assert_includes files.fetch("reservations.csv"), reservations(:pending_pickup_1).email
+    assert_includes files.fetch("contacts.csv"), contacts(:full).email
     assert_equal Setting.instance.organization_name, JSON.parse(files.fetch("settings.json")).dig("setting", "organization_name")
   end
 
@@ -78,6 +89,7 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
 
     assert_includes files.keys, "settings.json"
     assert_not_includes files.keys, "reservations.csv"
+    assert_not_includes files.keys, "contacts.csv"
   end
 
   test "download filename falls back when the home page header is blank" do
@@ -189,7 +201,7 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
   test "restores settings from a json file" do
     sign_in
     setting = Setting.instance
-    payload = JSON.parse(SettingTransfer.export(setting))
+    payload = JSON.parse(SettingsRestore.export(setting))
     payload["setting"]["organization_name"] = "Restored Troop"
     payload["setting"]["default_city"] = "Portland"
 
@@ -232,7 +244,7 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
       Restored Person,restored.person@example.com,123 Main St,pending_pickup
     CSV
 
-    assert_enqueued_with(job: ReservationCsvImportJob) do
+    assert_enqueued_with(job: ReservationsRestoreJob) do
       post restore_reservations_admin_backups_url, params: {
         file: upload(csv, "reservations.csv", "text/csv")
       }
@@ -248,7 +260,7 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
     restored = Reservation.find_by(email: "restored.person@example.com")
     assert restored
     assert_equal "Restored Person", restored.name
-    assert Log.of_type("job").where(error_type: "ReservationCsvImportJob").exists?
+    assert Log.of_type("job").where(error_type: "ReservationsRestoreJob").exists?
   end
 
   test "requires a reservations file to restore" do
@@ -258,6 +270,41 @@ class Admin::BackupsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to admin_data_url
     assert_equal "Please choose a reservations CSV file to restore.", flash[:alert]
+  end
+
+  test "queues a contacts restore and records the result" do
+    sign_in
+    csv = <<~CSV
+      name,email,street
+      Restored Contact,restored.contact@example.com,123 Main St
+    CSV
+
+    assert_enqueued_with(job: ContactsRestoreJob) do
+      post restore_contacts_admin_backups_url, params: {
+        file: upload(csv, "contacts.csv", "text/csv")
+      }
+    end
+
+    assert_redirected_to admin_data_url
+    assert_equal "Contact restore queued. Check the System Logs for results.", flash[:notice]
+
+    assert_difference "Contact.count", 1 do
+      perform_enqueued_jobs
+    end
+
+    restored = Contact.find_by(email: "restored.contact@example.com")
+    assert restored
+    assert_equal "Restored Contact", restored.name
+    assert Log.of_type("job").where(error_type: "ContactsRestoreJob").exists?
+  end
+
+  test "requires a contacts file to restore" do
+    sign_in
+
+    post restore_contacts_admin_backups_url
+
+    assert_redirected_to admin_data_url
+    assert_equal "Please choose a contacts CSV file to restore.", flash[:alert]
   end
 
   private

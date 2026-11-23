@@ -61,12 +61,12 @@ class Admin::BackupsController < Admin::BaseController
     end
 
     json = file.read
-    if json.bytesize > SettingTransfer::MAX_FILE_SIZE
+    if json.bytesize > SettingsRestore::MAX_FILE_SIZE
       return redirect_to admin_data_path, alert: "Settings file is too large (maximum 1 MB)."
     end
 
     json = json.force_encoding("UTF-8").scrub
-    result = SettingTransfer.new(json: json, user: Current.user).import
+    result = SettingsRestore.new(json: json, user: Current.user).perform
 
     if result.success?
       Log.create(
@@ -90,7 +90,7 @@ class Admin::BackupsController < Admin::BaseController
     end
 
     csv = file.read
-    if csv.bytesize > ReservationCsvImport::MAX_FILE_SIZE
+    if csv.bytesize > ReservationsRestore::MAX_FILE_SIZE
       return redirect_to admin_data_path, alert: "Reservations CSV file is too large (maximum 10 MB)."
     end
 
@@ -99,12 +99,34 @@ class Admin::BackupsController < Admin::BaseController
     # normalize to valid UTF-8 here.
     csv = csv.force_encoding("UTF-8").scrub
 
-    ReservationCsvImportJob.perform_later(
+    ReservationsRestoreJob.perform_later(
       csv: csv,
       filename: file.original_filename.to_s,
       user: Current.user
     )
     redirect_to admin_data_path, notice: "Reservation restore queued. Check the System Logs for results."
+  end
+
+  def restore_contacts
+    file = params[:file]
+    unless file.respond_to?(:read)
+      return redirect_to admin_data_path, alert: "Please choose a contacts CSV file to restore."
+    end
+
+    csv = file.read
+    if csv.bytesize > ContactsRestore::MAX_FILE_SIZE
+      return redirect_to admin_data_path, alert: "Contacts CSV file is too large (maximum 10 MB)."
+    end
+
+    # See restore_reservations: keep job arguments valid UTF-8.
+    csv = csv.force_encoding("UTF-8").scrub
+
+    ContactsRestoreJob.perform_later(
+      csv: csv,
+      filename: file.original_filename.to_s,
+      user: Current.user
+    )
+    redirect_to admin_data_path, notice: "Contact restore queued. Check the System Logs for results."
   end
 
   private

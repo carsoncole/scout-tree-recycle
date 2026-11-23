@@ -1,7 +1,7 @@
 require "test_helper"
 require "csv"
 
-class ReservationCsvImportTest < ActiveSupport::TestCase
+class ReservationsRestoreTest < ActiveSupport::TestCase
   test "creates reservations from a backup csv" do
     csv = csv_with_rows(
       "name" => "Restored Person",
@@ -106,7 +106,7 @@ class ReservationCsvImportTest < ActiveSupport::TestCase
 
     assert Reservation.find_by(email: "good@example.com")
     assert_not Reservation.find_by(email: "bad@example.com")
-    assert Log.where(error_type: "ReservationCsvImport", severity: "error").exists?
+    assert Log.where(error_type: "ReservationsRestore", severity: "error").exists?
   end
 
   test "does not send emails or write reservation activity logs" do
@@ -147,7 +147,7 @@ class ReservationCsvImportTest < ActiveSupport::TestCase
   private
 
   def import(csv)
-    ReservationCsvImport.new(csv: csv, filename: "reservations.csv").perform
+    ReservationsRestore.new(csv: csv, filename: "reservations.csv").perform
   end
 
   def csv_with_rows(*rows)

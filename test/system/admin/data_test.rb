@@ -8,9 +8,10 @@ class Admin::DataTest < ApplicationSystemTestCase
   test "visiting the data page" do
     visit admin_data_url
     assert_selector "h1", text: "Data"
-    assert_text "Import contacts"
     assert_text "Backups"
     assert_text "Restore from a backup"
+    assert_text "Restore contacts"
+    assert_no_text "Import contacts"
     assert_no_text "Export Reservations CSV"
     assert_no_text "Export Settings JSON"
     assert_link "System Logs"
@@ -25,22 +26,6 @@ class Admin::DataTest < ApplicationSystemTestCase
     if (password = ActiveRecord::Base.connection_db_config.configuration_hash[:password])
       assert_no_text password
     end
-  end
-
-  test "importing a csv" do
-    visit admin_data_url
-    attach_file "CSV file", Rails.root.join("test/fixtures/files/reservations_import.csv")
-    assert_selector "select[name='mapping[]']", count: 7
-    selects = all("select[name='mapping[]']")
-    selects[0].select("Name")
-    selects[1].select("Email")
-    selects[2].select("Street")
-    click_button "Import Contacts CSV"
-    assert_text "Contact import queued"
-
-    perform_enqueued_jobs
-    assert Contact.find_by(email: "imported.person@example.com")
-    assert Log.of_type("job").exists?
   end
 
   test "downloading a backup" do
@@ -81,7 +66,7 @@ class Admin::DataTest < ApplicationSystemTestCase
   end
 
   test "restoring settings from a json file" do
-    payload = JSON.parse(SettingTransfer.export(Setting.instance))
+    payload = JSON.parse(SettingsRestore.export(Setting.instance))
     payload["setting"]["organization_name"] = "Restored Troop"
     file = Tempfile.new([ "settings", ".json" ])
     file.write(payload.to_json)
@@ -112,6 +97,25 @@ class Admin::DataTest < ApplicationSystemTestCase
     perform_enqueued_jobs
 
     assert Reservation.find_by(email: "system.restored@example.com")
+  ensure
+    file&.close
+    file&.unlink
+  end
+
+  test "restoring contacts from a csv file" do
+    csv = "name,email,street\nSystem Contact,system.contact@example.com,123 Main St\n"
+    file = Tempfile.new([ "contacts", ".csv" ])
+    file.write(csv)
+    file.rewind
+
+    visit admin_data_url
+    attach_file "Contacts CSV file", file.path
+    click_button "Restore Contacts"
+
+    assert_text "Contact restore queued."
+    perform_enqueued_jobs
+
+    assert Contact.find_by(email: "system.contact@example.com")
   ensure
     file&.close
     file&.unlink

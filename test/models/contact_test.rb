@@ -179,4 +179,15 @@ class ContactTest < ActiveSupport::TestCase
     assert_includes Contact.marketing_subscribed.search("trellis"), contacts(:no_mobile)
     assert_not_includes Contact.marketing_subscribed.search("susan"), contacts(:full)
   end
+
+  test "to_csv exports every contact with the backup columns" do
+    require "csv"
+
+    csv = Contact.to_csv
+    rows = CSV.parse(csv, headers: true)
+
+    assert_equal Contact::EXPORT_FIELDS, rows.headers
+    assert_equal Contact.count, rows.size
+    assert_includes csv, contacts(:full).email
+  end
 end

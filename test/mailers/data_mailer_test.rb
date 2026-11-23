@@ -4,7 +4,7 @@ class DataMailerTest < ActionMailer::TestCase
   test "backup_email delivers the zip backup to the requested address" do
     Setting.instance.update!(email_from_address: "Troop 100 <troop100@example.com>")
 
-    mail = DataMailer.backup_email("qa@example.com", datasets: %w[reservations settings])
+    mail = DataMailer.backup_email("qa@example.com", datasets: %w[reservations contacts settings])
 
     assert_equal [ "qa@example.com" ], mail.to
     assert_equal [ "troop100@example.com" ], mail.from
@@ -19,7 +19,9 @@ class DataMailerTest < ActionMailer::TestCase
     files = zip_entries(attachment.body.decoded)
     assert_includes files.keys, "settings.json"
     assert_includes files.keys, "reservations.csv"
+    assert_includes files.keys, "contacts.csv"
     assert_includes files.fetch("reservations.csv"), reservations(:pending_pickup_1).email
+    assert_includes files.fetch("contacts.csv"), contacts(:full).email
   end
 
   test "backup_email can send only the selected dataset" do
@@ -30,6 +32,7 @@ class DataMailerTest < ActionMailer::TestCase
 
     assert_includes files.keys, "settings.json"
     assert_not_includes files.keys, "reservations.csv"
+    assert_not_includes files.keys, "contacts.csv"
   end
 
   private

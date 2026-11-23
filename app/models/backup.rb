@@ -1,9 +1,9 @@
 require "zip"
 
-# Builds a zip containing the selected datasets (reservations, settings) and a
-# manifest. Download, email, and the daily schedule all use this object so new
-# datasets only need one registry entry. Restoring is handled per dataset so a
-# backup can be restored piecemeal.
+# Builds a zip containing the selected datasets (reservations, contacts,
+# settings) and a manifest. Download, email, and the daily schedule all use
+# this object so new datasets only need one registry entry. Restoring is
+# handled per dataset so a backup can be restored piecemeal.
 class Backup
   FORMAT = "tree-recycle-backup"
   VERSION = 1
@@ -20,15 +20,23 @@ class Backup
       label: "Reservations",
       description: "Every reservation with its mapped fields, route name, and timestamps.",
       filename: "reservations.csv",
-      content: ->(_setting) { Reservation.to_csv },
+      content: ->(_setting) { ReservationsRestore.export },
       count: ->(_setting) { Reservation.count }
+    ),
+    "contacts" => Dataset.new(
+      key: "contacts",
+      label: "Contacts",
+      description: "Every contact, including marketing send history and unsubscribe status.",
+      filename: "contacts.csv",
+      content: ->(_setting) { ContactsRestore.export },
+      count: ->(_setting) { Contact.count }
     ),
     "settings" => Dataset.new(
       key: "settings",
       label: "Settings",
       description: "All settings, including credentials such as SMTP, Twilio, Stripe, AWS, and driver passwords.",
       filename: "settings.json",
-      content: ->(setting) { SettingTransfer.export(setting) },
+      content: ->(setting) { SettingsRestore.export(setting) },
       count: ->(setting) { setting ? 1 : 0 }
     )
   }.freeze

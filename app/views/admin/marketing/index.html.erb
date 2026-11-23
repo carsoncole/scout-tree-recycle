@@ -155,7 +155,7 @@
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">Contacts (<%= @pagy.count %>)</h2>
-        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Contacts from prior reservations and imported contacts. <%= link_to "Import data", admin_data_path, class: admin_link_class %></p>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Contacts from prior reservations and restored backups. <%= link_to "Data", admin_data_path, class: admin_link_class %></p>
       </div>
       <%= link_to "New Contact", new_admin_contact_path, class: admin_button_class %>
     </div>

@@ -1,6 +1,6 @@
-# Exports and imports the singleton Setting as a portable JSON file.
+# Exports and restores the singleton Setting as a portable JSON file.
 # Used by /admin/data so settings can be backed up and restored on a fresh install.
-class SettingTransfer
+class SettingsRestore
   FORMAT = "tree-recycle-settings"
   VERSION = 1
   MAX_FILE_SIZE = 1.megabyte
@@ -41,8 +41,8 @@ class SettingTransfer
     @user = user
   end
 
-  def import
-    return failure([ "Please choose a settings JSON file to import." ]) if @json.strip.empty?
+  def perform
+    return failure([ "Please choose a settings JSON file to restore." ]) if @json.strip.empty?
     return failure([ "Settings file is too large (maximum 1 MB)." ]) if @json.bytesize > MAX_FILE_SIZE
 
     payload = parse_payload
@@ -64,7 +64,7 @@ class SettingTransfer
     end
   rescue StandardError => e
     Rails.error.report(e, handled: true, severity: :warning, context: { user: @user&.email })
-    failure([ "Settings could not be imported: #{e.message}" ])
+    failure([ "Settings could not be restored: #{e.message}" ])
   end
 
   private

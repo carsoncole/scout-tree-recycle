@@ -1,8 +1,8 @@
 require "test_helper"
 
-class SettingTransferTest < ActiveSupport::TestCase
+class SettingsRestoreTest < ActiveSupport::TestCase
   test "exportable_attributes excludes identifiers and runtime timestamps" do
-    attrs = SettingTransfer.exportable_attributes
+    attrs = SettingsRestore.exportable_attributes
 
     assert_includes attrs, "organization_name"
     assert_includes attrs, "smtp_password"
@@ -16,7 +16,7 @@ class SettingTransferTest < ActiveSupport::TestCase
     setting = Setting.instance
     setting.update!(smtp_password: "secret-password", twilio_auth_token: "twilio-secret")
 
-    payload = JSON.parse(SettingTransfer.export(setting))
+    payload = JSON.parse(SettingsRestore.export(setting))
 
     assert_equal "tree-recycle-settings", payload["format"]
     assert_equal 1, payload["version"]
@@ -30,21 +30,21 @@ class SettingTransferTest < ActiveSupport::TestCase
     assert_not payload["setting"].key?("backup_last_sent_at")
   end
 
-  test "import updates the existing singleton setting" do
+  test "restore updates the existing singleton setting" do
     setting = Setting.instance
-    json = SettingTransfer.export(setting)
+    json = SettingsRestore.export(setting)
     payload = JSON.parse(json)
     payload["setting"]["organization_name"] = "Imported Troop"
     payload["setting"]["default_city"] = "Portland"
 
-    result = SettingTransfer.new(json: payload.to_json).import
+    result = SettingsRestore.new(json: payload.to_json).perform
 
     assert result.success?
     assert_equal "Imported Troop", setting.reload.organization_name
     assert_equal "Portland", setting.default_city
   end
 
-  test "import accepts legacy reservations export attribute names" do
+  test "restore accepts legacy reservations export attribute names" do
     setting = Setting.instance
     payload = {
       "format" => "tree-recycle-settings",
@@ -56,7 +56,7 @@ class SettingTransferTest < ActiveSupport::TestCase
       }
     }
 
-    result = SettingTransfer.new(json: payload.to_json).import
+    result = SettingsRestore.new(json: payload.to_json).perform
 
     assert result.success?
     setting.reload
@@ -65,7 +65,7 @@ class SettingTransferTest < ActiveSupport::TestCase
     assert setting.is_backup_schedule_enabled?
   end
 
-  test "import creates a setting when none exists" do
+  test "restore creates a setting when none exists" do
     Setting.delete_all
 
     payload = {
@@ -82,14 +82,14 @@ class SettingTransferTest < ActiveSupport::TestCase
     }
 
     assert_difference "Setting.count", 1 do
-      result = SettingTransfer.new(json: payload.to_json).import
+      result = SettingsRestore.new(json: payload.to_json).perform
       assert result.success?
     end
 
     assert_equal "Fresh Troop", Setting.instance.organization_name
   end
 
-  test "import ignores unknown keys and excluded attributes" do
+  test "restore ignores unknown keys and excluded attributes" do
     setting = Setting.instance
     original_id = setting.id
     original_created_at = setting.created_at
@@ -105,7 +105,7 @@ class SettingTransferTest < ActiveSupport::TestCase
       }
     }
 
-    result = SettingTransfer.new(json: payload.to_json).import
+    result = SettingsRestore.new(json: payload.to_json).perform
 
     assert result.success?
     setting.reload
@@ -114,16 +114,16 @@ class SettingTransferTest < ActiveSupport::TestCase
     assert_equal original_created_at.to_i, setting.created_at.to_i
   end
 
-  test "import rejects invalid json" do
-    result = SettingTransfer.new(json: "{not json").import
+  test "restore rejects invalid json" do
+    result = SettingsRestore.new(json: "{not json").perform
 
     assert_not result.success?
     assert_includes result.errors, "Settings file is not valid JSON."
   end
 
-  test "import rejects unsupported format or version" do
-    bad_format = SettingTransfer.new(json: { format: "nope", version: 1, setting: {} }.to_json).import
-    bad_version = SettingTransfer.new(json: { format: "tree-recycle-settings", version: 999, setting: {} }.to_json).import
+  test "restore rejects unsupported format or version" do
+    bad_format = SettingsRestore.new(json: { format: "nope", version: 1, setting: {} }.to_json).perform
+    bad_version = SettingsRestore.new(json: { format: "tree-recycle-settings", version: 999, setting: {} }.to_json).perform
 
     assert_not bad_format.success?
     assert_includes bad_format.errors, "Settings file is not a recognized Tree Recycle settings export."
@@ -131,14 +131,14 @@ class SettingTransferTest < ActiveSupport::TestCase
     assert_match(/not supported/, bad_version.errors.first)
   end
 
-  test "import rejects missing setting payload" do
-    result = SettingTransfer.new(json: { format: "tree-recycle-settings", version: 1 }.to_json).import
+  test "restore rejects missing setting payload" do
+    result = SettingsRestore.new(json: { format: "tree-recycle-settings", version: 1 }.to_json).perform
 
     assert_not result.success?
     assert_includes result.errors, "Settings file is invalid: missing setting data."
   end
 
-  test "import returns validation errors and does not persist invalid changes" do
+  test "restore returns validation errors and does not persist invalid changes" do
     setting = Setting.instance
     original_time_zone = setting.time_zone
 
@@ -148,7 +148,7 @@ class SettingTransferTest < ActiveSupport::TestCase
       "setting" => { "time_zone" => "Invalid/Zone" }
     }
 
-    result = SettingTransfer.new(json: payload.to_json).import
+    result = SettingsRestore.new(json: payload.to_json).perform
 
     assert_not result.success?
     assert result.errors.any? { |error| error.include?("Time zone is not included in the list") }

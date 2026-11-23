@@ -1,75 +1,15 @@
 <%= content_for :title, "Data" %>
 <%= render "admin/shared/page_header",
            title: "Data",
-           description: "Import contacts, download or restore reservations and settings backups, manage data, and review database settings." %>
+           description: "Download or restore backups of reservations, contacts and settings, manage data, and review database settings." %>
 
 <div class="flex flex-col gap-6">
   <% if Current.user&.admin? %>
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="import-contacts">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Import contacts</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Upload a CSV file, map its columns to contact fields, and queue a background import.</p>
-        </div>
-      </div>
-      <div class="admin-panel-body">
-        <div class="<%= admin_notice_class(:warning, spaced: true) %>" role="status">
-          <div>
-            <p class="admin-notice-title">Background import</p>
-            <p>
-              Imports run in the background after you submit. The completed summary and any rows that cannot be imported are recorded in the
-              <%= link_to "System Logs", admin_logs_path, class: admin_link_class %>
-              with row numbers and validation messages.
-            </p>
-          </div>
-        </div>
-
-        <noscript>
-          <div class="<%= admin_notice_class(:danger, spaced: true) %>" role="status">
-            <div>
-              <p class="admin-notice-title">JavaScript required</p>
-              <p>Column mapping requires JavaScript. Enable it in your browser to import CSV files.</p>
-            </div>
-          </div>
-        </noscript>
-
-        <%= form_with url: import_admin_data_path, method: :post, multipart: true,
-                      class: "admin-form",
-                      data: {
-                        controller: "csv-mapping",
-                        csv_mapping_fields_value: Contact::IMPORTABLE_FIELDS.map do |value, label|
-                          { value: value, label: label, aliases: Contact::IMPORTABLE_FIELD_ALIASES.fetch(value, []) }
-                        end.to_json
-                      } do |f| %>
-          <div class="admin-form-section admin-form-section--flush border-line dark:border-line-dark">
-            <div class="admin-field">
-              <%= label_tag :file, "CSV file", class: "admin-label text-ink dark:text-ink-dark" %>
-              <%= file_field_tag :file, accept: ".csv,text/csv", class: admin_input_class,
-                    data: { csv_mapping_target: "file", action: "change->csv-mapping#load" } %>
-              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Upload a CSV with a header row. These fields are required: name, email, mobile, street. Maximum 5 MB.</p>
-
-              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark" data-csv-mapping-target="matchStatus">Matching fields found: none yet.</p>
-            </div>
-
-            <p class="admin-error-text text-danger dark:text-danger-dark" data-csv-mapping-target="error" hidden></p>
-          </div>
-
-          <div class="admin-form-section border-line dark:border-line-dark">
-            <div class="admin-field-grid admin-field-grid--two gap-5" data-csv-mapping-target="mapping"></div>
-          </div>
-
-          <div class="flex flex-wrap items-center justify-end gap-3">
-            <%= submit_tag "Import Contacts CSV", class: admin_button_class %>
-          </div>
-        <% end %>
-      </div>
-    </section>
-
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="backups">
       <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
           <h2 class="admin-panel-title text-ink dark:text-ink-dark">Backups</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download or email a zip backup of reservations and settings, or restore from a previous backup.</p>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Download or email a zip backup of reservations, contacts and settings, or restore from a previous backup.</p>
         </div>
       </div>
       <div class="admin-panel-body">
@@ -141,7 +81,7 @@
           </div>
         <% else %>
           <div class="<%= admin_notice_class(:warning) %> mt-5" role="status">
-            <p><strong class="admin-notice-title">Settings required.</strong> Complete the initial settings before backing up settings. You can still download reservations.</p>
+            <p><strong class="admin-notice-title">Settings required.</strong> Complete the initial settings before backing up settings. You can still download reservations and contacts.</p>
           </div>
 
           <section class="mt-4 flex flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
@@ -160,19 +100,18 @@
 
         <div class="admin-form-section border-line dark:border-line-dark">
           <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Restore from a backup</h3>
-          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Restore settings and reservations independently.</p>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Restore settings, reservations and contacts independently. CSV restores run in the background and record results in the <%= link_to "System Logs", admin_logs_path, class: admin_link_class %>.</p>
 
           <div class="<%= admin_notice_class(:warning) %> mt-4" role="status">
             <p>
               <strong class="admin-notice-title">Event finished?</strong>
-              If this event is over, do not restore reservations. Import the CSV through
-              <%= link_to "Import contacts", admin_data_path(anchor: "import-contacts"), class: admin_link_class %>
+              If this event is over, do not restore reservations. Restore contacts instead
               so supporters are kept for next year. <%= link_to "Close Event", admin_close_event_path, class: admin_link_class %>
               does this automatically from the current reservations.
             </p>
           </div>
 
-          <div class="mt-4 grid gap-4 lg:grid-cols-2">
+          <div class="mt-4 grid gap-4 lg:grid-cols-3">
             <section class="flex h-full flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark">
               <h4 class="admin-toggle-title text-ink dark:text-ink-dark">Restore settings</h4>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Overwrites current settings, including credentials.</p>
@@ -200,6 +139,21 @@
                   <%= submit_tag "Restore Reservations", class: "#{admin_button_class} shrink-0" %>
                 </div>
                 <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Choose <span class="font-mono">reservations.csv</span> from a backup zip. Maximum 10 MB. Runs in the background; results are recorded in the System Logs.</p>
+              <% end %>
+            </section>
+
+            <section class="flex h-full flex-col rounded-lg border border-line bg-stone p-4 dark:border-line-dark dark:bg-stone-dark" id="restore-contacts">
+              <h4 class="admin-toggle-title text-ink dark:text-ink-dark">Restore contacts</h4>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Updates contacts that match by email and adds missing ones. Never deletes contacts.</p>
+
+              <%= form_with url: restore_contacts_admin_backups_path, method: :post, multipart: true, class: "mt-3 flex flex-1 flex-col gap-2" do %>
+                <%= label_tag :backup_contacts_file, "Contacts CSV file", class: "admin-label text-ink dark:text-ink-dark" %>
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <%= file_field_tag :file, id: "backup_contacts_file", accept: ".csv,text/csv",
+                      class: "#{admin_input_class} min-w-0 flex-1" %>
+                  <%= submit_tag "Restore Contacts", class: "#{admin_button_class} shrink-0" %>
+                </div>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Choose <span class="font-mono">contacts.csv</span> from a backup zip. Maximum 10 MB. Runs in the background; results are recorded in the System Logs.</p>
               <% end %>
             </section>
           </div>
@@ -303,7 +257,7 @@
         </div>
       </div>
       <div class="admin-panel-body">
-        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">You can view this page, but importing contacts, backing up or restoring data, and data management actions are available to admins only.</p>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">You can view this page, but backing up or restoring data and data management actions are available to admins only.</p>
       </div>
     </section>
   <% end %>

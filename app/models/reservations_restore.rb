@@ -5,11 +5,16 @@ require "csv"
 # updated and missing ones are created. Restores never delete reservations and
 # deliberately bypass model callbacks so a restore does not email customers,
 # re-geocode, reroute, or write activity logs.
-class ReservationCsvImport
+# Export and restore live together so every dataset has the same shape.
+class ReservationsRestore
   MAX_FILE_SIZE = 10.megabytes
   REQUIRED_HEADERS = %w[name email street].freeze
   NON_RESTORABLE_COLUMNS = %w[id route_id].freeze
   RESTORABLE_COLUMNS = (Reservation.column_names - NON_RESTORABLE_COLUMNS).freeze
+
+  def self.export
+    Reservation.to_csv
+  end
 
   Result = Struct.new(:created, :updated, :skipped, :failed, :error, :row_errors, keyword_init: true) do
     def success?
@@ -193,7 +198,7 @@ class ReservationCsvImport
     Log.create(
       log_type: "error",
       message: "Reservation restore failed: #{message}",
-      error_type: "ReservationCsvImport",
+      error_type: "ReservationsRestore",
       severity: "error",
       handled: false,
       skip_notification: true,
@@ -207,7 +212,7 @@ class ReservationCsvImport
     Log.create(
       log_type: "error",
       message: "Reservation restore failed for row #{row_number} (#{email.presence || "no email"}): #{errors.join(", ")}",
-      error_type: "ReservationCsvImport",
+      error_type: "ReservationsRestore",
       severity: "error",
       handled: false,
       skip_notification: true,

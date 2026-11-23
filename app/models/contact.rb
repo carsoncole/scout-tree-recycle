@@ -6,19 +6,26 @@ class Contact < ApplicationRecord
 
   BLOCKED_MARKETING_EMAIL_DOMAINS = %w[test example].freeze
 
-  IMPORTABLE_FIELDS = {
-    "name" => "Name",
-    "email" => "Email",
-    "mobile" => "Mobile",
-    "street" => "Street"
-  }.freeze
+  # Columns written to contacts.csv inside a backup zip. The same list is
+  # accepted by ContactsRestore when a backup is restored.
+  EXPORT_FIELDS = %w[
+    name
+    email
+    street
+    mobile
+    marketing_1_email_sent_at
+    marketing_2_email_sent_at
+    is_unsubscribed_from_marketing
+    created_at
+    updated_at
+  ].freeze
 
-  IMPORTABLE_FIELD_ALIASES = {
-    "name" => %w[full_name customer_name customer],
-    "email" => %w[email_address e_mail],
-    "mobile" => %w[phone phone_number mobile_phone cell cell_phone],
-    "street" => %w[address street_address pickup_address]
-  }.freeze
+  EXPORT_TIMESTAMP_FIELDS = %w[
+    marketing_1_email_sent_at
+    marketing_2_email_sent_at
+    created_at
+    updated_at
+  ].freeze
 
   include Mails::Correspondable
 
@@ -102,5 +109,23 @@ class Contact < ApplicationRecord
 
   def self.clear_email_flags!
     Contact.update_all(marketing_1_email_sent_at: nil, marketing_2_email_sent_at: nil)
+  end
+
+  def self.to_csv
+    require "csv"
+
+    CSV.generate(headers: EXPORT_FIELDS, write_headers: true) do |csv|
+      find_each do |contact|
+        csv << EXPORT_FIELDS.map { |field| csv_value(contact, field) }
+      end
+    end
+  end
+
+  def self.csv_value(contact, field)
+    if EXPORT_TIMESTAMP_FIELDS.include?(field)
+      contact.public_send(field)&.iso8601
+    else
+      contact.public_send(field)
+    end
   end
 end

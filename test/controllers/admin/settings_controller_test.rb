@@ -74,6 +74,43 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/#{Zone.count} zones, #{Route.count} routes, and #{Driver.count} drivers are set up/, response.body)
   end
 
+  test "should show email status on the settings overview" do
+    sign_in
+    Setting.instance.update!(
+      is_emailing_enabled: true,
+      email_from_address: "example@example.com",
+      smtp_address: "smtp.example.com",
+      smtp_port: 587
+    )
+    get admin_settings_path
+    assert_response :success
+
+    assert_select "#email-status" do
+      assert_select ".admin-badge", text: "Email enabled"
+      assert_select ".admin-badge", text: "Ready"
+      assert_select "a[href=?]", admin_settings_section_path("email")
+    end
+  end
+
+  test "should show location services status on the settings overview" do
+    sign_in
+    Setting.instance.update!(
+      is_routing_enabled: true,
+      location_provider: "places_v2",
+      aws_location_api_key: "test-key",
+      aws_region: "us-west-2"
+    )
+    get admin_settings_path
+    assert_response :success
+
+    assert_select "#location-status" do
+      assert_select ".admin-badge", text: "Places v2"
+      assert_select ".admin-badge", text: "Routing enabled"
+      assert_select ".admin-badge", text: "Ready"
+      assert_select "a[href=?]", admin_settings_section_path("location_services")
+    end
+  end
+
   test "system settings no longer include the error notification toggle" do
     sign_in
 

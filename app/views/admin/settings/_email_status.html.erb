@@ -1,0 +1,58 @@
+<% email_enabled = setting.is_emailing_enabled? %>
+<% missing_email_settings = setting.missing_email_settings %>
+<% email_ready = missing_email_settings.empty? %>
+<% automated_emails = [ "Reservation confirmations", "Missing tree notifications", "Marketing emails" ] %>
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="email-status">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email status</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Reservation, missing tree, and marketing email delivery.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="<%= admin_badge_class(email_enabled ? "positive" : "neutral") %>">
+        <%= email_enabled ? "Email enabled" : "Email disabled" %>
+      </span>
+      <% if email_enabled %>
+        <span class="<%= admin_badge_class(email_ready ? "positive" : "warning") %>">
+          <%= email_ready ? "Ready" : "#{missing_email_settings.size} missing" %>
+        </span>
+      <% else %>
+        <span class="<%= admin_badge_class("neutral") %>">Not sending</span>
+      <% end %>
+      <%= link_to "Email settings", admin_settings_section_path("email"), class: admin_link_class %>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <% if !email_enabled %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">Email is disabled</p>
+          <p>These emails will not be sent:</p>
+          <ul class="admin-setup-missing-list">
+            <% automated_emails.each do |email_type| %>
+              <li><%= email_type %></li>
+            <% end %>
+          </ul>
+          <p class="mt-2">Cancellation notices, test emails, password resets, account setup, and backup emails are not affected by this setting.</p>
+        </div>
+      </div>
+    <% elsif missing_email_settings.any? %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">Email settings are incomplete</p>
+          <p>Automated email cannot send until these settings are added:</p>
+          <ul class="admin-setup-missing-list">
+            <% missing_email_settings.each do |item| %>
+              <li><%= link_to item[:label], admin_settings_section_path(item[:section]), class: admin_link_class %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% else %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+        Reservation confirmations, missing tree notifications, and marketing emails will send automatically.
+      </p>
+    <% end %>
+  </div>
+</section>

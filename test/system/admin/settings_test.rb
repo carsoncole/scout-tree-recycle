@@ -78,6 +78,115 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     end
   end
 
+  test "email status makes clear what will not send when disabled" do
+    Setting.instance.update(is_emailing_enabled: false)
+
+    visit admin_settings_url
+
+    within "#email-status" do
+      assert_text "Email disabled"
+      assert_text "Not sending"
+      assert_text "These emails will not be sent:"
+      assert_text "Reservation confirmations"
+      assert_text "Missing tree notifications"
+      assert_text "Marketing emails"
+      assert_text "Cancellation notices, test emails, password resets, account setup, and backup emails are not affected by this setting."
+      assert_link "Email settings", href: admin_settings_section_path("email")
+    end
+  end
+
+  test "email status confirms delivery when enabled and configured" do
+    Setting.instance.update(
+      is_emailing_enabled: true,
+      email_from_address: "example@example.com",
+      smtp_address: "smtp.example.com",
+      smtp_port: 587
+    )
+
+    visit admin_settings_url
+
+    within "#email-status" do
+      assert_text "Email enabled"
+      assert_text "Ready"
+      assert_text "Reservation confirmations, missing tree notifications, and marketing emails will send automatically."
+      assert_no_text "Email settings are incomplete"
+    end
+  end
+
+  test "email status reports incomplete settings when enabled" do
+    Setting.instance.update(
+      is_emailing_enabled: true,
+      email_from_address: "",
+      smtp_address: nil,
+      smtp_port: nil
+    )
+
+    visit admin_settings_url
+
+    within "#email-status" do
+      assert_text "Email enabled"
+      assert_text "3 missing"
+      assert_text "Email settings are incomplete"
+      assert_link "Email From Address", href: admin_settings_section_path("email")
+      assert_link "SMTP Address", href: admin_settings_section_path("email")
+      assert_link "SMTP Port", href: admin_settings_section_path("email")
+    end
+  end
+
+  test "location services status makes clear what will not work when disabled" do
+    Setting.instance.update(is_routing_enabled: false)
+
+    visit admin_settings_url
+
+    within "#location-status" do
+      assert_text "Routing disabled"
+      assert_text "Manual routing"
+      assert_text "Automatic routing is disabled"
+      assert_text "Automatic route assignment for new reservations"
+      assert_text "Address verification during signup"
+      assert_text "Geocode and Route actions on reservations"
+      assert_text "Reservations can still be assigned to routes manually."
+      assert_link "Location settings", href: admin_settings_section_path("location_services")
+    end
+  end
+
+  test "location services status confirms routing and address verification when ready" do
+    Setting.instance.update(
+      is_routing_enabled: true,
+      location_provider: "places_v2",
+      aws_location_api_key: "test-key",
+      aws_region: "us-west-2"
+    )
+
+    visit admin_settings_url
+
+    within "#location-status" do
+      assert_text "Places v2"
+      assert_text "Routing enabled"
+      assert_text "Ready"
+      assert_text "New reservations are geocoded and routed automatically. Addresses are verified during signup."
+    end
+  end
+
+  test "location services status reports incomplete settings when enabled" do
+    Setting.instance.update(
+      is_routing_enabled: true,
+      location_provider: "places_v2",
+      aws_location_api_key: nil,
+      aws_region: nil
+    )
+
+    visit admin_settings_url
+
+    within "#location-status" do
+      assert_text "Routing enabled"
+      assert_text "2 missing"
+      assert_text "Location services are incomplete"
+      assert_link "AWS Location API Key", href: admin_settings_section_path("location_services")
+      assert_link "AWS Region", href: admin_settings_section_path("location_services")
+    end
+  end
+
   test "pickups setup status notes setup is only required when the portal is enabled" do
     Setting.instance.update(is_pickups_site_enabled: false)
 
@@ -87,7 +196,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Pickups disabled"
       assert_text "Not required"
       assert_text "The Pickups Portal is disabled, so these items are not needed yet."
-      assert_link "Manage Pickups Portal settings", href: admin_settings_section_path("pickups")
+      assert_link "Pickups settings", href: admin_settings_section_path("pickups")
       assert_no_selector "table"
     end
   end
@@ -102,7 +211,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Ready"
       assert_text "3 zones, 6 routes, and 2 drivers are set up."
       assert_text "The Pickups Portal is ready for drivers."
-      assert_link "Manage Pickups Portal settings", href: admin_settings_section_path("pickups")
+      assert_link "Pickups settings", href: admin_settings_section_path("pickups")
       assert_no_selector "table"
     end
   end
@@ -118,6 +227,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "#pickups-status" do
       assert_text "3 missing"
       assert_text "Missing pickups setup"
+      assert_link "Pickups settings", href: admin_settings_section_path("pickups")
       assert_selector "table"
       assert_text "Not added", count: 3
       assert_link "Zones", href: admin_zones_path

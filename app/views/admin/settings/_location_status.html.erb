@@ -1,0 +1,62 @@
+<% routing_enabled = setting.is_routing_enabled? %>
+<% location_ready = setting.location_service_configured? %>
+<% missing_location_settings = routing_enabled ? setting.missing_required_settings.select { |item| item[:section] == "location_services" } : [] %>
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="location-status">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Location services status</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Automatic routing and address verification through Amazon Location Service.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="<%= admin_badge_class("info") %>"><%= setting.places_v2? ? "Places v2" : "Places v1" %></span>
+      <span class="<%= admin_badge_class(routing_enabled ? "positive" : "neutral") %>">
+        <%= routing_enabled ? "Routing enabled" : "Routing disabled" %>
+      </span>
+      <% if routing_enabled %>
+        <span class="<%= admin_badge_class(location_ready ? "positive" : "warning") %>">
+          <%= location_ready ? "Ready" : "#{missing_location_settings.size} missing" %>
+        </span>
+      <% else %>
+        <span class="<%= admin_badge_class("neutral") %>">Manual routing</span>
+      <% end %>
+      <%= link_to "Location settings", admin_settings_section_path("location_services"), class: admin_link_class %>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <% if !routing_enabled %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">Automatic routing is disabled</p>
+          <p>These features will not work:</p>
+          <ul class="admin-setup-missing-list">
+            <li>Automatic route assignment for new reservations</li>
+            <li>Address verification during signup</li>
+            <li>Geocode and Route actions on reservations</li>
+          </ul>
+          <p class="mt-2">Reservations can still be assigned to routes manually.</p>
+        </div>
+      </div>
+    <% elsif missing_location_settings.any? %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">Location services are incomplete</p>
+          <p>Automatic routing and address verification will not work until these settings are added:</p>
+          <ul class="admin-setup-missing-list">
+            <% missing_location_settings.each do |item| %>
+              <li><%= link_to item[:label], admin_settings_section_path(item[:section]), class: admin_link_class %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% elsif setting.places_v2? %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+        New reservations are geocoded and routed automatically. Addresses are verified during signup.
+      </p>
+    <% else %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+        New reservations are geocoded and routed automatically. Address verification requires Places v2.
+      </p>
+    <% end %>
+  </div>
+</section>

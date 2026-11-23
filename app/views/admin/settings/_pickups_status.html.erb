@@ -18,6 +18,7 @@
       <% else %>
         <span class="<%= admin_badge_class("neutral") %>">Not required</span>
       <% end %>
+      <%= link_to "Pickups settings", admin_settings_section_path("pickups"), class: admin_link_class %>
     </div>
   </div>
 
@@ -25,12 +26,10 @@
     <% if !pickup_enabled %>
       <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
         The Pickups Portal is disabled, so these items are not needed yet.
-        <%= link_to "Manage Pickups Portal settings", admin_settings_section_path("pickups"), class: admin_link_class %>
       </p>
     <% elsif missing.empty? %>
       <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
         <%= pickup_setup_summary(items) %> are set up. The Pickups Portal is ready for drivers.
-        <%= link_to "Manage Pickups Portal settings", admin_settings_section_path("pickups"), class: admin_link_class %>
       </p>
     <% else %>
       <div class="<%= admin_notice_class(:warning) %>" role="status">

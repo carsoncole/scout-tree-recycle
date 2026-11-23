@@ -11,6 +11,8 @@ class Admin::DriversControllerTest < ActionDispatch::IntegrationTest
     sign_in
     get new_admin_driver_url
     assert_response :success
+    assert_select "input[name='driver[mobile]']"
+    assert_select "input[name='driver[phone]']", count: 0
   end
 
   test "should get edit" do

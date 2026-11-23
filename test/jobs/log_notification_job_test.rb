@@ -37,7 +37,7 @@ class LogNotificationJobTest < ActiveJob::TestCase
       LogNotificationJob.perform_now(log_id: log.id)
     end
 
-    assert_equal "New Log Entry: line one line two", sent.first[:subject]
+    assert_equal "New Error Log Entry: line one line two", sent.first[:subject]
   end
 
   test "does not send when email settings are incomplete" do

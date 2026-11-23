@@ -1,12 +1,13 @@
 <% missing_settings = setting.missing_required_settings %>
-<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="configuration-status">
-  <div class="admin-panel-header border-line dark:border-line-dark">
+<% alarm = missing_settings.any? %>
+<section class="<%= admin_status_panel_class(alarm: alarm) %>" id="configuration-status">
+  <div class="<%= admin_status_panel_header_class(alarm: alarm) %>">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Configuration status</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Required settings needed for the application to run correctly.</p>
     </div>
     <div class="flex items-center gap-3">
-      <span class="<%= admin_badge_class(missing_settings.empty? ? "positive" : "warning") %>">
+      <span class="<%= admin_badge_class(alarm ? "danger" : "positive") %>">
         <%= missing_settings.empty? ? "Ready" : "#{missing_settings.size} missing" %>
       </span>
       <%= link_to "All settings", admin_configuration_path, class: admin_link_class %>

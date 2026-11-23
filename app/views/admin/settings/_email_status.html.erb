@@ -1,9 +1,10 @@
 <% email_enabled = setting.is_emailing_enabled? %>
 <% missing_email_settings = setting.missing_email_settings %>
 <% email_ready = missing_email_settings.empty? %>
+<% alarm = email_enabled && !email_ready %>
 <% automated_emails = [ "Reservation confirmations", "Missing tree notifications", "Marketing emails" ] %>
-<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="email-status">
-  <div class="admin-panel-header border-line dark:border-line-dark">
+<section class="<%= admin_status_panel_class(alarm: alarm) %>" id="email-status">
+  <div class="<%= admin_status_panel_header_class(alarm: alarm) %>">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email status</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Reservation, missing tree, and marketing email delivery. Manage <%= link_to "email settings", admin_settings_section_path("email"), class: admin_link_class %>.</p>
@@ -13,7 +14,7 @@
         <%= email_enabled ? "Email enabled" : "Email disabled" %>
       </span>
       <% if email_enabled %>
-        <span class="<%= admin_badge_class(email_ready ? "positive" : "warning") %>">
+        <span class="<%= admin_badge_class(alarm ? "danger" : "positive") %>">
           <%= email_ready ? "Ready" : "#{missing_email_settings.size} missing" %>
         </span>
       <% else %>

@@ -1,8 +1,9 @@
 <% routing_enabled = setting.is_routing_enabled? %>
 <% location_ready = setting.location_service_configured? %>
 <% missing_location_settings = routing_enabled ? setting.missing_required_settings.select { |item| item[:section] == "location_services" } : [] %>
-<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="location-status">
-  <div class="admin-panel-header border-line dark:border-line-dark">
+<% alarm = routing_enabled && !location_ready %>
+<section class="<%= admin_status_panel_class(alarm: alarm) %>" id="location-status">
+  <div class="<%= admin_status_panel_header_class(alarm: alarm) %>">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Location services status</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Automatic routing and address verification through Amazon Location Service. Manage <%= link_to "location settings", admin_settings_section_path("location_services"), class: admin_link_class %>.</p>
@@ -13,7 +14,7 @@
         <%= routing_enabled ? "Routing enabled" : "Routing disabled" %>
       </span>
       <% if routing_enabled %>
-        <span class="<%= admin_badge_class(location_ready ? "positive" : "warning") %>">
+        <span class="<%= admin_badge_class(alarm ? "danger" : "positive") %>">
           <%= location_ready ? "Ready" : "#{missing_location_settings.size} missing" %>
         </span>
       <% else %>

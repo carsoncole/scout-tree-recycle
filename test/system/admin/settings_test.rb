@@ -49,6 +49,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "1 missing"
       assert_link "Site URL", href: admin_settings_section_path("site_details")
     end
+    assert_selector "#configuration-status.border-danger-border"
 
     Setting.instance.update(site_url: "https://example.com")
     visit admin_settings_url
@@ -57,6 +58,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Ready"
       assert_text "All required settings are configured."
     end
+    assert_no_selector "#configuration-status.border-danger-border"
   end
 
   test "blank default city and state are reported as missing" do
@@ -93,6 +95,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Cancellation notices, test emails, password resets, account setup, and backup emails are not affected by this setting."
       assert_link "email settings", href: admin_settings_section_path("email")
     end
+    assert_no_selector "#email-status.border-danger-border"
   end
 
   test "email status confirms delivery when enabled and configured" do
@@ -131,6 +134,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "SMTP Address", href: admin_settings_section_path("email")
       assert_link "SMTP Port", href: admin_settings_section_path("email")
     end
+    assert_selector "#email-status.border-danger-border"
   end
 
   test "location services status makes clear what will not work when disabled" do
@@ -148,6 +152,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_text "Reservations can still be assigned to routes manually."
       assert_link "location settings", href: admin_settings_section_path("location_services")
     end
+    assert_no_selector "#location-status.border-danger-border"
   end
 
   test "location services status confirms routing and address verification when ready" do
@@ -185,6 +190,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "AWS Location API Key", href: admin_settings_section_path("location_services")
       assert_link "AWS Region", href: admin_settings_section_path("location_services")
     end
+    assert_selector "#location-status.border-danger-border"
   end
 
   test "pickups setup status notes setup is only required when the portal is enabled" do
@@ -199,6 +205,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "pickups settings", href: admin_settings_section_path("pickups")
       assert_no_selector "table"
     end
+    assert_no_selector "#pickups-status.border-danger-border"
   end
 
   test "pickups setup status summarizes setup when enabled and ready" do
@@ -234,6 +241,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
       assert_link "Routes", href: admin_routes_path
       assert_link "Drivers", href: admin_drivers_path
     end
+    assert_selector "#pickups-status.border-danger-border"
   end
 
   test "pickups portal is disabled when not enabled" do

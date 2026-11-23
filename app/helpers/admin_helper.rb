@@ -224,6 +224,22 @@ module AdminHelper
     "admin-badge admin-badge--#{variant} #{colors}"
   end
 
+  # Status panels change to the alarm palette when setup needs attention.
+  def admin_status_panel_class(alarm: false)
+    border = alarm ? "border-danger-border dark:border-danger-border-dark" : "border-line dark:border-line-dark"
+    [ "admin-panel border bg-surface dark:bg-surface-dark", border ].join(" ")
+  end
+
+  def admin_status_panel_header_class(alarm: false)
+    classes = [ "admin-panel-header" ]
+    classes << if alarm
+      "border-danger-border bg-danger-bg dark:border-danger-border-dark dark:bg-danger-bg-dark"
+    else
+      "border-line dark:border-line-dark"
+    end
+    classes.join(" ")
+  end
+
   # Zones, routes, and drivers the Pickups Portal needs before drivers can use
   # their pickup lists. Counts are loaded by the settings controller.
   def pickup_setup_items(zones_count:, routes_count:, drivers_count:)

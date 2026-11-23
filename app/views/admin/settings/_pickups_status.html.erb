@@ -1,8 +1,9 @@
 <% pickup_enabled = setting.is_pickups_site_enabled? %>
 <% items = pickup_setup_items(zones_count: @zones_count, routes_count: @routes_count, drivers_count: @drivers_count) %>
 <% missing = items.select { |item| item[:count].zero? } %>
-<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="pickups-status">
-  <div class="admin-panel-header border-line dark:border-line-dark">
+<% alarm = pickup_enabled && missing.any? %>
+<section class="<%= admin_status_panel_class(alarm: alarm) %>" id="pickups-status">
+  <div class="<%= admin_status_panel_header_class(alarm: alarm) %>">
     <div>
       <h2 class="admin-panel-title text-ink dark:text-ink-dark">Pickups setup status</h2>
       <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Zones, routes, and drivers required by the driver portal. Manage <%= link_to "pickups settings", admin_settings_section_path("pickups"), class: admin_link_class %>.</p>
@@ -12,7 +13,7 @@
         <%= pickup_enabled ? "Pickups enabled" : "Pickups disabled" %>
       </span>
       <% if pickup_enabled %>
-        <span class="<%= admin_badge_class(missing.any? ? "warning" : "positive") %>">
+        <span class="<%= admin_badge_class(alarm ? "danger" : "positive") %>">
           <%= missing.any? ? "#{missing.size} missing" : "Ready" %>
         </span>
       <% else %>

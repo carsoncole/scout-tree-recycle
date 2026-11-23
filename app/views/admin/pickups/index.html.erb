@@ -2,6 +2,7 @@
 <%= render "admin/shared/page_header",
            title: "Pickups",
            description: "Operational overview of tree pickups — pending, picked up, and missing reservations by route and zone." do %>
+  <%= link_to "Map View", admin_pickups_map_path, class: admin_button_class %>
   <%= link_to "Pending PDF Report", admin_pickups_report_path(format: :pdf),
               class: admin_button_class(variant: :secondary),
               target: "_blank", rel: "noopener",

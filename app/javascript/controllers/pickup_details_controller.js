@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Route map page: opens the pickup details dialog when a map marker is
-// selected and keeps the map marker colors in sync after status updates.
+// Shared pickup details dialog: opens when a map marker is selected and keeps
+// the map marker colors in sync after status updates. Used by the driver route
+// map and the standalone admin pickups map.
 export default class extends Controller {
   static targets = [ "dialog", "frame", "mapWrap", "title" ]
 
@@ -41,11 +42,9 @@ export default class extends Controller {
     if (!id) return
 
     const mapEl = this.hasMapWrapTarget ? this.mapWrapTarget.querySelector('[data-controller~="map"]') : document.querySelector('[data-controller~="map"]')
-    if (mapEl && mapEl.__mapController) {
-      mapEl.__mapController.updateMarker({ detail: { id, color: detail.color, status: detail.status } })
-    } else if (mapEl && this.application) {
-      const mapController = this.application.getControllerForElementAndIdentifier(mapEl, "map")
-      if (mapController && mapController.updateMarker) mapController.updateMarker({ detail: { id, color: detail.color, status: detail.status } })
+    const mapController = mapEl && (mapEl.__mapController || this.application?.getControllerForElementAndIdentifier(mapEl, "map"))
+    if (mapController && mapController.updateMarker) {
+      mapController.updateMarker({ detail: { id, color: detail.color, status: detail.status } })
     }
   }
 }

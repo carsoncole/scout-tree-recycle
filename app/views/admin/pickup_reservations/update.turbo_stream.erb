@@ -1,0 +1,13 @@
+<%= turbo_stream.replace dom_id(@reservation, :panel) do %>
+  <%= render "shared/pickup_details",
+             reservation: @reservation,
+             update_url: admin_pickup_reservation_path(@reservation),
+             activity_logs: @activity_logs,
+             notice: flash.now[:notice] %>
+<% end %>
+<% @status_totals.each do |status, count| %>
+  <%= turbo_stream.update "pickup_status_count_#{status}" do %><%= count %><% end %>
+<% end %>
+<%= turbo_stream.update "flash" do %>
+  <%= render "shared/flash" %>
+<% end %>

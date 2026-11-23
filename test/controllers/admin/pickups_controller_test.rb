@@ -15,6 +15,8 @@ class Admin::PickupsControllerTest < ActionDispatch::IntegrationTest
     assert_select "tbody tr", count: Reservation.pickup_overview.count
     assert_select "td", text: "Mary Jones"
     assert_select "td", text: "Bob Miurtha", count: 0 # cancelled reservations are excluded
+    assert_select "[data-controller='map']", count: 0 # the map is its own page
+    assert_select "a[href=?]", admin_pickups_map_path, text: "Map View"
   end
 
   test "index filters by status" do
@@ -69,6 +71,49 @@ class Admin::PickupsControllerTest < ActionDispatch::IntegrationTest
     get admin_pickups_url
     assert_match "Notes: Tree will be in the back yard", @response.body
     assert_no_match(/New York/, @response.body)
+  end
+
+  test "should require authentication for map" do
+    get admin_pickups_map_url
+    assert_redirected_to new_admin_session_url
+  end
+
+  test "should get map with all operational pickups, zone route areas, and locations" do
+    sign_in
+    get admin_pickups_map_url
+
+    assert_response :success
+    assert_select "h1", text: "Pickups Map"
+    assert_select "[data-controller='map']", count: 1
+    assert_select "button[data-status='pending_pickup'][aria-pressed='true']", text: /Pending #{Reservation.pending_pickup.count}/
+    assert_select "button[data-status='picked_up'][aria-pressed='true']", text: /Picked #{Reservation.picked_up.count}/
+    assert_select "button[data-status='missing'][aria-pressed='true']", text: /Missing #{Reservation.missing.count}/
+
+    pending = reservations(:pending_pickup_1)
+    picked = reservations(:picked_up_1)
+    missing = reservations(:missing_1)
+    cancelled = reservations(:cancelled_1)
+
+    [ pending, picked, missing ].each do |reservation|
+      assert_select "[data-map-markers-value*='#{admin_pickup_reservation_path(reservation)}']", count: 1
+    end
+    assert_no_match(/pickups\/reservations\/#{cancelled.id}/, @response.body)
+
+    [ locations(:staging_point), locations(:outside) ].each do |location|
+      assert_select "[data-map-markers-value*='#{admin_pickup_location_path(location)}']", count: 1
+    end
+
+    assert_match "Zone 1 / Lower Manhattan boundary", @response.body
+    assert_match "Blue outlines are route areas labeled by zone", @response.body
+  end
+
+  test "map always shows all operational pickups regardless of index filters" do
+    sign_in
+    get admin_pickups_map_url(status: "missing", q: "no-such-reservation")
+
+    assert_response :success
+    assert_select "[data-map-markers-value*='#{admin_pickup_reservation_path(reservations(:pending_pickup_1))}']", count: 1
+    assert_select "[data-map-markers-value*='#{admin_pickup_reservation_path(reservations(:picked_up_1))}']", count: 1
   end
 
   test "should get report with pending pickups only" do

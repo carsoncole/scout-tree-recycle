@@ -12,7 +12,7 @@ class Pickups::ReservationsControllerTest < ActionDispatch::IntegrationTest
   test "should get reservation show with valid driver key" do
     get pickups_route_reservation_url(@route, @reservation)
     assert_response :success
-    assert_select "#route_detail_dialog", count: 1
+    assert_select "#pickup_detail_dialog", count: 1
     assert_select "p", text: "770 Broadway, New York, NY"
     assert_select "p", text: "Mary Jones"
     assert_select "a[href^='tel:']", text: @reservation.mobile

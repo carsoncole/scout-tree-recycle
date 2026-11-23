@@ -15,6 +15,8 @@ export default class extends Controller {
 
     this.element.__mapController = this
     this.markerLayers = new Map()
+    this.statusEntries = new Map()
+    this.hiddenStatuses = new Set()
     this.mapBounds = null
 
     const hasCenter = Array.isArray(this.centerValue) && this.centerValue.length === 2 && this.validCoord(this.centerValue[0], this.centerValue[1])
@@ -55,6 +57,7 @@ export default class extends Controller {
       this.map = null
       this.layerGroup = null
       this.markerLayers = null
+      this.statusEntries = null
     }
     if (this.element) this.element.__mapController = null
   }
@@ -105,13 +108,41 @@ export default class extends Controller {
     if (this.map && this.layerGroup) {
       this.layerGroup.clearLayers()
       this.markerLayers = new Map()
+      this.statusEntries = new Map()
       this.renderLayers()
     }
+  }
+
+  // Hide or show reservation markers by pickup status. Location squares and
+  // route polygons are unaffected.
+  setHiddenStatuses(statuses) {
+    this.hiddenStatuses = new Set(Array.isArray(statuses) ? statuses.map(String) : [])
+    this.applyStatusVisibility()
+  }
+
+  applyStatusVisibility() {
+    if (!this.layerGroup || !this.statusEntries) return
+
+    this.statusEntries.forEach(({ status, layers, id }) => {
+      const hidden = this.hiddenStatuses.has(status)
+      layers.forEach((layer) => {
+        if (hidden) {
+          this.layerGroup.removeLayer(layer)
+        } else if (!this.layerGroup.hasLayer(layer)) {
+          this.layerGroup.addLayer(layer)
+          // Leaflet may rebuild the SVG element when a layer is re-added, so
+          // restore the id used by tests and browser tooling.
+          const el = layer.getElement && layer.getElement()
+          if (el) el.setAttribute("data-marker-id", String(id))
+        }
+      })
+    })
   }
 
   renderLayers() {
     if (!this.layerGroup) return
     const bounds = []
+    this.statusEntries = new Map()
 
     let polygonBounds = null
 
@@ -151,6 +182,7 @@ export default class extends Controller {
 
       const selectable = this.interactiveValue && marker.detail_url
       const select = () => this.dispatch("marker-selected", { detail: { marker } })
+      const statusLayers = []
 
       if (selectable) {
         layer.on("click", select)
@@ -160,6 +192,7 @@ export default class extends Controller {
       }
 
       layer.addTo(this.layerGroup)
+      statusLayers.push(layer)
       if (!isSquare && marker.id !== undefined && marker.id !== null) {
         this.markerLayers.set(String(marker.id), layer)
       }
@@ -186,17 +219,29 @@ export default class extends Controller {
         })
         hit.on("click", select)
         hit.addTo(this.layerGroup)
+        statusLayers.push(hit)
         // Mark the SVG element with the marker id so tests and browser
         // devtools can target a specific tap target.
         const hitEl = hit.getElement()
         if (hitEl) hitEl.setAttribute(isSquare ? "data-location-id" : "data-marker-id", String(marker.id))
       }
+
+      if (!isSquare && marker.status && marker.id !== undefined && marker.id !== null) {
+        this.statusEntries.set(String(marker.id), {
+          id: String(marker.id),
+          status: String(marker.status),
+          layers: statusLayers
+        })
+      }
+
       // A coordinate far from the route boundary must not zoom the map out
       // to the world. The marker stays on the map for anyone who pans to it.
       if (!polygonBounds || this.nearBounds(polygonBounds, lat, lng)) {
         bounds.push(L.latLngBounds([[lat, lng], [lat, lng]]))
       }
     })
+
+    this.applyStatusVisibility()
 
     if (bounds.length > 0) {
       const combined = bounds.reduce((acc, b) => (acc ? acc.extend(b) : b), null)
@@ -233,11 +278,16 @@ export default class extends Controller {
     const layer = this.markerLayers.get(key)
     if (layer) layer.setStyle({ color: color, fillColor: color })
 
+    const statusEntry = this.statusEntries?.get(key)
+    if (detail.status && statusEntry) statusEntry.status = String(detail.status)
+
     const marker = this.markersValue.find((m) => String(m.id) === key)
     if (marker) {
       marker.color = color
       if (detail.status) marker.status = detail.status
     }
+
+    if (detail.status) this.applyStatusVisibility()
   }
 
   normalizePolygon(polygon) {

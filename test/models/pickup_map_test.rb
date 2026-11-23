@@ -31,6 +31,17 @@ class PickupMapTest < ActiveSupport::TestCase
     assert_empty empty.status_counts
   end
 
+  test "totals every pickup status including reservations with no route" do
+    reservations(:pending_pickup_not_routed).update_columns(route_id: nil)
+
+    map = PickupMap.new
+
+    assert_equal 3, map.status_totals["pending_pickup"]
+    assert_equal 2, map.status_totals["picked_up"]
+    assert_equal 1, map.status_totals["missing"]
+    assert_equal 6, map.status_totals["total"]
+  end
+
   test "keeps plotted reservations whose route has no zone" do
     routes(:two).update_columns(zone_id: nil)
 

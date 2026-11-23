@@ -1,0 +1,19 @@
+<%# locals: (frame_id: "pickup_detail_dialog", title: "Pickup details") %>
+<%# Shared details dialog used by the driver route map and the admin map. %>
+<dialog data-pickup-details-target="dialog"
+        data-action="click->pickup-details#backdropClose close->pickup-details#dialogClosed"
+        aria-labelledby="pickup_detail_dialog_title"
+        class="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[85dvh] w-full max-w-none rounded-t-2xl border border-line bg-surface p-0 pb-[env(safe-area-inset-bottom)] text-ink backdrop:bg-black/40 open:flex open:flex-col sm:inset-0 sm:m-auto sm:max-w-lg sm:rounded-2xl dark:border-line-dark dark:bg-surface-dark dark:text-ink-dark">
+  <div class="flex shrink-0 items-center justify-between gap-3 border-b border-line px-5 py-3.5 dark:border-line-dark">
+    <h2 id="pickup_detail_dialog_title" data-pickup-details-target="title" class="text-base font-semibold text-ink dark:text-ink-dark"><%= title %></h2>
+    <button type="button" data-action="pickup-details#close" aria-label="Close"
+            class="flex size-10 items-center justify-center rounded-full text-ink-soft hover:bg-stone hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:hover:text-ink-dark dark:focus-visible:outline-ink-dark">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+    </button>
+  </div>
+  <div class="max-h-[70dvh] overflow-y-auto px-5 py-5 sm:max-h-none sm:flex-1 sm:overflow-y-auto">
+    <%= turbo_frame_tag frame_id, data: { pickup_details_target: "frame" } do %>
+      <p class="py-8 text-center text-[0.9rem] text-ink-soft dark:text-ink-soft-dark">Loading details…</p>
+    <% end %>
+  </div>
+</dialog>

@@ -8,8 +8,11 @@
 
 <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
   <div class="admin-panel-body">
-    <%= turbo_frame_tag "route_detail_dialog", data: { pickups_route_target: "frame" } do %>
-      <%= render "pickups/reservations/panel", route: @route, reservation: @reservation, activity_logs: @activity_logs %>
+    <%= turbo_frame_tag "pickup_detail_dialog" do %>
+      <%= render "shared/pickup_details",
+                 reservation: @reservation,
+                 update_url: pickups_route_reservation_path(@route, @reservation),
+                 activity_logs: @activity_logs %>
     <% end %>
   </div>
 </section>

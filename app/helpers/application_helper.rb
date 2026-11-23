@@ -107,7 +107,7 @@ module ApplicationHelper
     "#{prefix}#{text}#{suffix}"
   end
 
-  def route_boundary_polygon(route)
+  def route_boundary_polygon(route, label: nil)
     # sort in Ruby so preloaded points (includes(:points)) are reused.
     points = route.points.sort_by(&:order).filter_map do |point|
       next if point.latitude.blank? || point.longitude.blank?
@@ -119,10 +119,19 @@ module ApplicationHelper
 
     [ {
       points: points,
-      label: "#{route.name} boundary",
+      label: label.presence || "#{route.name} boundary",
       color: ROUTE_AREA_STROKE,
       fillColor: ROUTE_AREA_COLOR
     } ]
+  end
+
+  # Route boundary polygons for a multi-route overview, labeled with the zone
+  # so an admin can tell which zone each area belongs to.
+  def pickups_map_route_polygons(routes)
+    Array(routes).flat_map do |route|
+      label = [ route.zone&.name.presence || "No Zone", "#{route.name} boundary" ].join(" / ")
+      route_boundary_polygon(route, label: label)
+    end
   end
 
   # Single source of truth for pickup status colors on the pickups maps,
@@ -190,6 +199,7 @@ module ApplicationHelper
   # Square markers for locations, so they read differently from the circular
   # reservation points at every zoom level.
   def location_map_markers(locations)
+    locations = locations.to_a if locations.respond_to?(:to_a)
     Array(locations).filter_map do |location|
       next if location.latitude.blank? || location.longitude.blank?
 
@@ -212,30 +222,53 @@ module ApplicationHelper
     location_map_markers(Location.within_routes(routes))
   end
 
-  # Locations on the driver route map open the shared details dialog instead
-  # of a map bubble, so they carry a detail URL and dialog title.
-  def pickups_route_location_markers(route)
-    location_map_markers(Location.within_routes([ route ])).each do |marker|
-      marker[:detail_url] = pickups_location_path(marker[:id])
+  # Locations that open the shared details dialog instead of a map bubble, so
+  # they carry a detail URL and dialog title. The URL is built by the caller so
+  # both the driver portal and admin map share the same marker shape.
+  def location_detail_markers(locations, detail_url:)
+    location_map_markers(locations).each do |marker|
+      marker[:detail_url] = detail_url.call(marker[:id])
       marker[:dialog_title] = "Location details"
     end
   end
 
-  # Map data only: the route map dialog fetches pickup details from the server,
-  # so markers carry coordinates plus a detail URL and nothing else.
+  # Locations on the driver route map open the shared details dialog.
+  def pickups_route_location_markers(route)
+    location_detail_markers(Location.within_routes([ route ]), detail_url: ->(id) { pickups_location_path(id) })
+  end
+
+  # Map data only: the pickup details dialog fetches the reservation from the
+  # server, so markers carry coordinates plus a detail URL and nothing else.
+  def pickup_detail_marker(reservation, detail_url:)
+    return if reservation.latitude.blank? || reservation.longitude.blank?
+
+    {
+      id: reservation.id,
+      lat: reservation.latitude.to_f,
+      lng: reservation.longitude.to_f,
+      status: reservation.status.to_s,
+      color: pickup_status_color(reservation.status),
+      detail_url: detail_url,
+      dialog_title: "Pickup details"
+    }
+  end
+
   def pickups_route_map_markers(route, reservations)
     Array(reservations).filter_map do |reservation|
-      next if reservation.latitude.blank? || reservation.longitude.blank?
-
-      {
-        id: reservation.id,
-        lat: reservation.latitude.to_f,
-        lng: reservation.longitude.to_f,
-        status: reservation.status.to_s,
-        color: pickup_status_color(reservation.status),
-        detail_url: pickups_route_reservation_path(route, reservation)
-      }
+      pickup_detail_marker(reservation, detail_url: pickups_route_reservation_path(route, reservation))
     end
+  end
+
+  # Reservation markers for the standalone admin map.
+  def admin_pickups_map_markers(reservations)
+    Array(reservations).filter_map do |reservation|
+      pickup_detail_marker(reservation, detail_url: admin_pickup_reservation_path(reservation))
+    end
+  end
+
+  # Location markers for the standalone admin map.
+  def admin_pickups_location_markers(locations)
+    location_detail_markers(locations, detail_url: ->(id) { admin_pickup_location_path(id) })
   end
 
   # Confirmation message for a driver marking a pickup missing, matching what

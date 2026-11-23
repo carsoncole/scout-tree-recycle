@@ -1,0 +1,18 @@
+<%# Pickup details. Loaded into the admin map dialog's Turbo Frame when a
+   marker is tapped; also directly visitable with a back link. %>
+<%= render "admin/shared/page_header",
+           title: "Pickup details",
+           description: [ @reservation.name.presence, @reservation.street ].compact_blank.join(" · ") do %>
+  <%= link_to "Back to Pickups Map", admin_pickups_map_path, class: admin_button_class(variant: :secondary) %>
+<% end %>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+  <div class="admin-panel-body">
+    <%= turbo_frame_tag "pickup_detail_dialog" do %>
+      <%= render "shared/pickup_details",
+                 reservation: @reservation,
+                 update_url: admin_pickup_reservation_path(@reservation),
+                 activity_logs: @activity_logs %>
+    <% end %>
+  </div>
+</section>

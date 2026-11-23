@@ -1,0 +1,75 @@
+<% content_for :title, "Pickups Map" %>
+<%= render "admin/shared/page_header",
+           title: "Pickups Map",
+           description: "Every pickup, route area, and location on one map. Use the status buttons to show or hide pickups." do %>
+  <%= link_to "Back to Pickups", admin_pickups_path, class: admin_button_class(variant: :secondary) %>
+<% end %>
+
+<% route_polygons = pickups_map_route_polygons(@routes) %>
+<% markers = admin_pickups_map_markers(@reservations) + admin_pickups_location_markers(@locations) %>
+
+<div class="flex flex-col gap-6">
+  <% if route_polygons.any? || markers.any? %>
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark"
+             data-controller="pickup-details pickup-status-filters"
+             data-action="map:marker-selected@window->pickup-details#select">
+      <header class="admin-panel-header border-line dark:border-line-dark">
+        <div>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">All pickups</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
+            Tap a dot or square to view details and update a pickup.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Show pickup statuses">
+          <% pickup_status_swatches.each do |swatch| %>
+            <%= button_tag type: :button,
+                           data: { action: "pickup-status-filters#toggle", status: swatch[:status] },
+                           aria: { pressed: "true" },
+                           class: "inline-flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-3 py-1.5 text-[0.82rem] font-medium text-ink-soft transition hover:bg-stone aria-pressed:border-sage aria-pressed:bg-sage aria-pressed:text-surface dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:aria-pressed:border-sage-dark dark:aria-pressed:bg-sage-dark dark:aria-pressed:text-page-dark" do %>
+              <span class="size-2 rounded-full" style="background-color: <%= swatch[:color] %>" aria-hidden="true"></span>
+              <%= swatch[:label] %> <span id="pickup_status_count_<%= swatch[:status] %>"><%= @status_totals.fetch(swatch[:status], 0) %></span>
+            <% end %>
+          <% end %>
+          <span class="inline-flex items-center rounded-full bg-stone px-2.5 py-1 text-[0.8rem] font-medium text-ink dark:bg-stone-dark dark:text-ink-dark">
+            Total <span id="pickup_status_count_total"><%= @status_totals["total"] %></span>
+          </span>
+        </div>
+      </header>
+
+      <div class="admin-panel-body admin-panel-body--tight">
+        <div data-pickup-details-target="mapWrap"
+             data-pickup-status-filters-target="mapWrap"
+             data-action="pickups:marker-update@window->pickup-details#markerUpdated">
+          <%= render "shared/map",
+                polygons: route_polygons,
+                markers: markers,
+                interactive: true,
+                height_class: "h-[calc(100dvh-16rem)] min-h-[28rem] lg:h-[calc(100dvh-18rem)]",
+                empty_message: "No map data available." %>
+        </div>
+
+        <p class="admin-table-note mt-3 px-1 text-ink-soft dark:text-ink-soft-dark">
+          Blue outlines are route areas labeled by zone. Dots show reservations by status. Squares show locations such as tree drop-off staging points.
+        </p>
+
+        <% if @missing_coordinates_count.positive? %>
+          <p class="admin-table-note mt-2 px-1 text-ink-soft dark:text-ink-soft-dark">
+            <%= pluralize(@missing_coordinates_count, "reservation") %> do not have coordinates and are not shown on the map.
+          </p>
+        <% end %>
+
+        <% routes_without_boundary = @routes.select { |route| route.points.length <= 3 } %>
+        <% if routes_without_boundary.any? %>
+          <p class="admin-table-note mt-2 px-1 text-ink-soft dark:text-ink-soft-dark">
+            Routes without a bounded area (&gt; 3 ordered points): <%= routes_without_boundary.map(&:name).join(", ") %>.
+          </p>
+        <% end %>
+
+        <%= render "shared/pickup_details_dialog" %>
+      </div>
+    </section>
+  <% else %>
+    <%= render "admin/shared/empty_state", message: "No route boundaries, locations, or reservations with coordinates are available yet." %>
+  <% end %>
+</div>

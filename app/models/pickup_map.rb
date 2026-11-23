@@ -16,6 +16,17 @@ class PickupMap
     @plotted_reservations
   end
 
+  # Pending / picked / missing / total counts across every route, including
+  # reservations with no route.
+  def status_totals
+    @status_totals ||= Reservation::PICKUP_OVERVIEW_STATUSES.index_with(0).tap do |totals|
+      status_counts.each do |(_route_id, status), count|
+        totals[status] += count if totals.key?(status)
+      end
+      totals["total"] = totals.values.sum
+    end
+  end
+
   def plotted_by_zone_id
     @plotted_by_zone_id ||= @plotted_reservations
       .select { |reservation| reservation.route&.zone_id }

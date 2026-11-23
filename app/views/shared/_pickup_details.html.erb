@@ -1,13 +1,13 @@
-<%# locals: (route:, reservation:, activity_logs:, error: nil, notice: nil) %>
-<%# Pickup details for the route map dialog (also shown standalone on the
-   reservation show page). %>
+<%# locals: (reservation:, update_url:, activity_logs:, error: nil, notice: nil) %>
+<%# Shared pickup details used by the driver route dialog and the admin map
+   dialog. Callers provide the URL that saves a new pickup status. %>
 <% color = pickup_status_color(reservation.status) %>
 <div id="<%= dom_id(reservation, :panel) %>"
      class="flex flex-col gap-5"
-     data-controller="pickups-route-panel"
-     data-pickups-route-panel-reservation-id-value="<%= reservation.id %>"
-     data-pickups-route-panel-status-value="<%= reservation.status %>"
-     data-pickups-route-panel-color-value="<%= color %>">
+     data-controller="pickup-details-panel"
+     data-pickup-details-panel-reservation-id-value="<%= reservation.id %>"
+     data-pickup-details-panel-status-value="<%= reservation.status %>"
+     data-pickup-details-panel-color-value="<%= color %>">
   <div class="flex flex-wrap items-center justify-between gap-2">
     <span class="<%= admin_reservation_status_badge(reservation.status) %>"><%= pickups_status_label(reservation.status) %></span>
     <% if notice.present? %>
@@ -58,7 +58,7 @@
   </div>
 
   <%= form_with model: reservation,
-                url: pickups_route_reservation_path(route, reservation),
+                url: update_url,
                 method: :patch do %>
     <div class="grid gap-2 sm:grid-cols-3">
       <% pickup_status_buttons(reservation).each do |button| %>

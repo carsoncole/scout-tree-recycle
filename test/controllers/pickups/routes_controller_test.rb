@@ -61,7 +61,7 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/#{reservations(:picked_up_1).id}/, @response.body)
     assert_no_match(/#{reservations(:missing_1).id}/, @response.body)
     assert_no_match(/Reservation details/, @response.body)
-    assert_select "#route_detail_dialog", count: 1
+    assert_select "#pickup_detail_dialog", count: 1
 
     # Locations inside the boundary open the shared details dialog, and
     # locations outside it are not plotted.

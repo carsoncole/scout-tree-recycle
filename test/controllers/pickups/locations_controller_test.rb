@@ -11,7 +11,7 @@ class Pickups::LocationsControllerTest < ActionDispatch::IntegrationTest
   test "should get location details with valid driver key" do
     get pickups_location_url(@location)
     assert_response :success
-    assert_select "#route_detail_dialog", count: 1
+    assert_select "#pickup_detail_dialog", count: 1
     assert_select "p", text: "Staging point"
     assert_select "p", text: @location.name
     assert_select "a[href*='destination=40.75%2C-73.98']", text: "Get directions"

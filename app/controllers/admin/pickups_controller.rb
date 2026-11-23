@@ -5,6 +5,18 @@ class Admin::PickupsController < Admin::BaseController
     @reservations = @reservations.search(params[:q]) if params[:q].present?
   end
 
+  # Standalone operational map: every pickup-overview reservation, all route
+  # areas grouped by zone, and every location. The table view remains on index.
+  def map
+    pickup_map = PickupMap.new
+    @reservations = pickup_map.plotted_reservations
+    @status_totals = pickup_map.status_totals
+    @missing_coordinates_count = pickup_map.coordinate_less_counts.values.sum
+
+    @routes = Route.includes(:zone, :points).ordered.to_a
+    @locations = Location.ordered.to_a
+  end
+
   # Backup pickup report for drivers covering pending pickups only. Rendered
   # as HTML for preview and as a PDF (via headless Chrome) for printing and
   # handing out per route.

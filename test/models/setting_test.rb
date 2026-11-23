@@ -313,6 +313,12 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.stripe_configured?
   end
 
+  test "mask_credential keeps the first eight and last four characters visible" do
+    assert_equal "abcdefgh••••••••••••uvwx", Setting.mask_credential("abcdefghijklmnopqrstuvwx")
+    assert_equal "short", Setting.mask_credential("short")
+    assert_equal "", Setting.mask_credential(nil)
+  end
+
   test "location_service_configured? requires all AWS location settings" do
     setting = Setting.instance
     setting.update(location_provider: "places_v1", aws_access_key_id: nil, aws_secret_access_key: nil, aws_region: nil, aws_location_index_name: nil)

@@ -100,6 +100,24 @@ class Setting < ApplicationRecord
     driver_secret_key
   ].freeze
 
+  CREDENTIAL_MASK_CHARACTER = "•"
+  CREDENTIAL_VISIBLE_PREFIX_LENGTH = 8
+  CREDENTIAL_VISIBLE_SUFFIX_LENGTH = 4
+
+  # Keeps the first 8 and last 4 characters visible while masking the rest.
+  # Values short enough that the visible portions overlap are returned as-is.
+  def self.mask_credential(value)
+    value = value.to_s
+    visible_length = CREDENTIAL_VISIBLE_PREFIX_LENGTH + CREDENTIAL_VISIBLE_SUFFIX_LENGTH
+    return value if value.length <= visible_length
+
+    prefix = value[0, CREDENTIAL_VISIBLE_PREFIX_LENGTH]
+    suffix = value[-CREDENTIAL_VISIBLE_SUFFIX_LENGTH, CREDENTIAL_VISIBLE_SUFFIX_LENGTH]
+    mask = CREDENTIAL_MASK_CHARACTER * (value.length - visible_length)
+
+    "#{prefix}#{mask}#{suffix}"
+  end
+
   enum :location_provider, { places_v1: "places_v1", places_v2: "places_v2" }, default: :places_v2
 
   attribute :on_day_of_pickup_instructions, :string, default: DEFAULT_PICKUP_INSTRUCTIONS

@@ -14,6 +14,10 @@ class Admin::SettingsController < Admin::BaseController
     is_donations_enabled
   ].freeze
 
+  # These credentials are rendered masked, so an unchanged masked value must
+  # not be persisted back over the real credential.
+  MASKED_CREDENTIAL_SETTINGS = %i[stripe_secret_key stripe_price_id].freeze
+
   def index
     load_pickup_counts
   end
@@ -239,6 +243,19 @@ class Admin::SettingsController < Admin::BaseController
       :email_batch_quantity
     ).tap do |permitted|
       permitted.delete(:aws_location_api_key) if permitted[:aws_location_api_key].blank?
+      discard_unchanged_masked_credentials!(permitted)
+    end
+  end
+
+  def discard_unchanged_masked_credentials!(permitted)
+    return unless @setting
+
+    MASKED_CREDENTIAL_SETTINGS.each do |attribute|
+      submitted = permitted[attribute]
+      next if submitted.blank?
+
+      current = @setting.public_send(attribute)
+      permitted.delete(attribute) if submitted == Setting.mask_credential(current)
     end
   end
 end

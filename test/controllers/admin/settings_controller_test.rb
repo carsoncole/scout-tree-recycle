@@ -412,6 +412,40 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "price_123", setting.stripe_price_id
   end
 
+  test "should mask stripe credentials on the donations section" do
+    sign_in
+    secret_key = "sk_test_1234567890abcdefghijklmnop"
+    price_id = "price_1234567890abcdefghijklmnop"
+    Setting.first.update!(stripe_secret_key: secret_key, stripe_price_id: price_id)
+
+    get admin_settings_section_path("donations")
+
+    assert_response :success
+    assert_select "input[name='setting[stripe_secret_key]'][value=?]", Setting.mask_credential(secret_key)
+    assert_select "input[name='setting[stripe_price_id]'][value=?]", Setting.mask_credential(price_id)
+    assert_select "input[name='setting[stripe_secret_key]'][type=password]", count: 0
+    assert_no_match secret_key, response.body
+  end
+
+  test "should not overwrite stripe credentials when masked values are submitted" do
+    sign_in
+    setting = Setting.first
+    setting.update!(stripe_secret_key: "sk_test_1234567890abcdefghijklmnop", stripe_price_id: "price_1234567890abcdefghijklmnop")
+
+    patch admin_setting_path(setting), params: {
+      section: "donations",
+      setting: {
+        stripe_secret_key: Setting.mask_credential(setting.stripe_secret_key),
+        stripe_price_id: Setting.mask_credential(setting.stripe_price_id)
+      }
+    }
+
+    assert_redirected_to admin_settings_section_path("donations")
+    setting.reload
+    assert_equal "sk_test_1234567890abcdefghijklmnop", setting.stripe_secret_key
+    assert_equal "price_1234567890abcdefghijklmnop", setting.stripe_price_id
+  end
+
   test "should update location service settings" do
     sign_in
 

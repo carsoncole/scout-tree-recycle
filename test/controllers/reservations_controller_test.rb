@@ -33,7 +33,7 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert reservation.geocoded?
   end
 
-  test "a weak address match pauses at the address verification page" do
+  test "an in-area weak address match continues silently to donation" do
     configure_address_verification!
 
     with_stubbed_location_search([ verified_address_result(match_score: 0.55) ]) do
@@ -44,12 +44,30 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
 
     reservation = Reservation.find_by(email: "suggestion@example.com")
     assert_redirected_to reservation_address_verification_url(reservation.public_token)
-    assert_equal "address_verification", reservation.status
-    assert_equal "suggested", reservation.address_match_status
+    assert_equal "donation", reservation.status
+    assert_equal "verified", reservation.address_match_status
+    assert reservation.geocoded?
+  end
 
-    follow_redirect!
-    assert_response :success
-    assert_select "h1", text: "Is this your address?"
+  test "an out-of-area address continues to donation without coordinates" do
+    configure_address_verification!
+    out_of_area = verified_address_result(
+      locality: "Seattle",
+      region: "Washington",
+      region_code: "WA",
+      region_name: "Washington"
+    )
+
+    with_stubbed_location_search([ out_of_area ]) do
+      assert_difference "Reservation.count", 1 do
+        post reservations_url, params: { reservation: { name: "Out of Area", email: "out.of.area@example.com", street: "123 Main Street" } }
+      end
+    end
+
+    reservation = Reservation.find_by(email: "out.of.area@example.com")
+    assert_equal "donation", reservation.status
+    assert_equal "unavailable", reservation.address_match_status
+    assert_nil reservation.latitude
   end
 
   test "automatic routing disabled skips address verification and the API call" do
@@ -141,18 +159,35 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "123 Doodle St", @reservation.reload.street
   end
 
-  test "updating a street with a weak address match pauses at verification" do
+  test "updating a street with an out-of-area match continues silently" do
     configure_address_verification!
     reservation = reservations(:donation_1)
+    out_of_area = verified_address_result(
+      locality: "Seattle",
+      region: "Washington",
+      region_code: "WA",
+      region_name: "Washington"
+    )
 
-    with_stubbed_location_search([ verified_address_result(match_score: 0.55) ]) do
+    with_stubbed_location_search([ out_of_area ]) do
       patch reservation_url(reservation.public_token), params: { reservation: { street: "123 Main Street" } }
     end
 
     assert_redirected_to reservation_address_verification_url(reservation.public_token)
     reservation.reload
-    assert_equal "address_verification", reservation.status
-    assert_equal "suggested", reservation.address_match_status
+    assert_equal "donation", reservation.status
+    assert_equal "unavailable", reservation.address_match_status
+    assert_nil reservation.latitude
+  end
+
+  test "public updates cannot change the configured city" do
+    reservation = reservations(:donation_1)
+    original_city = reservation.city
+
+    patch reservation_url(reservation.public_token), params: { reservation: { city: "Seattle" } }
+
+    assert_redirected_to reservation_address_verification_url(reservation.public_token)
+    assert_equal original_city, reservation.reload.city
   end
 
   test "should not update reservation with invalid details" do

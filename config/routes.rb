@@ -14,9 +14,10 @@ Rails.application.routes.draw do
   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
   resources :account_setups, param: :token, only: [ :edit, :update ]
 
+  get "address_suggestions", to: "address_suggestions#index", as: :address_suggestions
+
   resources :reservations, only: [ :create, :update, :edit, :destroy ] do
     get "address_verification", to: "address_verification#show", as: :address_verification
-    patch "address_verification", to: "address_verification#update"
     get "confirmation", to: "reservations#confirmation", as: :confirmation
 
     # Donations

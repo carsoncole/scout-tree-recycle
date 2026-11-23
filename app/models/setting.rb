@@ -350,9 +350,10 @@ class Setting < ApplicationRecord
     end
   end
 
-  # Address verification is part of the same location-services switch as
-  # routing. Legacy installs, disabled automatic routing, and unconfigured
-  # Places v2 installs all keep the existing signup flow without an API call.
+  # Address suggestions and verification are part of the same location-services
+  # switch as routing. Legacy installs, disabled automatic routing, and
+  # unconfigured Places v2 installs all keep the existing signup flow without
+  # an API call.
   def address_verification_available?
     is_routing_enabled? && places_v2? && location_service_configured?
   end

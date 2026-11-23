@@ -52,7 +52,11 @@ class ReservationsController < ApplicationController
       # step rather than showing a confirmation page for an incomplete
       # reservation; completed reservations return to their confirmation page.
       if @reservation.status_lower_than?("routing")
-        verify_address_for_flow! if @reservation.saved_change_to_street?
+        if @reservation.saved_change_to_street?
+          verify_address_for_flow!
+        elsif @reservation.address_verification?
+          @reservation.donation!
+        end
         redirect_to reservation_address_verification_path(@reservation.public_token), notice: "Reservation updated."
       else
         redirect_to reservation_confirmation_path(@reservation.public_token), notice: "Reservation updated."
@@ -87,22 +91,14 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:name, :email, :mobile, :street, :city, :pickup_notes)
+    params.require(:reservation).permit(:name, :email, :mobile, :street, :pickup_notes)
   end
 
-  # Places v2 verification happens on submit so the person can fix a typo
-  # before choosing a donation. Legacy or unconfigured installs keep the
-  # existing behavior: save the address and advance to the donation step.
+  # Verification is silent: store coordinates for an in-area match, then move
+  # on to donation. A miss stays out of the way and becomes a routing problem
+  # later. Legacy or unconfigured installs keep the existing flow.
   def verify_address_for_flow!
-    if Setting.instance.address_verification_available?
-      @reservation.verify_address!
-
-      if @reservation.address_verification_suggested?
-        @reservation.address_verification! unless @reservation.address_verification?
-        return
-      end
-    end
-
+    @reservation.verify_address! if Setting.instance.address_verification_available?
     @reservation.donation! if @reservation.reservation_form? || @reservation.address_verification?
   end
 end

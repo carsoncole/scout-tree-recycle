@@ -3,13 +3,16 @@ require "net/http"
 require "openssl"
 require "uri"
 
-# Client for the Amazon Location Service Places v2 Geocode API.
+# Client for the Amazon Location Service Places v2 Geocode and Autocomplete
+# APIs.
 #
-# The app stores the returned coordinates and address components on
-# reservations, so requests use IntendedUse=Storage.
+# Geocode results are stored on reservations, so those requests use
+# IntendedUse=Storage. Autocomplete suggestions are ephemeral and use
+# IntendedUse=SingleUse.
 class LocationSearch
   BASE_ENDPOINT = "https://places.geo.%s.amazonaws.com/v2"
   INTENDED_USE = "Storage"
+  SUGGESTION_INTENDED_USE = "SingleUse"
   DEFAULT_MAX_RESULTS = 5
   OPEN_TIMEOUT = 5
   READ_TIMEOUT = 10
@@ -33,8 +36,11 @@ class LocationSearch
     :street,
     :locality,
     :region,
+    :region_code,
+    :region_name,
     :postal_code,
     :country,
+    :country_code,
     :label,
     :place_type,
     :match_score,
@@ -52,6 +58,8 @@ class LocationSearch
     end
   end
 
+  Suggestion = Struct.new(:label, :street, :place_id, keyword_init: true)
+
   def initialize(setting, http: Net::HTTP)
     @setting = setting
     @http = http
@@ -67,6 +75,17 @@ class LocationSearch
     body[:BiasPosition] = options[:bias_position] if options[:bias_position]
 
     parse_results(post("geocode", body).body)
+  end
+
+  def autocomplete(query)
+    body = {
+      QueryText: query,
+      MaxResults: DEFAULT_MAX_RESULTS,
+      IntendedUse: SUGGESTION_INTENDED_USE,
+      AdditionalFeatures: [ "Core" ]
+    }
+
+    parse_suggestions(post("autocomplete", body).body)
   end
 
   private
@@ -109,6 +128,16 @@ class LocationSearch
       raise Error, "Amazon Location Service returned invalid JSON."
     end
 
+    def parse_suggestions(body)
+      payload = JSON.parse(body.to_s)
+      items = payload["ResultItems"]
+      raise Error, "Amazon Location Service returned an invalid response." unless items.is_a?(Array)
+
+      items.filter_map { |item| build_suggestion(item) }
+    rescue JSON::ParserError
+      raise Error, "Amazon Location Service returned invalid JSON."
+    end
+
     def build_result(item)
       position = item["Position"]
       return unless position.is_a?(Array) && position.length == 2
@@ -126,14 +155,33 @@ class LocationSearch
         street: address["Street"].presence,
         locality: address["Locality"].presence,
         region: region["Name"].presence || region["Code"].presence,
+        region_code: region["Code"].presence,
+        region_name: region["Name"].presence,
         postal_code: address["PostalCode"].presence,
         country: country["Name"].presence || country["Code3"].presence || country["Code2"].presence,
+        country_code: country["Code2"].presence || country["Code3"].presence,
         label: address["Label"].presence || item["Title"].presence,
         place_type: item["PlaceType"].presence,
         match_score: match_scores["Overall"]&.to_f,
         place_id: item["PlaceId"].presence,
         address_number_corrected: item["AddressNumberCorrected"],
         estimated_point_address: item["EstimatedPointAddress"]
+      )
+    end
+
+    def build_suggestion(item)
+      address = item["Address"] || {}
+      label = address["Label"].presence || item["Title"].presence
+      street = [ address["AddressNumber"], address["Street"] ].compact_blank.join(" ").presence
+
+      # The typeahead only fills the street field, so skip results that do not
+      # contain a usable street component.
+      return if street.blank?
+
+      Suggestion.new(
+        label: label.presence || street,
+        street: street,
+        place_id: item["PlaceId"].presence
       )
     end
 

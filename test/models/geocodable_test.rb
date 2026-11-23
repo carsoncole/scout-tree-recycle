@@ -72,8 +72,8 @@ class GeocodableTest < ActiveSupport::TestCase
     reservation = reservations(:routing_1)
     configure_places_v2!
     results = [
-      LocationSearch::Result.new(latitude: 40.1, longitude: -74.1),
-      LocationSearch::Result.new(latitude: 40.2, longitude: -74.2, address_number: "123")
+      verified_address_result(latitude: 40.1, longitude: -74.1, address_number: nil),
+      verified_address_result(latitude: 40.2, longitude: -74.2, address_number: "123")
     ]
 
     with_stubbed_location_search(results) do
@@ -83,6 +83,27 @@ class GeocodableTest < ActiveSupport::TestCase
     reservation.reload
     assert_equal 40.2, reservation.latitude
     assert_equal(-74.2, reservation.longitude)
+  end
+
+  test "rejects Places v2 results outside the configured pickup area" do
+    reservation = reservations(:routing_1)
+    configure_places_v2!
+    result = verified_address_result(
+      locality: "Seattle",
+      region: "Washington",
+      region_code: "WA",
+      region_name: "Washington"
+    )
+
+    with_stubbed_location_search([ result ]) do
+      assert_not reservation.full_geocode!
+    end
+
+    assert_includes reservation.geocode_failure_message, "configured pickup area"
+    reservation.reload
+    assert_nil reservation.latitude
+    assert reservation.geocoding_failed?
+    assert_equal "Manual", reservation.routing_status
   end
 
   test "records a Places v2 error log" do

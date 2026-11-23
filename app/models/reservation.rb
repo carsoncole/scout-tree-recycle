@@ -76,8 +76,9 @@ class Reservation < ApplicationRecord
   DEFAULT_MISSING_TREE_SMS = "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
   DEFAULT_MISSING_TREE_SMS_FOLLOW_UP = "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
 
+  # suggested and overridden remain valid for reservations created before
+  # verification became a silent in-area check.
   ADDRESS_MATCH_STATUSES = %w[verified suggested overridden unavailable].freeze
-  ADDRESS_MATCH_THRESHOLD = 0.9
 
   # Emails admins can send (or resend) from a reservation's email history.
   EMAIL_KINDS = {
@@ -287,30 +288,18 @@ class Reservation < ApplicationRecord
     Router.new(self).route!
   end
 
-  def address_verification_suggested?
-    address_match_status == "suggested"
-  end
-
   def address_match_verified?
     address_match_status == "verified"
-  end
-
-  def address_match_overridden?
-    address_match_status == "overridden"
   end
 
   def address_match_unavailable?
     address_match_status == "unavailable"
   end
 
-  def suggested_address_complete?
-    suggested_street.present? && suggested_city.present? && suggested_state.present?
-  end
-
-  # Checks the submitted address with Places v2 Geocode. A strong match stores
-  # the coordinates and normalized components without changing what the person
-  # typed. A weaker match stores a suggestion for the public address page.
-  # Returns true only for a strong match.
+  # Checks the submitted street against the configured pickup city/state/
+  # country. A match stores coordinates and continues silently. A miss or an
+  # out-of-area match leaves the reservation without coordinates so the routing
+  # job can retry and, if it still fails, flag the address for manual routing.
   def verify_address!
     return false unless persisted?
 
@@ -322,59 +311,28 @@ class Reservation < ApplicationRecord
     end
 
     results = LocationSearch.new(setting).geocode(submitted)
-    result = preferred_geocode_result(results)
+    result = preferred_geocode_result(results.select { |candidate| geocode_result_in_pickup_area?(candidate) })
 
     unless result&.coordinates
       return unavailable_address_verification!(submitted)
     end
 
-    strong = strong_address_match?(result)
-
     update_columns(
-      address_match_status: strong ? "verified" : "suggested",
+      address_match_status: "verified",
       address_match_score: result.match_score,
-      address_verified_at: strong ? Time.current : nil,
+      address_verified_at: Time.current,
       geo_place_id: result.place_id,
       formatted_address: result.label,
       submitted_address: submitted,
       latitude: result.latitude,
       longitude: result.longitude,
-      was_automatically_geocoded: true,
-      suggested_street: result.suggested_street,
-      suggested_city: result.locality,
-      suggested_state: result.region,
-      suggested_zip: result.postal_code,
-      suggested_country: result.country
+      was_automatically_geocoded: true
     )
 
-    strong
+    true
   rescue LocationSearch::Error => error
     log_location_service_error(error)
     unavailable_address_verification!(submitted)
-  end
-
-  def apply_suggested_address!
-    return false unless address_verification_suggested? && suggested_address_complete?
-
-    update_columns(
-      street: suggested_street,
-      city: suggested_city,
-      state: suggested_state,
-      zip: suggested_zip.presence || zip,
-      country: suggested_country.presence || country,
-      house_number: suggested_street[/\A\d+/],
-      street_name: suggested_street.sub(/^\d+\s*/, ""),
-      address_match_status: "verified",
-      address_verified_at: Time.current
-    )
-    true
-  end
-
-  def keep_entered_address!
-    return false unless address_verification_suggested?
-
-    update_columns(address_match_status: "overridden", address_verified_at: Time.current)
-    true
   end
 
   def destroy_not_active_reservations!
@@ -577,11 +535,27 @@ class Reservation < ApplicationRecord
 
   private
 
-  def strong_address_match?(result)
-    return false if result.address_number.blank? || result.street.blank?
-    return false if result.address_number_corrected
+  # Places v2 Geocode results include city/state/country components. Require
+  # them to match the reservation's pickup area, which public forms take from
+  # Setting. Legacy results keep the existing behavior until Places v1 is
+  # removed.
+  def geocode_result_in_pickup_area?(result)
+    return true unless result.is_a?(LocationSearch::Result)
 
-    result.match_score.nil? || result.match_score >= ADDRESS_MATCH_THRESHOLD
+    address_component_matches?(result.locality, city) &&
+      address_component_matches?([ result.region_code, result.region_name ], state) &&
+      address_component_matches?([ result.country, result.country_code ], country)
+  end
+
+  def address_component_matches?(actual, expected)
+    expected = normalize_address_component(expected)
+    return true if expected.blank?
+
+    Array(actual).compact_blank.map { |value| normalize_address_component(value) }.include?(expected)
+  end
+
+  def normalize_address_component(value)
+    value.to_s.downcase.gsub(/[^a-z0-9]+/, " ").squish
   end
 
   def unavailable_address_verification!(submitted)

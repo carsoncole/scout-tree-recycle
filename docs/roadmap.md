@@ -9,7 +9,7 @@
 
 ### Reservation flow
 
-- Add Places v2 `Autocomplete` to the street field as a typeahead aid. Submit-time address verification and the suggested-address confirmation step are implemented with Places v2 `Geocode`.
+- Surface unverified or out-of-area addresses on the admin reservation pages so organizers can review them before pickup day.
 
 ### Controllers and REST
 

@@ -3,11 +3,7 @@
 
 <section class="site-page">
   <div class="site-container site-container--narrow">
-    <% if @reservation.address_verification? %>
-      <%= link_to reservation_address_verification_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
-        <span aria-hidden="true">←</span> Back to your address check
-      <% end %>
-    <% elsif @reservation.status_lower_than?("routing") %>
+    <% if @reservation.status_lower_than?("routing") %>
       <%# Incomplete reservations return to the donation step, not a premature confirmation page. %>
       <%= link_to reservation_address_verification_path(@reservation.public_token), class: "site-back-link text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark" do %>
         <span aria-hidden="true">←</span> Back to your donation choice

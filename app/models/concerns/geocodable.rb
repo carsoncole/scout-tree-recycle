@@ -42,6 +42,13 @@ module Geocodable
       place.address_number if place.respond_to?(:address_number)
     end
 
+    # Reservations override this to keep Places v2 matches inside the
+    # configured pickup city/state/country. Routes and legacy results keep
+    # their existing behavior.
+    def geocode_result_in_pickup_area?(_result)
+      true
+    end
+
     def full_geocode!
       @geocode_failure_message = nil
       return fail_geocode("This address is manually geocoded.", logged: true) if self.class == Reservation && is_manually_geocoded?
@@ -62,7 +69,13 @@ module Geocodable
         else
           Geocoder.search(address, setting.location_search_options)
         end
-      result = preferred_geocode_result(results)
+
+      in_area_results = Array(results).select { |result| geocode_result_in_pickup_area?(result) }
+      if in_area_results.empty? && Array(results).any?
+        return fail_geocode("Amazon Location Service did not return an address inside the configured pickup area.")
+      end
+
+      result = preferred_geocode_result(in_area_results)
       return fail_geocode("Amazon Location Service did not return coordinates for this address.") unless result&.coordinates
 
       self.latitude, self.longitude = result.coordinates

@@ -49,8 +49,11 @@ class LocationSearchTest < ActiveSupport::TestCase
     assert_equal "Main Street", result.street
     assert_equal "New York", result.locality
     assert_equal "New York", result.region
+    assert_equal "NY", result.region_code
+    assert_equal "New York", result.region_name
     assert_equal "10001", result.postal_code
     assert_equal "United States", result.country
+    assert_equal "US", result.country_code
     assert_equal "123 Main Street", result.suggested_street
     assert_equal "PointAddress", result.place_type
     assert_in_delta 0.97, result.match_score, 0.001
@@ -84,6 +87,42 @@ class LocationSearchTest < ActiveSupport::TestCase
     LocationSearch.new(@setting, http: http).geocode("123 Main St")
 
     assert_not JSON.parse(http.sent_request.body).key?("BiasPosition")
+  end
+
+  test "maps Autocomplete suggestions and requests single-use core results" do
+    http = FakeHttp.new(fake_response(
+      200,
+      { "ResultItems" => [
+        {
+          "PlaceId" => "place-123",
+          "Address" => {
+            "AddressNumber" => "123",
+            "Street" => "Main Street",
+            "Label" => "123 Main Street, New York, NY 10001, United States"
+          }
+        },
+        {
+          "PlaceId" => "place-456",
+          "Address" => { "Street" => "Main Street" }
+        }
+      ] }
+    ))
+
+    suggestions = LocationSearch.new(@setting, http: http).autocomplete("123 Main")
+
+    body = JSON.parse(http.sent_request.body)
+    assert_equal "123 Main", body["QueryText"]
+    assert_equal 5, body["MaxResults"]
+    assert_equal "SingleUse", body["IntendedUse"]
+    assert_equal [ "Core" ], body["AdditionalFeatures"]
+    assert_equal "/v2/autocomplete", http.sent_request.uri.path
+
+    assert_equal 2, suggestions.size
+    assert_equal "123 Main Street", suggestions.first.street
+    assert_equal "123 Main Street, New York, NY 10001, United States", suggestions.first.label
+    assert_equal "place-123", suggestions.first.place_id
+    assert_equal "Main Street", suggestions.second.street
+    assert_equal "Main Street", suggestions.second.label
   end
 
   test "raises a normalized error for a failed response" do

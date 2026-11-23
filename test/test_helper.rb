@@ -110,6 +110,28 @@ module ActiveSupport
       LocationSearch.define_singleton_method(:new, original) if original
     end
 
+    def with_stubbed_address_suggestions(suggestions)
+      search = Object.new
+      search.define_singleton_method(:autocomplete) { |_query| suggestions }
+
+      original = LocationSearch.method(:new)
+      LocationSearch.define_singleton_method(:new) { |*_args, **_kwargs| search }
+      yield
+    ensure
+      LocationSearch.define_singleton_method(:new, original) if original
+    end
+
+    def with_stubbed_address_suggestions_error(error)
+      search = Object.new
+      search.define_singleton_method(:autocomplete) { |_query| raise error }
+
+      original = LocationSearch.method(:new)
+      LocationSearch.define_singleton_method(:new) { |*_args, **_kwargs| search }
+      yield
+    ensure
+      LocationSearch.define_singleton_method(:new, original) if original
+    end
+
     def verified_address_result(overrides = {})
       LocationSearch::Result.new(
         latitude: 40.7128,
@@ -118,8 +140,11 @@ module ActiveSupport
         street: "Main Street",
         locality: "New York",
         region: "New York",
+        region_code: "NY",
+        region_name: "New York",
         postal_code: "10001",
         country: "United States",
+        country_code: "US",
         label: "123 Main Street, New York, NY 10001, United States",
         place_type: "PointAddress",
         match_score: 0.98,

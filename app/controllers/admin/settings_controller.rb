@@ -14,9 +14,9 @@ class Admin::SettingsController < Admin::BaseController
     is_donations_enabled
   ].freeze
 
-  # These credentials are rendered masked, so an unchanged masked value must
+  # Secret credentials are rendered masked, so an unchanged masked value must
   # not be persisted back over the real credential.
-  MASKED_CREDENTIAL_SETTINGS = %i[stripe_secret_key stripe_price_id].freeze
+  MASKED_CREDENTIAL_SETTINGS = %i[stripe_secret_key].freeze
 
   def index
     load_pickup_counts

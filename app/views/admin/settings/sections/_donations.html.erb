@@ -44,7 +44,7 @@
           </div>
           <div class="admin-field">
             <%= label_tag "setting[stripe_price_id]", "Price ID", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= text_field_tag "setting[stripe_price_id]", Setting.mask_credential(setting.stripe_price_id), class: admin_input_class, placeholder: "price_..." %>
+            <%= text_field_tag "setting[stripe_price_id]", setting.stripe_price_id, class: admin_input_class, placeholder: "price_..." %>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The Stripe price used for the donation checkout.</p>
           </div>
         </div>

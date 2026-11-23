@@ -9,7 +9,7 @@
 
 ### Reservation flow
 
-- Decide whether to build a real address verification step (Amazon Location Service) or remove the placeholder entirely. `AddressVerificationController`, the `address_verification` status, and the TODO in `ReservationsController#create` mark where the step would slot in.
+- Add Places v2 `Autocomplete` to the street field as a typeahead aid. Submit-time address verification and the suggested-address confirmation step are implemented with Places v2 `Geocode`.
 
 ### Controllers and REST
 

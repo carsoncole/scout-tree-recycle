@@ -17,6 +17,71 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "donation", @reservation.reload.status
   end
 
+  test "a strong address match advances the reservation to the donation step" do
+    configure_address_verification!
+
+    with_stubbed_location_search([ verified_address_result ]) do
+      assert_difference "Reservation.count", 1 do
+        post reservations_url, params: { reservation: { name: "Verified Person", email: "verified@example.com", street: "123 Main Street" } }
+      end
+    end
+
+    reservation = Reservation.find_by(email: "verified@example.com")
+    assert_redirected_to reservation_address_verification_url(reservation.public_token)
+    assert_equal "donation", reservation.status
+    assert_equal "verified", reservation.address_match_status
+    assert reservation.geocoded?
+  end
+
+  test "a weak address match pauses at the address verification page" do
+    configure_address_verification!
+
+    with_stubbed_location_search([ verified_address_result(match_score: 0.55) ]) do
+      assert_difference "Reservation.count", 1 do
+        post reservations_url, params: { reservation: { name: "Suggestion Person", email: "suggestion@example.com", street: "123 Main Street" } }
+      end
+    end
+
+    reservation = Reservation.find_by(email: "suggestion@example.com")
+    assert_redirected_to reservation_address_verification_url(reservation.public_token)
+    assert_equal "address_verification", reservation.status
+    assert_equal "suggested", reservation.address_match_status
+
+    follow_redirect!
+    assert_response :success
+    assert_select "h1", text: "Is this your address?"
+  end
+
+  test "automatic routing disabled skips address verification and the API call" do
+    configure_places_v2!
+    Setting.instance.update!(is_routing_enabled: false)
+
+    with_stubbed_location_search([ verified_address_result ]) do
+      assert_difference "Reservation.count", 1 do
+        post reservations_url, params: { reservation: { name: "No Routing", email: "no.routing@example.com", street: "123 Main Street" } }
+      end
+    end
+
+    reservation = Reservation.find_by(email: "no.routing@example.com")
+    assert_redirected_to reservation_address_verification_url(reservation.public_token)
+    assert_equal "donation", reservation.status
+    assert_nil reservation.address_match_status
+    assert_nil reservation.latitude
+  end
+
+  test "legacy Places v1 still creates a reservation without address verification" do
+    configure_location_service!
+
+    assert_difference "Reservation.count", 1 do
+      post reservations_url, params: { reservation: { name: "Legacy Person", email: "legacy@example.com", street: "123 Main St" } }
+    end
+
+    reservation = Reservation.find_by(email: "legacy@example.com")
+    assert_redirected_to reservation_address_verification_url(reservation.public_token)
+    assert_equal "donation", reservation.status
+    assert_nil reservation.address_match_status
+  end
+
   test "confirmation page does not change reservation status" do
     @reservation = reservations(:donation_1)
 
@@ -74,6 +139,20 @@ class ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to reservation_address_verification_url(@reservation.public_token)
     assert_equal "Reservation updated.", flash[:notice]
     assert_equal "123 Doodle St", @reservation.reload.street
+  end
+
+  test "updating a street with a weak address match pauses at verification" do
+    configure_address_verification!
+    reservation = reservations(:donation_1)
+
+    with_stubbed_location_search([ verified_address_result(match_score: 0.55) ]) do
+      patch reservation_url(reservation.public_token), params: { reservation: { street: "123 Main Street" } }
+    end
+
+    assert_redirected_to reservation_address_verification_url(reservation.public_token)
+    reservation.reload
+    assert_equal "address_verification", reservation.status
+    assert_equal "suggested", reservation.address_match_status
   end
 
   test "should not update reservation with invalid details" do

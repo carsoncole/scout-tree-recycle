@@ -6,8 +6,9 @@ class RouteReservationJob < ApplicationJob
 
     reservation = Reservation.find(reservation_id)
 
-    # Geocoding
-    unless reservation.geocoding_failed? || reservation.is_manually_geocoded?
+    # Geocoding. Submit-time address verification may already have stored
+    # coordinates, so do not call Amazon again for those reservations.
+    unless reservation.geocoded? || reservation.geocoding_failed? || reservation.is_manually_geocoded?
       reservation.full_geocode!
     end
 

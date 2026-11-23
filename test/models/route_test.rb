@@ -1,6 +1,12 @@
 require "test_helper"
 
 class RouteTest < ActiveSupport::TestCase
+  test "address works for geocoding without a zip column" do
+    route = routes(:one)
+
+    assert_equal [ route.street, route.city, route.state, route.country ].compact_blank.join(", "), route.address
+  end
+
   test "pending_pickup_count counts pending reservations on the route" do
     assert_equal 2, routes(:one).pending_pickup_count
     assert_equal 1, routes(:two).pending_pickup_count

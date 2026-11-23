@@ -44,7 +44,7 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.sms_configured?
   end
 
-  test "AWS location settings have no default values except the legacy provider" do
+  test "AWS location settings default to Places v2 with no credentials" do
     setting = Setting.new
 
     assert_nil setting.aws_access_key_id
@@ -52,7 +52,7 @@ class SettingTest < ActiveSupport::TestCase
     assert_nil setting.aws_region
     assert_nil setting.aws_location_index_name
     assert_nil setting.aws_location_api_key
-    assert_equal "places_v1", setting.location_provider
+    assert_equal "places_v2", setting.location_provider
   end
 
   test "sms_quick_response_list splits and strips lines" do
@@ -157,6 +157,7 @@ class SettingTest < ActiveSupport::TestCase
       stripe_secret_key: "",
       stripe_price_id: "",
       is_routing_enabled: true,
+      location_provider: "places_v1",
       aws_access_key_id: "",
       aws_secret_access_key: "",
       aws_region: "",
@@ -314,7 +315,7 @@ class SettingTest < ActiveSupport::TestCase
 
   test "location_service_configured? requires all AWS location settings" do
     setting = Setting.instance
-    setting.update(aws_access_key_id: nil, aws_secret_access_key: nil, aws_region: nil, aws_location_index_name: nil)
+    setting.update(location_provider: "places_v1", aws_access_key_id: nil, aws_secret_access_key: nil, aws_region: nil, aws_location_index_name: nil)
     assert_not setting.location_service_configured?
 
     setting.update(
@@ -329,6 +330,7 @@ class SettingTest < ActiveSupport::TestCase
   test "configure_location_service! gives the geocoder the AWS region" do
     setting = Setting.instance
     setting.update!(
+      location_provider: "places_v1",
       aws_access_key_id: "AKIATEST",
       aws_secret_access_key: "secret",
       aws_region: "us-west-2",
@@ -364,6 +366,24 @@ class SettingTest < ActiveSupport::TestCase
     assert setting.prepare_location_search!
   end
 
+  test "address verification requires automatic routing and a configured Places v2 key" do
+    setting = Setting.instance
+    setting.update!(
+      is_routing_enabled: false,
+      location_provider: "places_v2",
+      aws_location_api_key: "v1.public.test",
+      aws_region: "us-west-2"
+    )
+
+    assert_not setting.address_verification_available?
+
+    setting.update!(is_routing_enabled: true)
+    assert setting.address_verification_available?
+
+    setting.update!(location_provider: "places_v1")
+    assert_not setting.address_verification_available?
+  end
+
   test "Places v2 requires an API key and region when routing is enabled" do
     setting = Setting.instance
     setting.update!(
@@ -388,6 +408,17 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal 5, options[:max_results]
     assert_equal 4, options[:filter_b_box].length
     assert_nil options[:bias_position]
+  end
+
+  test "geocode_options bias Places v2 toward the route area center" do
+    setting = Setting.instance
+    box = setting.location_filter_bbox
+    options = setting.geocode_options
+
+    assert_equal 5, options[:max_results]
+    assert_equal 2, options[:bias_position].length
+    assert_in_delta (box[0] + box[2]) / 2.0, options[:bias_position][0], 0.0001
+    assert_in_delta (box[1] + box[3]) / 2.0, options[:bias_position][1], 0.0001
   end
 
   test "site_url_options is empty without a configured site url" do

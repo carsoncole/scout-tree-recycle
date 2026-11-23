@@ -10,11 +10,7 @@ class ReservationsController < ApplicationController
     if !Reservation.open?
       redirect_to root_url, alert: "Reservations are closed right now."
     elsif @reservation.save
-      # Address verification is not implemented yet (see
-      # AddressVerificationController), so completed reservations move
-      # straight to the donation step here. The address_verification GET
-      # only forwards to the donation pages and must not change state.
-      @reservation.donation!
+      verify_address_for_flow!
       redirect_to reservation_address_verification_url(@reservation.public_token)
     else
       if @reservation.errors[:email].include?("has already been taken")
@@ -52,10 +48,11 @@ class ReservationsController < ApplicationController
     end
 
     if @reservation.update(reservation_params)
-      # Pre-donation edits return to the donation step rather than showing
-      # a confirmation page for an incomplete reservation; completed
-      # reservations return to their confirmation page.
+      # Pre-donation edits return to the address verification or donation
+      # step rather than showing a confirmation page for an incomplete
+      # reservation; completed reservations return to their confirmation page.
       if @reservation.status_lower_than?("routing")
+        verify_address_for_flow! if @reservation.saved_change_to_street?
         redirect_to reservation_address_verification_path(@reservation.public_token), notice: "Reservation updated."
       else
         redirect_to reservation_confirmation_path(@reservation.public_token), notice: "Reservation updated."
@@ -91,5 +88,21 @@ class ReservationsController < ApplicationController
 
   def reservation_params
     params.require(:reservation).permit(:name, :email, :mobile, :street, :city, :pickup_notes)
+  end
+
+  # Places v2 verification happens on submit so the person can fix a typo
+  # before choosing a donation. Legacy or unconfigured installs keep the
+  # existing behavior: save the address and advance to the donation step.
+  def verify_address_for_flow!
+    if Setting.instance.address_verification_available?
+      @reservation.verify_address!
+
+      if @reservation.address_verification_suggested?
+        @reservation.address_verification! unless @reservation.address_verification?
+        return
+      end
+    end
+
+    @reservation.donation! if @reservation.reservation_form? || @reservation.address_verification?
   end
 end

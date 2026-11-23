@@ -55,7 +55,11 @@ class Reservation < ApplicationRecord
     "cancelled_reservation_email_sent_at",
     "missing_tree_email_sent_at", "missing_tree_sms_sent_at",
     "is_missing_tree_notifications_enabled",
-    "created_at", "updated_at"
+    "created_at", "updated_at",
+    "address_match_status", "address_match_score", "address_verified_at",
+    "geo_place_id", "formatted_address", "submitted_address",
+    "suggested_street", "suggested_city", "suggested_state", "suggested_zip",
+    "suggested_country"
   ].freeze
 
   # Timestamp columns rendered as ISO 8601 strings in the CSV export.
@@ -66,10 +70,14 @@ class Reservation < ApplicationRecord
     missing_tree_sms_sent_at
     created_at
     updated_at
+    address_verified_at
   ].freeze
 
   DEFAULT_MISSING_TREE_SMS = "Hi there! We're having trouble finding your tree for pick-up. Maybe it's not out, or you might not need it picked up anymore. Let us know by replying to this ASAP if you would like us to attempt another pick-up of your tree. Thanks!"
   DEFAULT_MISSING_TREE_SMS_FOLLOW_UP = "Hello, we are still having trouble finding your tree for pickup. Please check that it's out and reply to this message confirming it's location if you want us to try again. Thanks!"
+
+  ADDRESS_MATCH_STATUSES = %w[verified suggested overridden unavailable].freeze
+  ADDRESS_MATCH_THRESHOLD = 0.9
 
   # Emails admins can send (or resend) from a reservation's email history.
   EMAIL_KINDS = {
@@ -114,6 +122,7 @@ class Reservation < ApplicationRecord
   validates :name, :street, :email, :city, :state, :country, presence: true
   validates :email, uniqueness: true
   validates :status, inclusion: { in: statuses.keys }
+  validates :address_match_status, inclusion: { in: ADDRESS_MATCH_STATUSES }, allow_nil: true
   validates :mobile, phone: { possible: true, allow_blank: true }
 
   # Statuses counted on the pickups overview and driver route pages.
@@ -278,6 +287,96 @@ class Reservation < ApplicationRecord
     Router.new(self).route!
   end
 
+  def address_verification_suggested?
+    address_match_status == "suggested"
+  end
+
+  def address_match_verified?
+    address_match_status == "verified"
+  end
+
+  def address_match_overridden?
+    address_match_status == "overridden"
+  end
+
+  def address_match_unavailable?
+    address_match_status == "unavailable"
+  end
+
+  def suggested_address_complete?
+    suggested_street.present? && suggested_city.present? && suggested_state.present?
+  end
+
+  # Checks the submitted address with Places v2 Geocode. A strong match stores
+  # the coordinates and normalized components without changing what the person
+  # typed. A weaker match stores a suggestion for the public address page.
+  # Returns true only for a strong match.
+  def verify_address!
+    return false unless persisted?
+
+    submitted = address
+    setting = Setting.instance
+
+    unless setting&.address_verification_available?
+      return unavailable_address_verification!(submitted)
+    end
+
+    results = LocationSearch.new(setting).geocode(submitted)
+    result = preferred_geocode_result(results)
+
+    unless result&.coordinates
+      return unavailable_address_verification!(submitted)
+    end
+
+    strong = strong_address_match?(result)
+
+    update_columns(
+      address_match_status: strong ? "verified" : "suggested",
+      address_match_score: result.match_score,
+      address_verified_at: strong ? Time.current : nil,
+      geo_place_id: result.place_id,
+      formatted_address: result.label,
+      submitted_address: submitted,
+      latitude: result.latitude,
+      longitude: result.longitude,
+      was_automatically_geocoded: true,
+      suggested_street: result.suggested_street,
+      suggested_city: result.locality,
+      suggested_state: result.region,
+      suggested_zip: result.postal_code,
+      suggested_country: result.country
+    )
+
+    strong
+  rescue LocationSearch::Error => error
+    log_location_service_error(error)
+    unavailable_address_verification!(submitted)
+  end
+
+  def apply_suggested_address!
+    return false unless address_verification_suggested? && suggested_address_complete?
+
+    update_columns(
+      street: suggested_street,
+      city: suggested_city,
+      state: suggested_state,
+      zip: suggested_zip.presence || zip,
+      country: suggested_country.presence || country,
+      house_number: suggested_street[/\A\d+/],
+      street_name: suggested_street.sub(/^\d+\s*/, ""),
+      address_match_status: "verified",
+      address_verified_at: Time.current
+    )
+    true
+  end
+
+  def keep_entered_address!
+    return false unless address_verification_suggested?
+
+    update_columns(address_match_status: "overridden", address_verified_at: Time.current)
+    true
+  end
+
   def destroy_not_active_reservations!
     not_active = Reservation.not_active.where(email: email)
     not_active.destroy_all if not_active.any?
@@ -343,6 +442,17 @@ class Reservation < ApplicationRecord
     self.distance_to_route = nil
     self.was_automatically_geocoded = false
     self.is_manually_geocoded = false
+    self.address_match_status = nil
+    self.address_match_score = nil
+    self.address_verified_at = nil
+    self.geo_place_id = nil
+    self.formatted_address = nil
+    self.submitted_address = nil
+    self.suggested_street = nil
+    self.suggested_city = nil
+    self.suggested_state = nil
+    self.suggested_zip = nil
+    self.suggested_country = nil
     reset_routing!
   end
 
@@ -466,6 +576,30 @@ class Reservation < ApplicationRecord
   end
 
   private
+
+  def strong_address_match?(result)
+    return false if result.address_number.blank? || result.street.blank?
+    return false if result.address_number_corrected
+
+    result.match_score.nil? || result.match_score >= ADDRESS_MATCH_THRESHOLD
+  end
+
+  def unavailable_address_verification!(submitted)
+    update_columns(
+      address_match_status: "unavailable",
+      address_match_score: nil,
+      address_verified_at: nil,
+      geo_place_id: nil,
+      formatted_address: nil,
+      submitted_address: submitted,
+      suggested_street: nil,
+      suggested_city: nil,
+      suggested_state: nil,
+      suggested_zip: nil,
+      suggested_country: nil
+    )
+    false
+  end
 
   def log_creation!
     record_activity_log!(

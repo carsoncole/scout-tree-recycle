@@ -3,12 +3,12 @@ require "net/http"
 require "openssl"
 require "uri"
 
-# Client for the Amazon Location Service Places v2 SearchText API.
+# Client for the Amazon Location Service Places v2 Geocode API.
 #
-# The app stores the returned coordinates on reservations, so requests use
-# IntendedUse=Storage. See the AWS Places pricing and IntendedUse docs.
+# The app stores the returned coordinates and address components on
+# reservations, so requests use IntendedUse=Storage.
 class LocationSearch
-  ENDPOINT = "https://places.geo.%s.amazonaws.com/v2/search-text"
+  BASE_ENDPOINT = "https://places.geo.%s.amazonaws.com/v2"
   INTENDED_USE = "Storage"
   DEFAULT_MAX_RESULTS = 5
   OPEN_TIMEOUT = 5
@@ -26,9 +26,29 @@ class LocationSearch
     end
   end
 
-  Result = Struct.new(:latitude, :longitude, :address_number, :label, :place_type, keyword_init: true) do
+  Result = Struct.new(
+    :latitude,
+    :longitude,
+    :address_number,
+    :street,
+    :locality,
+    :region,
+    :postal_code,
+    :country,
+    :label,
+    :place_type,
+    :match_score,
+    :place_id,
+    :address_number_corrected,
+    :estimated_point_address,
+    keyword_init: true
+  ) do
     def coordinates
       [ latitude, longitude ] if latitude.present? && longitude.present?
+    end
+
+    def suggested_street
+      [ address_number, street ].compact_blank.join(" ").presence
     end
   end
 
@@ -37,26 +57,26 @@ class LocationSearch
     @http = http
   end
 
-  def search(address)
-    options = @setting.location_search_options
+  def geocode(address)
+    options = @setting.geocode_options
     body = {
       QueryText: address,
       MaxResults: options.fetch(:max_results, DEFAULT_MAX_RESULTS),
       IntendedUse: INTENDED_USE
     }
-    body[:Filter] = { BoundingBox: options[:filter_b_box] } if options[:filter_b_box]
+    body[:BiasPosition] = options[:bias_position] if options[:bias_position]
 
-    parse_results(post(body).body)
+    parse_results(post("geocode", body).body)
   end
 
   private
-    def post(body)
+    def post(path, body)
       region = @setting.aws_region.to_s.strip
       api_key = @setting.aws_location_api_key.to_s.strip
       raise Error, "Amazon Location Service region is not configured." if region.blank?
       raise Error, "Amazon Location Service API key is not configured." if api_key.blank?
 
-      uri = URI(format(ENDPOINT, region))
+      uri = URI(format("%s/%s", format(BASE_ENDPOINT, region), path))
       uri.query = URI.encode_www_form(key: api_key)
 
       request = Net::HTTP::Post.new(uri)
@@ -95,12 +115,25 @@ class LocationSearch
       return unless position.all? { |value| value.is_a?(Numeric) }
 
       address = item["Address"] || {}
+      region = address["Region"] || {}
+      country = address["Country"] || {}
+      match_scores = item["MatchScores"] || {}
+
       Result.new(
         latitude: position[1].to_f,
         longitude: position[0].to_f,
         address_number: address["AddressNumber"].presence,
+        street: address["Street"].presence,
+        locality: address["Locality"].presence,
+        region: region["Name"].presence || region["Code"].presence,
+        postal_code: address["PostalCode"].presence,
+        country: country["Name"].presence || country["Code3"].presence || country["Code2"].presence,
         label: address["Label"].presence || item["Title"].presence,
-        place_type: item["PlaceType"].presence
+        place_type: item["PlaceType"].presence,
+        match_score: match_scores["Overall"]&.to_f,
+        place_id: item["PlaceId"].presence,
+        address_number_corrected: item["AddressNumberCorrected"],
+        estimated_point_address: item["EstimatedPointAddress"]
       )
     end
 

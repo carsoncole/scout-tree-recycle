@@ -261,9 +261,9 @@ Turn each one on under **Admin → Settings**. With a service off, that feature 
 | --- | --- | --- |
 | [Twilio](https://www.twilio.com) | Text messages | Settings → SMS. Set the number's incoming webhook to `https://your-domain/api/v1/sms/reply`. |
 | [Stripe](https://stripe.com) | Card donations | Settings → Donations. Add a webhook at `https://your-domain/api/v1/stripe-webhook` for `checkout.session.completed`, `charge.refunded`, `charge.updated`, and `payment_intent` events. |
-| [Amazon Location Service](https://aws.amazon.com/location/) | Address lookup and automatic routes | Settings → Location Services. Use the legacy Places v1 access key and place index, or switch to a Places v2 API key restricted to `geo-places:SearchText`. Switching providers only affects future geocoding. |
+| [Amazon Location Service](https://aws.amazon.com/location/) | Address verification, lookup, and automatic routes | Settings → Location Services. Places v2 is the default. Add an API key restricted to `geo-places:Geocode` and its default provider. The legacy Places v1 access key and place index are still available for existing installs, but new features use Places v2. |
 
-Places v2 calls `SearchText` with `IntendedUse=Storage` because the app keeps the returned coordinates on reservations. Restrict the API key to the `SearchText` action and the Places v2 default provider.
+Places v2 calls `Geocode` with `IntendedUse=Storage` because the app keeps the returned coordinates and normalized address components on reservations. When automatic routing and Places v2 are enabled, address verification runs when a reservation is submitted: strong matches continue to the donation step, weaker matches ask the reservation holder to confirm the suggested address, and an unavailable lookup does not block the reservation. New installs default to Places v2; an existing install without a Places v2 API key stays on the legacy provider until an admin adds one.
 
 ## Tests
 

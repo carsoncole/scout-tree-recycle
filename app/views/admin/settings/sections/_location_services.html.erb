@@ -44,7 +44,7 @@
 
       <div class="admin-form-section border-line dark:border-line-dark">
         <h3 class="admin-section-title text-ink dark:text-ink-dark">Provider</h3>
-        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Only the selected provider is used. Switching changes future geocoding only; existing addresses are not re-geocoded.</p>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Places v2 is the default. Only the selected provider is used. Switching changes future geocoding and address verification only; existing addresses are not re-geocoded.</p>
 
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">
@@ -92,7 +92,7 @@
             <span class="<%= admin_badge_class("positive") %> ml-2 align-middle">Configured</span>
           <% end %>
         </h3>
-        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Create an API key in the Amazon Location console and restrict it to <span class="font-medium">geo-places:SearchText</span>. The saved key is shown masked; enter a new key to replace it.</p>
+        <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Create an API key in the Amazon Location console and restrict it to <span class="font-medium">geo-places:Geocode</span>. Address verification runs when automatic routing is enabled and a reservation is submitted. The saved key is shown masked; enter a new key to replace it.</p>
 
         <div class="admin-field-grid admin-field-grid--two">
           <div class="admin-field">

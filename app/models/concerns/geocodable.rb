@@ -10,7 +10,10 @@ module Geocodable
     # not in callbacks.
 
     def address
-      [ street, city, state, country ].compact.join(", ")
+      parts = [ street, city, state ]
+      parts << zip if respond_to?(:zip)
+      parts << country
+      parts.compact_blank.join(", ")
     end
 
     def short_address
@@ -23,7 +26,10 @@ module Geocodable
 
     def preferred_geocode_result(results)
       Array(results).compact.select { |result| result.coordinates.present? }.max_by do |result|
-        geocode_address_number(result).present? ? 1 : 0
+        [
+          result.respond_to?(:match_score) ? result.match_score.to_f : 0,
+          geocode_address_number(result).present? ? 1 : 0
+        ]
       end
     end
 
@@ -47,11 +53,12 @@ module Geocodable
 
       update_columns(was_automatically_geocoded: true)
 
-      # Amazon Location Service can return the street and a second match with
-      # the house number. Prefer the more precise match.
+      # Amazon Location Service can return a street-level match and a second
+      # match with the house number. Prefer the higher score and, when scores
+      # are equal, the more precise match.
       results =
         if setting.places_v2?
-          LocationSearch.new(setting).search(address)
+          LocationSearch.new(setting).geocode(address)
         else
           Geocoder.search(address, setting.location_search_options)
         end

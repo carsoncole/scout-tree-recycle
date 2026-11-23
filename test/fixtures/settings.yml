@@ -1,4 +1,5 @@
 one:
+  location_provider: "places_v2"
   default_city: "New York"
   default_state: "New York"
   organization_name: "Troop 100"

@@ -82,9 +82,15 @@ module ActiveSupport
       )
     end
 
+    # Address verification uses the same master switch as routing.
+    def configure_address_verification!
+      configure_places_v2!
+      Setting.instance.update!(is_routing_enabled: true)
+    end
+
     def with_stubbed_location_search(results)
       search = Object.new
-      search.define_singleton_method(:search) { |_address| results }
+      search.define_singleton_method(:geocode) { |_address| results }
 
       original = LocationSearch.method(:new)
       LocationSearch.define_singleton_method(:new) { |*_args, **_kwargs| search }
@@ -95,13 +101,30 @@ module ActiveSupport
 
     def with_stubbed_location_search_error(error)
       search = Object.new
-      search.define_singleton_method(:search) { |_address| raise error }
+      search.define_singleton_method(:geocode) { |_address| raise error }
 
       original = LocationSearch.method(:new)
       LocationSearch.define_singleton_method(:new) { |*_args, **_kwargs| search }
       yield
     ensure
       LocationSearch.define_singleton_method(:new, original) if original
+    end
+
+    def verified_address_result(overrides = {})
+      LocationSearch::Result.new(
+        latitude: 40.7128,
+        longitude: -74.0060,
+        address_number: "123",
+        street: "Main Street",
+        locality: "New York",
+        region: "New York",
+        postal_code: "10001",
+        country: "United States",
+        label: "123 Main Street, New York, NY 10001, United States",
+        place_type: "PointAddress",
+        match_score: 0.98,
+        place_id: "place-123"
+      ).tap { |result| overrides.each { |key, value| result[key] = value } }
     end
 
     def configure_email!(enabled: true)

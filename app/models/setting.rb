@@ -100,7 +100,7 @@ class Setting < ApplicationRecord
     driver_secret_key
   ].freeze
 
-  enum :location_provider, { places_v1: "places_v1", places_v2: "places_v2" }, default: :places_v1
+  enum :location_provider, { places_v1: "places_v1", places_v2: "places_v2" }, default: :places_v2
 
   attribute :on_day_of_pickup_instructions, :string, default: DEFAULT_PICKUP_INSTRUCTIONS
   attribute :about_event_description, :string, default: DEFAULT_ABOUT_EVENT_DESCRIPTION
@@ -350,6 +350,13 @@ class Setting < ApplicationRecord
     end
   end
 
+  # Address verification is part of the same location-services switch as
+  # routing. Legacy installs, disabled automatic routing, and unconfigured
+  # Places v2 installs all keep the existing signup flow without an API call.
+  def address_verification_available?
+    is_routing_enabled? && places_v2? && location_service_configured?
+  end
+
   def configure_location_service!
     return false unless location_service_configured?
     return true if places_v2?
@@ -383,6 +390,20 @@ class Setting < ApplicationRecord
     return options unless box
 
     options[:filter_b_box] = box
+    options
+  end
+
+  # Places v2 Geocode accepts BiasPosition, not the legacy FilterBBox. Use the
+  # center of the route area so nearby matches rank first.
+  def geocode_options
+    options = { max_results: 5 }
+    box = location_filter_bbox
+    return options unless box
+
+    options[:bias_position] = [
+      ((box[0] + box[2]) / 2.0).to_f,
+      ((box[1] + box[3]) / 2.0).to_f
+    ]
     options
   end
 

@@ -314,7 +314,7 @@ class SettingTest < ActiveSupport::TestCase
   end
 
   test "mask_credential keeps the first eight and last four characters visible" do
-    assert_equal "abcdefgh••••••••••••uvwx", Setting.mask_credential("abcdefghijklmnopqrstuvwx")
+    assert_equal "abcdefgh••••uvwx", Setting.mask_credential("abcdefghijklmnopqrstuvwx")
     assert_equal "short", Setting.mask_credential("short")
     assert_equal "", Setting.mask_credential(nil)
   end

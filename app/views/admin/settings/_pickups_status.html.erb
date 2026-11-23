@@ -1,0 +1,84 @@
+<% pickup_enabled = setting.is_pickups_site_enabled? %>
+<% items = pickup_setup_items(zones_count: @zones_count, routes_count: @routes_count, drivers_count: @drivers_count) %>
+<% missing = items.select { |item| item[:count].zero? } %>
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" id="pickups-status">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Pickups setup status</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Zones, routes, and drivers required by the driver portal.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="<%= admin_badge_class(pickup_enabled ? "positive" : "neutral") %>">
+        <%= pickup_enabled ? "Pickups enabled" : "Pickups disabled" %>
+      </span>
+      <% if pickup_enabled %>
+        <span class="<%= admin_badge_class(missing.any? ? "warning" : "positive") %>">
+          <%= missing.any? ? "#{missing.size} missing" : "Ready" %>
+        </span>
+      <% else %>
+        <span class="<%= admin_badge_class("neutral") %>">Not required</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <% if !pickup_enabled %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+        The Pickups Portal is disabled, so these items are not needed yet.
+        <%= link_to "Manage Pickups Portal settings", admin_settings_section_path("pickups"), class: admin_link_class %>
+      </p>
+    <% elsif missing.empty? %>
+      <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+        <%= pickup_setup_summary(items) %> are set up. The Pickups Portal is ready for drivers.
+        <%= link_to "Manage Pickups Portal settings", admin_settings_section_path("pickups"), class: admin_link_class %>
+      </p>
+    <% else %>
+      <div class="<%= admin_notice_class(:warning) %>" role="status">
+        <div>
+          <p class="admin-notice-title">Missing pickups setup</p>
+          <p>Add these before drivers use the portal.</p>
+          <ul class="admin-setup-missing-list">
+            <% missing.each do |item| %>
+              <li><%= link_to item[:label], item[:path], class: admin_link_class %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table text-ink dark:text-ink-dark">
+          <thead>
+            <tr>
+              <th class="<%= admin_th_class %>">Item</th>
+              <th class="<%= admin_th_class %>">Status</th>
+              <th class="<%= admin_th_class %>">Count</th>
+              <th class="<%= admin_th_class %>"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% items.each do |item| %>
+              <% added = item[:count].positive? %>
+              <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                <td class="<%= admin_td_class %>">
+                  <span class="font-medium"><%= item[:label] %></span>
+                  <p class="mt-0.5 text-xs text-muted dark:text-muted-dark"><%= item[:description] %></p>
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <span class="<%= admin_badge_class(added ? "positive" : "warning") %>">
+                    <%= added ? "Added" : "Not added" %>
+                  </span>
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <%= render "admin/settings/count_badge", count: item[:count], label: item[:label].downcase %>
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <%= link_to "Manage #{item[:label].downcase}", item[:path], class: admin_link_class %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+</section>

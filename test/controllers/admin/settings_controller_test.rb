@@ -58,6 +58,22 @@ class Admin::SettingsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should show pickup setup status on the settings overview" do
+    sign_in
+    Setting.instance.update!(is_pickups_site_enabled: true)
+    get admin_settings_path
+    assert_response :success
+
+    assert_select "#pickups-status" do
+      assert_select ".admin-badge", text: "Pickups enabled"
+      assert_select ".admin-badge", text: "Ready"
+      assert_select "table", count: 0
+      assert_select "a[href=?]", admin_settings_section_path("pickups")
+    end
+
+    assert_match(/#{Zone.count} zones, #{Route.count} routes, and #{Driver.count} drivers are set up/, response.body)
+  end
+
   test "system settings no longer include the error notification toggle" do
     sign_in
 

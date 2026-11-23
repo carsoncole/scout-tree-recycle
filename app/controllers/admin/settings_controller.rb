@@ -15,6 +15,7 @@ class Admin::SettingsController < Admin::BaseController
   ].freeze
 
   def index
+    load_pickup_counts
   end
 
   def show
@@ -142,13 +143,17 @@ class Admin::SettingsController < Admin::BaseController
   def load_section_data
     case @section
     when "pickups"
-      @drivers_count = Driver.count
-      @zones_count = Zone.count
-      @routes_count = Route.count
+      load_pickup_counts
       @locations_count = Location.count
     when "system"
       @unviewed_logs_count = Log.where(is_viewed: false).count
     end
+  end
+
+  def load_pickup_counts
+    @drivers_count = Driver.count
+    @zones_count = Zone.count
+    @routes_count = Route.count
   end
 
   def settings_redirect_path

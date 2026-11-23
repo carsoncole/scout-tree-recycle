@@ -224,6 +224,24 @@ module AdminHelper
     "admin-badge admin-badge--#{variant} #{colors}"
   end
 
+  # Zones, routes, and drivers the Pickups Portal needs before drivers can use
+  # their pickup lists. Counts are loaded by the settings controller.
+  def pickup_setup_items(zones_count:, routes_count:, drivers_count:)
+    [
+      { label: "Zones", count: zones_count.to_i, path: admin_zones_path,
+        description: "Geographic areas used to group pickup routes." },
+      { label: "Routes", count: routes_count.to_i, path: admin_routes_path,
+        description: "Pickup routes with stops assigned to drivers." },
+      { label: "Drivers", count: drivers_count.to_i, path: admin_drivers_path,
+        description: "People who open pickup lists and mark trees collected." }
+    ]
+  end
+
+  # One-line summary of pickup setup counts, e.g. "3 zones, 6 routes, and 2 drivers".
+  def pickup_setup_summary(items)
+    items.map { |item| pluralize(item[:count], item[:label].downcase) }.to_sentence
+  end
+
   # Readable status badge for a ConfigurationOverview entry.
   def admin_configuration_status_badge(status)
     variant = CONFIGURATION_STATUS_BADGES.fetch(status.to_s, "neutral")

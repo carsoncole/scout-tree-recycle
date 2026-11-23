@@ -78,6 +78,54 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     end
   end
 
+  test "pickups setup status notes setup is only required when the portal is enabled" do
+    Setting.instance.update(is_pickups_site_enabled: false)
+
+    visit admin_settings_url
+
+    within "#pickups-status" do
+      assert_text "Pickups disabled"
+      assert_text "Not required"
+      assert_text "The Pickups Portal is disabled, so these items are not needed yet."
+      assert_link "Manage Pickups Portal settings", href: admin_settings_section_path("pickups")
+      assert_no_selector "table"
+    end
+  end
+
+  test "pickups setup status summarizes setup when enabled and ready" do
+    Setting.instance.update(is_pickups_site_enabled: true)
+
+    visit admin_settings_url
+
+    within "#pickups-status" do
+      assert_text "Pickups enabled"
+      assert_text "Ready"
+      assert_text "3 zones, 6 routes, and 2 drivers are set up."
+      assert_text "The Pickups Portal is ready for drivers."
+      assert_link "Manage Pickups Portal settings", href: admin_settings_section_path("pickups")
+      assert_no_selector "table"
+    end
+  end
+
+  test "pickups setup status reports missing drivers, routes, and zones when enabled" do
+    Setting.instance.update(is_pickups_site_enabled: true)
+    Driver.destroy_all
+    Route.destroy_all
+    Zone.destroy_all
+
+    visit admin_settings_url
+
+    within "#pickups-status" do
+      assert_text "3 missing"
+      assert_text "Missing pickups setup"
+      assert_selector "table"
+      assert_text "Not added", count: 3
+      assert_link "Zones", href: admin_zones_path
+      assert_link "Routes", href: admin_routes_path
+      assert_link "Drivers", href: admin_drivers_path
+    end
+  end
+
   test "pickups portal is disabled when not enabled" do
     Setting.instance.update(is_pickups_site_enabled: false)
 

@@ -26,6 +26,8 @@
     <% end %>
   </div>
 
+  <%= render "admin/pickups/pending_overview", pending_overview: @pending_overview %>
+
   <% if @reservations.any? %>
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-table-wrap">

@@ -1,5 +1,8 @@
 class Admin::PickupsController < Admin::BaseController
   def index
+    # The compact overview always reflects all remaining pending pickups;
+    # the table below honors the status and search filters.
+    @pending_overview = PendingPickupOverview.new
     @reservations = Reservation.pickup_overview.includes(:route).ordered_by_street_address
     @reservations = @reservations.where(status: params[:status]) if params[:status].present?
     @reservations = @reservations.search(params[:q]) if params[:q].present?

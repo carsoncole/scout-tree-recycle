@@ -19,6 +19,31 @@ class Admin::PickupsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", admin_pickups_map_path, text: "Map View"
   end
 
+  test "index shows a graphical pending overview by zone and route" do
+    sign_in
+    get admin_pickups_url
+
+    assert_response :success
+    assert_select "#pending-overview", count: 1
+    assert_select "#pending-overview [role='progressbar']", count: Route.count
+    assert_select "#pending-overview [data-route-id='#{routes(:one).id}'][role='progressbar'][aria-valuenow='2']"
+    assert_select "#pending-overview [data-route-id='#{routes(:two).id}'][role='progressbar'][aria-valuenow='1']"
+    assert_select "#pending-overview [data-route-id='#{routes(:three).id}'][role='progressbar'][aria-valuenow='0']"
+    assert_select "#pending-overview [role='progressbar'][aria-label='Lower Manhattan pending pickups']"
+    assert_select "#pending-overview h3", text: "Zone 1"
+    assert_select "#pending-overview h3", text: "Zone 2"
+    assert_select "#pending-overview", text: /3/
+  end
+
+  test "pending overview ignores table filters and search" do
+    sign_in
+    get admin_pickups_url(status: "picked_up", q: "no-such-reservation")
+
+    assert_response :success
+    assert_select "#pending-overview [data-route-id='#{routes(:one).id}'][role='progressbar'][aria-valuenow='2']"
+    assert_select "#pending-overview [data-route-id='#{routes(:two).id}'][role='progressbar'][aria-valuenow='1']"
+  end
+
   test "index filters by status" do
     sign_in
     get admin_pickups_url(status: "picked_up")

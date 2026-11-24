@@ -21,6 +21,20 @@ class Admin::PickupsTest < ApplicationSystemTestCase
     assert_link "Pending PDF Report", href: admin_pickups_report_path(format: :pdf)
   end
 
+  test "pending overview shows remaining pickups by zone and route" do
+    sign_in_as(users(:admin), true)
+    visit admin_pickups_url
+
+    within "#pending-overview" do
+      assert_text "Pending by route"
+      assert_text "Zone 1"
+      assert_text "Lower Manhattan"
+      assert_no_text "Unrouted"
+      assert_selector "[data-route-id='#{routes(:one).id}'][role='progressbar'][aria-valuenow='2']"
+      assert_selector "[data-route-id='#{routes(:two).id}'][role='progressbar'][aria-valuenow='1']"
+    end
+  end
+
   test "opening pickup and location details from the admin map" do
     sign_in_as(users(:admin), true)
     visit admin_pickups_map_url

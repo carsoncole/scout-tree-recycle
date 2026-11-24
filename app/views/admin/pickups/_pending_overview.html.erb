@@ -1,0 +1,64 @@
+<section id="pending-overview" class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" aria-labelledby="pending-overview-title">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 id="pending-overview-title" class="admin-panel-title text-ink dark:text-ink-dark">Pending by route</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Remaining pickups across every route, grouped by zone. Bar lengths are comparable across zones.</p>
+    </div>
+    <div class="text-right">
+      <p class="mb-1 text-[0.72rem] font-medium uppercase tracking-[0.14em] text-muted dark:text-muted-dark">Remaining pending</p>
+      <p class="font-display text-3xl leading-none tracking-tight text-ink dark:text-ink-dark"><%= pending_overview.total %></p>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <% if pending_overview.total.zero? %>
+      <p class="m-0 text-ink-soft dark:text-ink-soft-dark">No pending pickups remain. Every route is complete.</p>
+    <% else %>
+      <div class="grid gap-x-8 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
+        <% pending_overview.groups.each do |group| %>
+          <% bar_tone = group.unrouted ? "bg-warning dark:bg-warning-dark" : "bg-sage dark:bg-sage-dark" %>
+          <section aria-label="<%= group.label %> pending pickups">
+            <div class="mb-3 flex items-center justify-between gap-2">
+              <h3 class="text-sm font-semibold text-ink dark:text-ink-dark">
+                <% if group.zone %>
+                  <%= link_to group.label, admin_zone_path(group.zone), class: "hover:text-sage-deep dark:hover:text-sage-deep-dark" %>
+                <% else %>
+                  <%= group.label %>
+                <% end %>
+              </h3>
+              <span class="<%= admin_badge_class(group.pending_count.zero? ? "positive" : (group.unrouted ? "danger" : "warning")) %>">
+                <%= group.pending_count.zero? ? "Complete" : "#{group.pending_count} pending" %>
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+              <% group.rows.each do |row| %>
+                <div>
+                  <div class="mb-1 flex items-baseline justify-between gap-3">
+                    <span class="truncate text-xs font-medium text-ink-soft dark:text-ink-soft-dark">
+                      <% if row.route %>
+                        <%= link_to row.label, admin_route_path(row.route), class: "hover:text-ink dark:hover:text-ink-dark" %>
+                      <% else %>
+                        <%= row.label %>
+                      <% end %>
+                    </span>
+                    <span class="text-xs font-semibold tabular-nums <%= row.pending_count.zero? ? "text-muted dark:text-muted-dark" : "text-ink dark:text-ink-dark" %>"><%= row.pending_count %></span>
+                  </div>
+                  <div class="h-1.5 overflow-hidden rounded-full bg-stone dark:bg-stone-dark"
+                       role="progressbar"
+                       aria-label="<%= row.label %> pending pickups"
+                       aria-valuemin="0"
+                       aria-valuemax="<%= pending_overview.max_count %>"
+                       aria-valuenow="<%= row.pending_count %>"
+                       <% if row.route %>data-route-id="<%= row.route.id %>"<% end %>>
+                    <div class="h-full rounded-full <%= row.pending_count.positive? ? bar_tone : "" %>" style="width: <%= pending_overview.bar_percent(row.pending_count) %>%"></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>

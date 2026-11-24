@@ -3,7 +3,12 @@ module Pickups
     before_action :authenticate_driver
     layout "pickups"
 
-    helper_method :favorite_route_ids, :route_favorited?
+    helper_method :driver_selection_made?, :selected_driver, :selected_driver_id
+
+    # Drivers do not have accounts on the pickups site, so the driver they
+    # choose is stored in a permanent cookie on their browser. "none" records
+    # that they deliberately continued without selecting a driver.
+    DRIVER_SELECTION_NONE = "none".freeze
 
     private
 
@@ -32,24 +37,19 @@ module Pickups
       end
     end
 
-    # Drivers do not have accounts on the pickups site, so favorite routes are
-    # stored in a permanent cookie on their browser.
-    def favorite_route_ids
-      cookies[:pickup_route_favorites].to_s.split(",").filter_map { |id| id.to_i if id.match?(/\A\d+\z/) }.uniq
+    def driver_selection_made?
+      cookies[:pickup_driver_id].present?
     end
 
-    def route_favorited?(route)
-      favorite_route_ids.include?(route.id)
+    def selected_driver_id
+      value = cookies[:pickup_driver_id].to_s
+      value.to_i if value.match?(/\A\d+\z/)
     end
 
-    def favorite_route(route_id)
-      return if favorite_route_ids.include?(route_id)
+    def selected_driver
+      return unless selected_driver_id
 
-      cookies.permanent[:pickup_route_favorites] = (favorite_route_ids + [ route_id ]).join(",")
-    end
-
-    def unfavorite_route(route_id)
-      cookies.permanent[:pickup_route_favorites] = favorite_route_ids.reject { |id| id == route_id.to_i }.join(",")
+      @selected_driver ||= Driver.find_by(id: selected_driver_id)
     end
   end
 end

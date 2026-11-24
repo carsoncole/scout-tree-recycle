@@ -5,26 +5,28 @@
     <table class="admin-table text-ink dark:text-ink-dark">
       <thead>
         <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-          <th scope="col" class="<%= admin_th_class %>"><span class="sr-only">Favorite</span></th>
           <th scope="col" class="<%= admin_th_class %>">Route</th>
-          <th scope="col" class="<%= admin_th_class %>">Status</th>
-          <th scope="col" class="<%= admin_th_class %>">Reservations</th>
           <th scope="col" class="<%= admin_th_class %> pickups-col-secondary">Zone</th>
-          <th scope="col" class="<%= admin_th_class %> pickups-col-secondary">Drivers</th>
+          <th scope="col" class="<%= admin_th_class %> text-right">Status</th>
         </tr>
       </thead>
       <tbody>
         <% @routes.each do |route| %>
+          <% driver_names = route.drivers.map(&:name).to_sentence %>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <td class="<%= admin_td_class %>"><%= render "pickups/routes/favorite_button", route: route, favorited: route_favorited?(route) %></td>
-            <td class="<%= admin_td_class %>"><%= link_to route.name, pickups_route_path(route), class: admin_link_class %></td>
-            <td class="<%= admin_td_class %>"><%= render "pickups/routes/status_badge", pending_count: @pending_counts[route.id] || 0 %></td>
-            <td class="<%= admin_td_class %>"><%= route.reservations_count %></td>
+            <td class="<%= admin_td_class %>">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <%= link_to route.name, pickups_route_path(route), class: admin_link_class %>
+                <span class="text-[0.82rem] <%= driver_names.present? ? "text-ink-soft dark:text-ink-soft-dark" : "text-muted dark:text-muted-dark" %>">
+                  <%= driver_names.presence || "No drivers assigned" %>
+                </span>
+              </div>
+            </td>
             <td class="<%= admin_td_class %> pickups-col-secondary">
               <% zone_target = route.zone ? pickups_zone_path(route.zone) : pickups_zones_path(anchor: pickups_zone_anchor(route.zone)) %>
               <%= link_to route.zone&.name || "No Zone", zone_target, class: admin_link_class %>
             </td>
-            <td class="<%= admin_td_class %> pickups-col-secondary"><%= pluralize(route.drivers.size, "driver") %></td>
+            <td class="<%= admin_td_class %> text-right"><%= render "pickups/routes/status_badge", pending_count: @pending_counts[route.id] || 0 %></td>
           </tr>
         <% end %>
       </tbody>

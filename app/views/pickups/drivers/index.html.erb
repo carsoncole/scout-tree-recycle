@@ -1,8 +1,6 @@
-<%= render "admin/shared/page_header", title: "Drivers" %>
-
-<div class="admin-page-actions print:hidden">
-  <%= link_to "Pickup Instructions", pickups_pickup_instructions_path, class: admin_button_class(variant: "secondary") %>
-</div>
+<%= render "admin/shared/page_header", title: "Drivers" do %>
+  <%= link_to driver_selection_label, pickups_driver_selection_path, class: admin_button_class(variant: "secondary") %>
+<% end %>
 
 <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
   <div class="admin-table-wrap">
@@ -12,14 +10,26 @@
           <th scope="col" class="<%= admin_th_class %>">Name</th>
           <th scope="col" class="<%= admin_th_class %>">Phone</th>
           <th scope="col" class="<%= admin_th_class %>">Routes</th>
-          <th scope="col" class="<%= admin_th_class %>">Total pickups</th>
         </tr>
       </thead>
       <tbody>
         <% @drivers.each do |driver| %>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-            <td class="<%= admin_td_class %>"><%= driver.name %></td>
-            <td class="<%= admin_td_class %>"><%= driver.national_mobile %></td>
+            <td class="<%= admin_td_class %>">
+              <div class="flex flex-wrap items-center gap-2">
+                <span><%= driver.name %></span>
+                <% if driver.zone_leader? %>
+                  <span class="<%= admin_badge_class(:warning) %>">Zone leader: <%= driver.zone_leader_zone.name %></span>
+                <% end %>
+              </div>
+            </td>
+            <td class="<%= admin_td_class %>">
+              <% if driver.mobile.present? %>
+                <%= link_to "sms:#{driver.mobile}", class: "#{admin_link_class} inline-flex items-center gap-1.5" do %>
+                  <%= message_icon %><span><%= driver.national_mobile %></span>
+                <% end %>
+              <% end %>
+            </td>
             <td class="<%= admin_td_class %>">
               <% if driver.routes.any? %>
                 <div class="admin-table-actions">
@@ -31,7 +41,6 @@
                 <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark">No routes assigned</span>
               <% end %>
             </td>
-            <td class="<%= admin_td_class %>"><%= driver.pickup_count %></td>
           </tr>
         <% end %>
       </tbody>

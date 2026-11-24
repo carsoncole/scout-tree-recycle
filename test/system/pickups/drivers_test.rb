@@ -6,9 +6,7 @@ class Pickups::DriversTest < ApplicationSystemTestCase
   end
 
   test "visiting drivers" do
-    visit pickups_drivers_url
-    fill_in "Password", with: "secret"
-    click_on "Access Pickups"
+    sign_in_driver
 
     assert_selector "nav", text: "Tree Pickups"
     assert_selector "h1", text: "Pickups"
@@ -18,10 +16,49 @@ class Pickups::DriversTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Drivers"
   end
 
+  test "drivers page links to the driver selection page" do
+    sign_in_driver
+
+    visit pickups_drivers_url
+
+    assert_link "Select Driver", href: pickups_driver_selection_path
+  end
+
+  test "drivers page shows sms links with a message icon and no total pickups column" do
+    sign_in_driver
+
+    visit pickups_drivers_url
+
+    assert_selector "h1", text: "Drivers"
+    assert_no_selector "th", text: "Total pickups"
+    assert_selector "a[href^='sms:']", count: Driver.count
+    assert_selector "a[href^='sms:'] svg", minimum: 1
+    assert_text drivers(:driver_one).national_mobile
+  end
+
+  test "zone leader is indicated on the drivers page" do
+    drivers(:driver_two).update!(zone_leader_zone: zones(:one))
+    sign_in_driver
+
+    visit pickups_drivers_url
+
+    within "tr", text: drivers(:driver_two).name do
+      assert_text "Zone leader: Zone 1"
+    end
+    within "tr", text: drivers(:driver_one).name do
+      assert_no_text "Zone leader"
+    end
+  end
+
+  test "overview links to pickup instructions and driver selection" do
+    sign_in_driver
+
+    assert_link "Pickup Instructions", href: pickups_pickup_instructions_path
+    assert_link "Select Driver", href: pickups_driver_selection_path
+  end
+
   test "pickups nav links to overview, routes, drivers, and zones" do
-    visit pickups_root_url
-    fill_in "Password", with: "secret"
-    click_on "Access Pickups"
+    sign_in_driver
 
     within "nav.admin-nav--pickups" do
       assert_link "Overview"
@@ -48,9 +85,7 @@ class Pickups::DriversTest < ApplicationSystemTestCase
   end
 
   test "overview shows each zone with counts, a color key, and maps" do
-    visit pickups_root_url
-    fill_in "Password", with: "secret"
-    click_on "Access Pickups"
+    sign_in_driver
 
     assert_selector "h1", text: "Pickups"
     assert_text "Pending"
@@ -65,16 +100,14 @@ class Pickups::DriversTest < ApplicationSystemTestCase
   end
 
   test "overview zone titles link to the zone page" do
-    visit pickups_root_url
-    fill_in "Password", with: "secret"
-    click_on "Access Pickups"
+    sign_in_driver
 
     zone_link = find("h2.admin-panel-title a", text: "Zone 2")
     assert_equal pickups_zone_url(zones(:two)), zone_link["href"]
 
     zone_link.click
 
-    assert_selector "h1", text: "Zone: Zone 2"
+    assert_selector "h1", text: "Zone 2"
 
     visit pickups_root_url
     no_zone_link = find("h2.admin-panel-title a", text: "No Zone")
@@ -82,13 +115,11 @@ class Pickups::DriversTest < ApplicationSystemTestCase
   end
 
   test "zone page shows zone information, routes, drivers, and a map" do
-    visit pickups_root_url
-    fill_in "Password", with: "secret"
-    click_on "Access Pickups"
+    sign_in_driver
 
     click_on "Zone 1"
 
-    assert_selector "h1", text: "Zone: Zone 1"
+    assert_selector "h1", text: "Zone 1"
     assert_text "Zone information"
     assert_text "Zone map"
     assert_text "Routes"
@@ -102,14 +133,13 @@ class Pickups::DriversTest < ApplicationSystemTestCase
   end
 
   test "zones page zone titles link to the zone page" do
-    visit pickups_root_url
-    fill_in "Password", with: "secret"
-    click_on "Access Pickups"
+    sign_in_driver
+
     click_on "Zones"
 
     click_on "Zone 2"
 
-    assert_selector "h1", text: "Zone: Zone 2"
+    assert_selector "h1", text: "Zone 2"
   end
 
   test "visiting the root with invalid password" do

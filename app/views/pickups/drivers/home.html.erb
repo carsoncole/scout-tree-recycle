@@ -1,5 +1,10 @@
 <%= render "admin/shared/page_header", title: "Pickups" %>
 
+<div class="admin-page-actions print:hidden">
+  <%= link_to driver_selection_label, pickups_driver_selection_path, class: admin_button_class(variant: "secondary") %>
+  <%= link_to "Pickup Instructions", pickups_pickup_instructions_path, class: admin_button_class(variant: "secondary") %>
+</div>
+
 <%= render "pickups/shared/legend" %>
 
 <div class="mt-6 flex flex-col gap-6">

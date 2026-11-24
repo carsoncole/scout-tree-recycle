@@ -1,10 +1,7 @@
 module Pickups
   class RoutesController < BaseController
     def index
-      favorites = favorite_route_ids
-      favorited, rest = Route.includes(:zone, :drivers).ordered
-                             .partition { |route| favorites.include?(route.id) }
-      @routes = favorited + rest
+      @routes = Route.includes(:zone, :drivers).ordered_for_driver(selected_driver)
       @pending_counts = Reservation.pending_pickup.where(route_id: @routes.map(&:id)).group(:route_id).count
     end
 
@@ -21,18 +18,6 @@ module Pickups
                                          .pickup
                                          .where("latitude IS NULL OR longitude IS NULL")
                                          .count
-    end
-
-    def favorite
-      route = Route.find(params[:id])
-      favorite_route(route.id)
-      redirect_back fallback_location: pickups_routes_path
-    end
-
-    def unfavorite
-      route = Route.find(params[:id])
-      unfavorite_route(route.id)
-      redirect_back fallback_location: pickups_routes_path
     end
   end
 end

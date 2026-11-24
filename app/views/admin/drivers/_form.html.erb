@@ -21,6 +21,14 @@
           <%= form.telephone_field :mobile, class: admin_input_class, autocomplete: "tel" %>
         </div>
 
+        <div class="admin-field">
+          <%= form.label :zone_leader_zone_id, "Zone leader for", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= form.collection_select :zone_leader_zone_id, Zone.ordered, :id, :name,
+              { include_blank: "Not a zone leader" },
+              class: admin_select_class %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Each zone has one leader. Selecting a zone that already has a leader reassigns it to this driver.</p>
+        </div>
+
         <fieldset class="admin-field">
           <legend class="admin-label text-ink dark:text-ink-dark">Routes</legend>
           <div class="flex flex-col gap-4">

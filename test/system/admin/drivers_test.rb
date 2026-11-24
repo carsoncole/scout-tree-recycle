@@ -21,4 +21,18 @@ class Admin::DriversTest < ApplicationSystemTestCase
     assert_text "Driver was successfully created."
     assert_text "Casey Driver"
   end
+
+  test "flagging a zone leader from the index" do
+    visit admin_drivers_url
+
+    within "tr", text: drivers(:driver_one).name do
+      select zones(:one).name, from: "driver_zone_leader_zone_id_#{drivers(:driver_one).id}"
+      click_on "Flag as leader"
+    end
+
+    assert_text "Driver was successfully updated."
+    within "tr", text: drivers(:driver_one).name do
+      assert_text "Zone leader: #{zones(:one).name}"
+    end
+  end
 end

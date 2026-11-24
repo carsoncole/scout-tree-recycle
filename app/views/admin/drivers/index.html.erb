@@ -20,6 +20,7 @@
               <th scope="col" class="<%= admin_th_class %>">Mobile</th>
               <th scope="col" class="<%= admin_th_class %>">Routes</th>
               <th scope="col" class="<%= admin_th_class %>">Zones</th>
+              <th scope="col" class="<%= admin_th_class %>">Zone leader</th>
               <th scope="col" class="<%= admin_th_class %>">Actions</th>
             </tr>
           </thead>
@@ -49,6 +50,25 @@
                     </div>
                   <% else %>
                     <span class="admin-table-note text-ink-soft dark:text-ink-soft-dark">No zones assigned</span>
+                  <% end %>
+                </td>
+                <td class="<%= admin_td_class %>">
+                  <% if driver.zone_leader? %>
+                    <div class="admin-table-actions">
+                      <span class="<%= admin_badge_class(:warning) %>">Zone leader: <%= driver.zone_leader_zone.name %></span>
+                      <%= button_to "Remove leader",
+                          admin_driver_path(driver),
+                          method: :patch,
+                          params: { driver: { zone_leader_zone_id: "" } },
+                          class: admin_link_class(variant: :muted) %>
+                    </div>
+                  <% else %>
+                    <%= form_with model: [ :admin, driver ], class: "admin-table-inline" do |form| %>
+                      <%= form.collection_select :zone_leader_zone_id, @zones, :id, :name,
+                          { include_blank: "Select zone" },
+                          { class: "#{admin_select_class} max-w-[11rem]", id: "driver_zone_leader_zone_id_#{driver.id}" } %>
+                      <%= form.submit "Flag as leader", class: admin_button_class(variant: :secondary, size: "small") %>
+                    <% end %>
                   <% end %>
                 </td>
                 <td class="<%= admin_td_class %>">

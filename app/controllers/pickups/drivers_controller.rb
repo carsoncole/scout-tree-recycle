@@ -1,6 +1,7 @@
 module Pickups
   class DriversController < BaseController
     skip_before_action :authenticate_driver, only: :unauthorized
+    before_action :redirect_to_driver_selection, only: :home
 
     def unauthorized
       render "pickups/base/unauthorized", status: :unauthorized
@@ -20,7 +21,7 @@ module Pickups
     end
 
     def index
-      @drivers = Driver.includes(routes: :reservations).all
+      @drivers = Driver.includes(:routes).all
     end
 
     def show
@@ -45,6 +46,15 @@ module Pickups
     def instructions
       @password = Setting.instance.driver_secret_key
       render "pickup_instructions"
+    end
+
+    private
+
+    # First-time visitors choose a driver before seeing the overview. The
+    # selection is remembered in a cookie, so this prompt appears only once
+    # unless they clear their browser data.
+    def redirect_to_driver_selection
+      redirect_to pickups_driver_selection_path unless driver_selection_made?
     end
   end
 end

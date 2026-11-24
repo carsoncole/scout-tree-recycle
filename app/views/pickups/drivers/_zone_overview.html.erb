@@ -50,10 +50,7 @@
             <% route_totals = pickup_status_totals([route], status_counts) %>
             <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
               <td class="<%= admin_td_class %>">
-                <div class="flex items-center gap-1.5">
-                  <%= render "pickups/routes/favorite_button", route: route, favorited: route_favorited?(route) %>
-                  <%= link_to route.name, pickups_route_path(route), class: admin_link_class %>
-                </div>
+                <%= link_to route.name, pickups_route_path(route), class: admin_link_class %>
               </td>
               <td class="<%= admin_td_class %>"><%= route_totals["pending_pickup"] %></td>
               <td class="<%= admin_td_class %>"><%= route_totals["picked_up"] %></td>

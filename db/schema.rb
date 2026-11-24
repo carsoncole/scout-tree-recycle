@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_23_215735) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_24_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -112,6 +112,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_215735) do
     t.string "mobile"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "zone_leader_zone_id"
+    t.index ["zone_leader_zone_id"], name: "index_drivers_on_single_zone_leader", unique: true, where: "(zone_leader_zone_id IS NOT NULL)"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -435,6 +437,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_215735) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "drivers", "zones", column: "zone_leader_zone_id", on_delete: :nullify
   add_foreign_key "logs", "reservations", on_delete: :nullify
   add_foreign_key "mails_outbound_emails", "contacts", on_delete: :nullify
   add_foreign_key "mails_outbound_emails", "mails_received_emails", column: "received_email_id", on_delete: :nullify

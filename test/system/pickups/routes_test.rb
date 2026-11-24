@@ -6,13 +6,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     @route = routes(:one)
   end
 
-  def sign_in_driver
-    visit pickups_root_url
-    fill_in "Password", with: "secret"
-    click_on "Access Pickups"
-  end
-
-  test "driver can tap a pending pickup on the map to open its details" do
+  test "driver previews a pending pickup then opens its details" do
     sign_in_driver
 
     click_on @route.name, match: :first
@@ -241,23 +235,18 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_text "Pickups complete", count: 4
   end
 
-  test "driver can favorite a route and see it listed first on routes page" do
-    route = routes(:five)
-
+  test "routes page shows the assigned driver on the route title line" do
     sign_in_driver
 
-    # Favorite the route from the overview page
-    find("button[aria-label='Favorite #{route.name}']").click
-    assert_selector "button[aria-label='Remove #{route.name} from favorites']", count: 1
-
-    # Favorited route is listed first on the routes page
     visit pickups_routes_path
-    assert_selector "tbody tr:first-child", text: route.name
-    assert_selector "button[aria-label='Remove #{route.name} from favorites']", count: 1
 
-    # Unfavoriting restores the default name ordering
-    find("button[aria-label='Remove #{route.name} from favorites']").click
-    assert_selector "tbody tr:first-child", text: routes(:one).name
-    assert_selector "button[aria-label='Favorite #{route.name}']", count: 1
+    within "tbody tr", text: routes(:one).name do
+      assert_link routes(:one).name
+      assert_text "Jack Wallace"
+    end
+
+    within "tbody tr", text: routes(:two).name do
+      assert_text "No drivers assigned"
+    end
   end
 end

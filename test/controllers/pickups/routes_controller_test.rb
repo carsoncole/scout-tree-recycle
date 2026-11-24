@@ -19,7 +19,13 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a", text: "No Zone"
     assert_select "a[href=?]", pickups_zone_path(zones(:one))
     assert_select "th.pickups-col-secondary", text: "Zone"
-    assert_select "th.pickups-col-secondary", text: "Drivers"
+    assert_select "th", text: "Drivers", count: 0
+    assert_select "th", text: "Reservations", count: 0
+    assert_select "thead th:last-child.text-right", text: "Status"
+    assert_select "tbody td:last-child.text-right", minimum: 1
+    # The driver name sits on the route title line, on its right side.
+    assert_select "tbody tr", text: /#{Regexp.escape(@route.name)}.*Jack Wallace/
+    assert_select "tbody tr", text: /#{Regexp.escape(routes(:unzoned).name)}.*No drivers assigned/
   end
 
   test "index shows pickup status indicator for each route" do
@@ -29,6 +35,37 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "span", text: "2 pending", count: 1
     assert_select "span", text: "1 pending", count: 1
     assert_select "span", text: "Pickups complete", count: 4
+  end
+
+  test "index orders the selected driver's routes first, then unassigned routes" do
+    cookies[:pickup_driver_id] = drivers(:driver_two).id.to_s
+
+    get pickups_routes_url, params: { driver_secret_key: "secret" }
+    get pickups_routes_url
+
+    assert_response :success
+    body = response.body
+    assert_operator body.index(routes(:four).name), :<, body.index(routes(:two).name)
+    assert_operator body.index(routes(:two).name), :<, body.index(routes(:three).name)
+    assert_operator body.index(routes(:three).name), :<, body.index(routes(:five).name)
+    assert_operator body.index(routes(:five).name), :<, body.index(routes(:unzoned).name)
+    # Routes assigned only to another driver come after the unassigned ones.
+    assert_operator body.index(routes(:unzoned).name), :<, body.index(@route.name)
+  end
+
+  test "index keeps alphabetical order when no driver is selected" do
+    cookies[:pickup_driver_id] = "none"
+
+    get pickups_routes_url, params: { driver_secret_key: "secret" }
+    get pickups_routes_url
+
+    assert_response :success
+    body = response.body
+    assert_operator body.index(@route.name), :<, body.index(routes(:two).name)
+    assert_operator body.index(routes(:two).name), :<, body.index(routes(:three).name)
+    assert_operator body.index(routes(:three).name), :<, body.index(routes(:four).name)
+    assert_operator body.index(routes(:four).name), :<, body.index(routes(:five).name)
+    assert_operator body.index(routes(:five).name), :<, body.index(routes(:unzoned).name)
   end
 
   test "should not get index without driver key" do
@@ -83,43 +120,6 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
   test "should not get show when pickups site disabled" do
     Setting.instance.update!(is_pickups_site_enabled: false)
     get pickups_route_url(@route), params: { driver_secret_key: "secret" }
-    assert_response :unauthorized
-  end
-
-  test "should favorite route and show it first" do
-    get pickups_routes_url, params: { driver_secret_key: "secret" }
-    get pickups_routes_url
-
-    post favorite_pickups_route_url(routes(:unzoned))
-    assert_redirected_to pickups_routes_url
-    assert_equal [ routes(:unzoned).id ], cookies[:pickup_route_favorites].to_s.split(",").map(&:to_i)
-
-    get pickups_routes_url
-    assert_response :success
-    assert_operator response.body.index(routes(:unzoned).name), :<, response.body.index(@route.name)
-  end
-
-  test "should unfavorite route and restore name order" do
-    get pickups_routes_url, params: { driver_secret_key: "secret" }
-    post favorite_pickups_route_url(routes(:unzoned))
-
-    delete unfavorite_pickups_route_url(routes(:unzoned))
-    assert_redirected_to pickups_routes_url
-    assert_equal "", cookies[:pickup_route_favorites]
-
-    get pickups_routes_url
-    assert_response :success
-    assert_operator response.body.index(@route.name), :<, response.body.index(routes(:unzoned).name)
-  end
-
-  test "should not favorite route without driver key" do
-    post favorite_pickups_route_url(@route)
-    assert_response :unauthorized
-  end
-
-  test "should not favorite route when pickups site disabled" do
-    Setting.instance.update!(is_pickups_site_enabled: false)
-    post favorite_pickups_route_url(@route), params: { driver_secret_key: "secret" }
     assert_response :unauthorized
   end
 end

@@ -19,4 +19,19 @@ class DriverTest < ActiveSupport::TestCase
     assert_operator driver.routes.flat_map { |route| route.reservations.picked_up }.size, :>, 0
     assert_operator driver.pickup_count, :<, Reservation.pickup_overview.where(route_id: driver.route_ids).count
   end
+
+  test "each zone has one leader" do
+    first = drivers(:driver_one)
+    second = drivers(:driver_two)
+    zone = zones(:one)
+
+    first.update!(zone_leader_zone: zone)
+    assert first.reload.zone_leader?
+    assert_equal zone, first.zone_leader_zone
+
+    second.update!(zone_leader_zone: zone)
+    assert second.reload.zone_leader?
+    assert_not first.reload.zone_leader?
+    assert_equal [ second ], Driver.zone_leaders.to_a
+  end
 end

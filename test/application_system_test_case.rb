@@ -24,6 +24,23 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     Setting.create!(SETTING_ATTRIBUTES)
   end
 
+  # Signs into the pickups portal and handles the first-time driver prompt.
+  # Pass a driver to select one, or omit it to continue without a driver.
+  def sign_in_driver(driver: nil)
+    visit pickups_root_url
+    fill_in "Password", with: "secret"
+    click_on "Access Pickups"
+
+    return unless page.has_selector?("h1", text: "Select Driver")
+
+    if driver
+      choose driver.name
+      click_on "Save Driver"
+    else
+      click_on "Continue Without a Driver"
+    end
+  end
+
   # Reservation markers open a close-up preview popup first. These helpers keep
   # the two-step flow readable in system tests.
   def select_pickup_marker(reservation)

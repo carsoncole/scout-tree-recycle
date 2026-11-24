@@ -38,7 +38,7 @@ class Pickups::ZonesControllerTest < ActionDispatch::IntegrationTest
 
     get pickups_zone_url(zone)
     assert_response :success
-    assert_select "h1", text: "Zone: #{zone.name}"
+    assert_select "h1", text: zone.name
     assert_select ".admin-panel-title", text: "Zone information"
     assert_select ".admin-panel-title", text: "Zone map"
     assert_select ".admin-panel-title", text: "Routes"

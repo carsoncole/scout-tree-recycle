@@ -386,6 +386,9 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     fill_in "Password", with: "1234567890"
     click_on "Access Pickups"
 
+    assert_selector "h1", text: "Select Driver"
+    click_on "Continue Without a Driver"
+
     assert_selector "h1", text: "Pickups"
   end
 

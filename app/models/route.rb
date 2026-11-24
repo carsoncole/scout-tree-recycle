@@ -13,6 +13,18 @@ class Route < ApplicationRecord
   scope :ordered, -> { order(:name) }
   scope :unzoned, -> { where(zone_id: nil) }
 
+  # Routes for the selected driver come first, followed by routes with no
+  # driver, then routes assigned only to other drivers. Each group is
+  # alphabetical by name.
+  def self.ordered_for_driver(driver)
+    routes = ordered.to_a
+    return routes unless driver
+
+    assigned, rest = routes.partition { |route| route.drivers.any? { |route_driver| route_driver.id == driver.id } }
+    unassigned, other_drivers = rest.partition { |route| route.drivers.empty? }
+    assigned + unassigned + other_drivers
+  end
+
   attribute :is_zoned, :boolean, default: true
 
   def name_with_zone

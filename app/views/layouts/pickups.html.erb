@@ -25,7 +25,7 @@
           <% end %>
 
           <%= link_to "Overview", pickups_root_path,
-                      class: admin_nav_class(controller_name == "drivers" && action_name == "home") %>
+                      class: admin_nav_class(controller_name == "driver_selections" || (controller_name == "drivers" && action_name == "home")) %>
           <%= link_to "Routes", pickups_routes_path,
                       class: admin_nav_class(controller_name == "routes") %>
           <%= link_to "Drivers", pickups_drivers_path,

@@ -20,6 +20,16 @@ class RouteTest < ActiveSupport::TestCase
     assert_equal 0, routes(:five).pending_pickup_count
   end
 
+  test "ordered_for_driver puts the driver's routes first, then unassigned, then other drivers" do
+    ordered = Route.includes(:drivers).ordered_for_driver(drivers(:driver_two))
+
+    assert_equal [ routes(:four), routes(:two), routes(:three), routes(:five), routes(:unzoned), routes(:one) ], ordered
+  end
+
+  test "ordered_for_driver is alphabetical when no driver is selected" do
+    assert_equal Route.ordered.to_a, Route.ordered_for_driver(nil)
+  end
+
   test "pickup_count counts pending and missing reservations" do
     route = routes(:one)
 

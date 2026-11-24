@@ -84,6 +84,24 @@ module ApplicationHelper
     end
   end
 
+  # Small chat bubble marking an sms chat link.
+  def message_icon(css_class: "size-4 shrink-0")
+    tag.svg(
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": 1.8,
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      class: css_class,
+      aria: { hidden: true }
+    ) do
+      tag.path(
+        d: "M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 9.58 9.58 0 0 1 1.133-2.44A8.25 8.25 0 0 1 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
+      )
+    end
+  end
+
   # Directions link for a pickup address. Geocoded reservations link their
   # plotted coordinates; reservations without coordinates fall back to the
   # full address string.

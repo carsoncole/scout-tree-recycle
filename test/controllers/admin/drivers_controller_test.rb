@@ -7,6 +7,19 @@ class Admin::DriversControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "index shows the zone leader and a flag action for other drivers" do
+    sign_in
+    drivers(:driver_one).update!(zone_leader_zone: zones(:one))
+
+    get admin_drivers_url
+
+    assert_response :success
+    assert_select "th", text: "Zone leader"
+    assert_select "tr", text: /#{Regexp.escape(drivers(:driver_one).name)}.*Zone leader: Zone 1/m
+    assert_select "button", text: "Remove leader"
+    assert_select "input[type=submit][value='Flag as leader']", minimum: 1
+  end
+
   test "should get new" do
     sign_in
     get new_admin_driver_url
@@ -40,5 +53,19 @@ class Admin::DriversControllerTest < ActionDispatch::IntegrationTest
     delete admin_driver_url(drivers(:driver_one))
     assert_redirected_to admin_drivers_url
     assert_equal "Driver was successfully deleted.", flash[:notice]
+  end
+
+  test "flagging a zone leader assigns the zone and demotes the previous leader" do
+    sign_in
+    first = drivers(:driver_one)
+    second = drivers(:driver_two)
+    zone = zones(:one)
+    first.update!(zone_leader_zone: zone)
+
+    patch admin_driver_url(second), params: { driver: { zone_leader_zone_id: zone.id } }
+
+    assert_redirected_to admin_drivers_url
+    assert_equal zone, second.reload.zone_leader_zone
+    assert_not first.reload.zone_leader?
   end
 end

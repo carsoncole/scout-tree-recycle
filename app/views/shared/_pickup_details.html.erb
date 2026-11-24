@@ -41,8 +41,8 @@
       <div>
         <p class="admin-label text-ink dark:text-ink-dark">Phone</p>
         <p class="admin-detail-value">
-          <%= link_to reservation.mobile, "tel:#{reservation.mobile.gsub(/[^\d+]/, "")}",
-                       class: "text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" %>
+          <%= link_to "tel:#{reservation.mobile.gsub(/[^\d+]/, "")}",
+                       class: "inline-flex items-center gap-1.5 text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" do %><%= phone_icon %><span><%= reservation.mobile %></span><% end %>
         </p>
       </div>
     <% end %>

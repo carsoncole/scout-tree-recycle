@@ -55,6 +55,32 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     end
   end
 
+  test "pickup dialog links the resident's mobile for dialing and hides it when absent" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    # Wait for the map to plot the two pending pickups.
+    assert_selector ".pickup-marker-hit", count: 2
+
+    reservation = reservations(:pending_pickup_1)
+    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    assert_selector "dialog[open]"
+
+    within "dialog[open]" do
+      assert_selector "a[href='tel:+12069230400']", text: "+12069230400"
+    end
+
+    # Reservations without a mobile number show no phone link.
+    no_mobile = reservations(:pending_pickup_no_mobile)
+    find("button[aria-label='Close']").click
+    find(".pickup-marker-hit[data-marker-id='#{no_mobile.id}']").click
+
+    within "dialog[open]" do
+      assert_no_selector "a[href^='tel:']"
+      assert_no_text "Phone"
+    end
+  end
+
   test "location dialog shows details and links to map directions" do
     sign_in_driver
 

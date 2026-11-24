@@ -1,6 +1,6 @@
 # Scout Tree Recycle
 
-Tree Recycle is a Rails application for running a Christmas tree recycling fundraiser. Families reserve a pickup and can donate. Organizers manage reservations, routes, drivers, and messages in an admin site. Drivers use a separate pickups portal.
+Tree Recycle is a Ruby on Rails web application for running a Christmas tree recycling fundraiser. Families reserve a pickup and can donate. Organizers manage reservations, routes, drivers, and messages in an admin site. Drivers use a separate pickups portal.
 
 Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of Troop 1564 on Bainbridge Island, WA.
 

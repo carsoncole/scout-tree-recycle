@@ -2,8 +2,23 @@
 # status overview on the admin pickups index. Picked up and missing
 # reservations are excluded; only stops still waiting for pickup are counted.
 class PendingPickupOverview
+  STREAM = "admin_pending_pickups".freeze
+
   Row = Struct.new(:label, :route, :pending_count, keyword_init: true)
   Group = Struct.new(:label, :zone, :rows, :pending_count, :unrouted, keyword_init: true)
+
+  # Replaces the overview on every open pickups page. Route ids passed in are
+  # highlighted briefly by the pending-overview Stimulus controller.
+  def self.broadcast_update(route_ids: [])
+    Turbo::StreamsChannel.broadcast_replace_to(
+      STREAM,
+      target: "pending-overview",
+      partial: "admin/pickups/pending_overview",
+      locals: { pending_overview: new, updated_route_ids: Array(route_ids).uniq }
+    )
+  rescue StandardError => e
+    Rails.logger.error("Pending pickup overview broadcast failed: #{e.class}: #{e.message}")
+  end
 
   def initialize(scope = Reservation.pending_pickup)
     @counts = scope.group(:route_id).count

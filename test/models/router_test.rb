@@ -1,6 +1,9 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class RouterTest < ActiveSupport::TestCase
+  include Turbo::Broadcastable::TestHelper
+
   setup do
     @route = routes(:two)
     @other_route = routes(:five)
@@ -44,6 +47,20 @@ class RouterTest < ActiveSupport::TestCase
 
     assert_nil reservation.reload.route_id
     assert_equal count, @route.reload.reservations_count
+  end
+
+  test "automatic routing broadcasts the pending overview" do
+    reservation = reservations(:routing_1)
+    reservation.update_columns(latitude: 41.1, longitude: -72.9, route_id: nil, status: Reservation.statuses[:routing], is_manually_routed: false)
+
+    streams = capture_turbo_stream_broadcasts(PendingPickupOverview::STREAM) do
+      reservation.route!
+    end
+
+    assert_equal 1, streams.size
+    assert_equal "replace", streams.first["action"]
+    assert_equal "pending-overview", streams.first["target"]
+    assert_includes streams.first.at("template").inner_html, "data-pending-overview-updated=\"true\""
   end
 
   private

@@ -27,6 +27,10 @@ class Route < ApplicationRecord
 
   attribute :is_zoned, :boolean, default: true
 
+  # Route names, zones, and additions/removals all change the pickups
+  # overview grouping, so refresh the overview on any route change.
+  after_commit :broadcast_pending_pickup_overview, on: [ :create, :update, :destroy ]
+
   def name_with_zone
     (zone&.name || "No Zone") + " / " + self&.name
   end
@@ -68,5 +72,11 @@ class Route < ApplicationRecord
     polygon = Geokit::Polygon.new(polygon_array)
     point = Geokit::LatLng.new(lat, lon)
     polygon.contains?(point)
+  end
+
+  private
+
+  def broadcast_pending_pickup_overview
+    PendingPickupOverview.broadcast_update(route_ids: [ id ])
   end
 end

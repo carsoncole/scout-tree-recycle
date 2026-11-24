@@ -94,13 +94,15 @@ Rails.application.routes.draw do
     resources :donations, only: [ :index, :show, :destroy ]
     resource :analytics, only: [ :show ], controller: "analytics"
 
-    # Pickups (operational overview, standalone map, and driver backup report)
+    # Pickups section: live overview, reservations list, standalone map, and
+    # driver backup report.
     resources :pickups, only: [ :index ]
     get "pickups/map", to: "pickups#map", as: :pickups_map
     get "pickups/report", to: "pickups#report", as: :pickups_report
 
-    # Pickup details shown in the admin map's shared dialog.
-    resources :pickup_reservations, path: "pickups/reservations", only: [ :show, :update ]
+    # Pickup details shown in the admin map's shared dialog, plus the pickup
+    # reservations list.
+    resources :pickup_reservations, path: "pickups/reservations", only: [ :index, :show, :update ]
     resources :pickup_locations, path: "pickups/locations", only: [ :show ]
 
     # Mail archive. Manual sends and replies live here. Template mail stays on its mailers.

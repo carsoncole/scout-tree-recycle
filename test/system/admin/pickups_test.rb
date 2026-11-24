@@ -7,6 +7,14 @@ class Admin::PickupsTest < ApplicationSystemTestCase
 
     assert_selector "h1", text: "Pickups"
     assert_link "Pickups", href: admin_pickups_path
+    assert_link "Overview", href: admin_pickups_path
+    assert_link "Reservations", href: admin_pickup_reservations_path
+    assert_link "Map", href: admin_pickups_map_path
+    assert_link "Pending PDF", href: admin_pickups_report_path(format: :pdf)
+
+    click_link "Reservations"
+
+    assert_selector "h1", text: "Pickup Reservations"
     assert_text "Mary Jones"
     assert_text "Susan Banks"
     assert_text "Notes: Tree will be in the back yard" # notes sit on a second line under the street address
@@ -17,8 +25,8 @@ class Admin::PickupsTest < ApplicationSystemTestCase
     assert_text "Bill Carson"
     assert_no_text "Mary Jones"
 
-    assert_link "Map View", href: admin_pickups_map_path
-    assert_link "Pending PDF Report", href: admin_pickups_report_path(format: :pdf)
+    click_link "Map"
+    assert_selector "h1", text: "Pickups Map"
   end
 
   test "pending overview shows remaining pickups by zone and route" do
@@ -122,7 +130,7 @@ class Admin::PickupsTest < ApplicationSystemTestCase
 
   test "searching pickups by name, email, or address" do
     sign_in_as(users(:admin), true)
-    visit admin_pickups_url
+    visit admin_pickup_reservations_url
 
     fill_in "Search pickups", with: "mary.jones@example.com"
     click_button "Search"

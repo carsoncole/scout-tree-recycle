@@ -1,7 +1,15 @@
 class Admin::PickupReservationsController < Admin::BaseController
   include PickupStatusUpdates
 
-  before_action :set_reservation
+  before_action :set_reservation, only: [ :show, :update ]
+
+  # Pickup reservations list. The status filter and search apply to the
+  # table only; the live pending overview lives on the pickups overview.
+  def index
+    @reservations = Reservation.pickup_overview.includes(:route).ordered_by_street_address
+    @reservations = @reservations.where(status: params[:status]) if params[:status].present?
+    @reservations = @reservations.search(params[:q]) if params[:q].present?
+  end
 
   # Server-rendered pickup details loaded into the admin map's shared dialog.
   def show

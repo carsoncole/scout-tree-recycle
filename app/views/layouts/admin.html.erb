@@ -45,7 +45,7 @@
               <%= link_to "Reservations", admin_reservations_path,
                           class: admin_nav_class(controller_name == "reservations") %>
               <%= link_to "Pickups", admin_pickups_path,
-                          class: admin_nav_class(controller_name == "pickups") %>
+                          class: admin_nav_class(%w[pickups pickup_reservations pickup_locations].include?(controller_name)) %>
               <%= link_to "Donations", admin_donations_path,
                           class: admin_nav_class(controller_name == "donations") %>
               <%= link_to "Analytics", admin_analytics_path,

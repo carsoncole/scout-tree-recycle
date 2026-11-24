@@ -1,9 +1,9 @@
 <% content_for :title, "Pickups Map" %>
 <%= render "admin/shared/page_header",
            title: "Pickups Map",
-           description: "Every pickup, route area, and location on one map. Use the status buttons to show or hide pickups." do %>
-  <%= link_to "Back to Pickups", admin_pickups_path, class: admin_button_class(variant: :secondary) %>
-<% end %>
+           description: "Every pickup, route area, and location on one map. Use the status buttons to show or hide pickups." %>
+
+<%= render "admin/pickups/nav", active: :map %>
 
 <% route_polygons = pickups_map_route_polygons(@routes) %>
 <% markers = admin_pickups_map_markers(@reservations) + admin_pickups_location_markers(@locations) %>

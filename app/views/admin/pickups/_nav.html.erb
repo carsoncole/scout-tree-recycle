@@ -1,0 +1,15 @@
+<nav class="mb-6 flex flex-wrap items-center gap-1 border-b border-line pb-2 dark:border-line-dark" aria-label="Pickups views">
+  <%= link_to "Overview", admin_pickups_path,
+              class: admin_nav_class(active == :overview),
+              aria: { current: ("page" if active == :overview) } %>
+  <%= link_to "Reservations", admin_pickup_reservations_path,
+              class: admin_nav_class(active == :reservations),
+              aria: { current: ("page" if active == :reservations) } %>
+  <%= link_to "Map", admin_pickups_map_path,
+              class: admin_nav_class(active == :map),
+              aria: { current: ("page" if active == :map) } %>
+  <%= link_to "Pending PDF", admin_pickups_report_path(format: :pdf),
+              class: admin_nav_class(false),
+              target: "_blank", rel: "noopener",
+              data: { turbo: false } %>
+</nav>

@@ -39,6 +39,8 @@ class Router
         Route.decrement_counter(:reservations_count, previous_route_id) if previous_route_id.present?
         Route.increment_counter(:reservations_count, route_id)
       end
+
+      PendingPickupOverview.broadcast_update(route_ids: [ previous_route_id, route_id ])
     end
     private :assign_route!
 

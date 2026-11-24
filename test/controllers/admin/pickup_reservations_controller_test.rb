@@ -1,6 +1,81 @@
 require "test_helper"
 
 class Admin::PickupReservationsControllerTest < ActionDispatch::IntegrationTest
+  test "should require authentication for index" do
+    get admin_pickup_reservations_url
+    assert_redirected_to new_admin_session_url
+  end
+
+  test "should get index with the pickups section nav" do
+    sign_in
+    get admin_pickup_reservations_url
+
+    assert_response :success
+    assert_select "tbody tr", count: Reservation.pickup_overview.count
+    assert_select "td", text: "Mary Jones"
+    assert_select "td", text: "Bob Miurtha", count: 0 # cancelled reservations are excluded
+    assert_select "a[href=?]", admin_pickups_path, text: "Overview"
+    assert_select "a[href=?]", admin_pickup_reservations_path, text: "Reservations"
+    assert_select "a[href=?]", admin_pickups_map_path, text: "Map"
+  end
+
+  test "index filters by status" do
+    sign_in
+    get admin_pickup_reservations_url(status: "picked_up")
+
+    assert_response :success
+    assert_select "tbody tr", count: Reservation.where(status: "picked_up").count
+  end
+
+  test "index searches across name, email, and street address" do
+    sign_in
+
+    get admin_pickup_reservations_url(q: "mary.jones@example.com")
+    assert_response :success
+    assert_select "tbody tr", count: 1
+    assert_select "td", text: "Mary Jones"
+
+    get admin_pickup_reservations_url(q: "Broadway")
+    assert_select "tbody tr", count: 3
+
+    get admin_pickup_reservations_url(q: "no-such-reservation")
+    assert_select "tbody tr", count: 0
+    assert_select "p", text: "No reservations match your search."
+  end
+
+  test "index combines search with the status filter" do
+    sign_in
+    get admin_pickup_reservations_url(q: "Jones", status: "picked_up")
+
+    assert_select "tbody tr", count: 1
+    assert_select "td", text: "Bob Jones"
+    assert_select "td", text: "Mary Jones", count: 0
+  end
+
+  test "index shows route, zone, and the missing filter link" do
+    sign_in
+    get admin_pickup_reservations_url
+
+    assert_select "td", text: "Zone 1 / Lower Manhattan"
+    assert_select "a", text: "Missing", href: admin_pickup_reservations_path(status: "missing")
+  end
+
+  test "index orders reservations by street address" do
+    sign_in
+    get admin_pickup_reservations_url
+    body = @response.body
+
+    assert body.index("Susan Banks") < body.index("Mary Jones") # 1 World Trade Center before 770 Broadway
+  end
+
+  test "index shows notes on a second line under the street address without the city" do
+    sign_in
+    get admin_pickup_reservations_url
+
+    assert_match "Notes: Tree will be in the back yard", @response.body
+    assert_no_match(/New York/, @response.body)
+  end
+
   test "should require authentication for show" do
     get admin_pickup_reservation_url(reservations(:pending_pickup_1))
     assert_redirected_to new_admin_session_url

@@ -1,4 +1,7 @@
-<section id="pending-overview" class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" aria-labelledby="pending-overview-title">
+<% updated_route_ids = local_assigns.fetch(:updated_route_ids, []) %>
+<section id="pending-overview" class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark"
+         aria-labelledby="pending-overview-title"
+         data-controller="pending-overview">
   <div class="admin-panel-header border-line dark:border-line-dark">
     <div>
       <h2 id="pending-overview-title" class="admin-panel-title text-ink dark:text-ink-dark">Pending by route</h2>
@@ -33,7 +36,8 @@
 
             <div class="flex flex-col gap-2.5">
               <% group.rows.each do |row| %>
-                <div>
+                <% updated = updated_route_ids.include?(row.route&.id) %>
+                <div data-pending-overview-updated="<%= updated %>">
                   <div class="mb-1 flex items-baseline justify-between gap-3">
                     <span class="truncate text-xs font-medium text-ink-soft dark:text-ink-soft-dark">
                       <% if row.route %>
@@ -44,7 +48,8 @@
                     </span>
                     <span class="text-xs font-semibold tabular-nums <%= row.pending_count.zero? ? "text-muted dark:text-muted-dark" : "text-ink dark:text-ink-dark" %>"><%= row.pending_count %></span>
                   </div>
-                  <div class="h-1.5 overflow-hidden rounded-full bg-stone dark:bg-stone-dark"
+                  <div data-pending-overview-track
+                       class="h-1.5 overflow-hidden rounded-full bg-stone transition-shadow duration-500 dark:bg-stone-dark"
                        role="progressbar"
                        aria-label="<%= row.label %> pending pickups"
                        aria-valuemin="0"

@@ -1,6 +1,8 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class PendingPickupOverviewTest < ActiveSupport::TestCase
+  include Turbo::Broadcastable::TestHelper
   test "counts only pending pickups grouped by zone and route" do
     overview = PendingPickupOverview.new
 
@@ -60,5 +62,55 @@ class PendingPickupOverviewTest < ActiveSupport::TestCase
     assert_equal 0, overview.max_count
     assert_equal 0, overview.bar_percent(0)
     assert overview.groups.all? { |group| group.pending_count.zero? }
+  end
+
+  test "broadcasts a replaced overview when a pending pickup leaves its route" do
+    reservation = reservations(:pending_pickup_1)
+
+    streams = capture_turbo_stream_broadcasts(PendingPickupOverview::STREAM) do
+      reservation.update!(status: "picked_up")
+    end
+
+    assert_equal 1, streams.size
+    assert_equal "replace", streams.first["action"]
+    assert_equal "pending-overview", streams.first["target"]
+    assert_includes streams.first.at("template").inner_html, "data-pending-overview-updated=\"true\""
+    assert_match(/Lower Manhattan pending pickups/, streams.first.at("template").inner_html)
+  end
+
+  test "broadcasts the overview when a pending pickup joins a route" do
+    reservation = reservations(:routing_1)
+
+    streams = capture_turbo_stream_broadcasts(PendingPickupOverview::STREAM) do
+      reservation.update!(status: "pending_pickup", route: routes(:five))
+    end
+
+    assert_equal 1, streams.size
+    assert_equal "replace", streams.first["action"]
+    assert_includes streams.first.at("template").inner_html, "data-pending-overview-updated=\"true\""
+  end
+
+  test "broadcasts the overview when a route changes" do
+    streams = capture_turbo_stream_broadcasts(PendingPickupOverview::STREAM) do
+      routes(:one).update!(
+        name: "Lower Manhattan North",
+        street: "1 Main St",
+        city: "New York",
+        state: "NY",
+        country: "United States"
+      )
+    end
+
+    assert_equal 1, streams.size
+    assert_equal "replace", streams.first["action"]
+    assert_includes streams.first.at("template").inner_html, "data-pending-overview-updated=\"true\""
+  end
+
+  test "does not broadcast when a non-pending pickup changes" do
+    reservation = reservations(:picked_up_1)
+
+    assert_no_turbo_stream_broadcasts(PendingPickupOverview::STREAM) do
+      reservation.update!(pickup_notes: "Tree is by the curb")
+    end
   end
 end

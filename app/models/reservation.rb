@@ -267,6 +267,10 @@ class Reservation < ApplicationRecord
   after_commit :send_missing_sms!, if: ->(obj) { obj.missing? && obj.is_missing_tree_notifications_enabled? && obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
   after_commit :send_missing_email!, if: ->(obj) { obj.missing? && obj.is_missing_tree_notifications_enabled? && !obj.mobile.present? && obj.saved_change_to_status? && obj.persisted? && !obj.importing }
 
+  # Keep the admin pickups overview live when a stop moves on or off a route.
+  # Router writes with update_columns, so it broadcasts separately.
+  after_commit :broadcast_pending_pickup_overview, on: [ :create, :update, :destroy ]
+
   # RESERVATION ACTIVITY LOGS
   # Records a reservation log whenever a reservation is created or its
   # status changes, and a donation log when a cash/check donation is made
@@ -630,5 +634,19 @@ class Reservation < ApplicationRecord
     )
   rescue StandardError => e
     Rails.logger.error("Reservation activity could not be logged: #{e.class}: #{e.message}")
+  end
+
+  # Broadcasts the route(s) this reservation just left or joined so the
+  # pickups overview can refresh and briefly highlight them.
+  def broadcast_pending_pickup_overview
+    previous_status, current_status = saved_change_to_status || [ nil, status ]
+    return unless [ previous_status, current_status ].include?("pending_pickup")
+
+    previous_route_id, current_route_id = saved_change_to_route_id || [ route_id, route_id ]
+    route_ids = []
+    route_ids << previous_route_id if previous_status == "pending_pickup"
+    route_ids << current_route_id if current_status == "pending_pickup"
+
+    PendingPickupOverview.broadcast_update(route_ids: route_ids.uniq)
   end
 end

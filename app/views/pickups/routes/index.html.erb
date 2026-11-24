@@ -12,14 +12,26 @@
       </thead>
       <tbody>
         <% @routes.each do |route| %>
-          <% driver_names = route.drivers.map(&:name).to_sentence %>
           <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
             <td class="<%= admin_td_class %>">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <%= link_to route.name, pickups_route_path(route), class: admin_link_class %>
-                <span class="text-[0.82rem] <%= driver_names.present? ? "text-ink-soft dark:text-ink-soft-dark" : "text-muted dark:text-muted-dark" %>">
-                  <%= driver_names.presence || "No drivers assigned" %>
-                </span>
+                <% if route.drivers.any? %>
+                  <% selected = selected_driver && route.drivers.find { |driver| driver.id == selected_driver.id } %>
+                  <% other_driver_names = (route.drivers - [ selected ]).map(&:name) %>
+                  <span class="flex flex-wrap items-center gap-1.5 text-[0.82rem] text-ink-soft dark:text-ink-soft-dark">
+                    <% if selected %>
+                      <%= tag.span selected.name,
+                            class: admin_badge_class(:accent),
+                            title: "Your selected driver" %>
+                    <% end %>
+                    <% if other_driver_names.any? %>
+                      <span><%= other_driver_names.to_sentence %></span>
+                    <% end %>
+                  </span>
+                <% else %>
+                  <span class="text-[0.82rem] text-muted dark:text-muted-dark">No drivers assigned</span>
+                <% end %>
               </div>
             </td>
             <td class="<%= admin_td_class %> pickups-col-secondary">

@@ -37,6 +37,22 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "span", text: "Pickups complete", count: 4
   end
 
+  test "index highlights the selected driver in each route's driver badges" do
+    cookies[:pickup_driver_id] = drivers(:driver_two).id.to_s
+
+    get pickups_routes_url, params: { driver_secret_key: "secret" }
+    get pickups_routes_url
+
+    assert_select "tr", text: /#{Regexp.escape(routes(:four).name)}/ do
+      assert_select "span.admin-badge.bg-sage[title=?]", "Your selected driver", text: drivers(:driver_two).name
+    end
+
+    assert_select "tr", text: /#{Regexp.escape(@route.name)}/ do
+      assert_select "span", text: drivers(:driver_one).name
+      assert_select "span.admin-badge", count: 0
+    end
+  end
+
   test "index orders the selected driver's routes first, then unassigned routes" do
     cookies[:pickup_driver_id] = drivers(:driver_two).id.to_s
 

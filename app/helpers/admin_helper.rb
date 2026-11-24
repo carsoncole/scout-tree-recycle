@@ -12,6 +12,7 @@ module AdminHelper
   ADMIN_SETTINGS_NAV_ACTIVE_CLASSES = "is-active bg-sage-soft text-sage-deep dark:bg-sage-soft-dark dark:text-sage-deep-dark".freeze
 
   ADMIN_BADGE_CLASSES = {
+    "accent" => "bg-sage text-surface dark:bg-sage-dark dark:text-page-dark",
     "neutral" => "bg-stone text-ink-soft dark:bg-stone-dark dark:text-ink-soft-dark",
     "positive" => "bg-positive-bg text-positive dark:bg-positive-bg-dark dark:text-positive-dark",
     "info" => "bg-info-bg text-info dark:bg-info-bg-dark dark:text-info-dark",

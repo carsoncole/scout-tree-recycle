@@ -2749,7 +2749,21 @@ tr.admin-mail-unread .admin-link {
   }
 }
 
+/* Reservation preview popup on the pickup maps. Shape and spacing only;
+   surface/ink colors come from Tailwind utilities applied by
+   app/javascript/controllers/map_controller.js. */
+.pickup-mini-popup-shell .leaflet-popup-content {
+  margin: 0;
+}
 
+.pickup-mini-popup-shell .leaflet-popup-content-wrapper {
+  overflow: hidden;
+  border-radius: var(--site-radius);
+}
+
+.pickup-mini-map {
+  height: 12.5rem;
+}
 
 }
 

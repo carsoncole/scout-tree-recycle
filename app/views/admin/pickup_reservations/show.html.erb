@@ -1,5 +1,6 @@
 <%# Pickup details. Loaded into the admin map dialog's Turbo Frame when a
-   marker is tapped; also directly visitable with a back link. %>
+   reservation is opened from its map preview; also directly visitable with a
+   back link. %>
 <%= render "admin/shared/page_header",
            title: "Pickup details",
            description: [ @reservation.name.presence, @reservation.street ].compact_blank.join(" · ") do %>

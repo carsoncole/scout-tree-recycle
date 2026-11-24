@@ -18,6 +18,10 @@ export default class extends Controller {
     this.statusEntries = new Map()
     this.hiddenStatuses = new Set()
     this.mapBounds = null
+    this.previewPopup = null
+    this.previewMarker = null
+    this.miniMap = null
+    this.miniMarker = null
 
     const hasCenter = Array.isArray(this.centerValue) && this.centerValue.length === 2 && this.validCoord(this.centerValue[0], this.centerValue[1])
     const initialCenter = hasCenter ? [Number(this.centerValue[0]), Number(this.centerValue[1])] : [47.6062, -122.3321]
@@ -48,6 +52,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.closePickupPreview()
     if (this.resizeObserver) {
       this.resizeObserver.disconnect()
       this.resizeObserver = null
@@ -105,6 +110,7 @@ export default class extends Controller {
   }
 
   markersValueChanged() {
+    this.closePickupPreview()
     if (this.map && this.layerGroup) {
       this.layerGroup.clearLayers()
       this.markerLayers = new Map()
@@ -118,6 +124,10 @@ export default class extends Controller {
   setHiddenStatuses(statuses) {
     this.hiddenStatuses = new Set(Array.isArray(statuses) ? statuses.map(String) : [])
     this.applyStatusVisibility()
+
+    if (this.previewMarker && this.hiddenStatuses.has(String(this.previewMarker.status))) {
+      this.closePickupPreview()
+    }
   }
 
   applyStatusVisibility() {
@@ -181,10 +191,14 @@ export default class extends Controller {
       })
 
       const selectable = this.interactiveValue && marker.detail_url
-      const select = () => this.dispatch("marker-selected", { detail: { marker } })
+      const previewable = selectable && marker.preview
+      const select = () => this.selectMarker(marker)
+      const preview = () => this.openPickupPreview(marker, lat, lng)
       const statusLayers = []
 
-      if (selectable) {
+      if (previewable) {
+        layer.on("click", preview)
+      } else if (selectable) {
         layer.on("click", select)
       } else {
         const popup = marker.popup || marker.label || marker.name
@@ -217,7 +231,7 @@ export default class extends Controller {
           className: isSquare ? "location-marker-hit" : "pickup-marker-hit",
           interactive: true
         })
-        hit.on("click", select)
+        hit.on("click", previewable ? preview : select)
         hit.addTo(this.layerGroup)
         statusLayers.push(hit)
         // Mark the SVG element with the marker id so tests and browser
@@ -249,6 +263,174 @@ export default class extends Controller {
         this.mapBounds = combined
         this.fitToBounds(combined)
       }
+    }
+  }
+
+  // A selected reservation opens a preview popup with a close-up map of just
+  // that pickup. The full details dialog still loads from detail_url, but only
+  // after the driver taps the preview point or the View details button.
+  openPickupPreview(marker, lat, lng) {
+    if (!this.map) return
+    this.closePickupPreview()
+
+    const container = document.createElement("div")
+    container.className = "pickup-mini-popup flex flex-col font-sans"
+    if (marker.id !== undefined && marker.id !== null) {
+      container.dataset.markerId = String(marker.id)
+    }
+
+    const miniMapEl = document.createElement("div")
+    miniMapEl.className = "pickup-mini-map w-full bg-stone dark:bg-stone-dark"
+    miniMapEl.setAttribute("aria-hidden", "true")
+    container.appendChild(miniMapEl)
+
+    const address = document.createElement("a")
+    address.className = "pickup-mini-address flex min-h-12 items-center gap-2 border-t border-line px-4 py-2.5 text-[0.95rem] font-semibold leading-snug text-sage-deep! hover:text-ink! dark:border-line-dark dark:text-sage-deep-dark! dark:hover:text-ink-dark!"
+    address.href = marker.directions_url || marker.detail_url
+    address.target = "_blank"
+    address.rel = "noopener"
+    address.setAttribute("aria-label", `Get directions to ${marker.address || "this pickup"}`)
+
+    const addressIcon = document.createElement("span")
+    addressIcon.className = "shrink-0"
+    addressIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M4.5 19.5v-6.75A3.75 3.75 0 0 1 8.25 9h10.5" /><path d="m15.75 5.25 3 3.75-3 3.75" /></svg>'
+    address.appendChild(addressIcon)
+
+    const addressText = document.createElement("span")
+    addressText.textContent = marker.address || "Pickup address"
+    address.appendChild(addressText)
+    container.appendChild(address)
+
+    const details = document.createElement("button")
+    details.type = "button"
+    details.className = "pickup-mini-details min-h-12 w-full border-t border-line px-4 py-2.5 text-[0.95rem] font-semibold text-ink hover:bg-stone dark:border-line-dark dark:text-ink-dark dark:hover:bg-stone-dark"
+    details.textContent = "View details"
+    details.addEventListener("click", (event) => {
+      event.preventDefault()
+      this.selectMarker(marker)
+    })
+    container.appendChild(details)
+
+    const popup = L.popup({
+      maxWidth: 420,
+      minWidth: 320,
+      autoPan: true,
+      autoPanPadding: [16, 16],
+      closeButton: true,
+      className: "pickup-mini-popup-shell"
+    }).setLatLng([lat, lng]).setContent(container)
+
+    this.previewPopup = popup
+    this.previewMarker = marker
+
+    popup.on("remove", () => {
+      if (this.previewPopup === popup) {
+        this.previewPopup = null
+        this.previewMarker = null
+      }
+      this.stopMiniMap()
+    })
+
+    this.map.openPopup(popup)
+    this.stylePopupChrome(popup)
+
+    requestAnimationFrame(() => {
+      if (this.previewPopup === popup) this.startMiniMap(miniMapEl, marker, lat, lng)
+    })
+  }
+
+  // Hand the selected marker back to pickup_details_controller, which opens
+  // the shared details dialog.
+  selectMarker(marker) {
+    this.closePickupPreview()
+    this.dispatch("marker-selected", { detail: { marker } })
+  }
+
+  closePickupPreview() {
+    this.stopMiniMap()
+    if (this.map && this.previewPopup) this.map.closePopup(this.previewPopup)
+    this.previewPopup = null
+    this.previewMarker = null
+  }
+
+  startMiniMap(element, marker, lat, lng) {
+    if (!element || this.miniMap) return
+
+    const miniMap = L.map(element, {
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      dragging: false,
+      touchZoom: false
+    }).setView([lat, lng], 17)
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19
+    }).addTo(miniMap)
+
+    const dot = L.circleMarker([lat, lng], {
+      radius: 10,
+      color: marker.color || "#b91c1c",
+      weight: 2,
+      fillColor: marker.fillColor || marker.color || "#ef4444",
+      fillOpacity: 0.95,
+      className: "pickup-mini-point"
+    }).addTo(miniMap)
+    dot.on("click", () => this.selectMarker(marker))
+
+    // Same large invisible tap target as the main map, so the preview point
+    // is easy to hit on a phone.
+    const hit = L.circleMarker([lat, lng], {
+      radius: 22,
+      stroke: false,
+      fillColor: "#000000",
+      fillOpacity: 0,
+      className: "pickup-mini-point-hit"
+    }).addTo(miniMap)
+    hit.on("click", () => this.selectMarker(marker))
+    const hitElement = hit.getElement()
+    if (hitElement && marker.id !== undefined && marker.id !== null) {
+      hitElement.setAttribute("data-marker-id", String(marker.id))
+    }
+
+    this.miniMap = miniMap
+    this.miniMarker = dot
+    // The preview map is decorative and aria-hidden, so keep it out of the
+    // keyboard tab order even though Leaflet makes map containers focusable.
+    element.removeAttribute("tabindex")
+    miniMap.invalidateSize({ animate: false, pan: false })
+    requestAnimationFrame(() => {
+      if (this.miniMap === miniMap) miniMap.invalidateSize({ animate: false, pan: false })
+    })
+  }
+
+  stopMiniMap() {
+    if (this.miniMap) {
+      this.miniMap.remove()
+      this.miniMap = null
+    }
+    this.miniMarker = null
+  }
+
+  // Leaflet paints its popup chrome white. Apply the app's surface tokens once
+  // the popup is in the DOM so the preview follows light and dark mode.
+  stylePopupChrome(popup) {
+    const element = popup.getElement()
+    if (!element) return
+
+    const wrapper = element.querySelector(".leaflet-popup-content-wrapper")
+    const tip = element.querySelector(".leaflet-popup-tip")
+    const close = element.querySelector(".leaflet-popup-close-button")
+
+    if (wrapper) {
+      wrapper.classList.add("border", "border-line", "bg-surface", "text-ink", "dark:border-line-dark", "dark:bg-surface-dark", "dark:text-ink-dark")
+    }
+    if (tip) tip.classList.add("bg-surface", "dark:bg-surface-dark")
+    if (close) {
+      close.classList.add("rounded-full", "text-ink", "hover:bg-stone", "dark:text-ink-dark", "dark:hover:bg-stone-dark")
     }
   }
 
@@ -285,6 +467,13 @@ export default class extends Controller {
     if (marker) {
       marker.color = color
       if (detail.status) marker.status = detail.status
+    }
+
+    if (this.previewMarker && String(this.previewMarker.id) === key) {
+      this.previewMarker.color = color
+      if (detail.status) this.previewMarker.status = detail.status
+      if (this.miniMarker) this.miniMarker.setStyle({ color: color, fillColor: color })
+      if (detail.status && this.hiddenStatuses.has(String(detail.status))) this.closePickupPreview()
     }
 
     if (detail.status) this.applyStatusVisibility()

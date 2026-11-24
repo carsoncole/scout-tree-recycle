@@ -20,36 +20,102 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_selector "#route_status_badge", text: /2\s+pending/
     assert_selector "[data-controller='map']"
 
-    # Only the two pending pickups are plotted as tap targets.
-    assert_selector ".pickup-marker-hit", count: 2
+    # The two pending pickups and the missing pickup are plotted as tap targets.
+    assert_selector ".pickup-marker-hit", count: 3
+    assert_selector ".pickup-marker-hit[data-marker-id='#{reservations(:missing_1).id}']"
+    assert_selector ".pickups-route-map-legend", text: /Pending/
+    assert_selector ".pickups-route-map-legend", text: /Missing/
+    assert_no_text "Dots are pending pickups."
     assert_no_link "Back to Pickups"
 
     reservation = reservations(:pending_pickup_1)
-    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    select_pickup_marker(reservation)
 
+    # The first popup is a close-up map of only this pickup, with just the
+    # street address at the bottom.
+    within ".pickup-mini-popup" do
+      assert_selector ".pickup-mini-map"
+      assert_selector ".pickup-mini-point", count: 1
+      assert_selector ".pickup-mini-address svg"
+      assert_text "770 Broadway"
+      assert_no_text "New York"
+      assert_button "View details"
+    end
+
+    find(".pickup-mini-popup .pickup-mini-details").click
     assert_selector "dialog[open]"
     within "dialog[open]" do
       assert_text "770 Broadway"
       assert_text "Mary Jones"
       assert_text "+12069230400"
+      assert_selector ".pickup-current-status", text: /pending/i
       assert_text "Pending"
+      assert_selector "a[target='_blank'] svg"
     end
   end
 
-  test "pickup dialog links the address to map directions" do
+  test "driver can preview a missing pickup from the route map" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    assert_selector ".pickup-marker-hit", count: 3
+
+    reservation = reservations(:missing_1)
+    select_pickup_marker(reservation)
+
+    within ".pickup-mini-popup" do
+      assert_text "1600 Broadway"
+    end
+
+    find(".pickup-mini-popup .pickup-mini-details").click
+    assert_selector "dialog[open]"
+    within "dialog[open]" do
+      assert_text "1600 Broadway"
+      assert_text "Bill Carson"
+      assert_selector ".pickup-current-status", text: /missing/i
+    end
+  end
+
+  test "tapping the preview point opens the pickup details" do
+    sign_in_driver
+
+    click_on @route.name, match: :first
+    assert_selector ".pickup-marker-hit", count: 3
+
+    reservation = reservations(:pending_pickup_1)
+    select_pickup_marker(reservation)
+
+    find(".pickup-mini-popup .pickup-mini-point-hit").click
+
+    assert_selector "dialog[open]"
+    within "dialog[open]" do
+      assert_text "770 Broadway"
+      assert_text "Mary Jones"
+    end
+  end
+
+  test "pickup preview and dialog link the street address to map directions" do
     sign_in_driver
 
     click_on @route.name, match: :first
     assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
-    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    select_pickup_marker(reservation)
+
+    within ".pickup-mini-popup" do
+      address_link = find("a", text: /770 Broadway/)
+      # The provider (Apple Maps or Google Maps) depends on the device; both
+      # link the pickup's plotted coordinates.
+      assert_match(/\Ahttps:\/\/(maps\.apple\.com\/\?daddr=|www\.google\.com\/maps\/dir\/\?api=1&destination=)/, address_link[:href])
+      assert_includes address_link[:href], "40.7208%2C-73.993"
+    end
+
+    find(".pickup-mini-popup .pickup-mini-details").click
     assert_selector "dialog[open]"
 
     within "dialog[open]" do
       address_link = find("a", text: /770 Broadway/)
-      # The provider (Apple Maps or Google Maps) depends on the device; both
-      # link the pickup's plotted coordinates.
       assert_match(/\Ahttps:\/\/(maps\.apple\.com\/\?daddr=|www\.google\.com\/maps\/dir\/\?api=1&destination=)/, address_link[:href])
       assert_includes address_link[:href], "40.7208%2C-73.993"
     end
@@ -59,12 +125,11 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     sign_in_driver
 
     click_on @route.name, match: :first
-    # Wait for the map to plot the two pending pickups.
-    assert_selector ".pickup-marker-hit", count: 2
+    # Wait for the map to plot the pending and missing pickups.
+    assert_selector ".pickup-marker-hit", count: 3
 
     reservation = reservations(:pending_pickup_1)
-    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
-    assert_selector "dialog[open]"
+    open_pickup_details(reservation)
 
     within "dialog[open]" do
       assert_selector "a[href='tel:+12069230400']", text: "+12069230400"
@@ -73,7 +138,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     # Reservations without a mobile number show no phone link.
     no_mobile = reservations(:pending_pickup_no_mobile)
     find("button[aria-label='Close']").click
-    find(".pickup-marker-hit[data-marker-id='#{no_mobile.id}']").click
+    open_pickup_details(no_mobile)
 
     within "dialog[open]" do
       assert_no_selector "a[href^='tel:']"
@@ -113,8 +178,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
-    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
-    assert_selector "dialog[open]"
+    open_pickup_details(reservation)
 
     within "dialog[open]" do
       click_on "Picked"
@@ -131,8 +195,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
-    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
-    assert_selector "dialog[open]"
+    open_pickup_details(reservation)
 
     within "dialog[open]" do
       accept_confirm "Mark this pickup as missing? This will send the resident a missing-tree text message." do
@@ -151,8 +214,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
-    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
-    assert_selector "dialog[open]"
+    open_pickup_details(reservation)
 
     within "dialog[open]" do
       # Activity starts collapsed so the status buttons stay prominent.

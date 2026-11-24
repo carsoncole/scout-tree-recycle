@@ -10,14 +10,15 @@ module Pickups
 
     def show
       @route = Route.includes(:zone, :points).find(params[:id])
-      # The route map is the driver's work list: only stops still pending are
-      # plotted. Picked up and missing stops drop off after a page load.
+      # The route map is the driver's work list: pending pickups and pickups
+      # marked missing stay plotted so a missing tree can be revisited. Picked
+      # up stops drop off after a page load.
       @pickup_reservations = @route.reservations
-                                   .pending_pickup
+                                   .pickup
                                    .where.not(latitude: nil, longitude: nil)
                                    .order(:street, :id)
       @missing_coordinates_count = @route.reservations
-                                         .pending_pickup
+                                         .pickup
                                          .where("latitude IS NULL OR longitude IS NULL")
                                          .count
     end

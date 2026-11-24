@@ -148,6 +148,7 @@ module AdminHelper
     "primary" => "bg-sage text-surface hover:bg-sage-deep dark:bg-sage-dark dark:text-page-dark dark:hover:bg-sage-deep-dark",
     "secondary" => "border border-line-strong bg-surface text-ink hover:bg-stone dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-dark dark:hover:bg-stone-dark",
     "danger" => "bg-danger text-surface hover:bg-[#743730] dark:bg-danger-dark dark:text-page-dark dark:hover:bg-danger-border-dark",
+    "gray" => "bg-[#9ca3af] text-ink hover:bg-[#8b939f] dark:bg-[#9ca3af] dark:text-ink dark:hover:bg-[#8b939f]",
     "quiet" => "text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark"
   }.freeze
 

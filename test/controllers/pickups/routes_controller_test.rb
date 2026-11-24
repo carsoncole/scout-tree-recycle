@@ -54,14 +54,18 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "Route map", count: 0
     assert_select "p", text: /Tap a green dot to view the stop and update its status/, count: 0
 
-    # The map is the work list: only pending pickups are plotted.
+    # The map is the work list: pending and missing pickups are plotted.
     assert_select "[data-map-markers-value]", count: 1
     assert_match(/#{reservations(:pending_pickup_1).id}/, @response.body)
     assert_match(/#{reservations(:pending_pickup_no_mobile).id}/, @response.body)
+    assert_match(/#{reservations(:missing_1).id}/, @response.body)
     assert_no_match(/#{reservations(:picked_up_1).id}/, @response.body)
-    assert_no_match(/#{reservations(:missing_1).id}/, @response.body)
     assert_no_match(/Reservation details/, @response.body)
     assert_select "#pickup_detail_dialog", count: 1
+
+    assert_select ".pickups-route-map-legend", text: /Pending/
+    assert_select ".pickups-route-map-legend", text: /Missing/
+    assert_no_match(/Dots are pending pickups/, @response.body)
 
     # Locations inside the boundary open the shared details dialog, and
     # locations outside it are not plotted.

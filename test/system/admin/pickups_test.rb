@@ -29,8 +29,18 @@ class Admin::PickupsTest < ApplicationSystemTestCase
     assert_selector "[data-controller='map']"
 
     reservation = reservations(:pending_pickup_1)
-    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    select_pickup_marker(reservation)
 
+    within ".pickup-mini-popup" do
+      assert_selector ".pickup-mini-map"
+      assert_selector ".pickup-mini-point", count: 1
+      assert_selector ".pickup-mini-address svg"
+      assert_text "770 Broadway"
+      assert_no_text "New York"
+      assert_button "View details"
+    end
+
+    find(".pickup-mini-popup .pickup-mini-details").click
     assert_selector "dialog[open]"
     within "dialog[open]" do
       assert_text "770 Broadway"
@@ -61,9 +71,8 @@ class Admin::PickupsTest < ApplicationSystemTestCase
     visit admin_pickups_map_url
 
     reservation = reservations(:pending_pickup_1)
-    find(pickup_marker_selector(reservation)).click
+    open_pickup_details(reservation)
 
-    assert_selector "dialog[open]"
     within "dialog[open]" do
       click_on "Picked"
       assert_text "Pickup marked Picked Up."
@@ -83,8 +92,12 @@ class Admin::PickupsTest < ApplicationSystemTestCase
     assert_selector pickup_marker_selector(pending)
     assert_selector pickup_marker_selector(picked)
 
+    find(pickup_marker_selector(pending)).click
+    assert_selector ".pickup-mini-popup[data-marker-id='#{pending.id}']"
+
     find("button[data-status='pending_pickup']").click
     assert_no_selector pickup_marker_selector(pending)
+    assert_no_selector ".pickup-mini-popup[data-marker-id='#{pending.id}']"
     assert_selector pickup_marker_selector(picked)
     assert_selector "button[data-status='pending_pickup'][aria-pressed='false']"
 

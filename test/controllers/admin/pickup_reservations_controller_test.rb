@@ -20,7 +20,7 @@ class Admin::PickupReservationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "#pickup_detail_dialog", count: 1
-    assert_select "p", text: "770 Broadway, New York, NY"
+    assert_select "p", text: "770 Broadway"
     assert_select "p", text: "Mary Jones"
     assert_select "a[href^='tel:']", text: reservation.mobile
     assert_select "form[action=?]", admin_pickup_reservation_path(reservation)

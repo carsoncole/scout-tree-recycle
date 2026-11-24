@@ -23,4 +23,17 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     Setting.delete_all
     Setting.create!(SETTING_ATTRIBUTES)
   end
+
+  # Reservation markers open a close-up preview popup first. These helpers keep
+  # the two-step flow readable in system tests.
+  def select_pickup_marker(reservation)
+    find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
+    assert_selector ".pickup-mini-popup[data-marker-id='#{reservation.id}']"
+  end
+
+  def open_pickup_details(reservation)
+    select_pickup_marker(reservation)
+    find(".pickup-mini-popup[data-marker-id='#{reservation.id}'] .pickup-mini-details").click
+    assert_selector "dialog[open]"
+  end
 end

@@ -8,8 +8,16 @@
      data-pickup-details-panel-reservation-id-value="<%= reservation.id %>"
      data-pickup-details-panel-status-value="<%= reservation.status %>"
      data-pickup-details-panel-color-value="<%= color %>">
-  <div class="flex flex-wrap items-center justify-between gap-2">
-    <span class="<%= admin_reservation_status_badge(reservation.status) %>"><%= pickups_status_label(reservation.status) %></span>
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="pickup-current-status inline-flex items-center gap-2.5 rounded-xl border border-line bg-stone px-3 py-2 dark:border-line-dark dark:bg-stone-dark">
+      <span class="inline-flex size-7 shrink-0 items-center justify-center rounded-full" style="background-color: <%= color %>">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="size-4 <%= pickup_status_check_class(reservation.status) %>" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+      </span>
+      <div class="leading-tight">
+        <p class="m-0 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-ink-soft dark:text-ink-soft-dark">Current status</p>
+        <p class="m-0 text-[1rem] font-bold text-ink dark:text-ink-dark"><%= pickups_status_label(reservation.status) %></p>
+      </div>
+    </div>
     <% if notice.present? %>
       <span class="text-[0.85rem] font-medium text-positive dark:text-positive-dark" role="status"><%= notice %></span>
     <% end %>
@@ -25,8 +33,8 @@
         <%= link_to maps_directions_url(reservation),
                     target: "_blank",
                     rel: "noopener",
-                    aria: { label: "Get directions to #{[ reservation.street, reservation.city, reservation.state ].compact_blank.join(', ')}" },
-                    class: "inline-flex items-start gap-1.5 text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" do %><%= map_pin_icon %><span><%= [ reservation.street, reservation.unit.presence, reservation.city, reservation.state, reservation.zip.presence ].compact_blank.join(", ") %></span><% end %>
+                    aria: { label: "Get directions to #{reservation.street}" },
+                    class: "inline-flex items-start gap-1.5 text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark" do %><%= directions_icon %><span><%= reservation.street %></span><% end %>
       </p>
     </div>
 
@@ -68,11 +76,17 @@
                        disabled: button[:current],
                        aria: { current: button[:current] ? "true" : nil },
                        data: button[:confirm] ? { turbo_confirm: button[:confirm] } : {},
-                       class: [ "min-h-12 text-[0.95rem]", admin_button_class(variant: button[:variant], full: true) ] do %>
+                       class: [ "min-h-12 text-[0.95rem]", button[:current] ? "cursor-default" : nil, admin_button_class(variant: button[:variant], full: true) ] do %>
           <% if button[:current] %>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4 shrink-0" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+            <span class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-current" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="size-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+            </span>
           <% end %>
-          <%= button[:label] %><span class="sr-only"><%= " (current status)" if button[:current] %></span>
+          <%= button[:label] %>
+          <% if button[:current] %>
+            <span class="rounded-full border border-current px-1.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.08em]">Current</span>
+          <% end %>
+          <span class="sr-only"><%= " (current status)" if button[:current] %></span>
         <% end %>
       <% end %>
     </div>

@@ -48,8 +48,8 @@ module ApplicationHelper
     end
   end
 
-  # Small map pin marking a link that opens directions.
-  def map_pin_icon(css_class: "size-4 shrink-0")
+  # Turn-by-turn arrow marking a link that opens directions.
+  def directions_icon(css_class: "size-5 shrink-0")
     tag.svg(
       viewBox: "0 0 24 24",
       fill: "none",
@@ -61,7 +61,7 @@ module ApplicationHelper
       aria: { hidden: true }
     ) do
       tag.path(
-        d: "M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm4.5-.5c-.375 6-4.5 9.75-7.5 12-3-2.25-7.125-6-7.5-12C4.5 5.25 8.25 1.5 12 1.5s7.5 3.75 7.5 8.5Z"
+        d: "M4.5 19.5v-6.75A3.75 3.75 0 0 1 8.25 9h10.5M15.75 5.25l3 3.75-3 3.75"
       )
     end
   end
@@ -158,7 +158,7 @@ module ApplicationHelper
   PICKUP_STATUS_COLORS = {
     "pending_pickup" => "#16a34a",
     "picked_up" => "#6b7280",
-    "missing" => "#dc2626"
+    "missing" => "#9ca3af"
   }.freeze
   ROUTE_AREA_COLOR = "#3b82f6"
   ROUTE_AREA_STROKE = "#2563eb"
@@ -167,6 +167,11 @@ module ApplicationHelper
 
   def pickup_status_color(status)
     PICKUP_STATUS_COLORS.fetch(status.to_s, ROUTE_AREA_STROKE)
+  end
+
+  # The missing status uses a light gray dot, so its check needs dark ink.
+  def pickup_status_check_class(status)
+    status.to_s == "missing" ? "text-ink" : "text-surface"
   end
 
   def route_area_color
@@ -255,8 +260,8 @@ module ApplicationHelper
     location_detail_markers(Location.within_routes([ route ]), detail_url: ->(id) { pickups_location_path(id) })
   end
 
-  # Map data only: the pickup details dialog fetches the reservation from the
-  # server, so markers carry coordinates plus a detail URL and nothing else.
+  # Map data for reservations. Selecting one opens a popup preview with just
+  # that pickup before the shared details dialog is loaded from detail_url.
   def pickup_detail_marker(reservation, detail_url:)
     return if reservation.latitude.blank? || reservation.longitude.blank?
 
@@ -267,7 +272,10 @@ module ApplicationHelper
       status: reservation.status.to_s,
       color: pickup_status_color(reservation.status),
       detail_url: detail_url,
-      dialog_title: "Pickup details"
+      dialog_title: "Pickup details",
+      preview: true,
+      address: reservation.street,
+      directions_url: maps_directions_url(reservation)
     }
   end
 
@@ -319,7 +327,7 @@ module ApplicationHelper
     [
       { value: "pending_pickup", label: "Pending", variant: "secondary", confirm: nil },
       { value: "picked_up", label: "Picked", variant: "primary", confirm: nil },
-      { value: "missing", label: "Missing", variant: "danger", confirm: pickups_missing_status_confirm(reservation) }
+      { value: "missing", label: "Missing", variant: "gray", confirm: pickups_missing_status_confirm(reservation) }
     ].each { |button| button[:current] = reservation.status.to_s == button[:value] }
   end
 

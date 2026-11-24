@@ -144,7 +144,7 @@ On the first visit, the app opens the initial setup page at [http://localhost:30
 
 Stop the server with Ctrl+C. Start it again with `bin/dev`.
 
-For a local demo, load example zones, routes, drivers, and reservations for Bainbridge Island, Washington. Run this in a second terminal, or before `bin/dev`:
+For a local demo, load example zones, routes, drivers, and reservations for Bainbridge Island, Washington. It can be loaded by the UI, or in terminal:
 
 ```sh
 bin/rails sample_data:load
@@ -161,7 +161,7 @@ Edit `config/deploy.yml`:
 | `image` | Your image name, such as `yourname/scout-tree-recycle` |
 | `servers` → `web` | The server's IP address |
 | `registry` → `username` | Your Docker Hub username |
-| `proxy` → `host` | Your domain, such as `treerecycle.example.org` |
+| `proxy` → `host` | Ip address or domain, ex: `treerecycle.example.org` |
 
 `proxy.ssl: true` requests a free HTTPS certificate. Point the domain at the server first, and leave ports 80 and 443 open. When the domain uses Cloudflare, set SSL/TLS encryption mode to **Full**.
 
@@ -179,7 +179,7 @@ From the project folder:
 bin/kamal setup
 ```
 
-When that finishes, open `https://your-domain/admin/settings/new` and complete the first-run form. Then load the email templates on the server:
+When that finishes, open `https://your-domain` and complete the first-run form. Then load the email templates on the server:
 
 ```sh
 bin/kamal app exec --reuse "bin/rails db:seed"

@@ -1,6 +1,12 @@
 # Scout Tree Recycle
 
-Tree Recycle is a Ruby on Rails web application for running a Christmas tree recycling fundraiser. Families reserve a pickup and can donate. Organizers manage reservations, routes, drivers, and messages in an admin site. Drivers use a separate pickups portal.
+Tree Recycle is a Ruby on Rails web application for running a Christmas tree recycling fundraiser.
+
+The app has three components:
+
+- **Public reservations and donations site.** Families reserve a tree pickup and can donate.
+- **Driver tree pickups site.** Drivers run their routes from a separate portal on pickup day.
+- **Admin site.** Organizers manage reservations, routes, drivers, donations, messages, and settings.
 
 Written by [Carson Cole](https://github.com/carsoncole), a former Scoutmaster of Troop 1564 on Bainbridge Island, WA.
 
@@ -16,9 +22,19 @@ The two built-in marketing emails. The first says reservations are open. The sec
 
 ## Features
 
-**Public site.** Families reserve a tree pickup and can update or cancel it. They can donate by card, cash, or check, skip the donation, or donate without a reservation. The site also has About and privacy pages, a thank-you gallery, a maintenance page, and a pickup-day notice that can replace the signup form.
+**Public reservations and donations site.**
 
-**Admin.** Organizers work from one back office:
+- Families reserve a tree pickup and can update or cancel it.
+- Donate by card, cash, or check, skip the donation, or donate without a reservation.
+- About and privacy pages, a thank-you gallery, a maintenance page, and a pickup-day notice that can replace the signup form.
+
+**Driver tree pickups site.**
+
+- Drivers open it with a shared key.
+- Routes on a map.
+- Update a stop as picked up or missing, mark favorite routes, and print pickup lists.
+
+**Admin site.** Organizers work from one back office:
 
 - Reservations, with address verification review, lookup, and assignment onto routes. Routes can also be assigned by hand.
 - Zones, routes, and drivers.
@@ -30,13 +46,11 @@ The two built-in marketing emails. The first says reservations are open. The sec
 - Admin accounts, error logs, zip backups and restores for reservations, contacts, and settings, and a close-event step that keeps contacts for the next year.
 - A view of background jobs, such as mail, texts, and geocoding.
 
-**Driver pickups.** Drivers open a separate site with a shared key. They see routes on a map, update a stop as picked up or missing, mark favorite routes, and print pickup lists.
-
 ## What you need
 
 On your computer:
 
-- macOS, Ubuntu, or Windows with [Ubuntu on WSL](https://guides.rubyonrails.org/install_ruby_on_rails.html#install-ruby-on-windows)
+- A Mac
 - Git
 - Ruby 4.0.10 and Rails 8.1.4.1
 - PostgreSQL 14 or newer, running on your computer
@@ -68,26 +82,12 @@ When both are installed, run a check on your console:
 
 The app stores its data in PostgreSQL. Install it and leave it running before the next step, so the database library can compile.
 
-### macOS
-
 ```sh
 brew install postgresql@17
 brew services start postgresql@17
 echo 'export PATH="$(brew --prefix postgresql@17)/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
-
-### Ubuntu
-
-```sh
-sudo apt install postgresql postgresql-contrib libpq-dev
-sudo service postgresql start
-sudo -u postgres createuser -s $USER
-```
-
-The last command lets your user create the development databases.
-
-On Windows, use Ubuntu on WSL and follow the Ubuntu steps above.
 
 ## 4. Configure the database
 
@@ -112,7 +112,7 @@ Create that empty database and allow the server to connect. The host, username, 
 
 Rails stores secrets in `config/credentials.yml.enc`. The key that opens it is `config/master.key`. Git ignores the key. Keep a copy somewhere safe. Deploy sends it to the server.
 
-A fresh clone has no key. Create a new secrets file. On Ubuntu, install nano first with `sudo apt install nano` if that command is missing.
+A fresh clone has no key. Create a new secrets file. nano comes with macOS.
 
 ```sh
 rm config/credentials.yml.enc
@@ -204,9 +204,12 @@ Deploys keep the server disk that holds background jobs and live admin updates. 
 
 ## Email
 
-Outgoing mail uses any SMTP server. The settings are saved under **Admin → Settings → Email** and used on the next message.
+Email runs in two directions, and they can use different services:
 
-Replies in **Admin → Mail**, together with outgoing mail, require [Resend](https://resend.com). Any other service, including Gmail, can send marketing messages, confirmations, and the other outgoing mail. Read and answer those messages in that service. They do not appear in the admin inbox.
+- **Outbound only.** The most important emails — marketing, confirmations, and other notifications — can be sent by any SMTP service, including Gmail. With a service other than Resend, read and answer replies in that service. They do not appear in the admin inbox.
+- **Outbound and inbound.** If you want inbound email — replies delivered to **Admin → Mail** — [Resend](https://resend.com) is the only service configured, and it handles both directions.
+
+The settings are saved under **Admin → Settings → Email** and used on the next message.
 
 ### Send with any SMTP service
 
@@ -228,7 +231,7 @@ A test message, admin error notices, mail composed in **Admin → Mail**, and a 
 
 ### Resend
 
-[Resend](https://resend.com) delivers replies into **Admin → Mail**. Use it when you want that inbox as well as outgoing mail.
+[Resend](https://resend.com) is the only service configured for inbound email, and it can handle both outbound and inbound. Use it when you want replies delivered to **Admin → Mail** as well as outgoing mail.
 
 For SMTP, the host is `smtp.resend.com`, the username is `resend`, and the password is the API key alone. Use port **587** with encryption **STARTTLS**, or port **465** with **TLS**. Some servers block outbound ports 25, 465, and 587. Resend also accepts port **2465** with **TLS**, or port **2587** with **STARTTLS**.
 
@@ -250,7 +253,7 @@ Turn each one on under **Admin → Settings**. With a service off, that feature 
 | --- | --- | --- |
 | [Twilio](https://www.twilio.com) | Text messages | Settings → SMS. Set the number's incoming webhook to `https://your-domain/api/v1/sms/reply`. |
 | [Stripe](https://stripe.com) | Card donations | Settings → Donations. Add a webhook at `https://your-domain/api/v1/stripe-webhook` for `checkout.session.completed`, `charge.refunded`, `charge.updated`, and `payment_intent` events. |
-| [Amazon Location Service](https://aws.amazon.com/location/) | Address suggestions, verification, lookup, and automatic routes | Settings → Location Services. Places v2 is the default. Add an API key restricted to `geo-places:Geocode` and `geo-places:Autocomplete` for its default provider. The legacy Places v1 access key and place index are still available for existing installs, but new features use Places v2. |
+| [Amazon Location Service](https://aws.amazon.com/location/) | Address suggestions, verification, lookup, and automatic routes | Settings → Location Services. The app uses the v2 AWS Location Service API as well as the legacy Places v1 API. Places v2 is the default: add an API key restricted to `geo-places:Geocode` and `geo-places:Autocomplete` for its default provider. The legacy Places v1 access key and place index remain available for existing installs, but new features use Places v2. |
 
 Places v2 calls `Geocode` with `IntendedUse=Storage` because the app keeps the returned coordinates on reservations. When automatic routing and Places v2 are enabled, the street field offers `Autocomplete` suggestions and a submitted address is verified against the configured pickup city, state, and country. In-area matches store coordinates; misses continue to the donation step and are left for manual routing. The typeahead only changes the street field and never changes the configured city, state, or country. New installs default to Places v2; an existing install without a Places v2 API key stays on the legacy provider until an admin adds one.
 

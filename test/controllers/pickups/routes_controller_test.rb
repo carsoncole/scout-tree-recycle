@@ -26,8 +26,8 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
     get pickups_routes_url, params: { driver_secret_key: "secret" }
     get pickups_routes_url
 
-    assert_select "span", text: "2 pickups pending", count: 1
-    assert_select "span", text: "1 pickup pending", count: 1
+    assert_select "span", text: "2 pending", count: 1
+    assert_select "span", text: "1 pending", count: 1
     assert_select "span", text: "Pickups complete", count: 4
   end
 
@@ -48,11 +48,11 @@ class Pickups::RoutesControllerTest < ActionDispatch::IntegrationTest
 
     get pickups_route_url(@route)
     assert_response :success
-    assert_select "h1", /Route:/
-    assert_select "#route_status_badge", text: "2 pickups pending"
+    assert_select "h1", text: @route.name
+    assert_select "#route_status_badge", text: "2 pending"
     assert_select "a", text: "Back to Pickups", count: 0
     assert_select "h2", text: "Route map", count: 0
-    assert_select "p", text: /Tap a green dot to view the stop and update its status/
+    assert_select "p", text: /Tap a green dot to view the stop and update its status/, count: 0
 
     # The map is the work list: only pending pickups are plotted.
     assert_select "[data-map-markers-value]", count: 1

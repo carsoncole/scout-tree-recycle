@@ -118,6 +118,6 @@ class Pickups::ReservationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match(/action="replace" target="route_status_badge"/, response.body)
-    assert_match(/1 pickup pending/, response.body)
+    assert_match(/>1<\/span>\s*pending/, response.body)
   end
 end

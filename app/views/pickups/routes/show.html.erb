@@ -1,6 +1,4 @@
-<%= render "admin/shared/page_header",
-           title: "Route: #{@route.name}",
-           description: [ @route.zone&.name || "No Zone", "Tap a green dot to view the stop and update its status." ].join(" · ") do %>
+<%= render "admin/shared/page_header", title: @route.name do %>
   <%= render "pickups/routes/status_badge", pending_count: @route.pending_pickup_count, id: "route_status_badge" %>
 <% end %>
 

@@ -16,8 +16,8 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     sign_in_driver
 
     click_on @route.name, match: :first
-    assert_selector "h1", text: "Route: #{@route.name}"
-    assert_selector "#route_status_badge", text: "2 pickups pending"
+    assert_selector "h1", text: @route.name
+    assert_selector "#route_status_badge", text: /2\s+pending/
     assert_selector "[data-controller='map']"
 
     # Only the two pending pickups are plotted as tap targets.
@@ -40,7 +40,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     sign_in_driver
 
     click_on @route.name, match: :first
-    assert_selector "#route_status_badge", text: "2 pickups pending"
+    assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
     find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
@@ -59,7 +59,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     sign_in_driver
 
     click_on @route.name, match: :first
-    assert_selector "#route_status_badge", text: "2 pickups pending"
+    assert_selector "#route_status_badge", text: /2\s+pending/
 
     location = locations(:staging_point)
     find(".location-marker[data-location-id='#{location.id}']").click
@@ -84,7 +84,7 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     sign_in_driver
 
     click_on @route.name, match: :first
-    assert_selector "#route_status_badge", text: "2 pickups pending"
+    assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
     find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
@@ -95,14 +95,14 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
       assert_text "Pickup marked Picked Up."
     end
 
-    assert_selector "#route_status_badge", text: "1 pickup pending"
+    assert_selector "#route_status_badge", text: /1\s+pending/
   end
 
   test "marking a pickup missing confirms the missing-tree message first" do
     sign_in_driver
 
     click_on @route.name, match: :first
-    assert_selector "#route_status_badge", text: "2 pickups pending"
+    assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
     find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
@@ -115,14 +115,14 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
       assert_text "Pickup marked Missing."
     end
 
-    assert_selector "#route_status_badge", text: "1 pickup pending"
+    assert_selector "#route_status_badge", text: /1\s+pending/
   end
 
   test "driver can view a pickup's activity from its details dialog" do
     sign_in_driver
 
     click_on @route.name, match: :first
-    assert_selector "#route_status_badge", text: "2 pickups pending"
+    assert_selector "#route_status_badge", text: /2\s+pending/
 
     reservation = reservations(:pending_pickup_1)
     find(".pickup-marker-hit[data-marker-id='#{reservation.id}']").click
@@ -148,8 +148,8 @@ class Pickups::RoutesTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Pickups" # wait for the login redirect to complete
 
     visit pickups_routes_path
-    assert_text "2 pickups pending"
-    assert_text "1 pickup pending"
+    assert_text "2 pending"
+    assert_text "1 pending"
     assert_text "Pickups complete", count: 4
   end
 

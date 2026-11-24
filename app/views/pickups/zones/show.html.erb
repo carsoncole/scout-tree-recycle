@@ -1,6 +1,4 @@
-<%= render "admin/shared/page_header",
-           title: "Zone: #{@zone.name}",
-           description: "Zone information, routes, drivers, and plotted reservations." %>
+<%= render "admin/shared/page_header", title: @zone.name %>
 
 <% totals = pickup_status_totals(@routes, @status_counts) %>
 

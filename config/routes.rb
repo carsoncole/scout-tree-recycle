@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get "about", to: "public#about"
   get "privacy", to: "public#privacy"
   get "credits", to: "public#credits"
+  resource :sitemap, only: [ :show ], defaults: { format: :xml }
 
   resources :thanks, only: [ :index ] do
     member do

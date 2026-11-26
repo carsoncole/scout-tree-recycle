@@ -63,6 +63,15 @@ class RouterTest < ActiveSupport::TestCase
     assert_includes streams.first.at("template").inner_html, "data-pending-overview-updated=\"true\""
   end
 
+  test "automatic routing does not broadcast another reservation notification" do
+    reservation = reservations(:routing_1)
+    reservation.update_columns(latitude: 41.1, longitude: -72.9, route_id: nil, status: Reservation.statuses[:routing], is_manually_routed: false)
+
+    assert_no_turbo_stream_broadcasts(AdminReservationNotifier::STREAM) do
+      reservation.route!
+    end
+  end
+
   private
 
   def square_around(route, latitude, longitude)

@@ -1,7 +1,10 @@
 require "test_helper"
 require "csv"
+require "turbo/broadcastable/test_helper"
 
 class ReservationTest < ActiveSupport::TestCase
+  include Turbo::Broadcastable::TestHelper
+
   def setup
     @reservation = reservations(:reservation_form_minimum)
   end
@@ -135,6 +138,30 @@ class ReservationTest < ActiveSupport::TestCase
   test "can be picked up" do
     @reservation.picked_up!
     assert @reservation.picked_up?
+  end
+
+  test "schedules one delayed admin notification when created" do
+    travel_to Time.zone.parse("2026-11-26 12:00") do
+      assert_enqueued_with(job: AdminReservationNotificationJob, at: 10.seconds.from_now) do
+        Reservation.create!(name: "Notification Test", street: "1 Main St", city: "New York", state: "NY",
+                            country: "United States", email: "notification.test@example.com")
+      end
+    end
+  end
+
+  test "does not schedule an admin notification while importing" do
+    assert_no_enqueued_jobs(only: AdminReservationNotificationJob) do
+      Reservation.create!(name: "Import Notification Test", street: "1 Main St", city: "New York", state: "NY",
+                          country: "United States", email: "import.notification.test@example.com", importing: true)
+    end
+  end
+
+  test "does not schedule another admin notification when a route is assigned" do
+    reservation = reservations(:routing_1)
+
+    assert_no_enqueued_jobs(only: AdminReservationNotificationJob) do
+      reservation.update!(route: routes(:one))
+    end
   end
 
   test "logs a reservation activity when created" do

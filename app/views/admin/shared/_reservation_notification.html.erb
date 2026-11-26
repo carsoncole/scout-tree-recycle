@@ -1,0 +1,18 @@
+<div id="<%= AdminReservationNotifier.dom_id(reservation) %>"
+     class="<%= admin_notice_class(:info) %> -translate-y-full opacity-0 shadow-lg transition duration-200 ease-out motion-reduce:transition-none"
+     role="status"
+     data-controller="auto-dismiss"
+     data-auto-dismiss-delay-value="5000">
+  <div class="min-w-0 flex-1">
+    <p class="admin-notice-title text-ink dark:text-ink-dark">New reservation</p>
+    <p><%= link_to reservation.name, admin_reservation_path(reservation), class: admin_link_class %></p>
+    <p class="text-ink-soft dark:text-ink-soft-dark"><%= reservation.short_address %></p>
+    <% if reservation.route.present? %>
+      <p class="text-ink-soft dark:text-ink-soft-dark">Route: <span class="font-medium text-ink dark:text-ink-dark"><%= reservation.route.name %></span></p>
+    <% end %>
+  </div>
+  <button type="button"
+          class="site-notice-dismiss text-ink-soft hover:text-ink dark:text-ink-soft-dark dark:hover:text-ink-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-ink-dark"
+          aria-label="Dismiss notification"
+          data-action="auto-dismiss#dismiss">&times;</button>
+</div>

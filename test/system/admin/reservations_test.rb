@@ -15,6 +15,12 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Reservations"
   end
 
+  test "includes the live reservation notification container" do
+    visit admin_reservations_url
+
+    assert_selector "#admin-notifications[aria-live='polite']", visible: :all
+  end
+
   test "pagination works" do
     visit admin_reservations_url
     assert_text "Showing 1 to #{ Reservation.count } of #{ Reservation.count } results"

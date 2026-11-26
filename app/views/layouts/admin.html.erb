@@ -28,6 +28,16 @@
   <body class="admin-body bg-page text-ink dark:bg-page-dark dark:text-ink-dark">
     <a class="site-skip-link bg-ink text-surface dark:bg-ink-dark dark:text-page-dark" href="#admin-main">Skip to content</a>
 
+    <% if Current.user %>
+      <%= turbo_stream_from AdminReservationNotifier::STREAM %>
+      <div id="admin-notifications"
+           class="fixed left-1/2 top-4 z-[60] flex w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 flex-col gap-3 sm:top-6"
+           role="region"
+           aria-live="polite"
+           aria-relevant="additions"
+           aria-label="Admin notifications"></div>
+    <% end %>
+
     <% if Setting.exists? %>
       <header class="admin-header border-b border-line bg-page dark:border-line-dark dark:bg-page-dark">
         <div class="admin-header-inner">

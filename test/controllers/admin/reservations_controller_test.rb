@@ -7,6 +7,15 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "includes the live reservation notification container" do
+    sign_in
+    get admin_reservations_url
+
+    assert_response :success
+    assert_select "#admin-notifications[aria-live='polite']"
+    assert_select "turbo-cable-stream-source", minimum: 2
+  end
+
   test "should get index with closed reservations" do
     Setting.instance.update(is_reservations_open: false)
     sign_in

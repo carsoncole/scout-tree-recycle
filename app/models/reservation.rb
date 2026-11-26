@@ -271,6 +271,10 @@ class Reservation < ApplicationRecord
   # Router writes with update_columns, so it broadcasts separately.
   after_commit :broadcast_pending_pickup_overview, on: [ :create, :update, :destroy ]
 
+  # Send one delayed notification so automatic routing has time to assign a
+  # route before open admin pages are notified.
+  after_create_commit :schedule_admin_reservation_notification, unless: :importing
+
   # RESERVATION ACTIVITY LOGS
   # Records a reservation log whenever a reservation is created or its
   # status changes, and a donation log when a cash/check donation is made
@@ -636,6 +640,10 @@ class Reservation < ApplicationRecord
     )
   rescue StandardError => e
     Rails.logger.error("Reservation activity could not be logged: #{e.class}: #{e.message}")
+  end
+
+  def schedule_admin_reservation_notification
+    AdminReservationNotificationJob.set(wait: 10.seconds).perform_later(id)
   end
 
   # Broadcasts the route(s) this reservation just left or joined so the

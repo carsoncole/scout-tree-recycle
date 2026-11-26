@@ -122,7 +122,7 @@ class Analytics
     end
 
     def axis_text(label)
-      label.delete_prefix("Week of ")
+      label.delete_prefix("Week of ").sub(/, \d{4}\z/, "")
     end
 
     def y_tick_values

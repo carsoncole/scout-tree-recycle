@@ -3,5 +3,6 @@ class Admin::AnalyticsController < Admin::BaseController
     @analytics = Analytics.new(period: params[:period])
     @reservation_chart = Analytics::Chart.new(@analytics.reservation_series, scale: :count)
     @donation_chart = Analytics::Chart.new(@analytics.donation_series, scale: :currency)
+    @marketing_email_chart = Analytics::Chart.new(@analytics.marketing_email_series, scale: :count)
   end
 end

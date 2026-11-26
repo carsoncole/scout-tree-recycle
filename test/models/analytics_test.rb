@@ -10,6 +10,57 @@ class AnalyticsTest < ActiveSupport::TestCase
     assert_equal analytics.donation_total.to_d, analytics.donation_series.sum { |point| point.value.to_d }
   end
 
+  test "calculates average donations across all reservations and reservations with paid donations" do
+    reservation = reservations(:pending_pickup_1)
+    Donation.create!(reservation: reservation, amount: 50, payment_status: "paid", status: "complete")
+    Donation.create!(reservation: reservations(:picked_up_1), amount: 25, payment_status: "paid", status: "complete")
+    Donation.create!(reservation: reservations(:picked_up_1), amount: 9999, payment_status: "unpaid", status: "open")
+
+    analytics = Analytics.new(period: "day")
+
+    assert_equal 175.to_d / Reservation.count, analytics.average_donation_per_reservation
+    assert_equal 87.5.to_d, analytics.average_donation
+  end
+
+  test "returns zero averages without paid donations" do
+    Donation.delete_all
+    analytics = Analytics.new(period: "day")
+
+    assert_equal 0, analytics.average_donation_per_reservation
+    assert_equal 0, analytics.average_donation
+  end
+
+  test "counts and groups delivered marketing campaign emails but not test emails" do
+    sent_on = Time.zone.local(2026, 4, 2, 15, 0)
+    %w[marketing_email_1 marketing_email_1 marketing_email_2].each_with_index do |action, index|
+      Mails::OutboundEmail.create!(
+        message_id: "analytics-marketing-#{index}@example.com",
+        mailer: "MarketingMailer",
+        action: action,
+        sent_at: sent_on
+      )
+    end
+    Mails::OutboundEmail.create!(
+      message_id: "analytics-marketing-test@example.com",
+      mailer: "MarketingMailer",
+      action: "test_email",
+      sent_at: sent_on
+    )
+    Mails::OutboundEmail.create!(
+      message_id: "analytics-reservation@example.com",
+      mailer: "ReservationsMailer",
+      action: "new_reservation_email",
+      sent_at: sent_on
+    )
+
+    analytics = Analytics.new(period: "day")
+    point = analytics.marketing_email_series.find { |entry| entry.date == Date.new(2026, 4, 2) }
+
+    assert_equal 3, analytics.marketing_email_total
+    assert_equal 3, point.value
+    assert_equal "3", point.value_label
+  end
+
   test "groups reservations by the local day and fills quiet days" do
     stamp = Time.utc(2026, 1, 15, 7, 30) # 11:30pm Pacific on January 14
     create_reservation_at(stamp, "analytics-day-a@example.com")
@@ -68,6 +119,8 @@ class AnalyticsTest < ActiveSupport::TestCase
     assert_in_delta 196, chart.bars.second.height, 0.1
     assert_equal "4", chart.y_ticks.first.label
     assert_equal "0", chart.y_ticks.last.label
+    assert_equal [ "Jan 1", "Jan 2" ], chart.x_labels.map(&:text)
+    assert_equal "Jan 1, 2026", chart.bars.first.label
   end
 
   private

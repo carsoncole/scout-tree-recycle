@@ -1,5 +1,13 @@
-<% bar_class = tone == "warning" ? "fill-warning dark:fill-warning-dark" : "fill-sage dark:fill-sage-dark" %>
-<% dot_class = tone == "warning" ? "bg-warning dark:bg-warning-dark" : "bg-sage dark:bg-sage-dark" %>
+<% bar_class = case tone
+                when "warning" then "fill-warning dark:fill-warning-dark"
+                when "info" then "fill-info dark:fill-info-dark"
+                else "fill-sage dark:fill-sage-dark"
+                end %>
+<% dot_class = case tone
+                when "warning" then "bg-warning dark:bg-warning-dark"
+                when "info" then "bg-info dark:bg-info-dark"
+                else "bg-sage dark:bg-sage-dark"
+                end %>
 
 <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" aria-labelledby="<%= heading_id %>">
   <div class="admin-panel-header">
@@ -17,6 +25,17 @@
   </div>
 
   <div class="admin-panel-body">
+    <% if local_assigns[:stats].present? %>
+      <dl class="mb-6 grid gap-3 sm:grid-cols-2">
+        <% stats.each do |stat| %>
+          <div class="rounded-lg border border-line bg-stone p-3 dark:border-line-dark dark:bg-stone-dark">
+            <dt class="text-xs font-medium uppercase tracking-wide text-muted dark:text-muted-dark"><%= stat[:label] %></dt>
+            <dd class="mt-1 font-display text-2xl tracking-tight text-ink dark:text-ink-dark"><%= stat[:value] %></dd>
+          </div>
+        <% end %>
+      </dl>
+    <% end %>
+
     <% if points.empty? %>
       <p class="m-0 text-ink-soft dark:text-ink-soft-dark"><%= empty_message %></p>
     <% else %>

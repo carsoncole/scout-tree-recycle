@@ -70,7 +70,7 @@
             <div class="admin-nav-group">
               <span class="admin-nav-group-label text-muted dark:text-muted-dark">System</span>
               <%= link_to "Settings", admin_settings_path,
-                          class: admin_nav_class(%w[settings drivers routes zones users thanks operations].include?(controller_name)) %>
+                          class: admin_nav_class(%w[settings helps drivers routes zones users thanks operations].include?(controller_name)) %>
               <%= link_to "Logs", admin_logs_path,
                           class: admin_nav_class(controller_name == "logs") %>
               <%= link_to "Data", admin_data_path,

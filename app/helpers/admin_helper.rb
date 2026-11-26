@@ -2,7 +2,7 @@ module AdminHelper
   # Top-nav groups. Each entry is [label, [controller names]].
   ADMIN_NAV_GROUPS = {
     "Operations" => %w[reservations pickups pickup_reservations pickup_locations donations analytics sms received_emails outbound_emails replies marketing marketing_email_templates marketing_images reservation_email_templates contacts],
-    "System" => %w[settings configuration drivers routes zones locations users thanks logs data operations]
+    "System" => %w[settings configuration helps drivers routes zones locations users thanks logs data operations]
   }.freeze
 
   ADMIN_NAV_CLASSES = "admin-nav-link text-ink-soft hover:text-ink hover:bg-stone dark:text-ink-soft-dark dark:hover:text-ink-dark dark:hover:bg-stone-dark".freeze

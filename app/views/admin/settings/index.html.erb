@@ -2,6 +2,7 @@
 <%= render "admin/shared/page_header",
            title: "Settings",
            description: "Manage event details, feature toggles, and portal access." do %>
+  <%= link_to "Admin Help", admin_help_path, class: admin_button_class(variant: :secondary) %>
   <%= link_to pickups_root_path, target: "_blank", rel: "noopener", class: admin_button_class(variant: :secondary) do %>
     Pickups Portal
     <%= external_link_icon %>

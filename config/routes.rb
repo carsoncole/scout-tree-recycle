@@ -63,6 +63,7 @@ Rails.application.routes.draw do
     get "settings/:section", to: "settings#show", as: :settings_section,
         constraints: { section: /event|organization|site_details|site_content|pickups|sms|email|donations|location_services|system/ }
     get "configuration", to: "configuration#index", as: :configuration
+    resource :help, only: [ :show ]
     scope path: "settings" do
       resources :drivers, except: [ :show ]
       resources :users, except: [ :show ] do

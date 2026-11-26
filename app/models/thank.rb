@@ -11,10 +11,22 @@ class Thank < ApplicationRecord
   validates :image, presence: true, on: :create
   validates :image_content_type, presence: true
   validate :image_upload_is_valid
+  validate :url_must_be_http_or_https
 
   scope :recent, -> { order(created_at: :desc) }
 
   private
+
+  def url_must_be_http_or_https
+    return if url.blank?
+
+    uri = URI.parse(url)
+    return if uri.is_a?(URI::HTTP) && uri.host.present?
+
+    errors.add(:url, "must be a valid HTTP or HTTPS URL")
+  rescue URI::InvalidURIError
+    errors.add(:url, "must be a valid HTTP or HTTPS URL")
+  end
 
   def store_image_upload
     return unless image_upload.respond_to?(:read)

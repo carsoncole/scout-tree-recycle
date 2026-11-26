@@ -42,6 +42,6 @@ class Admin::ThanksController < Admin::BaseController
   end
 
   def thank_params
-    params.require(:thank).permit(:content, :image_upload)
+    params.require(:thank).permit(:content, :url, :url_text, :image_upload)
   end
 end

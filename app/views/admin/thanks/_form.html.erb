@@ -31,6 +31,18 @@
           <%= form.text_area :content, rows: 6, class: admin_textarea_class, placeholder: "Thanks to our friends at..." %>
           <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Optional. Shown beneath the image on the public page.</p>
         </div>
+
+        <div class="admin-field">
+          <%= form.label :url, "URL (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= form.url_field :url, class: admin_input_class, placeholder: "https://example.com" %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Optional. Shown as a link on the public page and opens in a new tab.</p>
+        </div>
+
+        <div class="admin-field">
+          <%= form.label :url_text, "URL Text (optional)", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= form.text_field :url_text, class: admin_input_class, placeholder: "Visit our supporter" %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Optional. Displayed as the link text instead of the URL. If blank, the URL is shown.</p>
+        </div>
       </div>
     </div>
 

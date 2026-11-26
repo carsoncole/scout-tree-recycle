@@ -1,4 +1,6 @@
 one:
   content: "Thanks to the Acme Tree Farm crew for lending a hand on pickup day."
+  url: "https://example.com/acme-tree-farm"
+  url_text: "Visit Acme Tree Farm"
   image: "supporter-logo-bytes"
   image_content_type: "image/png"

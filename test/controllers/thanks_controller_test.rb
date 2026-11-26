@@ -59,6 +59,34 @@ class ThanksControllerTest < ActionDispatch::IntegrationTest
     assert_select "img[src=?]", image_thank_path(thank, v: thank.updated_at.to_i)
   end
 
+  test "links to the supporter URL in a new tab" do
+    thank = thanks(:one)
+
+    get thanks_url
+
+    assert_response :success
+    assert_select "a[href=?][target=?][rel=?]", thank.url, "_blank", "noopener", text: thank.url_text
+  end
+
+  test "uses the URL as link text when URL text is blank" do
+    thank = thanks(:one)
+    thank.update!(url_text: nil)
+
+    get thanks_url
+
+    assert_response :success
+    assert_select "a[href=?]", thank.url, text: thank.url
+  end
+
+  test "omits the supporter link when the URL is blank" do
+    thanks(:one).update!(url: nil)
+
+    get thanks_url
+
+    assert_response :success
+    assert_select "li a[target='_blank']", count: 0
+  end
+
   test "serves the stored image with its content type" do
     thank = thanks(:one)
 

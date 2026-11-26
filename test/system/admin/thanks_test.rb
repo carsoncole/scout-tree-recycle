@@ -57,6 +57,8 @@ class Admin::ThanksTest < ApplicationSystemTestCase
     click_link "Add thank"
 
     fill_in "Content (optional)", with: "Thanks to the Riverside Garden Club."
+    fill_in "URL (optional)", with: "https://example.com/riverside-garden-club"
+    fill_in "URL Text (optional)", with: "Visit the Riverside Garden Club"
     attach_file "Image", file_fixture("thanks.png")
     click_button "Create Thank"
 
@@ -64,7 +66,11 @@ class Admin::ThanksTest < ApplicationSystemTestCase
     assert_text "Riverside Garden Club"
 
     all(:link, "Edit").first.click
+    assert_field "URL (optional)", with: "https://example.com/riverside-garden-club"
+    assert_field "URL Text (optional)", with: "Visit the Riverside Garden Club"
     fill_in "Content (optional)", with: "Thanks to the Riverside Garden Club for their generous support."
+    fill_in "URL (optional)", with: "https://example.com/riverside-garden-club/support"
+    fill_in "URL Text (optional)", with: "Support the Riverside Garden Club"
     click_button "Update Thank"
 
     assert_text "Thank was successfully updated."

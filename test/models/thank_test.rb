@@ -27,6 +27,23 @@ class ThankTest < ActiveSupport::TestCase
     assert_nil thank.reload.content
   end
 
+  test "is valid with an HTTP or HTTPS URL" do
+    assert build_thank(url: "https://example.com/supporters").valid?
+    assert build_thank(url: "http://example.com/supporters").valid?
+  end
+
+  test "is valid without a URL" do
+    assert build_thank(url: nil).valid?
+    assert build_thank(url: "").valid?
+  end
+
+  test "rejects a URL that is not HTTP or HTTPS" do
+    thank = build_thank(url: "javascript:alert('unsafe')")
+
+    assert_not thank.valid?
+    assert_includes thank.errors[:url], "must be a valid HTTP or HTTPS URL"
+  end
+
   test "requires an image on create" do
     thank = build_thank(image: nil, image_content_type: nil)
 

@@ -37,6 +37,8 @@ class Admin::ThanksControllerTest < ActionDispatch::IntegrationTest
       post admin_thanks_url, params: {
         thank: {
           content: "Thanks to the Riverside Garden Club.",
+          url: "https://example.com/riverside-garden-club",
+          url_text: "Visit the Riverside Garden Club",
           image_upload: fixture_file_upload("thanks.png", "image/png")
         }
       }
@@ -47,6 +49,8 @@ class Admin::ThanksControllerTest < ActionDispatch::IntegrationTest
 
     thank = Thank.recent.first
     assert_equal "image/png", thank.image_content_type
+    assert_equal "https://example.com/riverside-garden-club", thank.url
+    assert_equal "Visit the Riverside Garden Club", thank.url_text
     assert thank.image.present?
   end
 
@@ -74,15 +78,32 @@ class Admin::ThanksControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test "updates content without replacing the image" do
+  test "updates content and URL without replacing the image" do
     thank = thanks(:one)
 
-    patch admin_thank_url(thank), params: { thank: { content: "Updated thanks" } }
+    patch admin_thank_url(thank), params: {
+      thank: { content: "Updated thanks", url: "https://example.com/updated", url_text: "Updated supporter" }
+    }
 
     assert_redirected_to admin_thanks_url
     assert_equal "Updated thanks", thank.reload.content
+    assert_equal "https://example.com/updated", thank.url
+    assert_equal "Updated supporter", thank.url_text
     assert_equal "image/png", thank.image_content_type
     assert_equal "supporter-logo-bytes", thank.image
+  end
+
+  test "rejects an invalid URL" do
+    assert_no_difference("Thank.count") do
+      post admin_thanks_url, params: {
+        thank: {
+          url: "not-a-url",
+          image_upload: fixture_file_upload("thanks.png", "image/png")
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
   end
 
   test "deletes a thank" do

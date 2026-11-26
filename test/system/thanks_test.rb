@@ -8,6 +8,7 @@ class ThanksTest < ApplicationSystemTestCase
     assert_text Setting::DEFAULT_THANK_YOU_MESSAGE
     assert_text thanks(:one).content
     assert_selector "img[alt='Supporter logo']"
+    assert_selector "a[href='#{thanks(:one).url}'][target='_blank'][rel='noopener']", text: thanks(:one).url_text
   end
 
   test "public page omits the message when it is cleared" do

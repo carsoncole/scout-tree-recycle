@@ -10,6 +10,7 @@ class ContactsRestoreTest < ActiveSupport::TestCase
       "mobile" => "+11234567890",
       "marketing_1_email_sent_at" => "2026-01-01T10:00:00Z",
       "is_unsubscribed_from_marketing" => "true",
+      "unsubscribed_at" => "2026-01-02T10:00:00Z",
       "created_at" => "2026-01-01T09:00:00Z",
       "updated_at" => "2026-01-01T09:05:00Z"
     )
@@ -24,6 +25,7 @@ class ContactsRestoreTest < ActiveSupport::TestCase
     assert contact
     assert_equal "Restored Person", contact.name
     assert contact.is_unsubscribed_from_marketing?
+    assert_equal Time.zone.parse("2026-01-02T10:00:00Z"), contact.unsubscribed_at
     assert_equal Time.zone.parse("2026-01-01T10:00:00Z"), contact.marketing_1_email_sent_at
     assert_equal Time.zone.parse("2026-01-01T09:00:00Z"), contact.created_at
   end

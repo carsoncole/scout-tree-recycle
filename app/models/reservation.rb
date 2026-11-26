@@ -388,9 +388,11 @@ class Reservation < ApplicationRecord
 
   def self.migrate_reservations!
     Reservation.migratable.each do |r|
-      unsubscribed = Contact.where(email: r.email, is_unsubscribed_from_marketing: true).exists?
+      contact = Contact.find_by(email: r.email)
+      unsubscribed = contact&.is_unsubscribed_from_marketing? || false
+      unsubscribed_at = contact&.unsubscribed_at
       Contact.where(email: r.email).destroy_all
-      Contact.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street, is_unsubscribed_from_marketing: unsubscribed)
+      Contact.create(email: r.email, name: r.name, mobile: r.mobile, street: r.street, is_unsubscribed_from_marketing: unsubscribed, unsubscribed_at: unsubscribed_at)
     end
     Reservation.destroy_all
   end

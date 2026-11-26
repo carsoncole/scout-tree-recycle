@@ -16,6 +16,7 @@ class Contact < ApplicationRecord
     marketing_1_email_sent_at
     marketing_2_email_sent_at
     is_unsubscribed_from_marketing
+    unsubscribed_at
     created_at
     updated_at
   ].freeze
@@ -23,6 +24,7 @@ class Contact < ApplicationRecord
   EXPORT_TIMESTAMP_FIELDS = %w[
     marketing_1_email_sent_at
     marketing_2_email_sent_at
+    unsubscribed_at
     created_at
     updated_at
   ].freeze
@@ -104,7 +106,7 @@ class Contact < ApplicationRecord
   end
 
   def unsubscribe_from_marketing!
-    update!(is_unsubscribed_from_marketing: true)
+    update!(is_unsubscribed_from_marketing: true, unsubscribed_at: Time.current)
   end
 
   def self.clear_email_flags!

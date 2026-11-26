@@ -33,6 +33,12 @@
           <dd class="text-ink dark:text-ink-dark"><%= @contact.street.presence || "—" %></dd>
         </div>
         <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Created from reservation/manually added</dt>
+          <dd class="text-ink dark:text-ink-dark">
+            <%= @contact.created_at.in_time_zone.strftime("%b %-d, %Y %-l:%M %p") %>
+          </dd>
+        </div>
+        <div>
           <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Marketing emails</dt>
           <dd>
             <% if @contact.is_unsubscribed_from_marketing? %>
@@ -41,6 +47,10 @@
               <span class="<%= admin_badge_class(:positive) %>">Subscribed</span>
             <% end %>
           </dd>
+        </div>
+        <div>
+          <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Unsubscribed at</dt>
+          <dd class="text-ink dark:text-ink-dark"><%= @contact.unsubscribed_at.present? ? admin_marketing_sent_at(@contact.unsubscribed_at) : "—" %></dd>
         </div>
         <div>
           <dt class="admin-label text-ink-soft dark:text-ink-soft-dark">Marketing email 1</dt>

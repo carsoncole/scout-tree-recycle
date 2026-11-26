@@ -149,12 +149,16 @@ class ContactTest < ActiveSupport::TestCase
     assert_not_includes Contact.marketing_unsubscribed, contact
   end
 
-  test "unsubscribing from marketing sets the flag" do
+  test "unsubscribing from marketing sets the flag and timestamp" do
     contact = contacts(:full)
+    unsubscribed_at = Time.zone.parse("2026-11-26 12:00")
 
-    contact.unsubscribe_from_marketing!
+    travel_to unsubscribed_at do
+      contact.unsubscribe_from_marketing!
+    end
 
     assert contact.reload.is_unsubscribed_from_marketing?
+    assert_equal unsubscribed_at, contact.unsubscribed_at
     assert_not_includes Contact.marketing_subscribed, contact
     assert_includes Contact.marketing_unsubscribed, contact
   end

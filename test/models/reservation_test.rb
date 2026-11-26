@@ -331,14 +331,15 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal "Bobby Jones", Contact.find_by(email: "bob.jones@example.com").name
   end
 
-  test "migration preserves marketing unsubscribe flag" do
+  test "migration preserves marketing unsubscribe flag and timestamp" do
     reservation = reservations(:routing_1)
-    contact = Contact.create!(name: "Prior", email: reservation.email, is_unsubscribed_from_marketing: true)
+    contact = Contact.create!(name: "Prior", email: reservation.email, is_unsubscribed_from_marketing: true, unsubscribed_at: 1.week.ago)
 
     Reservation.migrate_reservations!
 
     migrated = Contact.find_by(email: reservation.email)
     assert migrated.is_unsubscribed_from_marketing?
+    assert_equal contact.unsubscribed_at, migrated.unsubscribed_at
   end
 
   test "reset_geocoding! resets geocoding data AND routing data" do

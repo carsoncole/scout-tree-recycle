@@ -15,6 +15,7 @@ class ContactsRestore
     marketing_1_email_sent_at
     marketing_2_email_sent_at
     is_unsubscribed_from_marketing
+    unsubscribed_at
   ].freeze
 
   Result = Struct.new(:created, :updated, :skipped, :failed, :error, :row_errors, keyword_init: true) do

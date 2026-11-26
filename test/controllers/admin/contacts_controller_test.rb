@@ -9,10 +9,28 @@ class Admin::ContactsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get show" do
     sign_in
-    get admin_contact_url(contacts(:full))
+    contact = contacts(:full)
+    contact.update!(created_at: Time.zone.parse("#{Time.current.year}-01-15 09:30"))
+
+    get admin_contact_url(contact)
+
     assert_response :success
     assert_match "Marketing emails", response.body
     assert_match "Subscribed", response.body
+    assert_match "Created from reservation/manually added", response.body
+    assert_match "Jan 15, #{Time.current.year} 9:30 AM", response.body
+  end
+
+  test "show displays the unsubscribe timestamp" do
+    sign_in
+    contact = contacts(:full)
+    contact.update!(is_unsubscribed_from_marketing: true, unsubscribed_at: Time.zone.parse("2025-11-26 09:30"))
+
+    get admin_contact_url(contact)
+
+    assert_response :success
+    assert_match "Unsubscribed at", response.body
+    assert_match "Nov 26, 2025 9:30 AM", response.body
   end
 
   test "should create contact" do

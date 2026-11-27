@@ -59,7 +59,7 @@
         <div class="flex flex-col gap-4">
           <% if template.present? %>
             <div class="flex items-center gap-3">
-              <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo" %>" class="h-auto" style="max-width: 75px;">
+              <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo" %>" class="h-auto" style="max-width: <%= ReservationEmailTemplate::LOGO_WIDTH %>px;">
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Logo:</strong> <%= template.logo_image_or_default %></p>
             </div>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Subject:</strong> <%= template.preview_subject %></p>

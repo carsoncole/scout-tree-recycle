@@ -1,6 +1,7 @@
 # Built-in reservation email templates. The migration seeds these, and admins
 # can reload them with "Load Default Templates" or the reservation_email_templates
 # rake task. HTML and text bodies live in the sibling files.
+# Each default uses the icon logo. Sent mail shows it at ReservationEmailTemplate::LOGO_WIDTH (65px).
 new_reservation_email:
   description: "Confirmation sent when a reservation is scheduled for tree pickup."
   subject: "Your tree pickup is confirmed"

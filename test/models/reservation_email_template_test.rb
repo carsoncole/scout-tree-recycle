@@ -47,6 +47,13 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     assert_includes @template.errors[:logo_image], "must be an image from the email image library"
   end
 
+  test "default logo width matches the icon file" do
+    header = File.binread(Rails.root.join("app/assets/images", ReservationEmailTemplate::DEFAULT_LOGO), 24)
+
+    assert_equal 65, header.unpack1("@16N")
+    assert_equal 65, ReservationEmailTemplate::LOGO_WIDTH
+  end
+
   test "allows a blank logo" do
     @template.logo_image = nil
 
@@ -185,6 +192,8 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     assert_equal ReservationEmailTemplate::NAMES.sort, templates.map(&:name).sort
     templates.each do |template|
       assert template.published?
+      assert_equal ReservationEmailTemplate::DEFAULT_LOGO, template.logo_image
+      assert_equal ReservationEmailTemplate::DEFAULT_LOGO, template.published_logo_image
       assert_includes template.body_html, "{{"
       assert_includes template.published_body_html, "{{"
 

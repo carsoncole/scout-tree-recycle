@@ -35,7 +35,7 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
 
     assert_includes html, %(src="#{email.attachments[template.published_logo_image].url}")
     assert_includes html, %(src="#{email.attachments[extra].url}")
-    assert_includes html, 'width="75"'
+    assert_includes html, %(width="#{ReservationEmailTemplate::LOGO_WIDTH}")
     assert_no_match(/data:image/, html)
     assert_equal [ template.published_logo_image, extra ].sort, filenames.sort
   end
@@ -138,7 +138,7 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
 
     assert logo&.inline?
     assert_includes html, %(src="#{logo.url}")
-    assert_includes html, 'width="75"'
+    assert_includes html, %(width="#{ReservationEmailTemplate::LOGO_WIDTH}")
     assert_no_match(/data:image/, html)
   end
 end

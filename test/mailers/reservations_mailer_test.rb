@@ -254,7 +254,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert image, "expected an inline attachment named #{filename}"
     assert image.inline?
     assert_includes html, %(src="#{image.url}")
-    assert_includes html, 'width="75"'
+    assert_includes html, %(width="#{ReservationEmailTemplate::LOGO_WIDTH}")
     assert_no_match(/data:image/, html)
   end
 end

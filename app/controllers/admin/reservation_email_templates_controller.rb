@@ -30,7 +30,7 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
     assigns = preview_assigns(reservation)
     @body_html = @template.render_body_html(assigns, source: source)
     @logo_src = EmailImageLibrary.data_uri(source_logo_image(source))
-    @logo_width = 75
+    @logo_width = ReservationEmailTemplate::LOGO_WIDTH
     @logo_alt = source_logo_alt(source)
     @email_footer = Setting.instance.organization_name
 
@@ -168,11 +168,6 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
   def source_logo_image(source)
     image = source == :published ? @template.published_logo_image : @template.logo_image
     image.presence || ReservationEmailTemplate::DEFAULT_LOGO
-  end
-
-  def source_logo_width(source)
-    width = source == :published ? @template.published_logo_width : @template.logo_width
-    width.presence || 75
   end
 
   def source_logo_alt(source)

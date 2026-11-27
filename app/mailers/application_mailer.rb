@@ -15,7 +15,7 @@ class ApplicationMailer < ActionMailer::Base
   # Not a header. The mail archive reads this after a successful delivery.
   after_action :remember_mail_action
 
-  def email_logo_tag(width: 75, alt: nil, style: nil, filename: nil)
+  def email_logo_tag(width: ReservationEmailTemplate::LOGO_WIDTH, alt: nil, style: nil, filename: nil)
     attributes = []
     attributes << %(alt="#{ERB::Util.html_escape(alt)}") if alt.present?
     attributes << %(style="#{ERB::Util.html_escape(style)}") if style.present?

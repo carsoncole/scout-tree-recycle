@@ -170,7 +170,7 @@ class ReservationsMailer < ApplicationMailer
     @email_html = embed_email_images(template.render_body_html(assigns, source: source))
     @email_text = template.render_body_text(assigns, source: source)
     @logo_src = email_logo_src(filename: template.public_send("#{prefix}logo_image"))
-    @logo_width = 75
+    @logo_width = ReservationEmailTemplate::LOGO_WIDTH
     @logo_alt = template.public_send("#{prefix}logo_alt").presence || template.logo_alt
     @email_footer = @setting.organization_name
 

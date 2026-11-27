@@ -7,7 +7,7 @@
             <table role="presentation" style="margin-top:16px; margin-bottom:16px; border-collapse:collapse;">
               <tr>
                 <% if logo_src.present? %>
-                  <% width = logo_width.to_i.positive? ? logo_width.to_i : 75 %>
+                  <% width = logo_width.to_i.positive? ? logo_width.to_i : ReservationEmailTemplate::LOGO_WIDTH %>
                   <td style="vertical-align:middle; padding-right:12px; border:0;">
                     <img src="<%= logo_src %>" alt="<%= logo_alt %>" width="<%= width %>" style="width:<%= width %>px; max-width:100%; height:auto;">
                   </td>

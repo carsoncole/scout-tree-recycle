@@ -5,6 +5,8 @@ class ReservationEmailTemplate < ApplicationRecord
   NAMES = %w[new_reservation_email cancelled_reservation_email missing_tree_email pickup_reminder_email donation_receipt_email].freeze
   TEMPLATE_ATTRIBUTES = %i[subject logo_image logo_alt body_html body_text].freeze
   DEFAULT_LOGO = "fleur-de-lis-2024-logo-4c-bc-icon.png"
+  # Pixel width of the default icon. Reservation emails render every logo at this size.
+  LOGO_WIDTH = 65
 
   BASE_VARIABLES = [
     { name: "reservation.name", description: "Reservation holder's full name (blank when there is no usable name).", example: "Susan Banks" },

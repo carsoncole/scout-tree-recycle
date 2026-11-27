@@ -58,7 +58,7 @@
         </div>
 
         <div class="admin-panel bg-stone text-center dark:bg-stone-dark">
-          <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo preview" %>" class="h-auto max-w-full" style="max-width: 75px;">        </div>
+          <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo preview" %>" class="h-auto max-w-full" style="max-width: <%= ReservationEmailTemplate::LOGO_WIDTH %>px;">        </div>
       </div>
     </div>
   </section>

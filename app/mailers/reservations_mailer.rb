@@ -1,4 +1,7 @@
 class ReservationsMailer < ApplicationMailer
+  # Reservation emails use their own padded layout with the logo and event name.
+  layout "reservation_mailer"
+
   before_action :set_context, except: :test_email
   after_deliver :mark_reservation_email_sent
   after_deliver :log_reservation_email

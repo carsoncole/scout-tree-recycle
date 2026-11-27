@@ -66,6 +66,8 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
 
     assert_response :success
     assert_includes response.body, "Dear Mary Jones"
+    assert_includes response.body, Setting.instance.home_page_header
+    assert_includes response.body, "padding: 32px 16px 40px"
     assert_includes response.body, "color: #123456"
     assert_includes response.body, "data:image/png;base64,"
     assert_includes response.body, %(width="#{ReservationEmailTemplate::LOGO_WIDTH}")

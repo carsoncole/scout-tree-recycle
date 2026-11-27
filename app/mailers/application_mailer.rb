@@ -6,7 +6,7 @@ class ApplicationMailer < ActionMailer::Base
   # system emails normally comes from Setting#mailer_logo_name.
   LOGO_FILENAME = "fleur-de-lis-2024-logo-4c-bc-icon.png"
 
-  helper_method :email_logo_tag, :email_logo_src
+  helper_method :email_logo_tag, :email_logo_src, :default_page_name
 
   before_action :apply_site_url
   before_action :apply_email_settings

@@ -7,6 +7,23 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
     @reservation.update_columns(confirmed_reservation_email_sent_at: nil)
   end
 
+  test "pads the message and shows the logo with the event name" do
+    email = ReservationsMailer.with(reservation_id: @reservation.id).new_reservation_email
+    html = email.html_part.body.decoded
+    text = email.text_part.body.decoded
+    name = Setting.instance.home_page_header
+
+    assert_equal 1, html.scan(/<html/i).size
+    assert_includes html, name
+    assert_includes html, "padding: 32px 16px 40px 16px"
+    assert_includes html, "padding: 24px 28px"
+    assert_includes html, "padding: 8px 28px 12px 28px"
+    assert_includes html, "max-width: 600px"
+    assert text.start_with?(name)
+    assert_includes html, "Tree pick-up scheduled"
+    assert_inline_logo html, email
+  end
+
   test "uses the published reservation template content" do
     template = reservation_email_templates(:new_reservation_email)
     template.update!(subject: "Draft subject", body_html: "<p>Draft body</p>")

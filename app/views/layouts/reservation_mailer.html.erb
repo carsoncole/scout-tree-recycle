@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= default_page_name %></title>
+  </head>
+
+  <body style="margin: 0; padding: 0; width: 100%; background-color: #f6f3ea; font-family: Arial, Helvetica, sans-serif;">
+    <%= render "shared/email_frame",
+               logo_src: @logo_src,
+               logo_width: @logo_width,
+               logo_alt: @logo_alt,
+               body_html: yield %>
+  </body>
+</html>

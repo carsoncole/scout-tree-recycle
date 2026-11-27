@@ -17,6 +17,27 @@
 }
 
 @layer components {
+  /*
+   * Base link styling. Tailwind's preflight (base layer) resets anchors to
+   * inherit their surrounding text color and decoration, so unstyled links
+   * would be indistinguishable from regular text. These rules live in the
+   * components layer so they override preflight, while explicit link
+   * recipes (Tailwind color utilities, .site-link, .admin-link, buttons,
+   * nav links) still override them via higher specificity or higher layers.
+   * Colors use light-dark() so they follow the native prefers-color-scheme
+   * setting without a separate dark-mode rule.
+   */
+  :where(.site-body, .admin-body) a {
+    color: light-dark(#3a5342, #aacdb0);
+    text-decoration: none;
+  }
+
+  :where(.site-body, .admin-body) a:hover {
+    color: light-dark(#262a20, #e9e6da);
+  }
+}
+
+@layer components {
 :root {
   --site-bg: #f6f3ea;
   --site-surface: #fefdfa;
@@ -701,14 +722,12 @@
 }
 
 .site-link {
-  color: var(--site-sage-dark);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  color: light-dark(#3a5342, #aacdb0);
+  text-decoration: none;
 }
 
 .site-link:hover {
-  color: var(--site-ink);
+  color: light-dark(#262a20, #e9e6da);
 }
 
 .site-callout {
@@ -1781,6 +1800,7 @@
 }
 
 .admin-link {
+  color: light-dark(#3a5342, #aacdb0);
   font-weight: 500;
   text-decoration: none;
   transition:

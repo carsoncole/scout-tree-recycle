@@ -108,6 +108,18 @@ Use these exact class strings (light + `dark:`) together:
 
 - Use the shared `admin-select` class for `<select>` elements. Tailwind's preflight removes native form-control styling, and native selects can render with no inner padding. `admin-select` sets `appearance: none`, explicit padding, and a custom chevron so dropdown text is always inset. Avoid bare or custom-styled selects without it.
 
+## Links
+
+- Every anchor must be visually distinct from surrounding text. Tailwind's preflight resets links to inherit color and text-decoration, so never rely on the browser default.
+- Base styling in `app/assets/stylesheets/application.css` (components layer) colors every anchor in `.site-body` and `.admin-body` with the deep accent (`light-dark(#3a5342, #aacdb0)`) and removes underlines, so links are distinguished by color rather than decoration. Explicit recipes below and component classes override it via higher specificity.
+- Public content links: use the `.site-link` class, or the Tailwind recipe `text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark`.
+- Admin links: use `admin_link_class(variant:)` (default/danger/muted), which applies `.admin-link` plus the matching Tailwind color utilities.
+- Danger links: `text-danger hover:text-[#743730] dark:text-danger-dark dark:hover:text-danger-border-dark` (or `admin_link_class(variant: :danger)`).
+- Muted links: `text-ink-soft dark:text-ink-soft-dark` (or `admin_link_class(variant: :muted)`).
+- Nav, footer, and button anchors keep their own recipes, which override the base underline/color.
+- Mailers: use the `admin_link_style` inline style for links in admin emails.
+- Document any new link treatment here and in the relevant helper.
+
 ## Admin views
 
 Admin pages use the same color tokens and recipes above. The `admin-*` classes in `app/assets/stylesheets/application.css` provide shape/layout only — colors always come from Tailwind utilities in markup. Call the helpers in `app/helpers/admin_helper.rb` instead of pasting recipe strings:

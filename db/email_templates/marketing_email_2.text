@@ -24,6 +24,3 @@ If you have any questions, email us at {{ setting.contact_email }}.
 {% endif %}
 Thank you,
 {{ setting.organization_name }}
-{% if urls.organization != blank %}
-{{ urls.organization }}
-{% endif %}

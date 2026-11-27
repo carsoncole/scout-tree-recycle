@@ -229,6 +229,24 @@ class MarketingEmailTemplateTest < ActiveSupport::TestCase
     assert_not_includes reminder_html, "If you have any questions"
   end
 
+  test "default templates print the organization name without the organization website" do
+    Setting.instance.update!(organization_url: "https://troop.example.org")
+    assigns = MarketingEmailTemplate::Renderer.new(contact: @contact).assigns
+    MarketingEmailTemplate.where(name: MarketingEmailTemplate.default_names).delete_all
+
+    MarketingEmailTemplate.install_defaults!.each do |template|
+      html = template.render_body_html(assigns, source: :published)
+      text = template.render_body_text(assigns, source: :published)
+
+      assert_includes html, Setting.instance.organization_name
+      assert_includes text, Setting.instance.organization_name
+      assert_not_includes html, "https://troop.example.org"
+      assert_not_includes text, "https://troop.example.org"
+      assert_not_includes template.body_html, "urls.organization"
+      assert_not_includes template.body_text, "urls.organization"
+    end
+  end
+
   test "default templates include the contact email when one is configured" do
     Setting.instance.update!(contact_email: "help@example.org")
     assigns = MarketingEmailTemplate::Renderer.new(contact: @contact).assigns

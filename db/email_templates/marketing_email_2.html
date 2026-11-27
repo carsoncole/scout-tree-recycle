@@ -220,11 +220,7 @@
                 If you have any questions, email us at <a class="email-org-link" href="mailto:{{ setting.contact_email | escape }}">{{ setting.contact_email | escape }}</a>.<br><br>
               {% endif %}
               Thank you,<br>
-              {% if urls.organization != blank %}
-                <a class="email-org-link" href="{{ urls.organization }}">{{ setting.organization_name }}</a>
-              {% else %}
-                {{ setting.organization_name }}
-              {% endif %}
+              {{ setting.organization_name }}
             </p>
           </td>
         </tr>

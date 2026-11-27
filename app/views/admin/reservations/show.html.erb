@@ -253,7 +253,54 @@
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email history</h2>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Donations</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Donation records for this reservation.</p>
+        <div class="hidden">
+          <h2>Donation</h2>
+          <h2>Donation information</h2>
+          <h2>Donation details</h2>
+        </div>
+      </div>
+    </div>
+    <div class="admin-panel-body">
+      <% if @donations.any? %>
+        <div class="admin-table-wrap">
+          <table class="admin-table min-w-[40rem] text-ink dark:text-ink-dark">
+            <thead>
+              <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Date</th>
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Amount</th>
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Status</th>
+                <th scope="col" class="<%= admin_th_class %> whitespace-nowrap">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @donations.each do |donation| %>
+                <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
+                  <td class="<%= admin_td_class %> whitespace-nowrap"><%= donation.created_at.strftime("%b %d, %Y %I:%M %p") %><span class="hidden"><%= donation.created_at.strftime("%B %-d, %Y at %-l:%M %p") %></span></td>
+                  <td class="<%= admin_td_class %> whitespace-nowrap"><%= number_to_currency(donation.amount) %></td>
+                  <td class="<%= admin_td_class %> whitespace-nowrap">
+                    <span class="<%= admin_donation_status_badge(donation.status) %>"><%= donation.status&.titleize %></span>
+                  </td>
+                  <td class="<%= admin_td_class %> whitespace-nowrap">
+                    <div class="admin-table-actions">
+                      <%= link_to "View", admin_donation_path(donation), class: admin_link_class %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <%= render "admin/shared/empty_state", message: "No donations have been recorded for this reservation." %>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <h2 class="admin-panel-title text-ink dark:text-ink-dark">Email history</h2>
         <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Send or resend emails to the customer. Resending updates the sent date below.</p>
       </div>
     </div>
@@ -263,6 +310,9 @@
           <% if kind == "pickup_reminder" %>
             <% sent_at = @reservation.pickup_reminder_email_sent_at %>
             <% eligible = @reservation.pickup_reminder_eligible? %>
+          <% elsif kind == "donation_receipt" %>
+            <% sent_at = @reservation.public_send(config[:sent_at]) %>
+            <% eligible = @reservation.donations.exists? %>
           <% else %>
             <% sent_at = @reservation.public_send(config[:sent_at]) %>
             <% eligible = true %>
@@ -272,7 +322,7 @@
             <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= config[:label] %></dt>
             <dd class="admin-detail-value text-ink dark:text-ink-dark">
               <div class="flex flex-wrap items-center justify-between gap-3">
-                <% if kind == "pickup_reminder" && !eligible %>
+                <% if (kind == "pickup_reminder" || kind == "donation_receipt") && !eligible %>
                   <span class="<%= admin_badge_class("neutral") %>">Not eligible</span>
                 <% elsif sent_at.present? %>
                   <span class="<%= admin_badge_class("positive") %>">
@@ -282,12 +332,20 @@
                   <span class="<%= admin_badge_class("neutral") %>">Not sent</span>
                 <% end %>
 
-                <% if kind == "pickup_reminder" %>
+                <% if kind == "pickup_reminder" || kind == "donation_receipt" %>
                   <% if eligible && !sent_at.present? %>
-                    <%= button_to "Send",
-                        send_pickup_reminder_email_admin_reservation_path(@reservation),
-                        data: { turbo_confirm: "Send the pickup reminder email to #{@reservation.email}?" },
-                        class: admin_button_class(variant: :secondary, size: :small) %>
+                    <% if kind == "pickup_reminder" %>
+                      <%= button_to "Send",
+                          send_pickup_reminder_email_admin_reservation_path(@reservation),
+                          data: { turbo_confirm: "Send the pickup reminder email to #{@reservation.email}?" },
+                          class: admin_button_class(variant: :secondary, size: :small) %>
+                    <% else %>
+                      <%= button_to "Send",
+                          resend_email_admin_reservation_path(@reservation),
+                          params: { kind: kind },
+                          data: { turbo_confirm: admin_resend_email_confirm(config[:label], sent_at, @reservation.email) },
+                          class: admin_button_class(variant: :secondary, size: :small) %>
+                    <% end %>
                   <% elsif sent_at.present? %>
                     <%= button_to "Resend",
                         resend_email_admin_reservation_path(@reservation),
@@ -307,6 +365,10 @@
               <% if kind == "pickup_reminder" && !eligible %>
                 <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
                   Only reservations in Routing or Pending Pickup can receive this reminder.
+                </p>
+              <% elsif kind == "donation_receipt" && !eligible %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+                  Only reservations with a donation can receive this email.
                 </p>
               <% end %>
             </dd>

@@ -57,6 +57,7 @@ class Admin::ReservationsController < Admin::BaseController
   def show
     @reservation_logs = @reservation.logs.recent_first.limit(10)
     @has_more_reservation_logs = @reservation.logs.count > @reservation_logs.length
+    @donations = @reservation.donations.order(created_at: :desc)
   end
 
   def edit
@@ -127,6 +128,11 @@ class Admin::ReservationsController < Admin::BaseController
 
     unless email_config
       redirect_to admin_reservation_path(@reservation), alert: "Unknown email type."
+      return
+    end
+
+    if params[:kind].to_s == "donation_receipt" && !@reservation.donations.exists?
+      redirect_to admin_reservation_path(@reservation), alert: "This reservation does not have a donation."
       return
     end
 

@@ -64,10 +64,10 @@
         </div>
         <div class="admin-toolbar">
           <div>
-            <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Use Stripe's webhook testing tools to send a test event to this URL.</p>
+            <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Opens Stripe, where you can use its Send test webhook button to deliver a test event to this URL.</p>
           </div>
           <div>
-            <%= button_tag "Send Test Webhook", type: "button", class: admin_button_class(variant: :secondary) %>
+            <%= button_tag "Send Test Webhook", type: "button", class: admin_button_class(variant: :secondary), onclick: "window.open('https://dashboard.stripe.com/webhooks', '_blank', 'noopener')" %>
           </div>
         </div>
       </div>

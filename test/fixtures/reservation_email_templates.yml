@@ -193,18 +193,136 @@ donation_receipt_email:
   logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   logo_alt: Tree Recycling Event
   body_html: |
-    <h1>Thank you for your donation!</h1>
-    <p>This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
+    <style>
+      .email-heading {
+        margin: 32px auto 24px;
+        color: #2d3748;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 40px;
+        font-weight: 300;
+        line-height: 1.5;
+        text-align: center;
+      }
+
+      .email-text {
+        margin: 0 0 20px;
+        color: #2d3748;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.5;
+      }
+
+      .email-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 20px;
+      }
+
+      .email-table th, .email-table td {
+        border: 1px solid #d1d5db;
+        padding: 8px;
+        text-align: left;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+      }
+    </style>
+
+    <h1 class="email-heading">Thank you for your donation!</h1>
+    <p class="email-text">This is a receipt for your donation of {{ donation.amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
+
+    <table class="email-table">
+      <tr><th>Amount</th><td>{{ donation.amount_currency }}</td></tr>
+      <tr><th>Status</th><td>{{ donation.status }}</td></tr>
+      {% if donation.card_brand != blank %}
+      <tr><th>Card brand</th><td>{{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}</td></tr>
+      {% elsif donation.last4 != blank %}
+      <tr><th>Last 4 digits</th><td>{{ donation.last4 }}</td></tr>
+      {% endif %}
+      <tr><th>Customer name</th><td>{{ donation.customer_name }}</td></tr>
+      <tr><th>Email</th><td>{{ donation.email }}</td></tr>
+      {% if donation.receipt_url != blank %}
+      <tr><th>Receipt URL</th><td><a href="{{ donation.receipt_url }}">{{ donation.receipt_url }}</a></td></tr>
+      {% endif %}
+    </table>
   body_text: |
     Thank you for your donation!
-    This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
+
+    This is a receipt for your donation of {{ donation.amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
+
+    Amount: {{ donation.amount_currency }}
+    Status: {{ donation.status }}
+    {% if donation.card_brand != blank %}Card brand: {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}
+    {% elsif donation.last4 != blank %}Last 4 digits: {{ donation.last4 }}
+    {% endif %}Customer name: {{ donation.customer_name }}
+    Email: {{ donation.email }}
+    {% if donation.receipt_url != blank %}Receipt URL: {{ donation.receipt_url }}{% endif %}
   published_subject: "Thank you for your donation"
   published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   published_logo_alt: Tree Recycling Event
   published_body_html: |
-    <h1>Thank you for your donation!</h1>
-    <p>This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
+    <style>
+      .email-heading {
+        margin: 32px auto 24px;
+        color: #2d3748;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 40px;
+        font-weight: 300;
+        line-height: 1.5;
+        text-align: center;
+      }
+
+      .email-text {
+        margin: 0 0 20px;
+        color: #2d3748;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.5;
+      }
+
+      .email-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 20px;
+      }
+
+      .email-table th, .email-table td {
+        border: 1px solid #d1d5db;
+        padding: 8px;
+        text-align: left;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+      }
+    </style>
+
+    <h1 class="email-heading">Thank you for your donation!</h1>
+    <p class="email-text">This is a receipt for your donation of {{ donation.amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
+
+    <table class="email-table">
+      <tr><th>Amount</th><td>{{ donation.amount_currency }}</td></tr>
+      <tr><th>Status</th><td>{{ donation.status }}</td></tr>
+      {% if donation.card_brand != blank %}
+      <tr><th>Card brand</th><td>{{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}</td></tr>
+      {% elsif donation.last4 != blank %}
+      <tr><th>Last 4 digits</th><td>{{ donation.last4 }}</td></tr>
+      {% endif %}
+      <tr><th>Customer name</th><td>{{ donation.customer_name }}</td></tr>
+      <tr><th>Email</th><td>{{ donation.email }}</td></tr>
+      {% if donation.receipt_url != blank %}
+      <tr><th>Receipt URL</th><td><a href="{{ donation.receipt_url }}">{{ donation.receipt_url }}</a></td></tr>
+      {% endif %}
+    </table>
   published_body_text: |
     Thank you for your donation!
-    This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
+
+    This is a receipt for your donation of {{ donation.amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
+
+    Amount: {{ donation.amount_currency }}
+    Status: {{ donation.status }}
+    {% if donation.card_brand != blank %}Card brand: {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}
+    {% elsif donation.last4 != blank %}Last 4 digits: {{ donation.last4 }}
+    {% endif %}Customer name: {{ donation.customer_name }}
+    Email: {{ donation.email }}
+    {% if donation.receipt_url != blank %}Receipt URL: {{ donation.receipt_url }}{% endif %}
   published_at: "2026-01-01 00:00:00"

@@ -1,9 +1,11 @@
 Thank you for your donation!
 
-{% if reservation.has_name %}Dear {{ reservation.name | escape }},{% endif %}
+This is a receipt for your donation of {{ donation.amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
 
-This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
-
-
-Thank you,
-{{ setting.organization_name }}
+Amount: {{ donation.amount_currency }}
+Status: {{ donation.status }}
+{% if donation.card_brand != blank %}Card brand: {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}
+{% elsif donation.last4 != blank %}Last 4 digits: {{ donation.last4 }}
+{% endif %}Customer name: {{ donation.customer_name }}
+Email: {{ donation.email }}
+{% if donation.receipt_url != blank %}Receipt URL: {{ donation.receipt_url }}{% endif %}

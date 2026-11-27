@@ -140,10 +140,29 @@ class ReservationsMailer < ApplicationMailer
   end
 
   def prepare_template_content(template, source:, follow_up: nil)
+    donation_assigns = {}
+    if @donation.present?
+      brand = @donation.card_brand.presence || @donation.brand
+      donation_assigns = {
+        "amount" => @donation.amount,
+        "amount_currency" => "$#{format('%.2f', @donation.amount || 0)}",
+        "status" => @donation.status.to_s,
+        "payment_status" => @donation.payment_status.to_s,
+        "customer_name" => @donation.customer_name.to_s,
+        "email" => @donation.email.to_s,
+        "receipt_url" => @donation.receipt_url.to_s,
+        "card_brand" => brand.to_s,
+        "card_brand_capitalized" => brand.to_s.capitalize,
+        "last4" => @donation.last4.to_s,
+        "card_last4" => @donation.card_last4.to_s
+      }
+    end
+
     assigns = ReservationEmailTemplate::Renderer.new(
       reservation: @reservation,
       setting: @setting,
-      follow_up: follow_up
+      follow_up: follow_up,
+      extra_assigns: { "donation" => donation_assigns }
     ).assigns
     prefix = source == :published ? "published_" : ""
 

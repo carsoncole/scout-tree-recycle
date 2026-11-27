@@ -2,7 +2,7 @@ Thank you for your donation!
 
 {% if reservation.has_name %}Dear {{ reservation.name | escape }},{% endif %}
 
-We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!
+This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
 
 Your generosity helps make our tree recycling fundraiser possible.
 

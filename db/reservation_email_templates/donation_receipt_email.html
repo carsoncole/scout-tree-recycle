@@ -21,6 +21,6 @@
 
 <h1 class="email-heading">Thank you for your donation!</h1>
 {% if reservation.has_name %}<p class="email-text">Dear {{ reservation.name | escape }},</p>{% endif %}
-<p class="email-text">We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!</p>
+<p class="email-text">This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
 <p class="email-text">Your generosity helps make our tree recycling fundraiser possible.</p>
 <p class="email-text">Thank you,<br>{{ setting.organization_name }}</p>

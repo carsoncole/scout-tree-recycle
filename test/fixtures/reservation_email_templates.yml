@@ -194,17 +194,17 @@ donation_receipt_email:
   logo_alt: Tree Recycling Event
   body_html: |
     <h1>Thank you for your donation!</h1>
-    <p>We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!</p>
+    <p>This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
   body_text: |
     Thank you for your donation!
-    We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!
+    This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
   published_subject: "Thank you for your donation"
   published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   published_logo_alt: Tree Recycling Event
   published_body_html: |
     <h1>Thank you for your donation!</h1>
-    <p>We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!</p>
+    <p>This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
   published_body_text: |
     Thank you for your donation!
-    We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!
+    This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
   published_at: "2026-01-01 00:00:00"

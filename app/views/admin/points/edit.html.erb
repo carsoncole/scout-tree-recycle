@@ -1,0 +1,28 @@
+<%= content_for :title, "Edit Point" %>
+<%= render "admin/shared/page_header", title: "Edit Point" %>
+
+<div class="admin-container--medium">
+  <%= form_with(model: [:admin, @route, @point], class: "admin-form") do |f| %>
+    <%= render "shared/form_errors", object: @point %>
+
+    <div class="admin-field-grid admin-field-grid--three">
+      <div class="admin-field">
+        <%= f.label :latitude, class: "admin-label text-ink dark:text-ink-dark" %>
+        <%= f.number_field :latitude, step: :any, required: true, class: admin_input_class %>
+      </div>
+      <div class="admin-field">
+        <%= f.label :longitude, class: "admin-label text-ink dark:text-ink-dark" %>
+        <%= f.number_field :longitude, step: :any, required: true, class: admin_input_class %>
+      </div>
+      <div class="admin-field">
+        <%= f.label :order, class: "admin-label text-ink dark:text-ink-dark" %>
+        <%= f.number_field :order, required: true, class: admin_input_class %>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-end gap-3">
+      <%= link_to "Cancel", edit_admin_route_path(@route), class: admin_button_class(variant: :secondary) %>
+      <%= f.submit class: admin_button_class %>
+    </div>
+  <% end %>
+</div>

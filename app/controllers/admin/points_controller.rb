@@ -1,7 +1,10 @@
 
 class Admin::PointsController < Admin::BaseController
   before_action :set_route
-  before_action :set_point, only: [ :destroy ]
+  before_action :set_point, only: [ :edit, :update, :destroy ]
+
+  def edit
+  end
 
   def create
     @point = @route.points.build(point_params)
@@ -10,6 +13,14 @@ class Admin::PointsController < Admin::BaseController
       redirect_to edit_admin_route_path(@route), notice: "Point was successfully added."
     else
       redirect_to edit_admin_route_path(@route), alert: "Failed to add point: #{@point.errors.full_messages.join(', ')}"
+    end
+  end
+
+  def update
+    if @point.update(point_params)
+      redirect_to edit_admin_route_path(@route), notice: "Point was successfully updated."
+    else
+      redirect_to edit_admin_route_path(@route), alert: "Failed to update point: #{@point.errors.full_messages.join(', ')}"
     end
   end
 

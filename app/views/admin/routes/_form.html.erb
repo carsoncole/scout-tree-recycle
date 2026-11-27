@@ -76,15 +76,41 @@
             </thead>
             <tbody>
               <% @route.points.order(:order).each do |point| %>
+                <% point_form_id = "edit_point_#{point.id}" %>
                 <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-                  <td class="<%= admin_td_class %>"><%= point.order %></td>
-                  <td class="<%= admin_td_class %>"><%= point.latitude %></td>
-                  <td class="<%= admin_td_class %>"><%= point.longitude %></td>
                   <td class="<%= admin_td_class %>">
-                    <%= button_to "Delete", admin_route_point_path(@route, point),
-                        method: :delete,
-                        class: admin_link_class(variant: :danger),
-                        form: { data: { turbo_confirm: "Are you sure you want to delete this point?" } } %>
+                    <%= number_field_tag "point[order]", point.order,
+                        id: "point_#{point.id}_order",
+                        form: point_form_id,
+                        required: true,
+                        class: admin_input_class %>
+                  </td>
+                  <td class="<%= admin_td_class %>">
+                    <%= number_field_tag "point[latitude]", point.latitude,
+                        id: "point_#{point.id}_latitude",
+                        step: :any,
+                        form: point_form_id,
+                        required: true,
+                        class: admin_input_class %>
+                  </td>
+                  <td class="<%= admin_td_class %>">
+                    <%= number_field_tag "point[longitude]", point.longitude,
+                        id: "point_#{point.id}_longitude",
+                        step: :any,
+                        form: point_form_id,
+                        required: true,
+                        class: admin_input_class %>
+                  </td>
+                  <td class="<%= admin_td_class %>">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <%= form_with(model: [:admin, @route, point], id: point_form_id) do |pf| %>
+                        <%= pf.submit "Update", class: admin_button_class(size: :small) %>
+                      <% end %>
+                      <%= button_to "Delete", admin_route_point_path(@route, point),
+                          method: :delete,
+                          class: admin_link_class(variant: :danger),
+                          form: { data: { turbo_confirm: "Are you sure you want to delete this point?" } } %>
+                    </div>
                   </td>
                 </tr>
               <% end %>

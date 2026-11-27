@@ -77,7 +77,7 @@ Rails.application.routes.draw do
       end
       resources :thanks, except: [ :show ]
       resources :routes do
-        resources :points, only: [ :create, :destroy ]
+        resources :points, only: [ :create, :edit, :update, :destroy ]
         member do
           post :add_driver
           delete :remove_driver

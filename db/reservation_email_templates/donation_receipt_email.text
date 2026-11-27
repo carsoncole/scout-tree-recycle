@@ -4,7 +4,6 @@ Thank you for your donation!
 
 This is a receipt for your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
 
-Your generosity helps make our tree recycling fundraiser possible.
 
 Thank you,
 {{ setting.organization_name }}

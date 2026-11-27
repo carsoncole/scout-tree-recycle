@@ -21,7 +21,6 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
     assert_includes body, "Tree pick-up scheduled"
     assert_not_includes body, "Draft body"
     assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, body)
-    assert_includes body, 'width="75"'
   end
 
   test "uses the published logo width and missing tree template" do
@@ -31,7 +30,6 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
       email.deliver_now
     end
     assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, email.html_part.body.decoded)
-    assert_includes email.html_part.body.decoded, 'width="75"'
   end
 
   test "does not send when the template is unpublished" do

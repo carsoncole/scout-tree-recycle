@@ -59,6 +59,15 @@
 
           <div class="admin-field admin-toolbar-field">
             <%= text_area_tag :stripe_webhook_url, api_v1_stripe_webhook_url(**setting.site_url_options), rows: 2, class: "admin-code-input #{admin_textarea_class}", readonly: true %>
+            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">If the webhook is not configured in Stripe, then donations will not be recorded in the app.</p>
+          </div>
+        </div>
+        <div class="admin-toolbar">
+          <div>
+            <p class="admin-section-description text-ink-soft dark:text-ink-soft-dark">Use Stripe's webhook testing tools to send a test event to this URL.</p>
+          </div>
+          <div>
+            <%= button_tag "Send Test Webhook", type: "button", class: admin_button_class(variant: :secondary) %>
           </div>
         </div>
       </div>

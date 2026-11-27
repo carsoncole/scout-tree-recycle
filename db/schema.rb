@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_27_070000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_27_080000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -229,6 +229,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_27_070000) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "image"
+    t.string "image_alt"
+    t.string "published_image"
+    t.string "published_image_alt"
     t.index ["name"], name: "index_marketing_email_templates_on_name", unique: true
   end
 

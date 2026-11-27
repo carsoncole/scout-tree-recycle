@@ -6,6 +6,8 @@ marketing_email_1:
   description: "Announces that tree pickup reservations are open."
   from: ""
   subject: "Reservations are open for tree pickup on {{ event.pickup_start_short }}"
+  image: two-scouts-tree-4c-bc.png
+  image_alt: "Scouts standing beside a Christmas tree"
   html_file: marketing_email_1.html
   text_file: marketing_email_1.text
 
@@ -13,5 +15,7 @@ marketing_email_2:
   description: "Reminds contacts who received the first email, and have not reserved, that the signup deadline is approaching."
   from: ""
   subject: "Reminder: reserve your tree pickup by {{ event.sign_up_deadline_short }} at {{ event.sign_up_deadline_time }}"
+  image: tree-4c-bc.png
+  image_alt: "A Christmas tree"
   html_file: marketing_email_2.html
   text_file: marketing_email_2.text

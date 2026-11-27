@@ -5,7 +5,9 @@ class MarketingEmailTemplate < ApplicationRecord
   IMAGES_DIRECTORY = EmailImageLibrary::DIRECTORY
   IMAGE_EXTENSIONS = EmailImageLibrary::EXTENSIONS
   MARKETING_EMAIL_NAMES = %w[marketing_email_1 marketing_email_2].freeze
-  TEMPLATE_ATTRIBUTES = %i[from subject body_html body_text].freeze
+  TEMPLATE_ATTRIBUTES = %i[from subject image image_alt body_html body_text].freeze
+
+  validate :image_is_available
 
   BASE_VARIABLES = [
     { name: "contact.name", description: "Contact's full name (blank when the contact has no usable name).", example: "Susan Banks" },
@@ -53,6 +55,8 @@ class MarketingEmailTemplate < ApplicationRecord
       description: attributes["description"],
       from: attributes["from"].presence,
       subject: attributes.fetch("subject"),
+      image: attributes["image"].presence,
+      image_alt: attributes["image_alt"],
       body_html: File.read(DEFAULTS_DIRECTORY.join(attributes.fetch("html_file"))),
       body_text: File.read(DEFAULTS_DIRECTORY.join(attributes.fetch("text_file")))
     }
@@ -60,13 +64,18 @@ class MarketingEmailTemplate < ApplicationRecord
   private_class_method :build_default_definition
 
   def self.available_variables
-    BASE_VARIABLES + image_variables.map do |variable, filename|
-      {
-        name: "images.#{variable}",
-        description: "Absolute URL for #{filename}.",
-        example: "https://example.org/assets/#{filename}"
-      }
-    end
+    BASE_VARIABLES +
+      [
+        { name: "image_src", description: "Embedded data URI for the selected template image.", example: "data:image/png;base64,..." },
+        { name: "image_alt", description: "Alt text for the selected template image.", example: "Scouts standing beside a Christmas tree" }
+      ] +
+      image_variables.map do |variable, filename|
+        {
+          name: "images.#{variable}",
+          description: "Absolute URL for #{filename}.",
+          example: "https://example.org/assets/#{filename}"
+        }
+      end
   end
 
   def self.available_images
@@ -87,6 +96,31 @@ class MarketingEmailTemplate < ApplicationRecord
 
   def self.sample_contact
     Contact.new(name: "Susan Banks", email: "susan@example.com", street: "123 Main St", mobile: "+11234567890")
+  end
+
+  def image_or_default
+    image.presence
+  end
+
+  def render_body_html(assigns = {}, source: :draft)
+    merged_assigns = (assigns || {}).to_h.stringify_keys.merge(image_render_assigns(source))
+    super(merged_assigns, source: source)
+  end
+
+  def image_render_assigns(source)
+    prefix = source.to_sym == :published ? "published_" : ""
+    filename = public_send("#{prefix}image").presence || image
+    {
+      "image_src" => EmailImageLibrary.data_uri(filename.to_s),
+      "image_alt" => (public_send("#{prefix}image_alt").presence || image_alt).to_s
+    }
+  end
+
+  def image_is_available
+    return if image.blank?
+    return if EmailImageLibrary.image_file?(image)
+
+    errors.add(:image, "must be an image from the email image library")
   end
 
   # The editable template plus the required unsubscribe footer. Preview, test

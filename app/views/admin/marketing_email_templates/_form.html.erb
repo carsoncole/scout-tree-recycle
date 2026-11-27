@@ -42,6 +42,43 @@
   <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
     <div class="admin-panel-header border-line dark:border-line-dark">
       <div>
+        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Header image</h2>
+        <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">The image is embedded in the email. Choose an image from the email image library.</p>
+      </div>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-form">
+        <div class="admin-field-grid admin-field-grid--two">
+          <div class="admin-field">
+            <%= f.label :image, "Image", class: "admin-label text-ink dark:text-ink-dark" %>
+            <%= f.select :image,
+                options_for_select([ [ "No image", "" ] ] + EmailImageLibrary.available_images.map { |filename| [ filename, filename ] }, template.image),
+                {},
+                class: admin_select_class %>
+          </div>
+        </div>
+
+        <div class="admin-field">
+          <%= f.label :image_alt, "Image alt text", class: "admin-label text-ink dark:text-ink-dark" %>
+          <%= f.text_field :image_alt, class: admin_input_class, placeholder: "Scouts standing beside a Christmas tree" %>
+          <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Shown when images are blocked or by screen readers.</p>
+        </div>
+
+        <div class="admin-panel bg-stone text-center dark:bg-stone-dark">
+          <% if template.image.present? %>
+            <img src="<%= image_path(template.image) %>" alt="<%= template.image_alt.presence || "Image preview" %>" class="h-auto max-w-full" style="max-width: 280px;">
+          <% else %>
+            <p class="text-ink-soft dark:text-ink-soft-dark">No image selected.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+    <div class="admin-panel-header border-line dark:border-line-dark">
+      <div>
         <h2 class="admin-panel-title text-ink dark:text-ink-dark">HTML body</h2>
         <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Write the body as an HTML fragment; the mailer supplies the document wrapper. Add a <code>&lt;style&gt;</code> block or use classes; styles are inlined automatically at send time.</p>
       </div>

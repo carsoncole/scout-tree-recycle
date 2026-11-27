@@ -160,7 +160,9 @@
       <table class="email-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#fefdfa">
         <tr>
           <td class="email-image-cell" align="center" bgcolor="#fefdfa">
-            <img class="email-image" src="{{ images.tree_4c_bc }}" alt="A Christmas tree" width="200">
+            {% if image_src != blank %}
+            <img class="email-image" src="{{ image_src }}" alt="{{ image_alt | escape }}" width="200">
+            {% endif %}
           </td>
         </tr>
         <tr>

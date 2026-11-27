@@ -123,7 +123,7 @@ class Admin::MarketingEmailTemplatesController < Admin::BaseController
   end
 
   def template_params
-    params.require(:marketing_email_template).permit(:name, :description, :from, :subject, :body_html, :body_text)
+    params.require(:marketing_email_template).permit(:name, :description, :from, :subject, :image, :image_alt, :body_html, :body_text)
   end
 
   def find_contact(id)

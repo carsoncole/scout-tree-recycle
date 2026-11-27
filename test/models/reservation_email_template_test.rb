@@ -184,6 +184,15 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     assert_equal "Your tree pickup is confirmed", template.render_subject(@assigns, source: :published)
   end
 
+  test "donation receipt default omits the stripe receipt url" do
+    definition = ReservationEmailTemplate.default_definition("donation_receipt_email")
+
+    assert_not_includes definition[:body_html], "receipt_url"
+    assert_not_includes definition[:body_html], "Receipt URL"
+    assert_not_includes definition[:body_text], "receipt_url"
+    assert_not_includes definition[:body_text], "Receipt URL"
+  end
+
   test "install defaults creates and publishes missing default templates" do
     ReservationEmailTemplate.delete_all
 

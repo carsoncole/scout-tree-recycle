@@ -7,4 +7,4 @@ This is a receipt for your donation{% if donation.amount_currency != blank %} of
 {% elsif donation.last4 != blank %}- Last 4 digits: {{ donation.last4 }}
 {% endif %}{% if donation.customer_name != blank %}- Customer name: {{ donation.customer_name }}
 {% endif %}{% if donation.email != blank %}- Email: {{ donation.email }}
-{% endif %}{% if donation.receipt_url != blank %}- Receipt URL: {{ donation.receipt_url }}{% endif %}
+{% endif %}

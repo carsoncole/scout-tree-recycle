@@ -245,7 +245,6 @@ donation_receipt_email:
       {% endif %}
       {% if donation.customer_name != blank %}<li><strong>Customer name:</strong> {{ donation.customer_name }}</li>{% endif %}
       {% if donation.email != blank %}<li><strong>Email:</strong> {{ donation.email }}</li>{% endif %}
-      {% if donation.receipt_url != blank %}<li><strong>Receipt URL:</strong> <a href="{{ donation.receipt_url }}">{{ donation.receipt_url }}</a></li>{% endif %}
     </ul>
   body_text: |
     Thank you for your donation!
@@ -257,7 +256,7 @@ donation_receipt_email:
     {% elsif donation.last4 != blank %}- Last 4 digits: {{ donation.last4 }}
     {% endif %}{% if donation.customer_name != blank %}- Customer name: {{ donation.customer_name }}
     {% endif %}{% if donation.email != blank %}- Email: {{ donation.email }}
-    {% endif %}{% if donation.receipt_url != blank %}- Receipt URL: {{ donation.receipt_url }}{% endif %}
+    {% endif %}
   published_subject: "Thank you for your donation"
   published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   published_logo_alt: Tree Recycling Event
@@ -314,7 +313,6 @@ donation_receipt_email:
       {% endif %}
       {% if donation.customer_name != blank %}<li><strong>Customer name:</strong> {{ donation.customer_name }}</li>{% endif %}
       {% if donation.email != blank %}<li><strong>Email:</strong> {{ donation.email }}</li>{% endif %}
-      {% if donation.receipt_url != blank %}<li><strong>Receipt URL:</strong> <a href="{{ donation.receipt_url }}">{{ donation.receipt_url }}</a></li>{% endif %}
     </ul>
   published_body_text: |
     Thank you for your donation!
@@ -326,5 +324,5 @@ donation_receipt_email:
     {% elsif donation.last4 != blank %}- Last 4 digits: {{ donation.last4 }}
     {% endif %}{% if donation.customer_name != blank %}- Customer name: {{ donation.customer_name }}
     {% endif %}{% if donation.email != blank %}- Email: {{ donation.email }}
-    {% endif %}{% if donation.receipt_url != blank %}- Receipt URL: {{ donation.receipt_url }}{% endif %}
+    {% endif %}
   published_at: "2026-01-01 00:00:00"

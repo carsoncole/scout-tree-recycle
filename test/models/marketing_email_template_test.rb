@@ -196,6 +196,8 @@ class MarketingEmailTemplateTest < ActiveSupport::TestCase
     assert_includes announcement_html, "Reservations are open"
     assert_includes announcement_html, "now taking reservations"
     assert_includes announcement_html, "Reserve a tree pickup"
+    assert_includes announcement.body_html, "{{ image_src }}"
+    assert_not_includes announcement.body_html, "{{ images."
     assert_includes announcement_html, "data:image"
     assert_equal 1, announcement_html.scan(/<img\b/i).size
     assert_includes announcement_html, event.fetch("pickup_start_date")
@@ -213,6 +215,8 @@ class MarketingEmailTemplateTest < ActiveSupport::TestCase
     assert_includes reminder_html, "have not seen a signup"
     assert_includes reminder_html, "Deadline approaching"
     assert_includes reminder_html, "Reserve a tree pickup"
+    assert_includes reminder.body_html, "{{ image_src }}"
+    assert_not_includes reminder.body_html, "{{ images."
     assert_includes reminder_html, "data:image"
     assert_equal 1, reminder_html.scan(/<img\b/i).size
     assert_includes reminder_html, event.fetch("pickup_start_date")

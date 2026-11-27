@@ -23,7 +23,7 @@ class ReservationsMailer < ApplicationMailer
   end
 
   def missing_tree_email(force: false)
-    return suppress_delivery(missing_tree_subject) unless Setting.instance.is_emailing_enabled
+    return suppress_delivery(missing_tree_subject) unless Setting.instance.is_emailing_enabled?
 
     @sent_attribute = :missing_tree_email_sent_at
     prepare_common_assigns

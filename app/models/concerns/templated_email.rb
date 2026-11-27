@@ -84,6 +84,24 @@ module TemplatedEmail
     self.class.default_names.include?(name)
   end
 
+  # True when the template's current draft still matches the built-in default
+  # content. A false result means an admin has manually edited it.
+  def default_content?
+    definition = self.class.default_definition(name)
+    return false if definition.blank?
+
+    self.class.template_attributes.all? do |attribute|
+      public_send(attribute).to_s == definition[attribute].to_s
+    end
+  end
+  alias_method :matches_default?, :default_content?
+  alias_method :matches_default_content?, :default_content?
+  def customized?
+    !default_content?
+  end
+  alias_method :edited?, :customized?
+  alias_method :manually_edited?, :customized?
+
   def published?
     published_at.present? && published_body_html.present?
   end

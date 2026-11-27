@@ -45,13 +45,29 @@
           <% else %>
             <span class="<%= admin_badge_class(:warning) %>">Draft - not sending</span>
           <% end %>
+          <% if template.present? %>
+            <% if template.default_content? %>
+              <span class="<%= admin_badge_class(:neutral) %>">Default</span>
+            <% else %>
+              <span class="<%= admin_badge_class(:warning) %>">Customized</span>
+            <% end %>
+          <% end %>
         </div>
       </div>
 
       <div class="admin-panel-body">
         <div class="flex flex-col gap-4">
           <% if template.present? %>
+            <div class="flex items-center gap-3">
+              <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo" %>" class="h-auto" style="max-width: 75px;">
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Logo:</strong> <%= template.logo_image_or_default %></p>
+            </div>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Subject:</strong> <%= template.preview_subject %></p>
+            <% if template.default_content? %>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Using the built-in default content (not manually edited).</p>
+            <% else %>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">Manually edited from the built-in default content.</p>
+            <% end %>
 
             <% unless template.published? %>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">This email will not send until the template is published.</p>

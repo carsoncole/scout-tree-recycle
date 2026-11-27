@@ -8,7 +8,7 @@
               <tr>
                 <% if logo_src.present? %>
                   <td style="vertical-align:middle; padding-right:12px; border:0;">
-                    <img src="<%= logo_src %>" width="65" alt="<%= logo_alt %>" style="max-width:100%; height:auto;">
+                    <img src="<%= logo_src %>" width="<%= (logo_width.presence || 75).to_i %>" alt="<%= logo_alt %>" style="max-width:100%; height:auto;">
                   </td>
                 <% end %>
                 <td style="vertical-align:middle; border:0; font-family:Arial, Helvetica, sans-serif; font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#4c6a57;">

@@ -1,5 +1,7 @@
 <%= content_for :title, "Edit Point" %>
-<%= render "admin/shared/page_header", title: "Edit Point" %>
+<%= render "admin/shared/page_header", title: "Edit Point" do %>
+  <%= link_to "Back to route", admin_route_path(@route), class: admin_button_class(variant: :secondary) %>
+<% end %>
 
 <div class="admin-container--medium">
   <%= form_with(model: [:admin, @route, @point], class: "admin-form") do |f| %>

@@ -161,6 +161,23 @@ module ApplicationHelper
     } ]
   end
 
+  # Numbered markers for a route's polygon corners. The route map keeps them
+  # hidden until the Points toggle is on.
+  def route_point_markers(route)
+    route.points.sort_by { |point| [ point.order || 0, point.id || 0 ] }.filter_map do |point|
+      next if point.latitude.blank? || point.longitude.blank?
+
+      {
+        id: point.id,
+        lat: point.latitude.to_f,
+        lng: point.longitude.to_f,
+        role: "route_point",
+        order: point.order,
+        edit_url: edit_admin_route_point_path(route, point)
+      }
+    end
+  end
+
   # Route boundary polygons for a multi-route overview, labeled with the zone
   # so an admin can tell which zone each area belongs to.
   def pickups_map_route_polygons(routes)

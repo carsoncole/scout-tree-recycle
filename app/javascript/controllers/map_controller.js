@@ -22,6 +22,8 @@ export default class extends Controller {
     this.previewMarker = null
     this.miniMap = null
     this.miniMarker = null
+    this.routePointLayers = []
+    this.routePointsVisible = false
 
     const hasCenter = Array.isArray(this.centerValue) && this.centerValue.length === 2 && this.validCoord(this.centerValue[0], this.centerValue[1])
     const initialCenter = hasCenter ? [Number(this.centerValue[0]), Number(this.centerValue[1])] : [47.6062, -122.3321]
@@ -63,6 +65,7 @@ export default class extends Controller {
       this.layerGroup = null
       this.markerLayers = null
       this.statusEntries = null
+      this.routePointLayers = null
     }
     if (this.element) this.element.__mapController = null
   }
@@ -149,10 +152,32 @@ export default class extends Controller {
     })
   }
 
+  // Show or hide the route's own points. Pickup markers and the boundary
+  // polygon stay as they are.
+  setRoutePointsVisible(visible) {
+    this.routePointsVisible = !!visible
+    this.applyRoutePointVisibility()
+  }
+
+  applyRoutePointVisibility() {
+    if (!this.layerGroup || !this.routePointLayers) return
+
+    this.routePointLayers.forEach((layer) => {
+      if (this.routePointsVisible) {
+        if (!this.layerGroup.hasLayer(layer)) layer.addTo(this.layerGroup)
+        const el = layer.getElement && layer.getElement()
+        if (el && layer.__pointId != null) el.setAttribute("data-point-id", String(layer.__pointId))
+      } else if (this.layerGroup.hasLayer(layer)) {
+        this.layerGroup.removeLayer(layer)
+      }
+    })
+  }
+
   renderLayers() {
     if (!this.layerGroup) return
     const bounds = []
     this.statusEntries = new Map()
+    this.routePointLayers = []
 
     let polygonBounds = null
 
@@ -177,6 +202,12 @@ export default class extends Controller {
       const lat = Number(marker.lat ?? marker.latitude)
       const lng = Number(marker.lng ?? marker.longitude)
       if (!this.validCoord(lat, lng)) return
+
+      if (marker.role === "route_point") {
+        this.routePointLayers.push(this.routePointLayer(marker, lat, lng))
+        bounds.push(L.latLngBounds([ [ lat, lng ], [ lat, lng ] ]))
+        return
+      }
 
       const stroke = marker.color || "#b91c1c"
       const fill = marker.fillColor || marker.color || "#ef4444"
@@ -256,6 +287,7 @@ export default class extends Controller {
     })
 
     this.applyStatusVisibility()
+    this.applyRoutePointVisibility()
 
     if (bounds.length > 0) {
       const combined = bounds.reduce((acc, b) => (acc ? acc.extend(b) : b), null)
@@ -432,6 +464,71 @@ export default class extends Controller {
     if (close) {
       close.classList.add("rounded-full", "text-ink", "hover:bg-stone", "dark:text-ink-dark", "dark:hover:bg-stone-dark")
     }
+  }
+
+  // A route point is a numbered corner of the boundary. It stays off the map
+  // until the route page asks for it, then opens its own popup when clicked.
+  routePointLayer(marker, lat, lng) {
+    const label = marker.order === undefined || marker.order === null || marker.order === "" ? "•" : String(marker.order)
+    const badge = document.createElement("span")
+    badge.className = "flex size-7 items-center justify-center rounded-full border-2 border-sage-deep bg-surface text-[0.75rem] font-semibold leading-none text-sage-deep shadow-sm dark:border-sage-dark dark:bg-surface-dark dark:text-sage-dark"
+    badge.textContent = label
+
+    const layer = L.marker([ lat, lng ], {
+      keyboard: true,
+      title: `Route point ${label}`,
+      zIndexOffset: 400,
+      icon: L.divIcon({
+        className: "route-point-marker",
+        html: badge,
+        iconSize: [ 28, 28 ],
+        iconAnchor: [ 14, 14 ],
+        popupAnchor: [ 0, -16 ]
+      })
+    })
+    layer.__pointId = marker.id
+
+    const popup = document.createElement("div")
+    popup.className = "route-point-popup flex flex-col font-sans text-[0.85rem] leading-tight"
+    if (marker.id !== undefined && marker.id !== null) popup.dataset.pointId = String(marker.id)
+
+    const heading = document.createElement("div")
+    heading.className = "font-semibold text-ink dark:text-ink-dark"
+    heading.textContent = "Route point"
+
+    const orderLine = document.createElement("div")
+    orderLine.className = "text-ink dark:text-ink-dark"
+    orderLine.textContent = `Order ${label}`
+
+    const coords = document.createElement("div")
+    coords.className = "text-ink-soft dark:text-ink-soft-dark"
+    coords.textContent = `${this.formatCoord(lat)}, ${this.formatCoord(lng)}`
+
+    popup.append(heading, orderLine, coords)
+
+    const editUrl = typeof marker.edit_url === "string" ? marker.edit_url : ""
+    if (editUrl.startsWith("/")) {
+      const edit = document.createElement("a")
+      edit.href = editUrl
+      edit.className = "admin-link mt-1 text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark"
+      edit.textContent = "Edit"
+      edit.addEventListener("click", (event) => event.stopPropagation())
+      popup.append(edit)
+    }
+
+    layer.bindPopup(popup)
+    layer.on("popupopen", (event) => {
+      this.stylePopupChrome(event.popup)
+    })
+
+    return layer
+  }
+
+  formatCoord(value) {
+    const number = Number(value)
+    if (!Number.isFinite(number)) return ""
+
+    return number.toFixed(6).replace(/\.?0+$/, "")
   }
 
   // Locations render as fixed-size squares so they are visually distinct from

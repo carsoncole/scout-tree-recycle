@@ -3,8 +3,7 @@ Thank you for your donation!
 This is a receipt for your donation{% if donation.amount_currency != blank %} of {{ donation.amount_currency }}{% endif %} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.
 
 {% if donation.amount_currency != blank %}- Amount: {{ donation.amount_currency }}
-{% endif %}{% if donation.status != blank %}- Status: {{ donation.status }}
-{% endif %}{% if donation.card_brand != blank %}- Card brand: {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}
+{% endif %}{% if donation.card_brand != blank %}- Card: {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}
 {% elsif donation.last4 != blank %}- Last 4 digits: {{ donation.last4 }}
 {% endif %}{% if donation.customer_name != blank %}- Customer name: {{ donation.customer_name }}
 {% endif %}{% if donation.email != blank %}- Email: {{ donation.email }}

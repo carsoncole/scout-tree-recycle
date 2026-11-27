@@ -43,9 +43,8 @@
 
 <ul class="email-details">
   {% if donation.amount_currency != blank %}<li><strong>Amount:</strong> {{ donation.amount_currency }}</li>{% endif %}
-  {% if donation.status != blank %}<li><strong>Status:</strong> {{ donation.status }}</li>{% endif %}
   {% if donation.card_brand != blank %}
-  <li><strong>Card brand:</strong> {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}</li>
+  <li><strong>Card:</strong> {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}</li>
   {% elsif donation.last4 != blank %}
   <li><strong>Last 4 digits:</strong> {{ donation.last4 }}</li>
   {% endif %}

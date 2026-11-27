@@ -5,6 +5,9 @@ require "base64"
 class EmailImageLibrary
   DIRECTORY = Rails.root.join("app/assets/images")
   EXTENSIONS = %w[.png .jpg .jpeg .gif .svg .webp].freeze
+  # Sent mail replaces this marker with a cid: URL after the HTML is rendered.
+  # The marker uses the Liquid variable key so filenames with spaces stay intact.
+  MARKER_PREFIX = "email-image:"
 
   class << self
     def available_images
@@ -27,6 +30,15 @@ class EmailImageLibrary
     def image_variable_for(filename)
       variable = image_variables.key(filename)
       "images.#{variable}" if variable
+    end
+
+    # Token placed in sent HTML. ApplicationMailer replaces it with a cid: URL
+    # and attaches only the files whose markers survive rendering.
+    def marker_for(filename)
+      variable = image_variables.key(filename.to_s)
+      return if variable.blank?
+
+      "#{MARKER_PREFIX}#{variable}"
     end
 
     def image_key_for(filename)

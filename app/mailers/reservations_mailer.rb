@@ -162,11 +162,12 @@ class ReservationsMailer < ApplicationMailer
       reservation: @reservation,
       setting: @setting,
       follow_up: follow_up,
-      extra_assigns: { "donation" => donation_assigns }
+      extra_assigns: { "donation" => donation_assigns },
+      embed_library_images: true
     ).assigns
     prefix = source == :published ? "published_" : ""
 
-    @email_html = template.render_body_html(assigns, source: source)
+    @email_html = embed_email_images(template.render_body_html(assigns, source: source))
     @email_text = template.render_body_text(assigns, source: source)
     @logo_src = email_logo_src(filename: template.public_send("#{prefix}logo_image"))
     @logo_width = 75

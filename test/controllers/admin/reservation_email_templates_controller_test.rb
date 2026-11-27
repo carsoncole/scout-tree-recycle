@@ -68,6 +68,7 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
     assert_includes response.body, "Dear Mary Jones"
     assert_includes response.body, "color: #123456"
     assert_includes response.body, "data:image/png;base64,"
+    assert_includes response.body, 'width="75"'
     assert_includes response.body, "/reservations/#{@reservation.public_token}/edit"
   end
 

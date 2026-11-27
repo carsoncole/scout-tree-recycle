@@ -20,7 +20,24 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
     body = email.html_part.body.decoded
     assert_includes body, "Tree pick-up scheduled"
     assert_not_includes body, "Draft body"
-    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, body)
+    assert_inline_logo body, email
+  end
+
+  test "embeds the logo and only the library images the body uses" do
+    template = reservation_email_templates(:new_reservation_email)
+    extra = EmailImageLibrary.available_images.find { |filename| filename != template.published_logo_image }
+    variable = EmailImageLibrary.image_variable_for(extra)
+    template.update!(published_body_html: %(#{template.published_body_html}<img src="{{ #{variable} }}" alt="Extra">))
+
+    email = ReservationsMailer.with(reservation_id: @reservation.id).new_reservation_email
+    html = email.html_part.body.decoded
+    filenames = email.attachments.select(&:inline?).map(&:filename)
+
+    assert_includes html, %(src="#{email.attachments[template.published_logo_image].url}")
+    assert_includes html, %(src="#{email.attachments[extra].url}")
+    assert_includes html, 'width="75"'
+    assert_no_match(/data:image/, html)
+    assert_equal [ template.published_logo_image, extra ].sort, filenames.sort
   end
 
   test "uses the published logo width and missing tree template" do
@@ -29,7 +46,7 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
     assert_emails 1 do
       email.deliver_now
     end
-    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, email.html_part.body.decoded)
+    assert_inline_logo email.html_part.body.decoded, email
   end
 
   test "does not send when the template is unpublished" do
@@ -112,5 +129,16 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
     end
     assert_equal "[TEST] Follow-up: We still cannot find your tree", email.subject
     assert_includes email.html_part.body.decoded, "We visited again today"
+  end
+
+  private
+
+  def assert_inline_logo(html, email)
+    logo = email.attachments["fleur-de-lis-2024-logo-4c-bc-icon.png"]
+
+    assert logo&.inline?
+    assert_includes html, %(src="#{logo.url}")
+    assert_includes html, 'width="75"'
+    assert_no_match(/data:image/, html)
   end
 end

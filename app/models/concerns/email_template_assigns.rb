@@ -61,7 +61,19 @@ module EmailTemplateAssigns
   end
 
   def image_assigns
-    EmailImageLibrary.image_variables.transform_values { |filename| image_url(filename) }
+    EmailImageLibrary.image_variables.each_with_object({}) do |(variable, filename), images|
+      images[variable] = if embed_library_images?
+        "#{EmailImageLibrary::MARKER_PREFIX}#{variable}"
+      else
+        image_url(filename)
+      end
+    end
+  end
+
+  # Mailers set this so sent messages embed library images. Previews leave it
+  # off and keep absolute URLs the browser can load.
+  def embed_library_images?
+    @embed_library_images == true
   end
 
   def image_url(name)

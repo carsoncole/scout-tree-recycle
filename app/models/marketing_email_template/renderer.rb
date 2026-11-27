@@ -5,10 +5,11 @@ class MarketingEmailTemplate
 
     attr_reader :contact, :setting, :extra_assigns
 
-    def initialize(contact: nil, setting: Setting.instance, extra_assigns: {})
+    def initialize(contact: nil, setting: Setting.instance, extra_assigns: {}, embed_library_images: false)
       @contact = contact || MarketingEmailTemplate.sample_contact
       @setting = setting || Setting.new
       @extra_assigns = extra_assigns.stringify_keys
+      @embed_library_images = embed_library_images
     end
 
     private

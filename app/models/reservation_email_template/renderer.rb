@@ -5,11 +5,12 @@ class ReservationEmailTemplate
 
     attr_reader :reservation, :setting, :extra_assigns, :follow_up
 
-    def initialize(reservation: nil, setting: Setting.instance, follow_up: nil, extra_assigns: {})
+    def initialize(reservation: nil, setting: Setting.instance, follow_up: nil, extra_assigns: {}, embed_library_images: false)
       @reservation = reservation || ReservationEmailTemplate.sample_reservation
       @setting = setting || Setting.new
       @follow_up = follow_up
       @extra_assigns = extra_assigns.stringify_keys
+      @embed_library_images = embed_library_images
     end
 
     private

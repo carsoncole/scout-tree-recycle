@@ -42,7 +42,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_includes body, "/reservations/#{reservation.public_token}/donations/new"
     assert_no_match "FIX", body
     assert_no_match "8am", body
-    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, email.html_part.body.decoded)
+    assert_inline_email_image email, "fleur-de-lis-2024-logo-4c-bc-icon.png"
   end
 
   test "sends cancellation reservation email once cancelled" do
@@ -69,7 +69,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     body = readable_mail_body(email)
     assert_match "Tree pick-up cancelled", body
     assert_match Setting.instance.organization_name, body
-    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, email.html_part.body.decoded)
+    assert_inline_email_image email, "fleur-de-lis-2024-logo-4c-bc-icon.png"
   end
 
   test "delivery is logged as reservation email activity with the subject" do
@@ -245,5 +245,16 @@ class ReservationsMailerTest < ActionMailer::TestCase
 
   def readable_mail_body(email)
     [ email.text_part, email.html_part ].compact.map { |part| part.body.decoded }.join("\n").presence || email.body.decoded
+  end
+
+  def assert_inline_email_image(email, filename)
+    html = email.html_part.body.decoded
+    image = email.attachments[filename]
+
+    assert image, "expected an inline attachment named #{filename}"
+    assert image.inline?
+    assert_includes html, %(src="#{image.url}")
+    assert_includes html, 'width="75"'
+    assert_no_match(/data:image/, html)
   end
 end

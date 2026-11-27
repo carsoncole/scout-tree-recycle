@@ -77,8 +77,8 @@ class ReservationEmailTemplate < ApplicationRecord
     BASE_VARIABLES + EmailImageLibrary.image_variables.map do |variable, filename|
       {
         name: "images.#{variable}",
-        description: "Absolute URL for #{filename}.",
-        example: "https://example.org/assets/#{filename}"
+        description: "Embedded copy of #{filename} in the sent email.",
+        example: "cid:#{filename}"
       }
     end
   end

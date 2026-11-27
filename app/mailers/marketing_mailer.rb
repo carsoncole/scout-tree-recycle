@@ -33,14 +33,13 @@ class MarketingMailer < ApplicationMailer
     @contact = Contact.find_by(id: params[:contact_id]) || MarketingEmailTemplate.sample_contact
     @setting = Setting.instance
     source = params[:source].to_s == "published" ? :published : :draft
-
-    @email_assigns = MarketingEmailTemplate::Renderer.new(contact: @contact, setting: @setting).assigns
-    @email_html = @template.render_message_html(@email_assigns, source: source)
-    @email_text = @template.render_message_text(@email_assigns, source: source)
-    subject = @template.render_subject(@email_assigns, source: source)
-
     recipient = params[:email].presence || @contact.email
     return if Contact.blocked_marketing_email_domain?(recipient)
+
+    @email_assigns = marketing_email_assigns
+    @email_html = rendered_marketing_html(source)
+    @email_text = @template.render_message_text(@email_assigns, source: source)
+    subject = @template.render_subject(@email_assigns, source: source)
 
     from = source == :published ? @template.published_from : @template.from
     headers = {
@@ -54,6 +53,18 @@ class MarketingMailer < ApplicationMailer
   end
 
   private
+
+  def marketing_email_assigns
+    MarketingEmailTemplate::Renderer.new(
+      contact: @contact,
+      setting: @setting,
+      embed_library_images: true
+    ).assigns
+  end
+
+  def rendered_marketing_html(source)
+    embed_email_images(@template.render_message_html(@email_assigns, source: source, embed_images: true))
+  end
 
   def set_contact
     @contact = if params[:contact_id].present?
@@ -69,7 +80,7 @@ class MarketingMailer < ApplicationMailer
     return false if Contact.blocked_marketing_email_domain?(@contact.email)
 
     @setting = Setting.instance
-    @email_assigns = MarketingEmailTemplate::Renderer.new(contact: @contact, setting: @setting).assigns
+    @email_assigns = marketing_email_assigns
 
     headers = {
       to: @contact.email,
@@ -82,7 +93,7 @@ class MarketingMailer < ApplicationMailer
       headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
     end
 
-    @email_html = @template.render_message_html(@email_assigns, source: :published)
+    @email_html = rendered_marketing_html(:published)
     @email_text = @template.render_message_text(@email_assigns, source: :published)
     @marketing_email_sent_at_attribute = sent_at_attribute
 

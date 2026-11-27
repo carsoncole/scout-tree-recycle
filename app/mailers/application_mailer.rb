@@ -1,5 +1,3 @@
-require "base64"
-
 class ApplicationMailer < ActionMailer::Base
   include ApplicationHelper
   layout "mailer"
@@ -26,17 +24,46 @@ class ApplicationMailer < ActionMailer::Base
     %(<img src="#{ERB::Util.html_escape(email_logo_src(filename: filename))}" width="#{width.to_i}"#{extra}>).html_safe
   end
 
-  # Embeds the logo directly in the message as a base64 data URI instead of
-  # attaching it. A blank filename uses the default mailer logo from Settings;
-  # unknown filenames fall back to it too.
+  # Attaches the logo and returns its cid: URL. Gmail strips data: URIs, so
+  # the image has to travel as an inline MIME part. A blank filename uses the
+  # default mailer logo from Settings; unknown filenames fall back to it too.
   def email_logo_src(filename: nil)
-    filename = safe_logo_filename(filename)
-    path = Rails.root.join("app/assets/images", filename)
-    content_type = "image/#{File.extname(filename).delete('.').downcase}"
-    "data:#{content_type};base64,#{Base64.strict_encode64(File.binread(path))}"
+    inline_email_image_src(safe_logo_filename(filename))
+  end
+
+  # Replaces email-image markers left by the template renderer. Only markers
+  # that are still in the HTML become attachments.
+  def embed_email_images(html)
+    html.to_s.gsub(/#{Regexp.escape(EmailImageLibrary::MARKER_PREFIX)}([a-z0-9_]+)/) do
+      filename = EmailImageLibrary.image_variables[Regexp.last_match(1)]
+      filename.present? ? inline_email_image_src(filename) : Regexp.last_match(0)
+    end
+  end
+
+  def inline_email_image_src(filename)
+    filename = filename.to_s
+    return "" unless filename == File.basename(filename)
+    return "" unless EmailImageLibrary.image_file?(filename)
+
+    attach_inline_email_image(filename).url
   end
 
   private
+
+  # Mail::AttachmentsList#inline stays on for every later attachment. Put it
+  # back so a file added after an image is not sent inline.
+  def attach_inline_email_image(filename)
+    existing = attachments[filename]
+    return existing if existing
+
+    path = EmailImageLibrary::DIRECTORY.join(filename)
+    attachments.inline[filename] = {
+      mime_type: Marcel::MimeType.for(path, name: filename),
+      content: File.binread(path)
+    }
+    attachments.instance_variable_set(:@content_disposition_type, "attachment")
+    attachments[filename]
+  end
 
   def safe_logo_filename(filename)
     fallback = default_mailer_logo

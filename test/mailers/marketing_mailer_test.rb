@@ -281,6 +281,30 @@ class MarketingMailerTest < ActionMailer::TestCase
     assert_not_includes mail.text_part.body.to_s, "&amp;"
   end
 
+  test "embeds the selected image and referenced library images" do
+    Setting.instance.update(is_emailing_enabled: true)
+    template = marketing_email_templates(:marketing_email_1)
+    selected = "fleur-de-lis-2024-logo-4c-bc-icon.png"
+    extra = EmailImageLibrary.available_images.find { |filename| filename != selected }
+    variable = EmailImageLibrary.image_variable_for(extra)
+    template.update!(
+      image: selected,
+      image_alt: "Tree Recycling Event",
+      published_image: selected,
+      published_image_alt: "Tree Recycling Event",
+      published_body_html: %(<img src="{{ image_src }}" alt="{{ image_alt }}"><img src="{{ #{variable} }}" alt="Extra">)
+    )
+
+    mail = MarketingMailer.with(contact_id: contacts(:full).id).marketing_email_1
+    html = mail.html_part.body.decoded
+    filenames = mail.attachments.select(&:inline?).map(&:filename)
+
+    assert_includes html, %(src="#{mail.attachments[selected].url}")
+    assert_includes html, %(src="#{mail.attachments[extra].url}")
+    assert_no_match(/data:image/, html)
+    assert_equal [ selected, extra ].sort, filenames.sort
+  end
+
   test "inlines template styles when delivered" do
     Setting.instance.update(is_emailing_enabled: true)
 

@@ -66,14 +66,14 @@ class MarketingEmailTemplate < ApplicationRecord
   def self.available_variables
     BASE_VARIABLES +
       [
-        { name: "image_src", description: "Embedded data URI for the selected template image.", example: "data:image/png;base64,..." },
+        { name: "image_src", description: "Selected template image, embedded in the sent email.", example: "cid:image.png" },
         { name: "image_alt", description: "Alt text for the selected template image.", example: "Scouts standing beside a Christmas tree" }
       ] +
       image_variables.map do |variable, filename|
         {
           name: "images.#{variable}",
-          description: "Absolute URL for #{filename}.",
-          example: "https://example.org/assets/#{filename}"
+          description: "Embedded copy of #{filename} in the sent email.",
+          example: "cid:#{filename}"
         }
       end
   end
@@ -102,16 +102,23 @@ class MarketingEmailTemplate < ApplicationRecord
     image.presence
   end
 
-  def render_body_html(assigns = {}, source: :draft)
-    merged_assigns = (assigns || {}).to_h.stringify_keys.merge(image_render_assigns(source))
+  def render_body_html(assigns = {}, source: :draft, embed_images: false)
+    merged_assigns = (assigns || {}).to_h.stringify_keys.merge(image_render_assigns(source, embed_images: embed_images))
     super(merged_assigns, source: source)
   end
 
-  def image_render_assigns(source)
+  # Previews keep a data URI so the browser can show the image. A send passes
+  # embed_images and gets a marker that the mailer turns into a cid: attachment.
+  def image_render_assigns(source, embed_images: false)
     prefix = source.to_sym == :published ? "published_" : ""
     filename = public_send("#{prefix}image").presence || image
+    src = if embed_images
+      EmailImageLibrary.marker_for(filename).to_s
+    else
+      EmailImageLibrary.data_uri(filename.to_s)
+    end
     {
-      "image_src" => EmailImageLibrary.data_uri(filename.to_s),
+      "image_src" => src,
       "image_alt" => (public_send("#{prefix}image_alt").presence || image_alt).to_s
     }
   end
@@ -125,8 +132,8 @@ class MarketingEmailTemplate < ApplicationRecord
 
   # The editable template plus the required unsubscribe footer. Preview, test
   # sends, and live sends all use this so the link cannot be left out.
-  def render_message_html(assigns = {}, source: :draft)
-    "#{render_body_html(assigns, source: source)}\n#{unsubscribe_footer_html(assigns)}"
+  def render_message_html(assigns = {}, source: :draft, embed_images: false)
+    "#{render_body_html(assigns, source: source, embed_images: embed_images)}\n#{unsubscribe_footer_html(assigns)}"
   end
 
   def render_message_text(assigns = {}, source: :draft)

@@ -40,6 +40,18 @@
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.stripe_payment_intent_id %></dd>
         </div>
         <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Card last 4</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.last4 %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Card brand</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.brand %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Receipt URL</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.receipt_url %></dd>
+        </div>
+        <div class="admin-detail border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Receipt email sent</dt>
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.receipt_email_sent_at.present? ? "Yes" : "No" %></dd>        </div>
         <div class="admin-detail border-line dark:border-line-dark">

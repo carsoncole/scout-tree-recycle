@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_27_060000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_27_070000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -96,6 +96,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_27_060000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "receipt_email_sent_at"
+    t.string "brand"
+    t.string "card_brand"
+    t.string "card_type"
+    t.string "funding"
+    t.string "card_funding"
+    t.string "country"
+    t.string "card_country"
+    t.string "network"
+    t.string "card_network"
+    t.string "stripe_charge_id"
+    t.string "charge_id"
+    t.string "payment_method_id"
+    t.string "payment_method"
+    t.string "currency"
+    t.string "receipt_number"
+    t.string "phone"
+    t.string "billing_name"
+    t.string "billing_email"
+    t.string "billing_phone"
+    t.string "billing_address_line1"
+    t.string "billing_address_line2"
+    t.string "billing_city"
+    t.string "billing_state"
+    t.string "billing_postal_code"
+    t.string "billing_country"
+    t.string "card_last4"
     t.index ["reservation_id"], name: "index_donations_on_reservation_id"
   end
 

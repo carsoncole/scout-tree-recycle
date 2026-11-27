@@ -7,7 +7,7 @@ class ReservationsMailer < ApplicationMailer
     return suppress_delivery("Your tree pickup is confirmed") unless Setting.instance.is_emailing_enabled?
     return suppress_delivery("Your tree pickup is confirmed") if !force && @reservation.confirmed_reservation_email_sent_at?
 
-    @sent_at_attribute = :confirmed_reservation_email_sent_at
+    @sent_attribute = :confirmed_reservation_email_sent_at
     prepare_common_assigns
     deliver_template("new_reservation_email", fallback_subject: "Your tree pickup is confirmed")
   end
@@ -15,7 +15,7 @@ class ReservationsMailer < ApplicationMailer
   def cancelled_reservation_email(force: false)
     return suppress_delivery("Your tree pickup reservation has been cancelled") if !force && @reservation.cancelled_reservation_email_sent_at?
 
-    @sent_at_attribute = :cancelled_reservation_email_sent_at
+    @sent_attribute = :cancelled_reservation_email_sent_at
     prepare_common_assigns
     deliver_template("cancelled_reservation_email", fallback_subject: "Your tree pickup reservation has been cancelled")
   end
@@ -23,9 +23,20 @@ class ReservationsMailer < ApplicationMailer
   def missing_tree_email(force: false)
     return suppress_delivery(missing_tree_subject) unless Setting.instance.is_emailing_enabled
 
-    @sent_at_attribute = :missing_tree_email_sent_at
+    @sent_attribute = :missing_tree_email_sent_at
     prepare_common_assigns
     deliver_template("missing_tree_email", fallback_subject: missing_tree_subject)
+  end
+
+  def pickup_reminder_email(force: false)
+    subject = "Reminder: Your upcoming tree pickup"
+    return suppress_delivery(subject) unless Setting.instance.is_emailing_enabled?
+    return suppress_delivery(subject) unless force || @reservation.pickup_reminder_eligible?
+    return suppress_delivery(subject) if !force && @reservation.pickup_reminder_email_sent_at.present?
+
+    @sent_attribute = :pickup_reminder_email_sent_at
+    prepare_common_assigns
+    deliver_template("pickup_reminder_email", fallback_subject: subject)
   end
 
   # Sends the saved draft (or published version) to an admin for review.
@@ -92,7 +103,7 @@ class ReservationsMailer < ApplicationMailer
     @email_html = template.render_body_html(assigns, source: source)
     @email_text = template.render_body_text(assigns, source: source)
     @logo_src = email_logo_src(filename: template.public_send("#{prefix}logo_image"))
-    @logo_width = template.public_send("#{prefix}logo_width").presence || 140
+    @logo_width = 75
     @logo_alt = template.public_send("#{prefix}logo_alt").presence || template.logo_alt
     @email_footer = @setting.organization_name
 
@@ -111,10 +122,10 @@ class ReservationsMailer < ApplicationMailer
 
   def mark_reservation_email_sent
     return if @delivery_suppressed
-    return if @sent_at_attribute.blank?
+    return if @sent_attribute.blank?
     return if @reservation.blank? || @reservation.id.blank?
 
-    Reservation.where(id: @reservation.id).update_all(@sent_at_attribute => Time.current, updated_at: Time.current)
+    Reservation.where(id: @reservation.id).update_all(@sent_attribute => Time.current, updated_at: Time.current)
   end
 
   # Records an email log with the sent subject for the reservation's
@@ -122,7 +133,7 @@ class ReservationsMailer < ApplicationMailer
   # they are not logged. A logging failure must never break the delivery.
   def log_reservation_email
     return if @delivery_suppressed
-    return if @sent_at_attribute.blank?
+    return if @sent_attribute.blank?
 
     Log.create(
       log_type: "email",

@@ -2,9 +2,9 @@ class ReservationEmailTemplate < ApplicationRecord
   include TemplatedEmail
 
   DEFAULTS_DIRECTORY = Rails.root.join("db/reservation_email_templates")
-  NAMES = %w[new_reservation_email cancelled_reservation_email missing_tree_email].freeze
-  TEMPLATE_ATTRIBUTES = %i[subject logo_image logo_width logo_alt body_html body_text].freeze
-  DEFAULT_LOGO = ApplicationMailer::LOGO_FILENAME
+  NAMES = %w[new_reservation_email cancelled_reservation_email missing_tree_email pickup_reminder_email].freeze
+  TEMPLATE_ATTRIBUTES = %i[subject logo_image logo_alt body_html body_text].freeze
+  DEFAULT_LOGO = "fleur-de-lis-2024-logo-4c-bc-icon.png"
 
   BASE_VARIABLES = [
     { name: "reservation.name", description: "Reservation holder's full name (blank when there is no usable name).", example: "Susan Banks" },
@@ -17,6 +17,7 @@ class ReservationEmailTemplate < ApplicationRecord
     { name: "reservation.state", description: "Pickup state.", example: "CA" },
     { name: "reservation.zip", description: "Pickup ZIP code.", example: "12345" },
     { name: "reservation.pickup_notes", description: "Notes the reservation holder added for the pickup crew.", example: "Tree is behind the gate." },
+    { name: "reservation.donation_received", description: "True when a paid donation has already been recorded for the reservation.", example: "false" },
     { name: "reservation.status", description: "Current reservation status.", example: "pending_pickup" },
     { name: "reservation.missing_tree_follow_up", description: "True when this is a follow-up missing-tree notice.", example: "true" },
     { name: "reservation.updated_at_date", description: "Date the reservation was last updated, including the weekday and year.", example: "Saturday, January 6, 2029" },
@@ -26,6 +27,7 @@ class ReservationEmailTemplate < ApplicationRecord
     { name: "setting.contact_email", description: "Contact email from Settings. May be blank.", example: "help@example.org" },
     { name: "setting.suggested_donation", description: "Suggested donation amount as a number.", example: "25" },
     { name: "setting.suggested_donation_currency", description: "Suggested donation amount formatted as currency.", example: "$25" },
+    { name: "setting.pickup_instructions", description: "Configured tree preparation and day-of-pickup instructions.", example: "Remove all decorations and tinsel from your tree." },
     { name: "event.pickup_start_date", description: "Pickup start date including the weekday and year.", example: "Saturday, January 6, 2099" },
     { name: "event.pickup_start_weekday", description: "Pickup start date including the weekday.", example: "Saturday, January 6" },
     { name: "event.pickup_start_short", description: "Pickup start month and day.", example: "January 6" },
@@ -46,7 +48,6 @@ class ReservationEmailTemplate < ApplicationRecord
   ].freeze
 
   validates :name, inclusion: { in: NAMES }
-  validates :logo_width, numericality: { only_integer: true, greater_than_or_equal_to: 20, less_than_or_equal_to: 600 }
   validate :logo_image_is_available
 
   def self.defaults_directory
@@ -63,7 +64,6 @@ class ReservationEmailTemplate < ApplicationRecord
       description: attributes["description"],
       subject: attributes.fetch("subject"),
       logo_image: attributes["logo_image"].presence,
-      logo_width: attributes.fetch("logo_width", 140),
       logo_alt: attributes["logo_alt"],
       body_html: File.read(DEFAULTS_DIRECTORY.join(attributes.fetch("html_file"))),
       body_text: File.read(DEFAULTS_DIRECTORY.join(attributes.fetch("text_file")))

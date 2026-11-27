@@ -1,0 +1,134 @@
+<style>
+  .email-heading {
+    margin: 32px auto 24px;
+    color: #2d3748;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 40px;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .email-subheading {
+    margin: 30px 0 20px;
+    color: #2d3748;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .email-text {
+    margin: 0 0 20px;
+    color: #2d3748;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .email-list {
+    margin: 0 0 20px;
+    padding: 0 0 0 18px;
+    color: #2d3748;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .email-list li {
+    margin: 0 0 6px;
+  }
+
+  .email-address-row {
+    margin: 0 0 30px;
+  }
+
+  .email-address {
+    display: inline-block;
+    padding: 12px 15px;
+    border: 1px solid #ce1126;
+    border-radius: 2px;
+    background-color: #ce1126;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .email-sign-off {
+    margin: 30px 0 50px;
+    color: #2d3748;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+</style>
+
+<h1 class="email-heading">Tree pickup reminder</h1>
+
+{% if reservation.has_name %}
+  <h2 class="email-subheading">Dear {{ reservation.name | escape }},</h2>
+{% endif %}
+
+<p class="email-text">
+  This is a reminder that we will pick up your tree on {{ event.pickup_start_date }}. Please have your tree out and ready by {{ event.pickup_start_time_compact }}.
+</p>
+
+<table class="email-address-row" role="presentation" width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center">
+      <span class="email-address">
+        {{ reservation.street | escape }}{% if reservation.unit != blank %}, {{ reservation.unit | escape }}{% endif %}<br>
+        {{ reservation.city | escape }}, {{ reservation.state | escape }} {{ reservation.zip | escape }}
+      </span>
+    </td>
+  </tr>
+</table>
+
+{% if reservation.pickup_notes != blank %}
+  <p class="email-text"><strong>Your pickup note:</strong> {{ reservation.pickup_notes | escape }}</p>
+{% endif %}
+
+<h2 class="email-subheading">Preparing your tree</h2>
+
+<p class="email-text">{{ setting.pickup_instructions | escape }}</p>
+
+<p class="email-text">
+  We will collect your tree between {{ event.pickup_start_time_compact }} and {{ event.pickup_end_time_compact }}.
+</p>
+
+{% unless reservation.donation_received %}
+  <h2 class="email-subheading">Support our fundraiser</h2>
+
+  <p class="email-text">
+    Tree recycling is a fundraiser for {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }} for the collection service.
+  </p>
+
+  <p class="email-text">
+    If you elect to donate on the day of collection, we accept checks or cash.
+  </p>
+
+  <ul class="email-list">
+    <li>make checks payable to {{ setting.organization_name }}</li>
+    <li>place your donation in an envelope</li>
+    <li>place that envelope in a baggie</li>
+    <li>secure the baggie to your tree</li>
+  </ul>
+
+  <p class="email-text">
+    Alternatively, you can <a href="{{ urls.donation }}">make an online donation</a>.
+  </p>
+{% endunless %}
+
+<h2 class="email-subheading">Need to update your reservation?</h2>
+
+<p class="email-text">
+  You can <a href="{{ urls.edit_reservation }}">review or edit your reservation</a>, including your pickup note, if your plans or pickup instructions have changed. If you have any questions, please <a href="{{ urls.contact }}">contact us</a>.
+</p>
+
+<p class="email-sign-off">
+  Thank you,<br>
+  {{ setting.organization_name }}
+</p>

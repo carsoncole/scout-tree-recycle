@@ -25,6 +25,7 @@ module EmailTemplateAssigns
       "site_url" => setting.site_url.to_s,
       "suggested_donation" => setting.suggested_donation_amount,
       "suggested_donation_currency" => helpers.number_to_currency(setting.suggested_donation_amount, precision: 0),
+      "pickup_instructions" => setting.pickup_instructions_text,
       "time_zone" => setting.time_zone.to_s
     }
   end

@@ -234,6 +234,18 @@
             <%= @reservation.pickup_notes.presence || "No notes provided" %>
           </dd>
         </div>
+        <div class="admin-detail border-line dark:border-line-dark">
+          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Pickup reminder email</dt>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark">
+            <% if @reservation.pickup_reminder_email_sent_at.present? %>
+              <span class="<%= admin_badge_class("positive") %>">
+                Sent <%= @reservation.pickup_reminder_email_sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
+              </span>
+            <% else %>
+              <span class="<%= admin_badge_class("neutral") %>">Not sent</span>
+            <% end %>
+          </dd>
+        </div>
       </dl>
     </div>
   </section>
@@ -248,24 +260,55 @@
     <div class="admin-panel-body">
       <dl class="admin-detail-list">
         <% Reservation::EMAIL_KINDS.each do |kind, config| %>
-          <% sent_at = @reservation.public_send(config[:sent_at]) %>
+          <% if kind == "pickup_reminder" %>
+            <% sent_at = @reservation.pickup_reminder_email_sent_at %>
+            <% eligible = @reservation.pickup_reminder_eligible? %>
+          <% else %>
+            <% sent_at = @reservation.public_send(config[:sent_at]) %>
+            <% eligible = true %>
+          <% end %>
+
           <div class="admin-detail border-line dark:border-line-dark">
             <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= config[:label] %></dt>
             <dd class="admin-detail-value text-ink dark:text-ink-dark">
               <div class="flex flex-wrap items-center justify-between gap-3">
-                <% if sent_at.present? %>
+                <% if kind == "pickup_reminder" && !eligible %>
+                  <span class="<%= admin_badge_class("neutral") %>">Not eligible</span>
+                <% elsif sent_at.present? %>
                   <span class="<%= admin_badge_class("positive") %>">
                     Sent <%= sent_at.strftime("%B %-d, %Y at %-l:%M %p") %>
                   </span>
                 <% else %>
                   <span class="<%= admin_badge_class("neutral") %>">Not sent</span>
                 <% end %>
-                <%= button_to sent_at.present? ? "Resend" : "Send",
-                    resend_email_admin_reservation_path(@reservation),
-                    params: { kind: kind },
-                    data: { turbo_confirm: admin_resend_email_confirm(config[:label], sent_at, @reservation.email) },
-                    class: admin_button_class(variant: :secondary, size: :small) %>
+
+                <% if kind == "pickup_reminder" %>
+                  <% if eligible && !sent_at.present? %>
+                    <%= button_to "Send",
+                        send_pickup_reminder_email_admin_reservation_path(@reservation),
+                        data: { turbo_confirm: "Send the pickup reminder email to #{@reservation.email}?" },
+                        class: admin_button_class(variant: :secondary, size: :small) %>
+                  <% elsif sent_at.present? %>
+                    <%= button_to "Resend",
+                        resend_email_admin_reservation_path(@reservation),
+                        params: { kind: kind },
+                        data: { turbo_confirm: admin_resend_email_confirm(config[:label], sent_at, @reservation.email) },
+                        class: admin_button_class(variant: :secondary, size: :small) %>
+                  <% end %>
+                <% else %>
+                  <%= button_to sent_at.present? ? "Resend" : "Send",
+                      resend_email_admin_reservation_path(@reservation),
+                      params: { kind: kind },
+                      data: { turbo_confirm: admin_resend_email_confirm(config[:label], sent_at, @reservation.email) },
+                      class: admin_button_class(variant: :secondary, size: :small) %>
+                <% end %>
               </div>
+
+              <% if kind == "pickup_reminder" && !eligible %>
+                <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+                  Only reservations in Routing or Pending Pickup can receive this reminder.
+                </p>
+              <% end %>
             </dd>
           </div>
         <% end %>

@@ -20,8 +20,8 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
     body = email.html_part.body.decoded
     assert_includes body, "Tree pick-up scheduled"
     assert_not_includes body, "Draft body"
-    assert_match(/src="cid:[^"]+"/, body)
-    assert_includes body, 'width="140"'
+    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, body)
+    assert_includes body, 'width="65"'
   end
 
   test "uses the published logo width and missing tree template" do
@@ -30,8 +30,8 @@ class ReservationsMailerTemplateTest < ActionMailer::TestCase
     assert_emails 1 do
       email.deliver_now
     end
-    assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)
-    assert_includes email.html_part.body.decoded, 'width="250"'
+    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, email.html_part.body.decoded)
+    assert_includes email.html_part.body.decoded, 'width="65"'
   end
 
   test "does not send when the template is unpublished" do

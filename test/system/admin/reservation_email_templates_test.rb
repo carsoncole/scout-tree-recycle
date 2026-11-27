@@ -12,7 +12,7 @@ class Admin::ReservationEmailTemplatesTest < ApplicationSystemTestCase
     visit admin_marketing_index_url
     click_on "Reservation Emails"
 
-    assert_selector "summary", text: "Send test email", count: 3
+    assert_selector "summary", text: "Send test email", count: ReservationEmailTemplate::NAMES.size
 
     within "section", text: "New reservation email" do
       click_on "Edit Template"

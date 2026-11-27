@@ -42,7 +42,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     assert_includes body, "/reservations/#{reservation.public_token}/donations/new"
     assert_no_match "FIX", body
     assert_no_match "8am", body
-    assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)
+    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, email.html_part.body.decoded)
   end
 
   test "sends cancellation reservation email once cancelled" do
@@ -69,7 +69,7 @@ class ReservationsMailerTest < ActionMailer::TestCase
     body = readable_mail_body(email)
     assert_match "Tree pick-up cancelled", body
     assert_match Setting.instance.organization_name, body
-    assert_match(/src="cid:[^"]+"/, email.html_part.body.decoded)
+    assert_match(/src="data:image\/[^;]+;base64,[^"]+"/, email.html_part.body.decoded)
   end
 
   test "delivery is logged as reservation email activity with the subject" do

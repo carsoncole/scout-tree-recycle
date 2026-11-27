@@ -1,0 +1,62 @@
+<% unless emailing_enabled %>
+  <div class="<%= admin_notice_class(:warning) %>" role="note">
+    <p>Pickup reminder emailing is disabled. Enable it in <%= link_to "Email Settings", admin_settings_section_path("email"), class: admin_link_class %> before sending reminders.</p>
+  </div>
+<% end %>
+
+<section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark" aria-labelledby="pickup-reminder-email-title">
+  <div class="admin-panel-header border-line dark:border-line-dark">
+    <div>
+      <h2 id="pickup-reminder-email-title" class="admin-panel-title text-ink dark:text-ink-dark">Pickup reminder email</h2>
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark"><%= pluralize(count, "email") %> remaining for active reservations.</p>
+    </div>
+    <div class="admin-table-inline">
+      <% if template.nil? %>
+        <span class="<%= admin_badge_class(:danger) %>">Template missing</span>
+      <% elsif template.published? && template.draft_changes? %>
+        <span class="<%= admin_badge_class(:warning) %>">Published with changes</span>
+      <% elsif template.published? %>
+        <span class="<%= admin_badge_class(:positive) %>">Published</span>
+      <% else %>
+        <span class="<%= admin_badge_class(:warning) %>">Draft - not sending</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="admin-panel-body">
+    <div class="flex flex-col gap-4">
+      <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
+        Sends pickup details, tree preparation instructions, and donation options to reservation holders in Routing or Pending Pickup. Each reservation is emailed only once.
+      </p>
+
+      <% if template.present? %>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark"><strong>Subject:</strong> <%= template.preview_subject %></p>
+        <div class="flex flex-wrap items-center justify-start gap-3">
+          <%= link_to "Preview", preview_admin_reservation_email_template_path(template, source: template.published? ? "published" : "draft"),
+              class: admin_button_class(variant: :secondary, size: :small),
+              target: "_blank",
+              rel: "noopener" %>
+        </div>
+        <%= render "admin/reservation_email_templates/test_email_form",
+                   template: template,
+                   reservations: [],
+                   return_to: "reservations" %>
+      <% else %>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">The default pickup reminder template has not been loaded yet.</p>
+        <%= button_to "Load Default Templates", install_defaults_admin_reservation_email_templates_path,
+            class: admin_button_class(variant: :secondary, size: :small) %>
+      <% end %>
+
+      <div class="flex flex-wrap items-center justify-start gap-3">
+        <%= button_to "Send Pickup Reminder Emails", send_pickup_reminder_emails_admin_reservations_path,
+            class: [ admin_button_class, "disabled:cursor-not-allowed disabled:opacity-50" ],
+            disabled: !emailing_enabled,
+            data: { turbo_confirm: admin_pickup_reminder_send_confirm(batch_size) } %>
+        <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+          Batch size: <strong class="text-ink dark:text-ink-dark"><%= pluralize(email_batch_quantity, "reservation") %></strong> per send.
+          <%= link_to "Edit in Settings", admin_settings_section_path("email"), class: admin_link_class %>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -49,10 +49,6 @@
                 class: admin_select_class %>
           </div>
 
-          <div class="admin-field">
-            <%= f.label :logo_width, "Logo width (px)", class: "admin-label text-ink dark:text-ink-dark" %>
-            <%= f.number_field :logo_width, min: 20, max: 600, step: 1, class: admin_input_class %>
-          </div>
         </div>
 
         <div class="admin-field">
@@ -62,8 +58,7 @@
         </div>
 
         <div class="admin-panel bg-stone text-center dark:bg-stone-dark">
-          <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo preview" %>" class="h-auto max-w-full" style="max-width: <%= [ template.logo_width.to_i, 300 ].min %>px;">
-        </div>
+          <img src="<%= image_path(template.logo_image_or_default) %>" alt="<%= template.logo_alt.presence || "Logo preview" %>" class="h-auto max-w-full" style="max-width: 75px;">        </div>
       </div>
     </div>
   </section>

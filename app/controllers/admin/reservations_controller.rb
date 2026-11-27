@@ -1,5 +1,5 @@
 class Admin::ReservationsController < Admin::BaseController
-  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode, :verify_address, :route, :assign_route, :resend_email ]
+  before_action :set_reservation, only: [ :show, :edit, :update, :destroy, :geocode, :verify_address, :route, :assign_route, :resend_email, :send_pickup_reminder_email ]
 
   def index
     @reservations = Reservation.for_admin_index(
@@ -10,7 +10,48 @@ class Admin::ReservationsController < Admin::BaseController
       address_check: params[:address_check]
     )
     @pagy, @reservations = pagy(@reservations)
+    @pickup_reminder_count = Reservation.pickup_reminder_pending.count
+    @pickup_reminder_template = ReservationEmailTemplate.find_by(name: "pickup_reminder_email")
+    setting = Setting.instance
+    @emailing_enabled = setting.is_emailing_enabled?
+    @email_batch_quantity = setting.email_batch_quantity
+    @pickup_reminder_batch_size = setting.email_batch_size(@pickup_reminder_count)
     flash.now[:alert] = "Reservations are CLOSED." unless Reservation.open?
+  end
+
+  def send_pickup_reminder_emails
+    setting = Setting.instance
+    count = Reservation.pickup_reminder_pending.count
+
+    if !setting.is_emailing_enabled?
+      redirect_to admin_reservations_path, alert: "Emailing is disabled. Enable it in Settings before sending pickup reminder emails."
+    elsif (message = setting.email_configuration_alert(purpose: "sending pickup reminder emails"))
+      redirect_to admin_reservations_path, alert: message
+    elsif ReservationEmailTemplate.published.find_by(name: "pickup_reminder_email").nil?
+      redirect_to admin_reservations_path, alert: "Pickup reminder email is not published. Edit the template and publish it before sending."
+    elsif count.zero?
+      redirect_to admin_reservations_path, alert: "No reservations are eligible for a pickup reminder email."
+    else
+      SendPickupReminderEmailsJob.perform_later
+      redirect_to admin_reservations_path, notice: "#{setting.email_batch_size(count)} of #{count} pickup reminder emails queued to be sent."
+    end
+  end
+
+  def send_pickup_reminder_email
+    setting = Setting.instance
+
+    if !setting.is_emailing_enabled?
+      redirect_to admin_reservation_path(@reservation), alert: "Emailing is disabled. Enable it in Settings before sending emails."
+    elsif ReservationEmailTemplate.published.find_by(name: "pickup_reminder_email").nil?
+      redirect_to admin_reservation_path(@reservation), alert: "Pickup reminder email is not published. Edit the template and publish it before sending."
+    elsif !@reservation.pickup_reminder_eligible?
+      redirect_to admin_reservation_path(@reservation), alert: "This reservation is not eligible for a pickup reminder email."
+    elsif @reservation.pickup_reminder_email_sent_at.present?
+      redirect_to admin_reservation_path(@reservation), alert: "Pickup reminder email was already sent to #{@reservation.email}."
+    else
+      ReservationsMailer.with(reservation_id: @reservation.id).pickup_reminder_email.deliver_later
+      redirect_to admin_reservation_path(@reservation), notice: "Pickup reminder email was queued for delivery to #{@reservation.email}."
+    end
   end
 
   def show

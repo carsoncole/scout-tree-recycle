@@ -11,13 +11,12 @@ class CreateReservationEmailTemplates < ActiveRecord::Migration[8.1]
       t.text :description
       t.string :subject, null: false
       t.string :logo_image
-      t.integer :logo_width, null: false, default: 140
+
       t.string :logo_alt
       t.text :body_html, null: false
       t.text :body_text
       t.string :published_subject
       t.string :published_logo_image
-      t.integer :published_logo_width
       t.string :published_logo_alt
       t.text :published_body_html
       t.text :published_body_text
@@ -44,7 +43,6 @@ class CreateReservationEmailTemplates < ActiveRecord::Migration[8.1]
     definitions.each do |name, attributes|
       subject = attributes.fetch("subject")
       logo_image = attributes["logo_image"].presence
-      logo_width = attributes.fetch("logo_width", 140)
       logo_alt = attributes["logo_alt"]
       body_html = File.read(directory.join(attributes.fetch("html_file")))
       body_text = File.read(directory.join(attributes.fetch("text_file")))
@@ -54,13 +52,11 @@ class CreateReservationEmailTemplates < ActiveRecord::Migration[8.1]
         description: attributes["description"],
         subject: subject,
         logo_image: logo_image,
-        logo_width: logo_width,
         logo_alt: logo_alt,
         body_html: body_html,
         body_text: body_text,
         published_subject: subject,
         published_logo_image: logo_image,
-        published_logo_width: logo_width,
         published_logo_alt: logo_alt,
         published_body_html: body_html,
         published_body_text: body_text,

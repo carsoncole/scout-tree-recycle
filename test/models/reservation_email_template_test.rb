@@ -51,14 +51,7 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     @template.logo_image = nil
 
     assert @template.valid?
-    assert_equal ApplicationMailer::LOGO_FILENAME, @template.logo_image_or_default
-  end
-
-  test "validates the logo width" do
-    @template.logo_width = 5
-
-    assert_not @template.valid?
-    assert_includes @template.errors[:logo_width], "must be greater than or equal to 20"
+    assert_equal ReservationEmailTemplate::DEFAULT_LOGO, @template.logo_image_or_default
   end
 
   test "does not allow the name to change after creation" do
@@ -93,7 +86,6 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     @template.update!(
       subject: "New subject",
       logo_image: "tree-scout.png",
-      logo_width: 300,
       logo_alt: "New logo",
       body_html: "<p>New body</p>",
       body_text: "New body"
@@ -106,17 +98,16 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     assert @template.published?
     assert_equal "New subject", @template.published_subject
     assert_equal "tree-scout.png", @template.published_logo_image
-    assert_equal 300, @template.published_logo_width
     assert_equal "New logo", @template.published_logo_alt
     assert_equal "<p>New body</p>", @template.published_body_html
     assert_not @template.draft_changes?
   end
 
   test "changing only the logo creates a pending draft change" do
-    @template.update!(logo_width: 400)
+    @template.update!(logo_alt: "Changed logo alt")
 
     assert @template.draft_changes?
-    assert_not_equal @template.logo_width, @template.published_logo_width
+    assert_not_equal @template.logo_alt, @template.published_logo_alt
   end
 
   test "unpublish removes the template from the published scope without deleting the snapshot" do
@@ -172,7 +163,6 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
     template.published_body_html = template.body_html
     template.published_body_text = template.body_text
     template.published_logo_image = template.logo_image
-    template.published_logo_width = template.logo_width
     template.published_logo_alt = template.logo_alt
     template.published_at = Time.current
     template.save!
@@ -208,7 +198,7 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
 
   test "restore default content updates the draft without changing the published version" do
     published_body = @template.published_body_html
-    @template.update!(subject: "Changed", body_html: "<p>Changed body</p>", logo_width: 400)
+    @template.update!(subject: "Changed", body_html: "<p>Changed body</p>", logo_alt: "Changed logo alt")
 
     assert @template.restore_default_content!
 
@@ -231,6 +221,8 @@ class ReservationEmailTemplateTest < ActiveSupport::TestCase
 
     assert_includes variable_names, "reservation.name"
     assert_includes variable_names, "reservation.missing_tree_follow_up"
+    assert_includes variable_names, "reservation.donation_received"
+    assert_includes variable_names, "setting.pickup_instructions"
     assert_includes variable_names, "event.pickup_start_time_compact"
     assert_includes variable_names, "urls.edit_reservation"
     assert_includes variable_names, EmailImageLibrary.image_variable_for(image)

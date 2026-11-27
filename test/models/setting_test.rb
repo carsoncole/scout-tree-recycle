@@ -255,7 +255,7 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal "reservations,settings", setting.backup_datasets
   end
 
-  test "mailer logo defaults to the small logo for a new setting" do
+  test "mailer logo defaults to the icon logo for a new setting" do
     assert_equal Setting::DEFAULT_MAILER_LOGO, Setting.new.mailer_logo_name
     assert_equal Setting::DEFAULT_MAILER_LOGO, Setting.new(mailer_logo: "").mailer_logo_name
   end

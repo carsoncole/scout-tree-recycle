@@ -424,6 +424,14 @@ module AdminHelper
     end
   end
 
+  def admin_pickup_reminder_send_confirm(batch_size)
+    if batch_size.zero?
+      "Send pickup reminder emails? No reservations are currently eligible."
+    else
+      "Send a pickup reminder email to #{pluralize(batch_size, "reservation holder")}? Reservations that already received a reminder will be skipped. This cannot be undone."
+    end
+  end
+
   def admin_resend_email_confirm(label, sent_at, email)
     if sent_at.present?
       "This #{label.downcase} was already sent to #{email} on #{sent_at.strftime("%B %-d, %Y at %-l:%M %p")}. Are you sure you want to send it again?"

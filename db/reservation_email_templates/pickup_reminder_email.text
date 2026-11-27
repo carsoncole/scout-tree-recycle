@@ -1,0 +1,38 @@
+Tree pickup reminder
+
+{% if reservation.has_name %}Dear {{ reservation.name | escape }},{% endif %}
+
+This is a reminder that we will pick up your tree on {{ event.pickup_start_date }}. Please have your tree out and ready by {{ event.pickup_start_time_compact }}.
+
+Address: {{ reservation.street | escape }}{% if reservation.unit != blank %}, {{ reservation.unit | escape }}{% endif %}
+{{ reservation.city | escape }}, {{ reservation.state | escape }} {{ reservation.zip | escape }}
+
+{% if reservation.pickup_notes != blank %}Your pickup note: {{ reservation.pickup_notes | escape }}{% endif %}
+
+Preparing your tree
+
+{{ setting.pickup_instructions }}
+
+We will collect your tree between {{ event.pickup_start_time_compact }} and {{ event.pickup_end_time_compact }}.
+
+{% unless reservation.donation_received %}Support our fundraiser
+
+Tree recycling is a fundraiser for {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }} for the collection service.
+
+If you elect to donate on the day of collection, we accept checks or cash.
+
+- make checks payable to {{ setting.organization_name }}
+- place your donation in an envelope
+- place that envelope in a baggie
+- secure the baggie to your tree
+
+Alternatively, you can make an online donation: {{ urls.donation }}
+{% endunless %}
+
+Need to update your reservation?
+
+You can review or edit your reservation, including your pickup note, if your plans or pickup instructions have changed: {{ urls.edit_reservation }}
+If you have any questions, please contact us: {{ urls.contact }}
+
+Thank you,
+{{ setting.organization_name }}

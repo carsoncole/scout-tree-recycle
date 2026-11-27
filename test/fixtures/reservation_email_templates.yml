@@ -2,8 +2,7 @@ new_reservation_email:
   name: new_reservation_email
   description: Confirmation sent when a reservation is scheduled for tree pickup.
   subject: "Your tree pickup is confirmed"
-  logo_image: fleur-de-lis-2024-logo-4c-bc.png
-  logo_width: 140
+  logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   logo_alt: Tree Recycling Event
   body_html: |
     <style>
@@ -24,8 +23,7 @@ new_reservation_email:
     Donate online: {{ urls.donation }}
     Make a change: {{ urls.edit_reservation }}
   published_subject: "Your tree pickup is confirmed"
-  published_logo_image: fleur-de-lis-2024-logo-4c-bc.png
-  published_logo_width: 140
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   published_logo_alt: Tree Recycling Event
   published_body_html: |
     <style>
@@ -51,8 +49,7 @@ cancelled_reservation_email:
   name: cancelled_reservation_email
   description: Sent when a tree pickup reservation is cancelled.
   subject: "Your tree pickup reservation has been cancelled"
-  logo_image: fleur-de-lis-2024-logo-4c-bc.png
-  logo_width: 140
+  logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   logo_alt: Tree Recycling Event
   body_html: |
     <h1>Tree pick-up cancelled</h1>
@@ -62,8 +59,7 @@ cancelled_reservation_email:
     Tree pick-up cancelled
     This email is to confirm that your tree pickup reservation for {{ event.pickup_start_month_day_year }} has been cancelled.
   published_subject: "Your tree pickup reservation has been cancelled"
-  published_logo_image: fleur-de-lis-2024-logo-4c-bc.png
-  published_logo_width: 140
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   published_logo_alt: Tree Recycling Event
   published_body_html: |
     <h1>Tree pick-up cancelled</h1>
@@ -78,8 +74,7 @@ missing_tree_email:
   name: missing_tree_email
   description: Sent when a tree cannot be found. Includes the first notice and follow-up variants.
   subject: "{% if reservation.missing_tree_follow_up %}Follow-up: We still cannot find your tree{% else %}We could not find your tree{% endif %}"
-  logo_image: fleur-de-lis-2024-logo-4c-bc.png
-  logo_width: 250
+  logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   logo_alt: Tree Recycling Event
   body_html: |
     <h1>{% if reservation.missing_tree_follow_up %}Tree Not Found - Follow Up{% else %}Tree Not Found{% endif %}</h1>
@@ -94,8 +89,7 @@ missing_tree_email:
     Date: {{ reservation.updated_at_date }}
     {% if reservation.pickup_notes != blank %}Your Notes: {{ reservation.pickup_notes | escape }}{% endif %}
   published_subject: "{% if reservation.missing_tree_follow_up %}Follow-up: We still cannot find your tree{% else %}We could not find your tree{% endif %}"
-  published_logo_image: fleur-de-lis-2024-logo-4c-bc.png
-  published_logo_width: 250
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
   published_logo_alt: Tree Recycling Event
   published_body_html: |
     <h1>{% if reservation.missing_tree_follow_up %}Tree Not Found - Follow Up{% else %}Tree Not Found{% endif %}</h1>
@@ -109,4 +103,85 @@ missing_tree_email:
     Address: {{ reservation.street | escape }}
     Date: {{ reservation.updated_at_date }}
     {% if reservation.pickup_notes != blank %}Your Notes: {{ reservation.pickup_notes | escape }}{% endif %}
+  published_at: "2026-01-01 00:00:00"
+
+pickup_reminder_email:
+  name: pickup_reminder_email
+  description: A one-time reminder with pickup details, tree preparation instructions, and donation options.
+  subject: "Reminder: Tree pickup on {{ event.pickup_start_weekday }}"
+  logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
+  logo_alt: Tree Recycling Event
+  body_html: |
+    <h1>Tree pickup reminder</h1>
+    <p>Have your tree out and ready by {{ event.pickup_start_time_compact }}.</p>
+    <p>{{ reservation.street | escape }}</p>
+    {% if reservation.pickup_notes != blank %}<p>{{ reservation.pickup_notes | escape }}</p>{% endif %}
+    <p>{{ setting.pickup_instructions | escape }}</p>
+    {% unless reservation.donation_received %}
+      <h2>Support our fundraiser</h2>
+      <p>Tree recycling is a fundraiser for {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }}.</p>
+      <p>If you elect to donate on the day of collection, we accept checks or cash.</p>
+      <ul>
+        <li>make checks payable to {{ setting.organization_name }}</li>
+        <li>place your donation in an envelope</li>
+        <li>place that envelope in a baggie</li>
+        <li>secure the baggie to your tree</li>
+      </ul>
+      <p><a href="{{ urls.donation }}">make an online donation</a></p>
+    {% endunless %}
+    <p><a href="{{ urls.edit_reservation }}">review or edit your reservation</a></p>
+  body_text: |
+    Tree pickup reminder
+    Have your tree out and ready by {{ event.pickup_start_time_compact }}.
+    {{ reservation.street | escape }}
+    {% if reservation.pickup_notes != blank %}{{ reservation.pickup_notes | escape }}{% endif %}
+    {{ setting.pickup_instructions }}
+    {% unless reservation.donation_received %}Support our fundraiser
+    Tree recycling is a fundraiser for {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }}.
+    If you elect to donate on the day of collection, we accept checks or cash.
+    - make checks payable to {{ setting.organization_name }}
+    - place your donation in an envelope
+    - place that envelope in a baggie
+    - secure the baggie to your tree
+    Make an online donation: {{ urls.donation }}
+    {% endunless %}
+    Review or edit your reservation: {{ urls.edit_reservation }}
+  published_subject: "Reminder: Tree pickup on {{ event.pickup_start_weekday }}"
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
+  published_logo_alt: Tree Recycling Event
+  published_body_html: |
+    <h1>Tree pickup reminder</h1>
+    <p>Have your tree out and ready by {{ event.pickup_start_time_compact }}.</p>
+    <p>{{ reservation.street | escape }}</p>
+    {% if reservation.pickup_notes != blank %}<p>{{ reservation.pickup_notes | escape }}</p>{% endif %}
+    <p>{{ setting.pickup_instructions | escape }}</p>
+    {% unless reservation.donation_received %}
+      <h2>Support our fundraiser</h2>
+      <p>Tree recycling is a fundraiser for {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }}.</p>
+      <p>If you elect to donate on the day of collection, we accept checks or cash.</p>
+      <ul>
+        <li>make checks payable to {{ setting.organization_name }}</li>
+        <li>place your donation in an envelope</li>
+        <li>place that envelope in a baggie</li>
+        <li>secure the baggie to your tree</li>
+      </ul>
+      <p><a href="{{ urls.donation }}">make an online donation</a></p>
+    {% endunless %}
+    <p><a href="{{ urls.edit_reservation }}">review or edit your reservation</a></p>
+  published_body_text: |
+    Tree pickup reminder
+    Have your tree out and ready by {{ event.pickup_start_time_compact }}.
+    {{ reservation.street | escape }}
+    {% if reservation.pickup_notes != blank %}{{ reservation.pickup_notes | escape }}{% endif %}
+    {{ setting.pickup_instructions }}
+    {% unless reservation.donation_received %}Support our fundraiser
+    Tree recycling is a fundraiser for {{ setting.organization_name }}. We suggest a donation of {{ setting.suggested_donation_currency }}.
+    If you elect to donate on the day of collection, we accept checks or cash.
+    - make checks payable to {{ setting.organization_name }}
+    - place your donation in an envelope
+    - place that envelope in a baggie
+    - secure the baggie to your tree
+    Make an online donation: {{ urls.donation }}
+    {% endunless %}
+    Review or edit your reservation: {{ urls.edit_reservation }}
   published_at: "2026-01-01 00:00:00"

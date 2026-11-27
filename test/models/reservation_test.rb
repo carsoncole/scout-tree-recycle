@@ -37,6 +37,30 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not_includes reviewable, reservations(:cancelled_1)
   end
 
+  test "pickup reminder pending includes only active reservations without a reminder" do
+    reminded = reservations(:routing_1)
+    reminded.update_column(:pickup_reminder_email_sent_at, Time.current)
+
+    eligible = Reservation.pickup_reminder_pending
+
+    assert_includes eligible, reservations(:routing_2)
+    assert_includes eligible, reservations(:pending_pickup_1)
+    assert_not_includes eligible, reminded
+    assert_not_includes eligible, reservations(:picked_up_1)
+    assert_not_includes eligible, reservations(:cancelled_1)
+    assert_not_includes eligible, reservations(:donation_1)
+  end
+
+  test "donation received is true only when a paid donation exists" do
+    reservation = reservations(:pending_pickup_no_mobile)
+    assert_not reservation.donation_received?
+
+    Donation.create!(reservation: reservation, amount: 100, payment_status: "paid", form: :online)
+    assert reservation.reload.donation_received?
+
+    assert_not ReservationEmailTemplate.sample_reservation.donation_received?
+  end
+
   test "imported status is valid and reports routing status" do
     reservation = Reservation.new(name: "Imported", street: "1 Main", city: "New York", state: "NY", country: "United States", email: "imported.status@example.com", status: "imported")
     assert reservation.valid?

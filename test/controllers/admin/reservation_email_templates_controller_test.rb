@@ -17,7 +17,7 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
     assert_includes response.body, "Send test email"
     assert_includes response.body, "Send the follow-up version"
     assert_includes response.body, "Use reservation data from"
-    assert_select "input[type='email'][value=?]", users(:admin).email, count: 3
+    assert_select "input[type='email'][value=?]", users(:admin).email, count: ReservationEmailTemplate::NAMES.size
   end
 
   test "should get edit" do
@@ -39,15 +39,13 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
     patch admin_reservation_email_template_url(@template), params: {
       reservation_email_template: {
         subject: "Updated subject",
-        logo_width: 300,
-        body_html: "<p>Updated body for {{ reservation.name }}</p>"
+          body_html: "<p>Updated body for {{ reservation.name }}</p>"
       }
     }
 
     assert_redirected_to edit_admin_reservation_email_template_url(@template)
     @template.reload
     assert_equal "Updated subject", @template.subject
-    assert_equal 300, @template.logo_width
     assert_equal published_body, @template.published_body_html
     assert @template.draft_changes?
   end
@@ -100,7 +98,7 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
   end
 
   test "should publish a template" do
-    @template.update!(subject: "Ready to go", body_html: "<p>Ready</p>", logo_width: 300)
+    @template.update!(subject: "Ready to go", body_html: "<p>Ready</p>", logo_alt: "Ready logo")
 
     patch publish_admin_reservation_email_template_url(@template)
 
@@ -109,7 +107,6 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
     assert @template.published?
     assert_equal "Ready to go", @template.published_subject
     assert_equal "<p>Ready</p>", @template.published_body_html
-    assert_equal 300, @template.published_logo_width
   end
 
   test "should unpublish a template" do
@@ -134,7 +131,7 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
   test "should load default templates" do
     ReservationEmailTemplate.delete_all
 
-    assert_difference -> { ReservationEmailTemplate.count }, 3 do
+    assert_difference -> { ReservationEmailTemplate.count }, ReservationEmailTemplate::NAMES.size do
       post install_defaults_admin_reservation_email_templates_url
     end
 
@@ -142,6 +139,7 @@ class Admin::ReservationEmailTemplatesControllerTest < ActionDispatch::Integrati
     assert ReservationEmailTemplate.published.exists?(name: "new_reservation_email")
     assert ReservationEmailTemplate.published.exists?(name: "cancelled_reservation_email")
     assert ReservationEmailTemplate.published.exists?(name: "missing_tree_email")
+    assert ReservationEmailTemplate.published.exists?(name: "pickup_reminder_email")
   end
 
   test "should send a test email using the draft" do

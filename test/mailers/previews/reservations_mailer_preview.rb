@@ -24,4 +24,10 @@ class ReservationsMailerPreview < ActionMailer::Preview
     reservation.update(missing_tree_email_sent_at: 1.day.ago)
     ReservationsMailer.with(reservation_id: reservation.id).missing_tree_email
   end
+
+  def send_pickup_reminder_email
+    reservation = Reservation.active.first || Reservation.first
+    reservation.update(pickup_reminder_email_sent_at: nil)
+    ReservationsMailer.with(reservation_id: reservation.id).pickup_reminder_email
+  end
 end

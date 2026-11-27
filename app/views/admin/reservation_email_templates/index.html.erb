@@ -58,7 +58,9 @@
             <% end %>
 
             <div class="flex flex-wrap items-center justify-start gap-3">
-              <%= link_to "Edit Template", edit_admin_reservation_email_template_path(template), class: admin_button_class(variant: :secondary, size: :small) %>
+              <% unless template.name == "pickup_reminder_email" %>
+                <%= link_to "Edit Template", edit_admin_reservation_email_template_path(template), class: admin_button_class(variant: :secondary, size: :small) %>
+              <% end %>
               <%= link_to "Preview",
                   preview_admin_reservation_email_template_path(template, source: template.published? ? "published" : "draft"),
                   class: admin_button_class(variant: :secondary, size: :small),

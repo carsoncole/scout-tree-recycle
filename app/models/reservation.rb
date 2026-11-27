@@ -54,6 +54,7 @@ class Reservation < ApplicationRecord
     "confirmed_reservation_email_sent_at",
     "cancelled_reservation_email_sent_at",
     "missing_tree_email_sent_at", "missing_tree_sms_sent_at",
+    "pickup_reminder_email_sent_at",
     "is_missing_tree_notifications_enabled",
     "created_at", "updated_at",
     "address_match_status", "address_match_score", "address_verified_at",
@@ -68,6 +69,7 @@ class Reservation < ApplicationRecord
     cancelled_reservation_email_sent_at
     missing_tree_email_sent_at
     missing_tree_sms_sent_at
+    pickup_reminder_email_sent_at
     created_at
     updated_at
     address_verified_at
@@ -96,6 +98,11 @@ class Reservation < ApplicationRecord
       label: "Missing tree email",
       sent_at: :missing_tree_email_sent_at,
       mailer: :missing_tree_email
+    },
+    "pickup_reminder" => {
+      label: "Pickup reminder email",
+      sent_at: :pickup_reminder_email_sent_at,
+      mailer: :pickup_reminder_email
     }
   }.freeze
 
@@ -182,6 +189,9 @@ class Reservation < ApplicationRecord
   MIGRATABLE_STATUSES = %w[routing pending_pickup picked_up missing cancelled imported].freeze
   scope :migratable, -> { where(status: MIGRATABLE_STATUSES) }
   scope :active, -> { where(status: [ "routing", "pending_pickup" ]) }
+  scope :pickup_reminder_pending, -> { active.where(pickup_reminder_email_sent_at: nil) }
+  scope :pickup_reminder_eligible, -> { pickup_reminder_pending }
+  scope :pickup_reminder_unsent, -> { pickup_reminder_pending }
   scope :not_active, -> { where.not(status: [ "routing", "pending_pickup" ]) }
   scope :pickup, -> { where(status: [ "pending_pickup", "missing" ]) }
   scope :routing_ready, -> {
@@ -300,6 +310,17 @@ class Reservation < ApplicationRecord
   def routed?
     route.present?
   end
+
+  def pickup_reminder_eligible?
+    routing? || pending_pickup?
+  end
+
+  def donation_received?
+    persisted? && donations.received.exists?
+  end
+  alias_method :has_donation?, :donation_received?
+  alias_method :eligible_for_pickup_reminder?, :pickup_reminder_eligible?
+  alias_method :pickup_reminder_email_eligible?, :pickup_reminder_eligible?
 
   def route!
     Router.new(self).route!

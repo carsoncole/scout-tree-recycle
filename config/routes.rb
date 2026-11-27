@@ -46,12 +46,16 @@ Rails.application.routes.draw do
     resource :session, only: [ :new, :create, :destroy ]
     resource :profile, only: [ :show, :update ]
     resources :reservations, except: [ :new, :create ] do
+      collection do
+        post :send_pickup_reminder_emails
+      end
       member do
         post :geocode
         post :verify_address
         post :route
         patch :assign_route
         post :resend_email
+        post :send_pickup_reminder_email
       end
     end
     resources :settings, only: [ :index, :new, :create, :update ] do

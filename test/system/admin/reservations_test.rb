@@ -15,6 +15,19 @@ class Admin::ReservationsTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Reservations"
   end
 
+  test "sending a batch of pickup reminder emails" do
+    configure_email!
+    count = Reservation.pickup_reminder_pending.count
+    visit admin_reservations_url
+
+    within "section", text: "Pickup reminder email" do
+      assert_text "#{count} emails remaining"
+      accept_confirm { click_button "Send Pickup Reminder Emails" }
+    end
+
+    assert_selector ".flash", text: "#{Setting.instance.email_batch_size(count)} of #{count} pickup reminder emails queued to be sent."
+  end
+
   test "includes the live reservation notification container" do
     visit admin_reservations_url
 

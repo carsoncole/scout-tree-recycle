@@ -25,7 +25,7 @@ class Setting < ApplicationRecord
   DEFAULT_DONATIONS_NEW_PAGE_CONTENT = "Our tree pickup service is free, but it's also our biggest fundraiser of the year. Every donation goes straight to our organization and helps our members take part in:\n\n- Summer camps and outdoor adventures\n- Leadership and team-building activities\n- Community service projects"
   DEFAULT_DONATIONS_SUCCESS_PAGE_CONTENT = "Thanks to you, our organization can keep adventuring, leading, and giving back to the community. We'll put your donation to good use."
   DEFAULT_HOME_PAGE_IMAGE = "tree-4c-bc.png"
-  DEFAULT_MAILER_LOGO = "fleur-de-lis-2024-logo-4c-bc-small.png"
+  DEFAULT_MAILER_LOGO = "fleur-de-lis-2024-logo-4c-bc-icon.png"
   DEFAULT_BACKUP_TIME = "06:00"
   BACKUP_TIME_FORMAT = /\A([01]\d|2[0-3]):[0-5]\d\z/
 

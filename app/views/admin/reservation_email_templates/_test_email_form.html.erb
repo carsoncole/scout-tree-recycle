@@ -3,7 +3,7 @@
 
   <%= form_with url: send_test_admin_reservation_email_template_path(template), method: :post, class: "mt-4 flex flex-col gap-3" do %>
     <%= hidden_field_tag :source, "published" %>
-    <%= hidden_field_tag :return_to, "index" %>
+    <%= hidden_field_tag :return_to, local_assigns.fetch(:return_to, "index") %>
 
     <div class="admin-field">
       <%= label_tag "test_email_#{template.name}", "Send to", class: "admin-label text-ink dark:text-ink-dark" %>

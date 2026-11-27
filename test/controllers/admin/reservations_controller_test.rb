@@ -7,6 +7,138 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "index shows pickup reminder batch details" do
+    Setting.instance.update!(email_batch_quantity: 2)
+    sign_in
+
+    get admin_reservations_url
+
+    assert_response :success
+    assert_select "section[aria-labelledby=pickup-reminder-email-title]" do
+      assert_select "h2", text: "Pickup reminder email"
+      assert_select "form[action=?]", send_pickup_reminder_emails_admin_reservations_path
+      assert_match "#{Reservation.pickup_reminder_pending.count} emails remaining", response.body
+      assert_match "Batch size:", response.body
+    end
+  end
+
+  test "queues a batch of pickup reminder emails" do
+    configure_email!
+    sign_in
+    count = Reservation.pickup_reminder_pending.count
+
+    assert_enqueued_with(job: SendPickupReminderEmailsJob) do
+      post send_pickup_reminder_emails_admin_reservations_url
+    end
+
+    assert_redirected_to admin_reservations_url
+    assert_equal "#{Setting.instance.email_batch_size(count)} of #{count} pickup reminder emails queued to be sent.", flash[:notice]
+  end
+
+  test "does not queue pickup reminders when emailing is disabled" do
+    Setting.instance.update!(is_emailing_enabled: false)
+    sign_in
+
+    assert_no_enqueued_jobs do
+      post send_pickup_reminder_emails_admin_reservations_url
+    end
+
+    assert_redirected_to admin_reservations_url
+    assert_equal "Emailing is disabled. Enable it in Settings before sending pickup reminder emails.", flash[:alert]
+  end
+
+  test "does not queue pickup reminders without eligible reservations" do
+    configure_email!
+    Reservation.pickup_reminder_pending.update_all(pickup_reminder_email_sent_at: Time.current)
+    sign_in
+
+    assert_no_enqueued_jobs do
+      post send_pickup_reminder_emails_admin_reservations_url
+    end
+
+    assert_redirected_to admin_reservations_url
+    assert_equal "No reservations are eligible for a pickup reminder email.", flash[:alert]
+  end
+
+  test "does not queue pickup reminders when the template is unpublished" do
+    configure_email!
+    reservation_email_templates(:pickup_reminder_email).unpublish!
+    sign_in
+
+    assert_no_enqueued_jobs do
+      post send_pickup_reminder_emails_admin_reservations_url
+    end
+
+    assert_redirected_to admin_reservations_url
+    assert_equal "Pickup reminder email is not published. Edit the template and publish it before sending.", flash[:alert]
+  end
+
+  test "show displays whether the pickup reminder was sent" do
+    reservation = reservations(:pending_pickup_1)
+    reservation.update_column(:pickup_reminder_email_sent_at, Time.current)
+    sign_in
+
+    get admin_reservation_url(reservation)
+
+    assert_response :success
+    assert_select ".admin-detail dt", text: "Pickup reminder email"
+    assert_select ".admin-badge", text: /Sent/
+  end
+
+  test "sends a pickup reminder test email from the reservations panel" do
+    configure_email!
+    original_perform_deliveries = ActionMailer::Base.perform_deliveries
+    ActionMailer::Base.perform_deliveries = false
+    sign_in
+    template = reservation_email_templates(:pickup_reminder_email)
+
+    post send_test_admin_reservation_email_template_url(template), params: {
+      email: "admin@example.com",
+      source: "published",
+      return_to: "reservations"
+    }
+
+    assert_redirected_to admin_reservations_url
+    assert_equal "Test email sent to admin@example.com.", flash[:notice]
+  ensure
+    ActionMailer::Base.perform_deliveries = original_perform_deliveries
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.smtp_settings = {}
+  end
+
+  test "queues a pickup reminder email from the reservation show page" do
+    configure_email!
+    original_perform_deliveries = ActionMailer::Base.perform_deliveries
+    ActionMailer::Base.perform_deliveries = false
+    sign_in
+    reservation = reservations(:pending_pickup_not_routed)
+
+    assert_enqueued_emails 1 do
+      post send_pickup_reminder_email_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Pickup reminder email was queued for delivery to #{reservation.email}.", flash[:notice]
+  ensure
+    ActionMailer::Base.perform_deliveries = original_perform_deliveries
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.smtp_settings = {}
+  end
+
+  test "does not queue a pickup reminder that was already sent" do
+    configure_email!
+    sign_in
+    reservation = reservations(:pending_pickup_not_routed)
+    reservation.update_column(:pickup_reminder_email_sent_at, Time.current)
+
+    assert_no_enqueued_emails do
+      post send_pickup_reminder_email_admin_reservation_url(reservation)
+    end
+
+    assert_redirected_to admin_reservation_url(reservation)
+    assert_equal "Pickup reminder email was already sent to #{reservation.email}.", flash[:alert]
+  end
+
   test "includes the live reservation notification container" do
     sign_in
     get admin_reservations_url

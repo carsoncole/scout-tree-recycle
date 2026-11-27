@@ -1,10 +1,12 @@
+require "base64"
+
 class ApplicationMailer < ActionMailer::Base
   include ApplicationHelper
   layout "mailer"
 
   # Built-in fallback used when no Setting row exists. The default logo for
   # system emails normally comes from Setting#mailer_logo_name.
-  LOGO_FILENAME = "fleur-de-lis-2024-logo-4c-bc.png"
+  LOGO_FILENAME = "fleur-de-lis-2024-logo-4c-bc-icon.png"
 
   helper_method :email_logo_tag, :email_logo_src
 
@@ -15,7 +17,7 @@ class ApplicationMailer < ActionMailer::Base
   # Not a header. The mail archive reads this after a successful delivery.
   after_action :remember_mail_action
 
-  def email_logo_tag(width: 140, alt: nil, style: nil, filename: nil)
+  def email_logo_tag(width: 75, alt: nil, style: nil, filename: nil)
     attributes = []
     attributes << %(alt="#{ERB::Util.html_escape(alt)}") if alt.present?
     attributes << %(style="#{ERB::Util.html_escape(style)}") if style.present?
@@ -24,12 +26,14 @@ class ApplicationMailer < ActionMailer::Base
     %(<img src="#{ERB::Util.html_escape(email_logo_src(filename: filename))}" width="#{width.to_i}"#{extra}>).html_safe
   end
 
-  # Attaches the logo inline and returns its CID URL. A blank filename uses the
-  # default mailer logo from Settings; unknown filenames fall back to it too.
+  # Embeds the logo directly in the message as a base64 data URI instead of
+  # attaching it. A blank filename uses the default mailer logo from Settings;
+  # unknown filenames fall back to it too.
   def email_logo_src(filename: nil)
     filename = safe_logo_filename(filename)
-    attachments.inline[filename] ||= File.binread(Rails.root.join("app/assets/images", filename))
-    attachments[filename].url
+    path = Rails.root.join("app/assets/images", filename)
+    content_type = "image/#{File.extname(filename).delete('.').downcase}"
+    "data:#{content_type};base64,#{Base64.strict_encode64(File.binread(path))}"
   end
 
   private

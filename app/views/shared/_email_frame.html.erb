@@ -4,11 +4,18 @@
       <table role="presentation" style="max-width:800px; margin-left:auto; margin-right:auto; border-collapse: collapse;">
         <tr>
           <td style="text-align:left; padding:0; border:0;">
-            <% if logo_src.present? %>
-              <div style="text-align:center; margin-left:auto; margin-right:auto; margin-top:16px; margin-bottom:0;">
-                <img src="<%= logo_src %>" width="<%= logo_width.to_i %>" alt="<%= logo_alt %>" style="max-width:100%; height:auto;">
-              </div>
-            <% end %>
+            <table role="presentation" style="margin-top:16px; margin-bottom:16px; border-collapse:collapse;">
+              <tr>
+                <% if logo_src.present? %>
+                  <td style="vertical-align:middle; padding-right:12px; border:0;">
+                    <img src="<%= logo_src %>" width="65" alt="<%= logo_alt %>" style="max-width:100%; height:auto;">
+                  </td>
+                <% end %>
+                <td style="vertical-align:middle; border:0; font-family:Arial, Helvetica, sans-serif; font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#4c6a57;">
+                  <%= ERB::Util.html_escape(Setting.instance&.home_page_header.presence || Setting.instance&.organization_name.presence || "Tree Recycle") %>
+                </td>
+              </tr>
+            </table>
 
             <%= raw body_html %>
 

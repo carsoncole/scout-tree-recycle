@@ -2,6 +2,7 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
   include EmailTemplateResponses
 
   before_action :set_template, only: [ :edit, :update, :preview, :send_test, :publish, :unpublish, :restore_default ]
+  before_action :prevent_pickup_reminder_editing, only: [ :edit, :update, :publish, :unpublish, :restore_default ]
 
   def index
     @templates = ReservationEmailTemplate.where(name: ReservationEmailTemplate::NAMES).index_by(&:name)
@@ -29,7 +30,7 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
     assigns = preview_assigns(reservation)
     @body_html = @template.render_body_html(assigns, source: source)
     @logo_src = EmailImageLibrary.data_uri(source_logo_image(source))
-    @logo_width = source_logo_width(source)
+    @logo_width = 75
     @logo_alt = source_logo_alt(source)
     @email_footer = Setting.instance.organization_name
 
@@ -96,13 +97,22 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
 
   private
 
+  def prevent_pickup_reminder_editing
+    return unless @template&.name == "pickup_reminder_email"
+
+    redirect_to admin_reservation_email_templates_path, alert: "The pickup reminder email template cannot be edited."
+  end
+
   def set_template
     @template = ReservationEmailTemplate.find(params[:id])
   end
 
   def send_test_redirect_path
-    if params[:return_to].to_s == "index"
+    case params[:return_to].to_s
+    when "index"
       admin_reservation_email_templates_path
+    when "reservations"
+      admin_reservations_path
     else
       edit_admin_reservation_email_template_path(@template)
     end
@@ -113,7 +123,6 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
       :description,
       :subject,
       :logo_image,
-      :logo_width,
       :logo_alt,
       :body_html,
       :body_text
@@ -158,12 +167,12 @@ class Admin::ReservationEmailTemplatesController < Admin::BaseController
 
   def source_logo_image(source)
     image = source == :published ? @template.published_logo_image : @template.logo_image
-    image.presence || ApplicationMailer::LOGO_FILENAME
+    image.presence || ReservationEmailTemplate::DEFAULT_LOGO
   end
 
   def source_logo_width(source)
     width = source == :published ? @template.published_logo_width : @template.logo_width
-    width.presence || 140
+    width.presence || 75
   end
 
   def source_logo_alt(source)

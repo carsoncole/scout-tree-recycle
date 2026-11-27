@@ -3,6 +3,7 @@
 class MarketingMailer < ApplicationMailer
   before_action :set_contact, except: :test_email
   after_deliver :mark_marketing_email_sent
+  after_deliver :log_marketing_email
 
   def marketing_email_1
     setting = Setting.instance
@@ -98,5 +99,21 @@ class MarketingMailer < ApplicationMailer
     return if @contact.blank? || @contact.id.blank?
 
     Contact.where(id: @contact.id).update_all(@marketing_email_sent_at_attribute => Time.current, updated_at: Time.current)
+  end
+
+  # Records an email log with the sent subject for marketing email activity.
+  # Suppressed and test sends are not real activity, so they are not logged.
+  # A logging failure must never break the delivery.
+  def log_marketing_email
+    return if @marketing_email_sent_at_attribute.blank?
+    return if @contact.blank? || @contact.id.blank?
+
+    Log.create(
+      log_type: "email",
+      message: "Marketing email sent to #{@contact.email}: #{message.subject}",
+      context: { to: @contact.email, subject: message.subject }
+    )
+  rescue StandardError => e
+    Rails.logger.error("Marketing email could not be logged: #{e.class}: #{e.message}")
   end
 end

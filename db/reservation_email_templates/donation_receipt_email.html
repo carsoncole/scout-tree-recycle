@@ -39,19 +39,17 @@
 </style>
 
 <h1 class="email-heading">Thank you for your donation!</h1>
-<p class="email-text">This is a receipt for your donation of {{ donation.amount_currency }} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
+<p class="email-text">This is a receipt for your donation{% if donation.amount_currency != blank %} of {{ donation.amount_currency }}{% endif %} via Stripe. Thank you - this directly supports {{ setting.organization_name }}.</p>
 
 <ul class="email-details">
-  <li><strong>Amount:</strong> {{ donation.amount_currency }}</li>
-  <li><strong>Status:</strong> {{ donation.status }}</li>
+  {% if donation.amount_currency != blank %}<li><strong>Amount:</strong> {{ donation.amount_currency }}</li>{% endif %}
+  {% if donation.status != blank %}<li><strong>Status:</strong> {{ donation.status }}</li>{% endif %}
   {% if donation.card_brand != blank %}
   <li><strong>Card brand:</strong> {{ donation.card_brand_capitalized }}{% if donation.last4 != blank %} ending in {{ donation.last4 }}{% endif %}</li>
   {% elsif donation.last4 != blank %}
   <li><strong>Last 4 digits:</strong> {{ donation.last4 }}</li>
   {% endif %}
-  <li><strong>Customer name:</strong> {{ donation.customer_name }}</li>
-  <li><strong>Email:</strong> {{ donation.email }}</li>
-  {% if donation.receipt_url != blank %}
-  <li><strong>Receipt URL:</strong> <a href="{{ donation.receipt_url }}">{{ donation.receipt_url }}</a></li>
-  {% endif %}
+  {% if donation.customer_name != blank %}<li><strong>Customer name:</strong> {{ donation.customer_name }}</li>{% endif %}
+  {% if donation.email != blank %}<li><strong>Email:</strong> {{ donation.email }}</li>{% endif %}
+  {% if donation.receipt_url != blank %}<li><strong>Receipt URL:</strong> <a href="{{ donation.receipt_url }}">{{ donation.receipt_url }}</a></li>{% endif %}
 </ul>

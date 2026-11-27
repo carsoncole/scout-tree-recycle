@@ -41,8 +41,7 @@
         </div>
         <div class="admin-detail border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Receipt email sent</dt>
-          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.is_receipt_email_sent ? "Yes" : "No" %></dd>
-        </div>
+          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.receipt_email_sent_at.present? ? "Yes" : "No" %></dd>        </div>
         <div class="admin-detail border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Created at</dt>
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.created_at.strftime("%b %d, %Y %I:%M %p") %></dd>

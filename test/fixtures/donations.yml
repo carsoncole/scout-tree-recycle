@@ -3,6 +3,6 @@ one:
   amount: 100
   status: complete
   payment_status: paid
-  is_receipt_email_sent: true
+  receipt_email_sent_at: "2025-05-17 12:00:00"
   customer_name: John Doe
   email: john.doe@example.com

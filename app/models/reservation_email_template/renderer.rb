@@ -32,6 +32,8 @@ class ReservationEmailTemplate
         "zip" => reservation.zip.to_s,
         "pickup_notes" => reservation.pickup_notes.to_s,
         "donation_received" => reservation.donation_received?,
+        "donation_amount" => reservation.donation_amount,
+        "donation_amount_currency" => reservation.donation_amount_currency,
         "status" => reservation.status.to_s,
         "missing_tree_follow_up" => missing_tree_follow_up?,
         "updated_at_date" => formatted_time(reservation.updated_at, "%A, %B %-d, %Y"),

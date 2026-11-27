@@ -1,7 +1,9 @@
 class ReservationsMailer < ApplicationMailer
-  before_action :set_reservation, except: :test_email
+  before_action :set_context, except: :test_email
   after_deliver :mark_reservation_email_sent
   after_deliver :log_reservation_email
+  after_deliver :mark_donation_receipt_sent
+  after_deliver :log_donation_receipt_email
 
   def new_reservation_email(force: false)
     return suppress_delivery("Your tree pickup is confirmed") unless Setting.instance.is_emailing_enabled?
@@ -56,10 +58,55 @@ class ReservationsMailer < ApplicationMailer
     )
   end
 
+  def donation_receipt_email(force: false)
+    @donation = @donation || (@reservation ? @reservation.donations.order(created_at: :desc).first : nil)
+    @reservation ||= @donation&.reservation
+
+    subject = "Thank you for your donation"
+
+    if @reservation.blank?
+      return suppress_delivery(subject)
+    end
+
+    if (@donation&.email.presence || @reservation&.email).blank?
+      return suppress_delivery(subject)
+    end
+
+    unless Setting.instance.is_emailing_enabled?
+      return suppress_delivery(subject)
+    end
+
+    if !force && @donation&.receipt_email_sent_at.present?
+      return suppress_delivery(subject)
+    end
+
+    @donation_to_update = @donation
+    @sent_attribute = nil
+    prepare_common_assigns
+    deliver_template("donation_receipt_email", fallback_subject: subject)
+  end
+  alias_method :donation_email, :donation_receipt_email
+  alias_method :donation_confirmed_email, :donation_receipt_email
+  alias_method :donation_receipt, :donation_receipt_email
+
   private
 
-  def set_reservation
-    @reservation = Reservation.find(params[:reservation_id])
+  def set_context
+    @reservation = Reservation.find_by(id: params[:reservation_id]) if params[:reservation_id].present?
+    @donation = if params[:donation_id].present?
+      Donation.find_by(id: params[:donation_id])
+    else
+      @reservation&.donations&.order(created_at: :desc)&.first
+    end
+    @reservation ||= @donation&.reservation
+  end
+
+  def suppress_delivery(subject)
+    @delivery_suppressed = true
+    recipient = (@donation&.email.presence || @reservation&.email)
+    message = mail(to: recipient, subject: subject, body: "")
+    message.perform_deliveries = false
+    message
   end
 
   def prepare_common_assigns
@@ -115,7 +162,8 @@ class ReservationsMailer < ApplicationMailer
   # leaving the reservation's send timestamps untouched.
   def suppress_delivery(subject)
     @delivery_suppressed = true
-    message = mail(to: @reservation.email, subject: subject, body: "")
+    recipient = (@donation&.email.presence || @reservation&.email)
+    message = mail(to: recipient, subject: subject, body: "")
     message.perform_deliveries = false
     message
   end
@@ -143,5 +191,31 @@ class ReservationsMailer < ApplicationMailer
     )
   rescue StandardError => e
     Rails.logger.error("Reservation email could not be logged: #{e.class}: #{e.message}")
+  end
+
+  def mark_donation_receipt_sent
+    return if @delivery_suppressed
+    return unless @donation_to_update&.id
+
+    Donation.where(id: @donation_to_update.id).update_all(receipt_email_sent_at: Time.current, updated_at: Time.current)
+  end
+
+  def log_donation_receipt_email
+    return if @delivery_suppressed
+    return unless @donation_to_update&.id
+
+    recipient = (@donation&.email.presence || @reservation&.email)
+    return if recipient.blank?
+
+    if @reservation.present?
+      Log.create(
+        log_type: "email",
+        reservation: @reservation,
+        message: "Email sent to #{recipient}: #{message.subject}",
+        context: { to: recipient, subject: message.subject }
+      )
+    end
+  rescue StandardError => e
+    Rails.logger.error("Donation receipt email could not be logged: #{e.class}: #{e.message}")
   end
 end

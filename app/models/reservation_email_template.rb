@@ -2,7 +2,7 @@ class ReservationEmailTemplate < ApplicationRecord
   include TemplatedEmail
 
   DEFAULTS_DIRECTORY = Rails.root.join("db/reservation_email_templates")
-  NAMES = %w[new_reservation_email cancelled_reservation_email missing_tree_email pickup_reminder_email].freeze
+  NAMES = %w[new_reservation_email cancelled_reservation_email missing_tree_email pickup_reminder_email donation_receipt_email].freeze
   TEMPLATE_ATTRIBUTES = %i[subject logo_image logo_alt body_html body_text].freeze
   DEFAULT_LOGO = "fleur-de-lis-2024-logo-4c-bc-icon.png"
 
@@ -18,6 +18,8 @@ class ReservationEmailTemplate < ApplicationRecord
     { name: "reservation.zip", description: "Pickup ZIP code.", example: "12345" },
     { name: "reservation.pickup_notes", description: "Notes the reservation holder added for the pickup crew.", example: "Tree is behind the gate." },
     { name: "reservation.donation_received", description: "True when a paid donation has already been recorded for the reservation.", example: "false" },
+  { name: "reservation.donation_amount", description: "Amount of the most recent donation for this reservation.", example: "25" },
+  { name: "reservation.donation_amount_currency", description: "Amount of the most recent donation formatted as currency.", example: "$25.00" },
     { name: "reservation.status", description: "Current reservation status.", example: "pending_pickup" },
     { name: "reservation.missing_tree_follow_up", description: "True when this is a follow-up missing-tree notice.", example: "true" },
     { name: "reservation.updated_at_date", description: "Date the reservation was last updated, including the weekday and year.", example: "Saturday, January 6, 2029" },

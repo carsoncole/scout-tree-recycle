@@ -185,3 +185,26 @@ pickup_reminder_email:
     {% endunless %}
     Review or edit your reservation: {{ urls.edit_reservation }}
   published_at: "2026-01-01 00:00:00"
+
+donation_receipt_email:
+  name: donation_receipt_email
+  description: Donation receipt sent when a donation is confirmed.
+  subject: "Thank you for your donation"
+  logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
+  logo_alt: Tree Recycling Event
+  body_html: |
+    <h1>Thank you for your donation!</h1>
+    <p>We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!</p>
+  body_text: |
+    Thank you for your donation!
+    We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!
+  published_subject: "Thank you for your donation"
+  published_logo_image: fleur-de-lis-2024-logo-4c-bc-icon.png
+  published_logo_alt: Tree Recycling Event
+  published_body_html: |
+    <h1>Thank you for your donation!</h1>
+    <p>We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!</p>
+  published_body_text: |
+    Thank you for your donation!
+    We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!
+  published_at: "2026-01-01 00:00:00"

@@ -15,7 +15,17 @@ class Donation < ApplicationRecord
     reservation.present? && saved_change_to_payment_status? && payment_status.in?(PAID_PAYMENT_STATUSES)
   }
 
+  # Sends a donation receipt email once the donation is confirmed (paid).
+  after_save :send_receipt_email!, if: -> {
+    saved_change_to_payment_status? && payment_status.in?(PAID_PAYMENT_STATUSES) && receipt_email_sent_at.blank?
+  }
   private
+
+  def send_receipt_email!
+    ReservationsMailer.with(donation_id: id, reservation_id: reservation&.id).donation_receipt_email.deliver_later
+  rescue StandardError => e
+    Rails.logger.error("Donation receipt email could not be queued: #{e.class}: #{e.message}")
+  end
 
   def log_donation_made!
     Log.create(

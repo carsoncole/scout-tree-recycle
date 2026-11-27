@@ -1,0 +1,26 @@
+<style>
+  .email-heading {
+    margin: 32px auto 24px;
+    color: #2d3748;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 40px;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .email-text {
+    margin: 0 0 20px;
+    color: #2d3748;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+</style>
+
+<h1 class="email-heading">Thank you for your donation!</h1>
+{% if reservation.has_name %}<p class="email-text">Dear {{ reservation.name | escape }},</p>{% endif %}
+<p class="email-text">We received your donation of {{ reservation.donation_amount_currency }} via Stripe. Thank you for your support!</p>
+<p class="email-text">Your generosity helps make our tree recycling fundraiser possible.</p>
+<p class="email-text">Thank you,<br>{{ setting.organization_name }}</p>

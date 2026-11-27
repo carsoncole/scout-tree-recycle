@@ -103,6 +103,11 @@ class Reservation < ApplicationRecord
       label: "Pickup reminder email",
       sent_at: :pickup_reminder_email_sent_at,
       mailer: :pickup_reminder_email
+    },
+    "donation_receipt" => {
+      label: "Donation receipt email",
+      sent_at: :donation_receipt_email_sent_at,
+      mailer: :donation_receipt_email
     }
   }.freeze
 
@@ -319,6 +324,19 @@ class Reservation < ApplicationRecord
     persisted? && donations.received.exists?
   end
   alias_method :has_donation?, :donation_received?
+  alias_method :donation_made?, :donation_received?
+
+  def donation_receipt_email_sent_at
+    donations.order(created_at: :desc).first&.receipt_email_sent_at
+  end
+
+  def donation_amount
+    donations.order(created_at: :desc).first&.amount || 0
+  end
+
+  def donation_amount_currency
+    "$#{format('%.2f', donation_amount)}"
+  end
   alias_method :eligible_for_pickup_reminder?, :pickup_reminder_eligible?
   alias_method :pickup_reminder_email_eligible?, :pickup_reminder_eligible?
 

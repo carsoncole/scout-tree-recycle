@@ -30,6 +30,8 @@ class Admin::AnalyticsControllerTest < ActionDispatch::IntegrationTest
     assert_match ActiveSupport::NumberHelper.number_to_currency(analytics.average_donation_per_reservation), response.body
     assert_match ActiveSupport::NumberHelper.number_to_currency(analytics.average_donation), response.body
     assert_select "svg.analytics-chart", count: 3
+    assert_select "svg.analytics-chart text", count: 0
+    assert_select "span.analytics-axis-label", minimum: 1
   end
 
   test "shows the same analytics to a user" do

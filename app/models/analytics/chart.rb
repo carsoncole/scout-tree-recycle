@@ -1,6 +1,8 @@
 class Analytics
   # Rounded bar chart geometry for one analytics series. The view draws the
   # SVG from these measurements so the page stays free of plotting math.
+  # Axis labels are HTML beside the SVG. Text inside the SVG scales with the
+  # viewBox and becomes huge once the chart is stretched across the card.
   class Chart
     HEIGHT = 248
     INTERVALS = 4
@@ -32,6 +34,10 @@ class Analytics
 
     def plot_right
       width - 12
+    end
+
+    def plot_top
+      16
     end
 
     def plot_bottom
@@ -151,10 +157,6 @@ class Analytics
       plot_top + plot_height - ((value / nice_max) * plot_height)
     end
 
-    def plot_top
-      16
-    end
-
     def plot_height
       plot_bottom - plot_top
     end
@@ -171,11 +173,10 @@ class Analytics
       [ [ slot * 0.62, 22 ].min, 3 ].max
     end
 
+    # Labels sit in HTML beside the plot, so the SVG only needs a hair of
+    # inset to keep the first bar and gridline off the edge.
     def left_gutter
-      @left_gutter ||= begin
-        longest = y_tick_values.map { |value| format_tick(value).length }.max || 1
-        [ (longest * 7.4) + 18, 44 ].max
-      end
+      2
     end
 
     def format_tick(value)

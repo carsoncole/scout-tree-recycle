@@ -22,6 +22,17 @@ class Admin::RoutesTest < ApplicationSystemTestCase
     assert_no_selector ".route-polygon-label", text: routes(:two).name
   end
 
+  test "clicking a route polygon opens that route" do
+    route = routes(:one)
+
+    visit admin_routes_url
+
+    find("path.route-polygon-link[data-route-url='#{admin_route_path(route)}']").click
+
+    assert_current_path admin_route_path(route)
+    assert_selector "h1", text: "Route: #{route.name}"
+  end
+
   test "showing route displays boundary map" do
     route = routes(:one)
 
@@ -58,6 +69,24 @@ class Admin::RoutesTest < ApplicationSystemTestCase
 
     assert_current_path edit_admin_route_point_path(route, point)
     assert_selector "h1", text: "Edit Point"
+  end
+
+  test "clicking a nearby route label opens that route" do
+    route = routes(:one)
+    neighbor = routes(:two)
+    shared = points(:one)
+
+    neighbor.points.create!(latitude: 40.80, longitude: -74.20, order: 1)
+    neighbor.points.create!(latitude: 40.81, longitude: -74.21, order: 2)
+    neighbor.points.create!(latitude: 40.82, longitude: -74.19, order: 3)
+    neighbor.points.create!(latitude: shared.latitude, longitude: shared.longitude, order: 4)
+
+    visit admin_route_url(route)
+
+    find("a.route-polygon-label[href='#{admin_route_path(neighbor)}']", text: neighbor.name).click
+
+    assert_current_path admin_route_path(neighbor)
+    assert_selector "h1", text: "Route: #{neighbor.name}"
   end
 
   test "nearby routes that share a point are labeled and their points show coordinates" do

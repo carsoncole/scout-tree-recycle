@@ -240,7 +240,7 @@ module ApplicationHelper
   ].freeze
 
   # Every route boundary on the routes index. The name is drawn on the polygon.
-  # Routes with three or fewer points have no closed boundary.
+  # A click opens that route. Routes with three or fewer points have no closed boundary.
   def routes_overview_polygons(routes)
     Array(routes).each_with_index.flat_map do |route, index|
       stroke, fill = ROUTE_OVERVIEW_COLORS[index % ROUTE_OVERVIEW_COLORS.length]
@@ -249,15 +249,16 @@ module ApplicationHelper
           color: stroke,
           fillColor: fill,
           fillOpacity: 0.3,
-          permanentLabel: true
+          permanentLabel: true,
+          url: admin_route_path(route)
         )
       end
     end
   end
 
   # Gray boundary for a route that shares a vertex with the route being viewed.
-  # The name is drawn on the polygon. Routes with three or fewer points still
-  # contribute their markers, but they have no closed boundary.
+  # The name is drawn on the polygon, and a click opens that route. Routes with
+  # three or fewer points still contribute their markers, but they have no closed boundary.
   def nearby_route_polygons(routes)
     Array(routes).flat_map do |route|
       route_boundary_polygon(route, label: route.name).map do |polygon|
@@ -265,7 +266,8 @@ module ApplicationHelper
           color: NEARBY_ROUTE_STROKE,
           fillColor: NEARBY_ROUTE_COLOR,
           fillOpacity: 0.18,
-          permanentLabel: true
+          permanentLabel: true,
+          url: admin_route_path(route)
         )
       end
     end

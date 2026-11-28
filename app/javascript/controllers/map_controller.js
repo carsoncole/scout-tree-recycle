@@ -187,17 +187,21 @@ export default class extends Controller {
     this.polygonsValue.forEach((polygon) => {
       const points = this.normalizePolygon(polygon)
       if (points.length > 3) {
+        const url = this.localPath(polygon?.url)
+        const fillOpacity = polygon.fillOpacity ?? 0.2
         const layer = L.polygon(points, {
           color: polygon.color || "#2563eb",
           weight: 2,
           fillColor: polygon.fillColor || "#3b82f6",
-          fillOpacity: polygon.fillOpacity ?? 0.2
+          fillOpacity,
+          className: url ? "route-polygon-link" : ""
         })
         if (polygon?.permanentLabel && polygon.label) {
-          this.addPolygonLabel(points, String(polygon.label))
-        } else if (polygon && polygon.label) {
+          this.addPolygonLabel(points, String(polygon.label), url)
+        } else if (polygon && polygon.label && !url) {
           layer.bindPopup(String(polygon.label))
         }
+        if (url) this.linkPolygon(layer, url, fillOpacity)
         layer.addTo(this.layerGroup)
         polygonBounds = polygonBounds ? polygonBounds.extend(layer.getBounds()) : layer.getBounds()
       }
@@ -481,14 +485,79 @@ export default class extends Controller {
     }
   }
 
-  // Name drawn on a route polygon. The label sits above the fill and does
-  // not take clicks. It is anchored inside the polygon, then nudged so
-  // neighboring names do not cover each other.
-  addPolygonLabel(points, text) {
+  // A same-site path opens that page. The routes index sends each boundary
+  // to its route. Other maps omit the path, so their polygons stay as they are.
+  localPath(value) {
+    if (typeof value !== "string") return ""
+    if (!value.startsWith("/") || value.startsWith("//")) return ""
+
+    return value
+  }
+
+  linkPolygon(layer, url, fillOpacity) {
+    layer.on("mouseover", () => {
+      layer.setStyle({ weight: 3, fillOpacity: Math.min(0.55, fillOpacity + 0.15) })
+      layer.bringToFront()
+    })
+    layer.on("mouseout", () => {
+      layer.setStyle({ weight: 2, fillOpacity })
+    })
+    layer.on("click", (event) => {
+      if (event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent)
+      this.visitLocalPath(url, event.originalEvent)
+    })
+    layer.on("add", () => {
+      const element = layer.getElement()
+      if (element) element.setAttribute("data-route-url", url)
+    })
+  }
+
+  visitLocalPath(url, originalEvent) {
+    const path = this.localPath(url)
+    if (!path) return
+
+    const openNewTab = originalEvent && (
+      originalEvent.metaKey ||
+      originalEvent.ctrlKey ||
+      originalEvent.shiftKey ||
+      originalEvent.button === 1
+    )
+    if (openNewTab) {
+      window.open(path, "_blank", "noopener")
+      return
+    }
+
+    if (window.Turbo && typeof window.Turbo.visit === "function") {
+      window.Turbo.visit(path)
+    } else {
+      window.location.assign(path)
+    }
+  }
+
+  // Name drawn on a route polygon. A linked name opens that route even when
+  // another boundary covers the fill. An unlabeled name does not take clicks.
+  // The label is anchored inside the polygon, then nudged so neighboring
+  // names do not cover each other.
+  addPolygonLabel(points, text, url = "") {
     const [ lat, lng ] = this.polygonLabelPoint(points)
-    const badge = document.createElement("span")
-    badge.className = "route-polygon-label pointer-events-none absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-line bg-surface px-2 py-0.5 text-[0.75rem] font-semibold leading-none text-ink shadow-xs dark:border-line-dark dark:bg-surface-dark dark:text-ink-dark"
+    const path = this.localPath(url)
+    const badge = document.createElement(path ? "a" : "span")
+    badge.className = "route-polygon-label absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-line bg-surface px-2 py-0.5 text-[0.75rem] font-semibold leading-none text-ink shadow-xs dark:border-line-dark dark:bg-surface-dark dark:text-ink-dark"
     badge.textContent = text
+    if (path) {
+      badge.href = path
+      badge.classList.add("pointer-events-auto", "cursor-pointer", "no-underline")
+      badge.setAttribute("data-route-url", path)
+      badge.addEventListener("pointerdown", (event) => event.stopPropagation())
+      badge.addEventListener("mousedown", (event) => event.stopPropagation())
+      badge.addEventListener("click", (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        this.visitLocalPath(path, event)
+      })
+    } else {
+      badge.classList.add("pointer-events-none")
+    }
 
     const marker = L.marker([ lat, lng ], {
       interactive: false,

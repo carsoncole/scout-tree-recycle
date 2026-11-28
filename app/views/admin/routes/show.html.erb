@@ -12,57 +12,17 @@
   <div class="flex flex-col gap-6" <% if point_markers.any? %>data-controller="route-map"<% end %>>
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-panel-header border-line dark:border-line-dark">
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route information</h2>
-      </div>
-      <div class="admin-panel-body">
-        <dl class="admin-detail-list">
-          <div class="admin-detail border-line dark:border-line-dark">
-            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Name</dt>
-            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @route.name %></dd>
-          </div>
-          <div class="admin-detail border-line dark:border-line-dark">
-            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Zone</dt>
-            <dd class="admin-detail-value text-ink dark:text-ink-dark">
-              <% if @route.zone %>
-                <%= link_to @route.zone.name, admin_zone_path(@route.zone) %>
-              <% else %>
-                Unzoned
-              <% end %>
-            </dd>
-          </div>
-          <div class="admin-detail border-line dark:border-line-dark">
-            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Address</dt>
-            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= [ @route.street, @route.city, @route.state, @route.country ].compact.join(", ") %></dd>
-          </div>
-          <div class="admin-detail border-line dark:border-line-dark">
-            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Distance</dt>
-            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= number_with_precision(@route.distance, precision: 2) if @route.distance %></dd>
-          </div>
-          <div class="admin-detail border-line dark:border-line-dark">
-            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Distance to zone</dt>
-            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= number_with_precision(@route.distance_to_zone, precision: 2) if @route.distance_to_zone %></dd>
-          </div>
-          <div class="admin-detail border-line dark:border-line-dark">
-            <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Coordinates</dt>
-            <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= [ @route.latitude, @route.longitude ].compact.join(", ") %></dd>
-          </div>
-        </dl>
-      </div>
-    </section>
-
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
           <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route map</h2>
           <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
             <% if point_markers.any? %>
               Route boundary and pickup locations.
               <% if @nearby_routes.any? %>
-                Nearby routes that border this one are outlined in gray, with their points marked.
+                Nearby routes that border this one are outlined in gray, with their points marked. Click a labeled route to open it.
               <% end %>
               Turn on Points to show this route's points.
             <% elsif @nearby_routes.any? %>
-              Route boundary area and pickup locations. Nearby routes that border this one are outlined in gray, with their points marked.
+              Route boundary area and pickup locations. Nearby routes that border this one are outlined in gray, with their points marked. Click a labeled route to open it.
             <% else %>
               Route boundary area and pickup locations.
             <% end %>
@@ -103,25 +63,59 @@
       </div>
     </section>
 
-    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <h2 class="admin-panel-title text-ink dark:text-ink-dark">Drivers</h2>
-      </div>
-      <div class="admin-panel-body">
-        <% if @route.drivers.any? %>
+    <div class="flex flex-wrap items-start gap-6">
+      <section class="admin-panel min-w-[min(100%,20rem)] max-w-full grow basis-80 border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+        <div class="admin-panel-header border-line dark:border-line-dark">
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route information</h2>
+        </div>
+        <div class="admin-panel-body">
           <dl class="admin-detail-list">
-            <% @route.drivers.each do |driver| %>
-              <div class="admin-detail border-line dark:border-line-dark">
-                <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= driver.name %></dt>
-                <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= Phonelib.parse(driver.mobile).national.presence || driver.mobile %></dd>
-              </div>
-            <% end %>
+            <div class="admin-detail border-line dark:border-line-dark">
+              <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Name</dt>
+              <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @route.name %></dd>
+            </div>
+            <div class="admin-detail border-line dark:border-line-dark">
+              <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Zone</dt>
+              <dd class="admin-detail-value text-ink dark:text-ink-dark">
+                <% if @route.zone %>
+                  <%= link_to @route.zone.name, admin_zone_path(@route.zone), class: admin_link_class %>
+                <% else %>
+                  Unzoned
+                <% end %>
+              </dd>
+            </div>
+            <div class="admin-detail border-line dark:border-line-dark">
+              <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Address</dt>
+              <dd class="admin-detail-value min-w-0 text-ink dark:text-ink-dark"><%= [ @route.street, @route.city, @route.state, @route.country ].compact.join(", ") %></dd>
+            </div>
+            <div class="admin-detail border-line dark:border-line-dark">
+              <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Coordinates</dt>
+              <dd class="admin-detail-value min-w-0 text-ink dark:text-ink-dark"><%= [ @route.latitude, @route.longitude ].compact.join(", ") %></dd>
+            </div>
           </dl>
-        <% else %>
-          <%= render "admin/shared/empty_state", message: "No drivers assigned to this route." %>
-        <% end %>
-      </div>
-    </section>
+        </div>
+      </section>
+
+      <section class="admin-panel min-w-[min(100%,20rem)] max-w-full grow basis-80 border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+        <div class="admin-panel-header border-line dark:border-line-dark">
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Drivers</h2>
+        </div>
+        <div class="admin-panel-body">
+          <% if @route.drivers.any? %>
+            <dl class="admin-detail-list">
+              <% @route.drivers.each do |driver| %>
+                <div class="admin-detail border-line dark:border-line-dark">
+                  <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark"><%= driver.name %></dt>
+                  <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= Phonelib.parse(driver.mobile).national.presence || driver.mobile %></dd>
+                </div>
+              <% end %>
+            </dl>
+          <% else %>
+            <%= render "admin/shared/empty_state", message: "No drivers assigned to this route." %>
+          <% end %>
+        </div>
+      </section>
+    </div>
 
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-panel-header border-line dark:border-line-dark">

@@ -15,7 +15,7 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h2", text: "Route map"
-    assert_select "p", text: "Every route boundary, labeled with the route name."
+    assert_select "p", text: "Every route boundary, labeled with the route name. Click a route to open it."
     assert_select "table td", text: "Unassigned", count: 0
     map = css_select('[data-controller="map"]').first
     assert_includes map["class"], "h-[calc(100dvh-16rem)]"
@@ -27,11 +27,13 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     neighbor = polygons.find { |polygon| polygon["label"] == other.name }
 
     assert_equal true, current["permanentLabel"]
+    assert_equal admin_route_path(routes(:one)), current["url"]
     assert_equal "#8b1818", current["color"]
     assert_equal "#d34545", current["fillColor"]
     assert_equal 0.3, current["fillOpacity"]
     assert_operator current["points"].size, :>, 3
     assert_equal true, neighbor["permanentLabel"]
+    assert_equal admin_route_path(other), neighbor["url"]
     assert_equal "#188b3a", neighbor["color"]
     assert_not_equal current["color"], neighbor["color"]
     assert_nil polygons.find { |polygon| polygon["label"] == routes(:unzoned).name }
@@ -58,7 +60,7 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "table a", text: mapped.name, count: 0
 
     polygons = JSON.parse(css_select("[data-map-polygons-value]").first["data-map-polygons-value"])
-    assert polygons.any? { |polygon| polygon["label"] == mapped.name && polygon["permanentLabel"] }
+    assert polygons.any? { |polygon| polygon["label"] == mapped.name && polygon["permanentLabel"] && polygon["url"] == admin_route_path(mapped) }
   end
 
   test "index explains when no route has a boundary" do
@@ -78,6 +80,12 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h2", text: "Route map"
+    assert_equal [ "Route map", "Route information", "Drivers", "Route points" ], css_select("h2").map(&:text)
+    assert_select "dt", text: "Distance", count: 0
+    assert_select "dt", text: "Distance to zone", count: 0
+    assert_select "dt", text: "Name"
+    assert_select "dt", text: "Coordinates"
+    assert_select ".flex.flex-wrap > section", count: 2
     assert_select '[data-controller="map"]'
     assert_select "[data-map-polygons-value]"
     assert_select "button#route-points-toggle[aria-pressed=false]", text: /Points/
@@ -112,7 +120,9 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "#6b7280", nearby_polygon["color"]
     assert_equal "#9ca3af", nearby_polygon["fillColor"]
     assert_equal true, nearby_polygon["permanentLabel"]
+    assert_equal admin_route_path(neighbor), nearby_polygon["url"]
     assert_not current_polygon["permanentLabel"]
+    assert_nil current_polygon["url"]
     assert_equal "#2563eb", current_polygon["color"]
     assert_nil polygons.find { |polygon| polygon["label"] == shared_only.name }
     assert_nil polygons.find { |polygon| polygon["label"] == outsider.name }

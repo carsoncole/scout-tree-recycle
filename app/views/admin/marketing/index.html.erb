@@ -266,30 +266,5 @@
     <% if @contacts.empty? %>
       <%= render "admin/shared/empty_state", message: "No contacts are available for marketing." %>
     <% end %>
-
-    <% if @contacts_count.positive? %>
-      <div class="admin-danger-zone border-danger-border bg-danger-bg dark:border-danger-border-dark dark:bg-danger-bg-dark" id="delete-all-contacts">
-        <div class="admin-toolbar">
-          <div>
-            <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Delete all contacts</h3>
-            <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
-              This permanently deletes <strong class="text-ink dark:text-ink-dark"><%= pluralize(@contacts_count, "contact") %></strong>. Type DELETE to confirm.
-            </p>
-          </div>
-
-          <% if Current.user&.admin? %>
-            <%= render "admin/shared/destructive_details",
-                       summary_label: "Delete All Contacts",
-                       url: destroy_all_admin_contacts_path,
-                       submit_label: "Confirm Delete All Contacts" %>
-          <% else %>
-            <span class="<%= admin_badge_class("neutral") %>">Admin only</span>
-          <% end %>
-        </div>
-        <% unless Current.user&.admin? %>
-          <p class="admin-hint mt-2 text-ink-soft dark:text-ink-soft-dark">Only admins can delete all contacts.</p>
-        <% end %>
-      </div>
-    <% end %>
   </section>
 </div>

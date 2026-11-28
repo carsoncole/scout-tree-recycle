@@ -185,15 +185,10 @@ class Admin::MarketingsTest < ApplicationSystemTestCase
     end
   end
 
-  test "delete all contacts with confirmation" do
+  test "does not offer delete all contacts" do
     visit admin_marketing_index_url
-    assert_text "3 contacts"
-    find("summary", text: "Delete All Contacts").click
-    fill_in "Type DELETE to confirm", with: "DELETE"
-    click_on "Confirm Delete All Contacts"
 
-    assert_text "3 contacts have been deleted."
-    assert_text "No contacts are available for marketing."
-    assert_equal 0, Contact.count
+    assert_no_text "Delete all contacts"
+    assert_no_button "Delete All Contacts"
   end
 end

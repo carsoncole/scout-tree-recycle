@@ -20,6 +20,20 @@ module ActiveSupport
       sleep 1
     end
 
+    # Removes reservations, contacts, and route info so sample data can load.
+    # Route info is routes, zones, and drivers. Pass keep: to leave one of
+    # those tables in place.
+    def clear_sample_data_tables!(keep: nil)
+      DriverRoute.delete_all
+      Point.delete_all
+      Donation.where.not(reservation_id: nil).update_all(reservation_id: nil)
+      Reservation.delete_all unless keep == Reservation
+      Route.delete_all unless keep == Route
+      Driver.delete_all unless keep == Driver
+      Zone.delete_all unless keep == Zone
+      Contact.delete_all unless keep == Contact
+    end
+
     # sign_in for controller tests
     def sign_in(user = users(:admin))
       session = user.sessions.create!

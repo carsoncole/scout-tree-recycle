@@ -5,19 +5,26 @@ class LoadSampleDataJob < ApplicationJob
   queue_as :default
 
   def perform(user: nil)
-    SampleData.load!
+    loaded = SampleData.load!
+    message = if loaded
+      "Sample data load job completed: example zones, routes, route points, drivers, reservations, and contacts were created."
+    else
+      "Sample data was not loaded because reservations, contacts, routes, zones, or drivers already have records."
+    end
 
     Log.create(
       log_type: "job",
-      message: "Sample data load job completed: example zones, routes, route points, drivers, reservations, and contacts were created.",
+      message: message,
       error_type: "LoadSampleDataJob",
-      severity: "info",
+      severity: loaded ? "info" : "warning",
       handled: true,
       skip_notification: true,
       context: {
         user: user&.email,
+        loaded: loaded,
         zones: Zone.count,
         routes: Route.count,
+        drivers: Driver.count,
         reservations: Reservation.count,
         contacts: Contact.count
       }

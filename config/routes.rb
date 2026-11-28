@@ -93,9 +93,6 @@ Rails.application.routes.draw do
         post :send_marketing_email_1
         post :send_marketing_email_2
       end
-      collection do
-        delete :destroy_all
-      end
     end
     resources :donations, only: [ :index, :show, :destroy ]
     resource :analytics, only: [ :show ], controller: "analytics"
@@ -149,7 +146,7 @@ Rails.application.routes.draw do
       post :restore_contacts
     end
 
-    # Data management (delete all reservations/contacts, reset all data)
+    # Data management (delete reservations, contacts, or route info; factory reset)
     resource :data_reset, only: [ :create ]
 
     # Close the current event and prepare contacts for the next one.

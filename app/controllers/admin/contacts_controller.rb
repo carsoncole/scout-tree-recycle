@@ -63,21 +63,6 @@ class Admin::ContactsController < Admin::BaseController
     send_marketing_email!(2)
   end
 
-  def destroy_all
-    unless Current.user.admin?
-      redirect_to admin_marketing_index_path, alert: "You are not authorized to delete all contacts."
-      return
-    end
-
-    if params[:confirmation].to_s.strip.casecmp?("DELETE")
-      deleted_count = Contact.delete_all
-      redirect_to admin_marketing_index_path,
-        notice: deleted_count == 1 ? "1 contact has been deleted." : "#{deleted_count} contacts have been deleted."
-    else
-      redirect_to admin_marketing_index_path, alert: "Type DELETE to confirm deletion of all contacts."
-    end
-  end
-
   private
 
   def set_contact

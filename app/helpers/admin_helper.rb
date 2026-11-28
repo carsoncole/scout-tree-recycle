@@ -33,7 +33,6 @@ module AdminHelper
   ADMIN_ROLE_PRIVILEGES = [
     { area: "Operations", label: "Reservations, pickups, donations, analytics, SMS, and mail", user: true, admin: true },
     { area: "Operations", label: "Marketing, templates, images, and contacts", user: true, admin: true },
-    { area: "Operations", label: "Delete all contacts", user: false, admin: true },
     { area: "Operations", label: "Thank-you message and supporter thanks", user: true, admin: true },
     { area: "Routing", label: "Routes, zones, drivers, and route points", user: true, admin: true },
     { area: "Routing", label: "Locations — staging points, meeting places, and other map locations", user: true, admin: true },
@@ -42,8 +41,8 @@ module AdminHelper
     { area: "System", label: "Jobs dashboard, including retry, discard, and queue pause", user: true, admin: true },
     { area: "Data", label: "View the data page and database settings", user: true, admin: true },
     { area: "Data", label: "Download or email backups, restore reservations, contacts or settings, and manage data", user: false, admin: true },
-    { area: "Data", label: "Delete all reservations or all contacts", user: false, admin: true },
-    { area: "Data", label: "Reset all data to default (danger zone)", user: false, admin: true },
+    { area: "Data", label: "Delete all reservations, contacts, or zones, routes, and drivers", user: false, admin: true },
+    { area: "Data", label: "Factory reset (danger zone)", user: false, admin: true },
     { area: "Users", label: "View the user list and these privileges", user: true, admin: true },
     { area: "Users", label: "Create, edit, and delete users", user: false, admin: true },
     { area: "Settings", label: "View settings and the close-event page", user: true, admin: true },

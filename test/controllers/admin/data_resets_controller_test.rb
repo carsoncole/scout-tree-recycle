@@ -56,6 +56,39 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Type DELETE to confirm this destructive action.", flash[:alert]
   end
 
+  test "requires the DELETE confirmation word for zones, routes, and drivers" do
+    sign_in users(:admin)
+
+    assert_no_changes -> { Route.count } do
+      post admin_data_reset_path, params: { data_reset: { scope: "routes" }, confirmation: "RESET ALL" }
+    end
+
+    assert_redirected_to admin_data_path
+    assert_equal "Type DELETE to confirm this destructive action.", flash[:alert]
+    assert Zone.exists?
+    assert Driver.exists?
+  end
+
+  test "admin can delete all zones, routes, and drivers" do
+    sign_in users(:admin)
+    zones_count = Zone.count
+    routes_count = Route.count
+    drivers_count = Driver.count
+    reservations_count = Reservation.count
+
+    assert_difference -> { Log.where(log_type: "system").count }, 1 do
+      post admin_data_reset_path, params: { data_reset: { scope: "routes" }, confirmation: "DELETE" }
+    end
+
+    assert_redirected_to admin_data_path
+    assert_equal 0, Zone.count
+    assert_equal 0, Route.count
+    assert_equal 0, Driver.count
+    assert_equal reservations_count, Reservation.count
+    assert_match "#{zones_count} zones, #{routes_count} routes, and #{drivers_count} drivers have been deleted", flash[:notice]
+    assert_match "Reservations were kept but removed from their routes", flash[:notice]
+  end
+
   test "requires the DELETE confirmation word for contacts" do
     sign_in users(:admin)
 
@@ -130,8 +163,22 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
     assert_equal users(:admin).email, log.context["user"]
   end
 
+  test "admin cannot queue sample data when reservations, contacts, routes, zones, or drivers already have records" do
+    sign_in users(:admin)
+
+    assert_no_enqueued_jobs only: LoadSampleDataJob do
+      assert_no_difference -> { Reservation.count } do
+        post admin_data_reset_path, params: { data_reset: { scope: "sample_data" } }
+      end
+    end
+
+    assert_redirected_to admin_data_path
+    assert_equal "Sample data was not loaded. Reservations, contacts, routes, zones, and drivers must all be empty.", flash[:alert]
+  end
+
   test "admin can queue the sample data load without a typed confirmation word" do
     sign_in users(:admin)
+    clear_sample_data_tables!
 
     assert_enqueued_with(job: LoadSampleDataJob) do
       post admin_data_reset_path, params: { data_reset: { scope: "sample_data" } }
@@ -143,6 +190,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
 
   test "admin can load sample data in the background job" do
     sign_in users(:admin)
+    clear_sample_data_tables!
 
     assert_difference -> { Log.of_type("job").count }, 1 do
       perform_enqueued_jobs do
@@ -152,7 +200,7 @@ class Admin::DataResetsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to admin_data_path
     assert_operator Reservation.count, :>, 50
-    assert_operator Contact.count, :>, 100
+    assert_operator Contact.count, :>=, 100
     assert Log.of_type("job").where(error_type: "LoadSampleDataJob").exists?
   end
 

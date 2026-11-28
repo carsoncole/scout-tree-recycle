@@ -165,7 +165,7 @@
       <div class="admin-panel-header border-line dark:border-line-dark">
         <div>
           <h2 class="admin-panel-title text-ink dark:text-ink-dark">Data Management</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Delete all reservations or contacts, wipe the database back to defaults, or load the example dataset for development and demos.</p>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Delete all reservations, contacts, or zones, routes, and drivers, run a factory reset, or load the example dataset for development and demos.</p>
         </div>
       </div>
       <div class="admin-panel-body">
@@ -206,17 +206,40 @@
           </div>
           <div class="admin-toggle-row border-line dark:border-line-dark">
             <div class="admin-toggle-copy">
+              <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Delete all zones, routes, and drivers</h3>
+              <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
+                This permanently deletes <strong class="text-ink dark:text-ink-dark"><%= pluralize(@zones_count.to_i, "zone") %></strong>,
+                <strong class="text-ink dark:text-ink-dark"><%= pluralize(@routes_count.to_i, "route") %></strong>,
+                and <strong class="text-ink dark:text-ink-dark"><%= pluralize(@drivers_count.to_i, "driver") %></strong>,
+                including route points and driver assignments.
+                Reservations are kept but removed from their routes. Type DELETE to confirm.
+              </p>
+            </div>
+            <%= render "admin/shared/destructive_details",
+                summary_label: "Delete All Zones, Routes, and Drivers",
+                url: admin_data_reset_path,
+                method: :post,
+                word: "DELETE",
+                fields: { "data_reset[scope]" => "routes" },
+                submit_label: "Confirm Delete All Zones, Routes, and Drivers",
+                confirm: "Delete all zones, routes, and drivers? This permanently deletes every zone, route, and driver and cannot be undone." %>
+          </div>
+          <div class="admin-toggle-row border-line dark:border-line-dark">
+            <div class="admin-toggle-copy">
               <h3 class="admin-toggle-title text-ink dark:text-ink-dark">Load sample data</h3>
               <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
-                Queues a background job that creates the example Bainbridge Island zones, routes, route points, drivers, reservations, and contacts.
-                Intended for local development and demos — it adds records to the current database, and the completed run is recorded in the System Logs.
+                Queues a background job that creates example Bainbridge Island reservations, contacts, and route info.
+                Route info is routes, zones, and drivers, including route points.
+                It loads only when reservations, contacts, routes, zones, and drivers are all empty.
+                If any of those tables already has a record, sample data is not loaded.
+                Intended for local development and demos. A completed run is recorded in the System Logs.
               </p>
             </div>
             <%= button_to "Load Sample Data", admin_data_reset_path,
                 params: { "data_reset[scope]" => "sample_data" },
                 class: admin_button_class(variant: :secondary),
                 form: { class: "ml-auto shrink-0" },
-                data: { turbo_confirm: "Load sample data? This adds example zones, routes, drivers, reservations, and contacts to the database." } %>
+                data: { turbo_confirm: "Load sample data? This runs only when reservations, contacts, routes, zones, and drivers are all empty." } %>
           </div>
         </div>
       </div>
@@ -224,7 +247,7 @@
         <div class="admin-toggle-row">
           <div class="admin-toggle-copy">
             <span class="<%= admin_badge_class("danger") %>">Danger zone</span>
-            <h3 class="admin-toggle-title mt-2 text-ink dark:text-ink-dark">Reset all data to default</h3>
+            <h3 class="admin-toggle-title mt-2 text-ink dark:text-ink-dark">Factory reset</h3>
             <p class="admin-hint text-ink-soft dark:text-ink-soft-dark">
               This permanently deletes <strong class="text-ink dark:text-ink-dark">every record in every table</strong>,
               including reservations, contacts, donations, routes, users, settings, and the current sign-in sessions.
@@ -233,13 +256,13 @@
             </p>
           </div>
           <%= render "admin/shared/destructive_details",
-              summary_label: "Reset All Data to Default",
+              summary_label: "Factory Reset",
               url: admin_data_reset_path,
               method: :post,
               word: "RESET ALL",
               fields: { "data_reset[scope]" => "all" },
-              submit_label: "Confirm Reset All Data",
-              confirm: "Are you sure? This permanently deletes ALL data, including users and settings. You will be signed out and returned to first-run setup." %>
+              submit_label: "Confirm Factory Reset",
+              confirm: "Factory reset? This permanently deletes ALL data, including users and settings. You will be signed out and returned to first-run setup." %>
         </div>
         <div class="<%= admin_notice_class("danger") %> mt-4" role="alert">
           <div>

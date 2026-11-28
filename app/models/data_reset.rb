@@ -2,19 +2,20 @@
 # controls on /admin/data. Destructive operations require a typed
 # confirmation word that is validated server-side (see Admin::DataResetsController).
 #
-# Loading sample data is additive rather than destructive, so it is not a
-# reset scope; it is handled by LoadSampleDataJob.
+# Loading sample data is not a reset scope. It runs only when reservations,
+# contacts, routes, zones, and drivers are all empty (see LoadSampleDataJob).
 #
 # Like EventClosure, this is a plain model object: controllers stay skinny and
 # the destructive logic is testable on its own.
 class DataReset
-  SCOPES = %w[reservations contacts all].freeze
+  SCOPES = %w[reservations contacts routes all].freeze
 
   # Destructive scopes require a typed confirmation word, validated
   # server-side.
   CONFIRMATION_WORDS = {
     "reservations" => "DELETE",
     "contacts" => "DELETE",
+    "routes" => "DELETE",
     "all" => "RESET ALL"
   }.freeze
 
@@ -46,7 +47,15 @@ class DataReset
     settings
   ].freeze
 
-  Result = Struct.new(:scope, :deleted_count, :signed_out, keyword_init: true)
+  Result = Struct.new(
+    :scope,
+    :deleted_count,
+    :signed_out,
+    :zones_count,
+    :routes_count,
+    :drivers_count,
+    keyword_init: true
+  )
 
   def self.confirmation_word(scope)
     CONFIRMATION_WORDS.fetch(scope.to_s)
@@ -65,6 +74,7 @@ class DataReset
     case @scope
     when "reservations" then delete_reservations!
     when "contacts" then delete_contacts!
+    when "routes" then delete_routes!
     when "all" then reset_all!
     else
       raise ArgumentError, "Unknown data reset scope: #{@scope}"
@@ -91,6 +101,52 @@ class DataReset
 
     log_system_event("All contacts deleted (#{deleted_count}).")
     Result.new(scope: @scope, deleted_count: deleted_count, signed_out: false)
+  end
+
+  # Zones, routes, and drivers, plus the route points and driver assignments
+  # that belong to them. Reservations stay, with their route cleared the same
+  # way removing a route on a reservation does.
+  def delete_routes!
+    zones_count = Zone.count
+    routes_count = Route.count
+    drivers_count = Driver.count
+
+    ActiveRecord::Base.transaction do
+      detach_reservations_from_routes!
+      DriverRoute.delete_all
+      Point.delete_all
+      Route.delete_all
+      Driver.delete_all
+      Zone.delete_all
+    end
+
+    log_system_event(
+      "All zones, routes, and drivers deleted (#{zones_count} zones, #{routes_count} routes, #{drivers_count} drivers). Reservations were kept but removed from their routes."
+    )
+    Result.new(
+      scope: @scope,
+      deleted_count: zones_count + routes_count + drivers_count,
+      signed_out: false,
+      zones_count: zones_count,
+      routes_count: routes_count,
+      drivers_count: drivers_count
+    )
+  end
+
+  def detach_reservations_from_routes!
+    keep_status = Reservation.statuses.values_at("reservation_form", "address_verification", "donation", "cancelled")
+    cleared = {
+      route_id: nil,
+      was_automatically_routed: false,
+      is_manually_routed: false,
+      distance_to_route: nil,
+      updated_at: Time.current
+    }
+
+    Reservation.where.not(route_id: nil).where.not(status: keep_status).update_all(
+      cleared.merge(status: Reservation.statuses.fetch("routing"))
+    )
+    Reservation.where.not(route_id: nil).update_all(cleared)
   end
 
   def reset_all!

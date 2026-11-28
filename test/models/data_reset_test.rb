@@ -4,6 +4,7 @@ class DataResetTest < ActiveSupport::TestCase
   test "confirmation words map to scopes" do
     assert_equal "DELETE", DataReset.confirmation_word("reservations")
     assert_equal "DELETE", DataReset.confirmation_word("contacts")
+    assert_equal "DELETE", DataReset.confirmation_word("routes")
     assert_equal "RESET ALL", DataReset.confirmation_word("all")
   end
 
@@ -52,6 +53,50 @@ class DataResetTest < ActiveSupport::TestCase
     log = Log.order(:created_at).last
     assert_equal "system", log.log_type
     assert_includes log.message, "All reservations deleted"
+    assert_equal users(:admin).email, log.context["user"]
+  end
+
+  test "deleting all zones, routes, and drivers keeps reservations and detaches them" do
+    reservations_count = Reservation.count
+    contacts_count = Contact.count
+    zones_count = Zone.count
+    routes_count = Route.count
+    drivers_count = Driver.count
+    assert zones_count.positive?
+    assert routes_count.positive?
+    assert drivers_count.positive?
+    assert Point.exists?
+    assert DriverRoute.exists?
+
+    result = DataReset.new(scope: "routes", user: users(:admin)).perform!
+
+    assert_not result.signed_out
+    assert_equal zones_count, result.zones_count
+    assert_equal routes_count, result.routes_count
+    assert_equal drivers_count, result.drivers_count
+    assert_equal 0, Zone.count
+    assert_equal 0, Route.count
+    assert_equal 0, Driver.count
+    assert_equal 0, Point.count
+    assert_equal 0, DriverRoute.count
+    assert_equal reservations_count, Reservation.count
+    assert_equal contacts_count, Contact.count
+    assert_equal 0, Reservation.where.not(route_id: nil).count
+
+    pending = reservations(:pending_pickup_1).reload
+    assert_equal "routing", pending.status
+    assert_not pending.is_manually_routed
+    assert_not pending.was_automatically_routed
+
+    cancelled = reservations(:cancelled_1).reload
+    assert_equal "cancelled", cancelled.status
+    assert_nil cancelled.route_id
+
+    untouched = reservations(:reservation_form_minimum).reload
+    assert_equal "reservation_form", untouched.status
+
+    log = Log.order(:created_at).last
+    assert_includes log.message, "All zones, routes, and drivers deleted"
     assert_equal users(:admin).email, log.context["user"]
   end
 

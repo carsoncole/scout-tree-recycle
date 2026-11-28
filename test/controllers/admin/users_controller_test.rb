@@ -18,12 +18,12 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select "table" do
       assert_select "th", text: "User"
       assert_select "th", text: "Admin"
-      assert_select "td", text: "Delete all contacts"
+      assert_select "td", text: "Delete all reservations, contacts, or zones, routes, and drivers"
       assert_select "td", text: "Thank-you message and supporter thanks"
       assert_select "td", text: "Create, edit, and delete users"
     end
 
-    delete_all = css_select("tbody tr").find { |row| row.text.include?("Delete all contacts") }
+    delete_all = css_select("tbody tr").find { |row| row.text.include?("Delete all reservations, contacts, or zones, routes, and drivers") }
     assert_includes delete_all.text, "Not allowed"
     assert_includes delete_all.text, "Allowed"
 

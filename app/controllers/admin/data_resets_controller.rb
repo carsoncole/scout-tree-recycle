@@ -4,10 +4,16 @@ class Admin::DataResetsController < Admin::BaseController
   def create
     scope = params.dig(:data_reset, :scope).to_s
 
-    # Loading sample data is additive: it needs no typed confirmation, and it
-    # runs in a background job because it takes long enough to time out the
-    # request. The outcome is recorded in the System Logs with the "job" type.
+    # Sample data loads only when reservations, contacts, routes, zones, and
+    # drivers are all empty. It needs no typed confirmation, and it runs in a
+    # background job because it takes long enough to time out the request.
+    # The outcome is recorded in the System Logs with the "job" type.
     if scope == "sample_data"
+      unless SampleData.loadable?
+        return redirect_to admin_data_path,
+          alert: "Sample data was not loaded. Reservations, contacts, routes, zones, and drivers must all be empty."
+      end
+
       LoadSampleDataJob.perform_later(user: Current.user)
       return redirect_to admin_data_path,
         notice: "Sample data load queued. Check the System Logs for results."
@@ -55,6 +61,8 @@ class Admin::DataResetsController < Admin::BaseController
     when "contacts"
       deleted = result.deleted_count == 1 ? "1 contact has" : "#{result.deleted_count} contacts have"
       "#{deleted} been deleted."
+    when "routes"
+      "#{helpers.pluralize(result.zones_count, "zone")}, #{helpers.pluralize(result.routes_count, "route")}, and #{helpers.pluralize(result.drivers_count, "driver")} have been deleted. Reservations were kept but removed from their routes."
     else
       "Done."
     end

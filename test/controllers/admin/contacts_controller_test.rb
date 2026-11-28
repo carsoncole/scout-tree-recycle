@@ -279,32 +279,4 @@ class Admin::ContactsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_marketing_index_path
     assert_equal "Contact was successfully deleted.", flash[:notice]
   end
-
-  test "should not destroy all without confirmation" do
-    sign_in
-    assert_no_difference "Contact.count" do
-      delete destroy_all_admin_contacts_url, params: { confirmation: "no" }
-    end
-    assert_redirected_to admin_marketing_index_path
-    assert_equal "Type DELETE to confirm deletion of all contacts.", flash[:alert]
-  end
-
-  test "should destroy all with confirmation" do
-    sign_in
-    contact_count = Contact.count
-    assert_difference "Contact.count", -contact_count do
-      delete destroy_all_admin_contacts_url, params: { confirmation: "DELETE" }
-    end
-    assert_redirected_to admin_marketing_index_path
-    assert_equal "#{contact_count} contacts have been deleted.", flash[:notice]
-  end
-
-  test "user should not destroy all contacts" do
-    sign_in(users(:user))
-    assert_no_difference "Contact.count" do
-      delete destroy_all_admin_contacts_url, params: { confirmation: "DELETE" }
-    end
-    assert_redirected_to admin_marketing_index_path
-    assert_equal "You are not authorized to delete all contacts.", flash[:alert]
-  end
 end

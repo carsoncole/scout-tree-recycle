@@ -824,10 +824,13 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     within "section#data-management" do
       assert_text "Data Management"
       assert_text "Danger zone"
-      assert_text "Reset all data to default"
+      assert_text "Factory reset"
+      assert_text "Delete all zones, routes, and drivers"
       assert_text "This permanently deletes #{Reservation.count} reservation"
       assert_text "This permanently deletes #{Contact.count} contact"
       assert_text "Sample data is not loaded — run it separately once setup is complete."
+      assert_text "It loads only when reservations, contacts, routes, zones, and drivers are all empty."
+      assert_text "If any of those tables already has a record, sample data is not loaded."
       assert_text "This is the most destructive action in the application."
     end
   end
@@ -846,6 +849,27 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     assert_text "reservations have been deleted"
     assert_equal 0, Reservation.count
     assert_nil Donation.first&.reservation_id
+  end
+
+  test "admin can delete all zones, routes, and drivers from the data management panel" do
+    visit admin_data_url
+    reservations_count = Reservation.count
+
+    within "section#data-management" do
+      find("summary", text: "Delete All Zones, Routes, and Drivers").click
+      within find("details", text: "Delete All Zones, Routes, and Drivers") do
+        fill_in "Type DELETE to confirm", with: "DELETE"
+        accept_confirm { click_on "Confirm Delete All Zones, Routes, and Drivers" }
+      end
+    end
+
+    assert_text "zones,"
+    assert_text "have been deleted"
+    assert_text "Reservations were kept but removed from their routes"
+    assert_equal 0, Zone.count
+    assert_equal 0, Route.count
+    assert_equal 0, Driver.count
+    assert_equal reservations_count, Reservation.count
   end
 
   test "admin can delete all contacts from the data management panel" do
@@ -867,9 +891,9 @@ class Admin::SettingsTest < ApplicationSystemTestCase
     visit admin_data_url
 
     within "section#data-management" do
-      find("summary", text: "Reset All Data to Default").click
+      find("summary", text: "Factory Reset").click
       fill_in "Type RESET ALL to confirm", with: "RESET ALL"
-      accept_confirm { click_on "Confirm Reset All Data" }
+      accept_confirm { click_on "Confirm Factory Reset" }
     end
 
     assert_text "All data has been reset to defaults"
@@ -905,6 +929,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
   end
 
   test "admin can load sample data from the data management panel" do
+    clear_sample_data_tables!
     visit admin_data_url
 
     within "section#data-management" do
@@ -915,7 +940,7 @@ class Admin::SettingsTest < ApplicationSystemTestCase
 
     perform_enqueued_jobs
     assert_operator Reservation.count, :>, 50
-    assert_operator Contact.count, :>, 100
+    assert_operator Contact.count, :>=, 100
     assert Log.of_type("job").exists?
   end
 

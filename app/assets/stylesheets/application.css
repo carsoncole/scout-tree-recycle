@@ -1955,10 +1955,6 @@
   max-width: 100%;
 }
 
-.admin-destructive[open] {
-  flex: 1 1 auto;
-}
-
 .admin-destructive summary {
   width: fit-content;
   max-width: 100%;
@@ -1969,10 +1965,6 @@
 
 .admin-destructive summary::-webkit-details-marker {
   display: none;
-}
-
-.admin-destructive[open] summary {
-  margin-bottom: 0.85rem;
 }
 
 .admin-destructive-body {
@@ -1993,10 +1985,121 @@
   min-width: 0;
 }
 
+/* Closed: title on the left, toggle button on the right.
+   Open: the button stays with the title, and the confirmation form
+   spans the row underneath with the field and button on one line. */
+.admin-toggle-row:has(> .admin-destructive),
+.admin-toolbar:has(> .admin-destructive) {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 1.5rem;
+}
+
+.admin-toggle-row:has(> .admin-destructive) > .admin-toggle-copy,
+.admin-toolbar:has(> .admin-destructive) > :first-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.admin-toggle-row:has(> .admin-destructive) > .admin-destructive,
+.admin-toolbar:has(> .admin-destructive) > .admin-destructive {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
+.admin-toggle-row:has(> .admin-destructive[open]) > .admin-toggle-copy,
+.admin-toolbar:has(> .admin-destructive[open]) > :first-child {
+  grid-column: 1 / -1;
+  padding-right: 18rem;
+}
+
+.admin-toggle-row:has(> .admin-destructive[open]) > .admin-destructive,
+.admin-toolbar:has(> .admin-destructive[open]) > .admin-destructive {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: stretch;
+  width: 100%;
+  max-width: none;
+  margin-top: 1rem;
+}
+
+.admin-toggle-row .admin-destructive[open] > summary,
+.admin-toolbar .admin-destructive[open] > summary {
+  position: absolute;
+  top: 1rem;
+  right: 0;
+  margin: 0;
+}
+
+.admin-toggle-row:first-child .admin-destructive[open] > summary,
+.admin-toolbar .admin-destructive[open] > summary {
+  top: 0;
+}
+
+.admin-toggle-row .admin-destructive[open] > .admin-destructive-body,
+.admin-toolbar .admin-destructive[open] > .admin-destructive-body {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.admin-destructive .admin-inline-form {
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.admin-destructive .admin-inline-form .admin-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 28rem;
+}
+
+.admin-destructive .admin-inline-form .admin-button {
+  flex: 0 0 auto;
+}
+
 @media (max-width: 640px) {
   .admin-destructive summary,
   .admin-destructive-body {
     margin-left: 0;
+  }
+
+  .admin-toggle-row:has(> .admin-destructive),
+  .admin-toolbar:has(> .admin-destructive) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-toggle-row:has(> .admin-destructive) > .admin-destructive,
+  .admin-toolbar:has(> .admin-destructive) > .admin-destructive {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: stretch;
+    margin-top: 0.85rem;
+  }
+
+  .admin-toggle-row:has(> .admin-destructive[open]) > .admin-toggle-copy,
+  .admin-toolbar:has(> .admin-destructive[open]) > :first-child {
+    padding-right: 0;
+  }
+
+  .admin-toggle-row .admin-destructive[open] > summary,
+  .admin-toolbar .admin-destructive[open] > summary {
+    position: static;
+    margin-bottom: 0.85rem;
+  }
+
+  .admin-destructive .admin-inline-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-destructive .admin-inline-form .admin-field {
+    max-width: none;
   }
 }
 
@@ -2026,10 +2129,6 @@
 .admin-toggle-copy {
   flex: 1 1 0%;
   min-width: 0;
-}
-
-.admin-toggle-row:has(.admin-destructive[open]) .admin-toggle-copy {
-  flex: 0 1 auto;
 }
 
 .admin-toggle-title {

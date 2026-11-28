@@ -384,7 +384,6 @@ module Datasets
       { name: "Lovgreen", street: "9180 NE Lovgreen Rd", city: "Bainbridge Island", state: "Washington", country: "United States", latitude: 47.67213034782609, longitude: -122.5271065217391, zone_name: "East" },
       { name: "Lynwood Ctr", street: "5919 Blakely Ave NE", city: "Bainbridge Island", state: "Washington", country: "United States", latitude: 47.61758092026136, longitude: -122.540790178815, zone_name: "South" },
       { name: "High School", street: "1856 Commodore Ln NW", city: "Bainbridge Island", state: "Washington", country: "United States", latitude: 47.6411197090392, longitude: -122.5267590221607, zone_name: "Center" },
-      { name: "Newell Point", street: "10878 NE Skinner Rd", city: "Bainbridge Island", state: "Washington", country: "United States", latitude: 47.6624840300135, longitude: -122.5808979866228, zone_name: "West" },
       { name: "Phelps", street: "15740 Euclid Ave NE", city: "Bainbridge Island", state: "Washington", country: "United States", latitude: 47.70694648546652, longitude: -122.5232555417314, zone_name: "East" },
       { name: "New Brooklyn", street: "8245 New Holland Ct", city: "Bainbridge Island", state: "Washington", country: "United States", latitude: 47.62987803600337, longitude: -122.5381838517988, zone_name: "West" },
       { name: "Point White", street: "3154 Point White Dr NE", city: "Bainbridge Island", state: "Washington", country: "United States", latitude: 47.5925832715766, longitude: -122.5645631381366, zone_name: "South" },

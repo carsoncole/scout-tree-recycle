@@ -17,7 +17,6 @@ class Admin::MarketingController < Admin::BaseController
   def index
     @pagy, @contacts = pagy(Contact.search(params[:q]).order(:email))
     @test_contacts = Contact.order(:email)
-    @contacts_count = Contact.count
     @marketing_1_count = Contact.marketing_subscribed.where(marketing_1_email_sent_at: nil).count
     @marketing_2_count = Contact.marketing_subscribed.where(marketing_2_email_sent_at: nil).count
     @marketing_email_templates = MarketingEmailTemplate.where(name: MarketingEmailTemplate::MARKETING_EMAIL_NAMES).index_by(&:name)

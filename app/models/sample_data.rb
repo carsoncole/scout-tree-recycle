@@ -2,13 +2,26 @@
 # records (drivers, reservations, contacts). Backs the `sample_data:load`
 # rake task and the admin "Load Sample Data" action (LoadSampleDataJob).
 # Intended for development/demo use.
+#
+# Loads only when reservations, contacts, and route info are all empty.
+# Route info is routes, zones, and drivers. Any record in one of those
+# tables leaves the database unchanged.
 class SampleData
   SAMPLE_CITY = "Bainbridge Island"
   SAMPLE_STATE = "WA"
   SAMPLE_ZIP = "98110"
   SAMPLE_COUNTRY = "United States"
 
+  # Reservations, contacts, and route info (routes, zones, and drivers).
+  TABLES = [ Reservation, Contact, Route, Zone, Driver ].freeze
+
+  def self.loadable?
+    TABLES.none?(&:exists?)
+  end
+
   def self.load!
+    return false unless loadable?
+
     require "faker"
 
     # Drivers
@@ -47,15 +60,12 @@ class SampleData
       end
     end
 
-    # Route boundary/guide points
-    Datasets::SeedData::POINTS.each do |point_attrs|
-      route = Route.find_by!(name: point_attrs[:route_name])
-      next unless route
-
-      Point.find_or_create_by!(route_id: route.id, order: point_attrs[:order]) do |point|
-        point.latitude = point_attrs[:latitude]
-        point.longitude = point_attrs[:longitude]
-      end
+    # Route boundary points. A polygon is the route's coordinates (more than
+    # three of them). Order only sequences those corners, so it is not a
+    # unique key. New Brooklyn's corners are all order 0; looking them up by
+    # order saved only the first point and the route never formed a boundary.
+    Datasets::SeedData::POINTS.group_by { |attrs| attrs[:route_name] }.each do |route_name, point_list|
+      load_route_points!(Route.find_by!(name: route_name), point_list)
     end
 
     # Driver routes
@@ -112,5 +122,29 @@ class SampleData
     end
 
     Rails.logger.info("Loaded example Bainbridge Island, Washington sample data (zones, routes, points, drivers, reservations, contacts).")
+    true
   end
+
+  # Find or create each corner. When a route repeats an order, number the
+  # corners in dataset order so each coordinate is stored and the boundary
+  # has a sequence. Ordered routes stay keyed by order.
+  def self.load_route_points!(route, point_list)
+    repeated_order = point_list.map { |attrs| attrs[:order].to_i }.tally.any? { |_order, count| count > 1 }
+
+    point_list.each_with_index do |attrs, index|
+      if repeated_order
+        point = route.points.find_or_initialize_by(latitude: attrs[:latitude], longitude: attrs[:longitude])
+        point.order = index + 1 if point.new_record? || point.order.to_i.zero?
+      else
+        point = route.points.find_or_initialize_by(order: attrs[:order])
+        if point.new_record?
+          point.latitude = attrs[:latitude]
+          point.longitude = attrs[:longitude]
+        end
+      end
+
+      point.save!
+    end
+  end
+  private_class_method :load_route_points!
 end

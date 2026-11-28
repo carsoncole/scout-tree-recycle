@@ -18,7 +18,7 @@ class Admin::PointsController < Admin::BaseController
 
   def update
     if @point.update(point_params)
-      redirect_to edit_admin_route_path(@route), notice: "Point was successfully updated."
+      redirect_to admin_route_path(@route), notice: "Point was successfully updated."
     else
       redirect_to edit_admin_route_path(@route), alert: "Failed to update point: #{@point.errors.full_messages.join(', ')}"
     end

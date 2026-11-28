@@ -15,7 +15,7 @@ class Admin::RoutesTest < ApplicationSystemTestCase
 
     visit admin_routes_url
 
-    assert_selector "h2", text: "Route map"
+    assert_no_selector "h2", text: "Route map"
     assert_selector ".leaflet-container"
     assert_selector "path.leaflet-interactive[stroke='#8b1818']"
     assert_no_selector "path.route-polygon-link"
@@ -39,31 +39,32 @@ class Admin::RoutesTest < ApplicationSystemTestCase
 
     visit admin_route_url(route)
 
-    assert_selector "h2", text: "Route map"
+    assert_no_selector "h2", text: "Route map"
     assert_selector '[data-controller="map"]'
     assert_selector "span.route-polygon-label", text: route.name
     assert_no_selector "a.route-polygon-label", text: route.name
   end
 
-  test "points toggle shows each route point on the map" do
+  test "clicking a route point opens its popup" do
     route = routes(:one)
     point = points(:three)
 
     visit admin_route_url(route)
 
     assert_selector ".leaflet-container"
+    assert_no_selector "#route-points-toggle"
     assert_no_selector ".route-point-marker"
-    click_button "Points"
-
-    assert_selector "#route-points-toggle[aria-pressed='true']"
-    marker = find(".route-point-marker[data-point-id='#{point.id}']")
+    marker = find(".route-polygon-point[data-point-id='#{point.id}']")
     marker.click
 
     assert_current_path admin_route_path(route)
     assert_selector ".leaflet-container"
-    assert_selector ".route-point-popup", text: "Route point"
-    assert_selector ".route-point-popup", text: "Order #{point.order}"
+    assert_selector ".route-point-popup", text: route.name
+    assert_selector ".route-point-popup", text: "Latitude #{point.latitude}"
+    assert_selector ".route-point-popup", text: "Longitude #{point.longitude}"
+    assert_no_selector ".route-point-popup", text: "Order #{point.order}"
     assert_selector ".route-point-popup a[href='#{edit_admin_route_point_path(route, point)}']", text: "Edit"
+    assert_route_point_popup_colors
     assert_no_selector "tr.bg-sage-soft"
 
     within ".route-point-popup" do
@@ -111,19 +112,19 @@ class Admin::RoutesTest < ApplicationSystemTestCase
     assert_selector "span.route-polygon-label", text: route.name
     assert_selector "a.route-polygon-label[href='#{admin_route_path(neighbor)}']", text: neighbor.name
     assert_no_selector ".route-point-marker"
-    assert_text "Nearby routes that border this one are outlined in gray"
+    assert_no_selector "#route-points-toggle"
+    assert_no_text "Nearby routes that border this one are outlined in gray"
 
-    find(".nearby-route-point[data-point-id='#{separate.id}']").click
+    find(".route-polygon-point[data-point-id='#{separate.id}']").click
 
-    assert_selector ".nearby-route-point-popup", text: neighbor.name
-    assert_selector ".nearby-route-point-popup", text: "Latitude 40.75"
-    assert_selector ".nearby-route-point-popup", text: "Longitude -74.25"
-    assert_no_selector ".nearby-route-point-popup a", text: "Edit"
+    assert_selector ".route-point-popup", text: neighbor.name
+    assert_selector ".route-point-popup", text: "Latitude 40.75"
+    assert_selector ".route-point-popup", text: "Longitude -74.25"
+    assert_selector ".route-point-popup a[href='#{edit_admin_route_point_path(neighbor, separate)}']", text: "Edit"
+    assert_route_point_popup_colors
 
-    click_button "Points"
-
-    assert_selector ".route-point-marker[data-point-id='#{points(:three).id}']"
-    assert_selector ".nearby-route-point[data-point-id='#{corner.id}']"
+    assert_selector ".route-polygon-point[data-point-id='#{points(:three).id}']"
+    assert_selector ".route-polygon-point[data-point-id='#{corner.id}']"
   end
 
   test "showing route without map data displays empty state" do
@@ -131,7 +132,20 @@ class Admin::RoutesTest < ApplicationSystemTestCase
 
     visit admin_route_url(route)
 
-    assert_selector "h2", text: "Route map"
+    assert_no_selector "h2", text: "Route map"
     assert_text "No route boundary or pickup locations with coordinates are available for this route."
+  end
+
+  private
+
+  # Leaflet paints popups white and links #0078A8. The shared route-point
+  # popup stays on the light surface and sage link, with no dark: classes.
+  def assert_route_point_popup_colors
+    popup_html = evaluate_script("document.querySelector('.leaflet-popup').innerHTML")
+    assert_no_match(/dark:/, popup_html)
+
+    assert_equal "rgb(254, 253, 250)", evaluate_script("getComputedStyle(document.querySelector('.leaflet-popup-content-wrapper')).backgroundColor")
+    assert_equal "rgb(38, 42, 32)", evaluate_script("getComputedStyle(document.querySelector('.route-point-popup')).color")
+    assert_equal "rgb(58, 83, 66)", evaluate_script("getComputedStyle(document.querySelector('.route-point-popup a')).color")
   end
 end

@@ -9,49 +9,19 @@
   <%= render "admin/settings/sidebar" %>
 
   <% point_markers = route_point_markers(@route) %>
-  <div class="flex flex-col gap-6" <% if point_markers.any? %>data-controller="route-map"<% end %>>
+  <div class="flex flex-col gap-6">
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route map</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
-            <% if point_markers.any? %>
-              Route boundary and pickup locations.
-              <% if @nearby_routes.any? %>
-                Nearby routes that border this one are outlined in gray, with their points marked. Click a labeled route to open it.
-              <% end %>
-              Turn on Points to show this route's points.
-            <% elsif @nearby_routes.any? %>
-              Route boundary area and pickup locations. Nearby routes that border this one are outlined in gray, with their points marked. Click a labeled route to open it.
-            <% else %>
-              Route boundary area and pickup locations.
-            <% end %>
-          </p>
-        </div>
-        <% if point_markers.any? %>
-          <%= button_tag type: "button",
-                id: "route-points-toggle",
-                aria: { pressed: "false" },
-                data: { action: "route-map#togglePoints" },
-                class: "inline-flex items-center gap-1.5 self-start rounded-full border border-line-strong bg-surface px-3 py-1.5 text-[0.82rem] font-medium text-ink-soft transition hover:bg-stone aria-pressed:border-sage aria-pressed:bg-sage aria-pressed:text-surface dark:border-line-strong-dark dark:bg-surface-dark dark:text-ink-soft-dark dark:hover:bg-stone-dark dark:aria-pressed:border-sage-dark dark:aria-pressed:bg-sage-dark dark:aria-pressed:text-page-dark" do %>
-            Points
-            <span class="tabular-nums"><%= point_markers.size %></span>
-          <% end %>
-        <% end %>
-      </div>
       <div class="admin-panel-body">
         <% current_polygons = current_route_polygon(@route) %>
         <% nearby_polygons = nearby_route_polygons(@nearby_routes) %>
         <% boundary_polygons = nearby_polygons + current_polygons %>
         <% markers = reservation_map_markers(@pickup_reservations) + location_markers_within([ @route ]) + nearby_route_point_markers(@nearby_routes) + point_markers %>
         <% if boundary_polygons.any? || markers.any? %>
-          <div <% if point_markers.any? %>data-route-map-target="map"<% end %>>
-            <%= render "shared/map",
-                  polygons: boundary_polygons,
-                  markers: markers,
-                  height_class: "h-[36rem]",
-                  empty_message: "No map data available for this route." %>
-          </div>
+          <%= render "shared/map",
+                polygons: boundary_polygons,
+                markers: markers,
+                height_class: "h-[36rem]",
+                empty_message: "No map data available for this route." %>
           <% if current_polygons.empty? && @route.points.any? %>
             <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">A bounded area requires more than 3 ordered points. Add more route points to display the route boundary.</p>
           <% elsif current_polygons.empty? %>

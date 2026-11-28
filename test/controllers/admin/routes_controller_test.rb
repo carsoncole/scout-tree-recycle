@@ -14,8 +14,8 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     get admin_routes_url
 
     assert_response :success
-    assert_select "h2", text: "Route map"
-    assert_select "p", text: "Every route boundary, labeled with the route name. Click a route name to open it."
+    assert_select "h2", text: "Route map", count: 0
+    assert_select "p", text: "Every route boundary, labeled with the route name. Click a route name to open it.", count: 0
     assert_select "table td", text: "Unassigned", count: 0
     map = css_select('[data-controller="map"]').first
     assert_includes map["class"], "h-[calc(100dvh-16rem)]"
@@ -81,8 +81,8 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     get admin_route_url(route)
 
     assert_response :success
-    assert_select "h2", text: "Route map"
-    assert_equal [ "Route map", "Route information", "Drivers", "Route points" ], css_select("h2").map(&:text)
+    assert_select "h2", text: "Route map", count: 0
+    assert_equal [ "Route information", "Drivers", "Route points" ], css_select("h2").map(&:text)
     assert_select "dt", text: "Distance", count: 0
     assert_select "dt", text: "Distance to zone", count: 0
     assert_select "dt", text: "Name"
@@ -90,10 +90,19 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".flex.flex-wrap > section", count: 2
     assert_select '[data-controller="map"]'
     assert_select "[data-map-polygons-value]"
-    assert_select "button#route-points-toggle[aria-pressed=false]", text: /Points/
+    assert_select "button#route-points-toggle", count: 0
+    assert_select "p", text: /Each polygon point is marked/, count: 0
+    assert_select "p", text: "Route boundary area and pickup locations.", count: 0
     assert_select "[data-map-markers-value*=route_point]"
     assert_select "[data-map-markers-value*='#{points(:three).latitude.to_f}']"
     assert_select "[data-map-markers-value*='#{edit_admin_route_point_path(route, points(:three))}']"
+
+    markers = JSON.parse(css_select("[data-map-markers-value]").first["data-map-markers-value"])
+    point_marker = markers.find { |marker| marker["role"] == "route_point" && marker["id"] == points(:three).id }
+
+    assert_equal route.name, point_marker["route_name"]
+    assert_equal edit_admin_route_point_path(route, points(:three)), point_marker["edit_url"]
+    assert_nil point_marker["order"]
   end
 
   test "should show nearby routes that share a point" do
@@ -113,7 +122,7 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     get admin_route_url(route)
 
     assert_response :success
-    assert_select "p", text: /Nearby routes that border this one are outlined in gray/
+    assert_select "p", text: /Nearby routes that border this one are outlined in gray/, count: 0
 
     polygons = JSON.parse(css_select("[data-map-polygons-value]").first["data-map-polygons-value"])
     nearby_polygon = polygons.find { |polygon| polygon["label"] == neighbor.name }
@@ -137,6 +146,10 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_includes nearby_markers.map { |marker| marker["route_name"] }, neighbor.name
     assert_includes nearby_markers.map { |marker| marker["route_name"] }, shared_only.name
     assert_not_includes nearby_markers.map { |marker| marker["route_name"] }, outsider.name
+    assert nearby_markers.all? { |marker|
+      point = Point.find(marker["id"])
+      marker["route_name"] == point.route.name && marker["edit_url"] == edit_admin_route_point_path(point.route, point)
+    }
     assert nearby_markers.any? { |marker| marker["lat"] == shared.latitude.to_f && marker["lng"] == shared.longitude.to_f }
   end
 
@@ -146,7 +159,7 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     get admin_route_url(route)
 
     assert_response :success
-    assert_select "h2", text: "Route map"
+    assert_select "h2", text: "Route map", count: 0
     assert_select "p", text: "No route boundary or pickup locations with coordinates are available for this route."
     assert_select "button#route-points-toggle", count: 0
   end

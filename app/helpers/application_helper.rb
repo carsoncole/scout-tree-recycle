@@ -161,20 +161,11 @@ module ApplicationHelper
     } ]
   end
 
-  # Numbered markers for a route's polygon corners. The route map keeps them
-  # hidden until the Points toggle is on.
+  # Circle markers for a route's polygon corners. They use the same marker as
+  # nearby route vertices and open a popup with the coordinates.
   def route_point_markers(route)
     route.points.sort_by { |point| [ point.order || 0, point.id || 0 ] }.filter_map do |point|
-      next if point.latitude.blank? || point.longitude.blank?
-
-      {
-        id: point.id,
-        lat: point.latitude.to_f,
-        lng: point.longitude.to_f,
-        role: "route_point",
-        order: point.order,
-        edit_url: edit_admin_route_point_path(route, point)
-      }
+      route_point_marker(route, point, role: "route_point")
     end
   end
 
@@ -280,22 +271,28 @@ module ApplicationHelper
     end
   end
 
-  # Vertices of nearby routes. They stay visible so the current polygon's sides
-  # can be compared with the shared corners. Clicking one shows its coordinates.
+  # Vertices of nearby routes. They use the same circle as this route's own
+  # points. Clicking one opens the shared coordinate popup.
   def nearby_route_point_markers(routes)
     Array(routes).flat_map do |route|
       route.points.sort_by { |point| [ point.order || 0, point.id || 0 ] }.filter_map do |point|
-        next if point.latitude.blank? || point.longitude.blank?
-
-        {
-          id: point.id,
-          lat: point.latitude.to_f,
-          lng: point.longitude.to_f,
-          role: "nearby_route_point",
-          route_name: route.name
-        }
+        route_point_marker(route, point, role: "nearby_route_point")
       end
     end
+  end
+
+  # Shared fields for a route-point popup: route name, coordinates, and edit link.
+  def route_point_marker(route, point, role:)
+    return if point.latitude.blank? || point.longitude.blank?
+
+    {
+      id: point.id,
+      lat: point.latitude.to_f,
+      lng: point.longitude.to_f,
+      role: role,
+      route_name: route.name,
+      edit_url: edit_admin_route_point_path(route, point)
+    }
   end
 
   def pickup_status_color(status)

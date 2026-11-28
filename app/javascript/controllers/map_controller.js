@@ -22,9 +22,7 @@ export default class extends Controller {
     this.previewMarker = null
     this.miniMap = null
     this.miniMarker = null
-    this.routePointLayers = []
     this.polygonLabels = []
-    this.routePointsVisible = false
 
     const hasCenter = Array.isArray(this.centerValue) && this.centerValue.length === 2 && this.validCoord(this.centerValue[0], this.centerValue[1])
     const initialCenter = hasCenter ? [Number(this.centerValue[0]), Number(this.centerValue[1])] : [47.6062, -122.3321]
@@ -66,7 +64,6 @@ export default class extends Controller {
       this.layerGroup = null
       this.markerLayers = null
       this.statusEntries = null
-      this.routePointLayers = null
     }
     if (this.element) this.element.__mapController = null
   }
@@ -154,32 +151,10 @@ export default class extends Controller {
     })
   }
 
-  // Show or hide the route's own points. Pickup markers and the boundary
-  // polygon stay as they are.
-  setRoutePointsVisible(visible) {
-    this.routePointsVisible = !!visible
-    this.applyRoutePointVisibility()
-  }
-
-  applyRoutePointVisibility() {
-    if (!this.layerGroup || !this.routePointLayers) return
-
-    this.routePointLayers.forEach((layer) => {
-      if (this.routePointsVisible) {
-        if (!this.layerGroup.hasLayer(layer)) layer.addTo(this.layerGroup)
-        const el = layer.getElement && layer.getElement()
-        if (el && layer.__pointId != null) el.setAttribute("data-point-id", String(layer.__pointId))
-      } else if (this.layerGroup.hasLayer(layer)) {
-        this.layerGroup.removeLayer(layer)
-      }
-    })
-  }
-
   renderLayers() {
     if (!this.layerGroup) return
     const bounds = []
     this.statusEntries = new Map()
-    this.routePointLayers = []
 
     let polygonBounds = null
     this.polygonLabels = []
@@ -211,15 +186,12 @@ export default class extends Controller {
       const lng = Number(marker.lng ?? marker.longitude)
       if (!this.validCoord(lat, lng)) return
 
-      if (marker.role === "route_point") {
-        this.routePointLayers.push(this.routePointLayer(marker, lat, lng))
-        bounds.push(L.latLngBounds([ [ lat, lng ], [ lat, lng ] ]))
-        return
-      }
-
-      if (marker.role === "nearby_route_point") {
-        this.nearbyRoutePointLayer(marker, lat, lng).addTo(this.layerGroup)
-        if (!polygonBounds || this.nearBounds(polygonBounds, lat, lng)) {
+      if (marker.role === "route_point" || marker.role === "nearby_route_point") {
+        this.polygonPointLayer(marker, lat, lng).addTo(this.layerGroup)
+        // This route's corners always frame the map. A nearby corner only
+        // does when it sits near the boundary, so a distant point cannot
+        // zoom the map out.
+        if (marker.role === "route_point" || !polygonBounds || this.nearBounds(polygonBounds, lat, lng)) {
           bounds.push(L.latLngBounds([ [ lat, lng ], [ lat, lng ] ]))
         }
         return
@@ -303,7 +275,6 @@ export default class extends Controller {
     })
 
     this.applyStatusVisibility()
-    this.applyRoutePointVisibility()
 
     if (bounds.length > 0) {
       const combined = bounds.reduce((acc, b) => (acc ? acc.extend(b) : b), null)
@@ -463,8 +434,7 @@ export default class extends Controller {
     this.miniMarker = null
   }
 
-  // Leaflet paints its popup chrome white. Apply the app's surface tokens once
-  // the popup is in the DOM so the preview follows light and dark mode.
+  // Leaflet paints its popup chrome white. Pickup previews follow light and dark mode.
   stylePopupChrome(popup) {
     const element = popup.getElement()
     if (!element) return
@@ -480,6 +450,61 @@ export default class extends Controller {
     if (close) {
       close.classList.add("rounded-full", "text-ink", "hover:bg-stone", "dark:text-ink-dark", "dark:hover:bg-stone-dark")
     }
+  }
+
+  // The basemap stays light, so route-point popups use the light surface only.
+  // Leaflet's unlayered popup rules beat layered utilities, so these use
+  // important. There are no dark: classes: the tiles do not switch.
+  styleMapPopupChrome(popup) {
+    const element = popup.getElement()
+    if (!element) return
+
+    const wrapper = element.querySelector(".leaflet-popup-content-wrapper")
+    const tip = element.querySelector(".leaflet-popup-tip")
+    const close = element.querySelector(".leaflet-popup-close-button")
+
+    if (wrapper) wrapper.classList.add("border", "!border-line", "!bg-surface", "!text-ink")
+    if (tip) tip.classList.add("!bg-surface")
+    if (close) close.classList.add("rounded-full", "!text-ink", "hover:!text-ink", "hover:!bg-stone")
+  }
+
+  // One popup for every route point on admin settings maps: route name,
+  // latitude, longitude, and an edit link.
+  bindRoutePointPopup(layer, marker, lat, lng) {
+    const popup = document.createElement("div")
+    popup.className = "route-point-popup flex flex-col font-sans text-[0.85rem] leading-tight !text-ink"
+    if (marker.id !== undefined && marker.id !== null) popup.dataset.pointId = String(marker.id)
+
+    const heading = document.createElement("div")
+    heading.className = "font-semibold !text-ink"
+    heading.textContent = marker.route_name ? String(marker.route_name) : "Route"
+
+    const latitude = document.createElement("div")
+    latitude.className = "!text-ink"
+    latitude.textContent = `Latitude ${this.formatCoord(lat)}`
+
+    const longitude = document.createElement("div")
+    longitude.className = "!text-ink"
+    longitude.textContent = `Longitude ${this.formatCoord(lng)}`
+
+    popup.append(heading, latitude, longitude)
+
+    const editUrl = typeof marker.edit_url === "string" ? marker.edit_url : ""
+    if (editUrl.startsWith("/")) {
+      const edit = document.createElement("a")
+      edit.href = editUrl
+      // Leaflet colors every map link #0078A8. Important keeps the light sage
+      // on the light basemap, including after the link has been visited.
+      edit.className = "mt-1 no-underline !text-sage-deep hover:!text-ink visited:!text-sage-deep"
+      edit.textContent = "Edit"
+      edit.addEventListener("click", (event) => event.stopPropagation())
+      popup.append(edit)
+    }
+
+    layer.bindPopup(popup)
+    layer.on("popupopen", (event) => {
+      this.styleMapPopupChrome(event.popup)
+    })
   }
 
   // A same-site path opens that page. Route names use it. Polygon fills do not.
@@ -720,16 +745,16 @@ export default class extends Controller {
     })
   }
 
-  // A vertex of a nearby route. Always visible, unlike this route's own points.
-  // Clicking it shows the coordinates used to line the polygons up.
-  nearbyRoutePointLayer(marker, lat, lng) {
+  // A polygon vertex on this route or a nearby route. Every corner uses the
+  // same circle. Clicking it opens the shared coordinate popup.
+  polygonPointLayer(marker, lat, lng) {
     const layer = L.circleMarker([ lat, lng ], {
       radius: 6,
       color: "#4b5563",
       weight: 2,
       fillColor: "#f9fafb",
       fillOpacity: 1,
-      className: "nearby-route-point"
+      className: "route-polygon-point"
     })
     layer.on("add", () => {
       const element = layer.getElement()
@@ -738,85 +763,7 @@ export default class extends Controller {
       element.setAttribute("data-point-id", String(marker.id))
     })
 
-    const popup = document.createElement("div")
-    popup.className = "nearby-route-point-popup flex flex-col font-sans text-[0.85rem] leading-tight"
-    if (marker.id !== undefined && marker.id !== null) popup.dataset.pointId = String(marker.id)
-
-    const heading = document.createElement("div")
-    heading.className = "font-semibold text-ink dark:text-ink-dark"
-    heading.textContent = marker.route_name ? String(marker.route_name) : "Nearby route"
-
-    const latitude = document.createElement("div")
-    latitude.className = "text-ink dark:text-ink-dark"
-    latitude.textContent = `Latitude ${this.formatCoord(lat)}`
-
-    const longitude = document.createElement("div")
-    longitude.className = "text-ink dark:text-ink-dark"
-    longitude.textContent = `Longitude ${this.formatCoord(lng)}`
-
-    popup.append(heading, latitude, longitude)
-    layer.bindPopup(popup)
-    layer.on("popupopen", (event) => {
-      this.stylePopupChrome(event.popup)
-    })
-
-    return layer
-  }
-
-  // A route point is a numbered corner of the boundary. It stays off the map
-  // until the route page asks for it, then opens its own popup when clicked.
-  routePointLayer(marker, lat, lng) {
-    const label = marker.order === undefined || marker.order === null || marker.order === "" ? "•" : String(marker.order)
-    const badge = document.createElement("span")
-    badge.className = "flex size-7 items-center justify-center rounded-full border-2 border-sage-deep bg-surface text-[0.75rem] font-semibold leading-none text-sage-deep shadow-sm dark:border-sage-dark dark:bg-surface-dark dark:text-sage-dark"
-    badge.textContent = label
-
-    const layer = L.marker([ lat, lng ], {
-      keyboard: true,
-      title: `Route point ${label}`,
-      zIndexOffset: 400,
-      icon: L.divIcon({
-        className: "route-point-marker",
-        html: badge,
-        iconSize: [ 28, 28 ],
-        iconAnchor: [ 14, 14 ],
-        popupAnchor: [ 0, -16 ]
-      })
-    })
-    layer.__pointId = marker.id
-
-    const popup = document.createElement("div")
-    popup.className = "route-point-popup flex flex-col font-sans text-[0.85rem] leading-tight"
-    if (marker.id !== undefined && marker.id !== null) popup.dataset.pointId = String(marker.id)
-
-    const heading = document.createElement("div")
-    heading.className = "font-semibold text-ink dark:text-ink-dark"
-    heading.textContent = "Route point"
-
-    const orderLine = document.createElement("div")
-    orderLine.className = "text-ink dark:text-ink-dark"
-    orderLine.textContent = `Order ${label}`
-
-    const coords = document.createElement("div")
-    coords.className = "text-ink-soft dark:text-ink-soft-dark"
-    coords.textContent = `${this.formatCoord(lat)}, ${this.formatCoord(lng)}`
-
-    popup.append(heading, orderLine, coords)
-
-    const editUrl = typeof marker.edit_url === "string" ? marker.edit_url : ""
-    if (editUrl.startsWith("/")) {
-      const edit = document.createElement("a")
-      edit.href = editUrl
-      edit.className = "admin-link mt-1 text-sage-deep hover:text-ink dark:text-sage-deep-dark dark:hover:text-ink-dark"
-      edit.textContent = "Edit"
-      edit.addEventListener("click", (event) => event.stopPropagation())
-      popup.append(edit)
-    }
-
-    layer.bindPopup(popup)
-    layer.on("popupopen", (event) => {
-      this.stylePopupChrome(event.popup)
-    })
+    this.bindRoutePointPopup(layer, marker, lat, lng)
 
     return layer
   }

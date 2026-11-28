@@ -12,12 +12,6 @@
 
   <div class="flex flex-col gap-6">
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
-      <div class="admin-panel-header border-line dark:border-line-dark">
-        <div>
-          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route map</h2>
-          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Every route boundary, labeled with the route name. Click a route name to open it.</p>
-        </div>
-      </div>
       <div class="admin-panel-body">
         <% polygons = routes_overview_polygons(@map_routes) %>
         <% if polygons.any? %>

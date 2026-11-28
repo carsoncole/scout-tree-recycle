@@ -12,6 +12,32 @@
 
   <div class="flex flex-col gap-6">
     <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
+      <div class="admin-panel-header border-line dark:border-line-dark">
+        <div>
+          <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route map</h2>
+          <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">Every route boundary, labeled with the route name.</p>
+        </div>
+      </div>
+      <div class="admin-panel-body">
+        <% polygons = routes_overview_polygons(@map_routes) %>
+        <% if polygons.any? %>
+          <%= render "shared/map",
+                polygons: polygons,
+                height_class: "h-[calc(100dvh-16rem)] min-h-[28rem] lg:h-[calc(100dvh-18rem)]",
+                empty_message: "No route boundaries are available." %>
+          <% routes_without_boundary = @map_routes.select { |route| route_boundary_polygon(route).empty? } %>
+          <% if routes_without_boundary.any? %>
+            <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">
+              Routes without a bounded area (&gt; 3 ordered points): <%= routes_without_boundary.map(&:name).to_sentence %>.
+            </p>
+          <% end %>
+        <% else %>
+          <%= render "admin/shared/empty_state", message: "No route boundaries are available. A bounded area requires more than 3 ordered points." %>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="admin-panel border border-line bg-surface dark:border-line-dark dark:bg-surface-dark">
       <div class="admin-table-wrap">
         <table class="admin-table text-ink dark:text-ink-dark">
           <thead>
@@ -61,18 +87,6 @@
                 </td>
               </tr>
             <% end %>
-
-            <tr class="hover:bg-table-hover dark:hover:bg-table-hover-dark">
-              <td class="<%= admin_td_class %>">Unassigned</td>
-              <td class="<%= admin_td_class %>">—</td>
-              <td class="<%= admin_td_class %>"><%= Reservation.where(route_id: nil).count %></td>
-              <td class="<%= admin_td_class %>"><span class="admin-table-note text-ink-soft dark:text-ink-soft-dark">No route</span></td>
-              <td class="<%= admin_td_class %>">
-                <div class="admin-table-actions">
-                  <%= link_to "View", admin_reservations_path(route_id: nil), class: admin_link_class %>
-                </div>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>

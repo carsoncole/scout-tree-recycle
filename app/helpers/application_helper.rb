@@ -197,8 +197,97 @@ module ApplicationHelper
   }.freeze
   ROUTE_AREA_COLOR = "#3b82f6"
   ROUTE_AREA_STROKE = "#2563eb"
+  NEARBY_ROUTE_COLOR = "#9ca3af"
+  NEARBY_ROUTE_STROKE = "#6b7280"
   LOCATION_MARKER_COLOR = "#d97706"
   LOCATION_MARKER_STROKE = "#b45309"
+  # Stroke, then fill. Hues are spaced so neighboring names do not share a color.
+  # Assigned by position in the ordered route list, so a route keeps its color.
+  # The list repeats only after every color has been used.
+  ROUTE_OVERVIEW_COLORS = [
+    [ "#8b1818", "#d34545" ],
+    [ "#188b3a", "#45d36f" ],
+    [ "#5b188b", "#9845d3" ],
+    [ "#8b7c18", "#d3c245" ],
+    [ "#18788b", "#45bcd3" ],
+    [ "#8b1856", "#d34592" ],
+    [ "#358b18", "#69d345" ],
+    [ "#1d188b", "#4b45d3" ],
+    [ "#8b3f18", "#d37545" ],
+    [ "#188b60", "#45d39e" ],
+    [ "#81188b", "#c845d3" ],
+    [ "#738b18", "#b6d345" ],
+    [ "#18518b", "#458cd3" ],
+    [ "#8b1830", "#d34563" ],
+    [ "#188b22", "#45d351" ],
+    [ "#44188b", "#7b45d3" ],
+    [ "#8b6518", "#d3a445" ],
+    [ "#188b86", "#45d3ce" ],
+    [ "#8b186e", "#d345af" ],
+    [ "#4d8b18", "#86d345" ],
+    [ "#182b8b", "#455cd3" ],
+    [ "#8b2718", "#d35745" ],
+    [ "#188b48", "#45d381" ],
+    [ "#6a188b", "#aa45d3" ],
+    [ "#8a8b18", "#d3d345" ],
+    [ "#18698b", "#45a9d3" ],
+    [ "#8b1848", "#d34580" ],
+    [ "#268b18", "#56d345" ],
+    [ "#2c188b", "#5d45d3" ],
+    [ "#8b4d18", "#d38745" ],
+    [ "#188b6f", "#45d3b0" ],
+    [ "#8b1885", "#d345cd" ]
+  ].freeze
+
+  # Every route boundary on the routes index. The name is drawn on the polygon.
+  # Routes with three or fewer points have no closed boundary.
+  def routes_overview_polygons(routes)
+    Array(routes).each_with_index.flat_map do |route, index|
+      stroke, fill = ROUTE_OVERVIEW_COLORS[index % ROUTE_OVERVIEW_COLORS.length]
+      route_boundary_polygon(route, label: route.name).map do |polygon|
+        polygon.merge(
+          color: stroke,
+          fillColor: fill,
+          fillOpacity: 0.3,
+          permanentLabel: true
+        )
+      end
+    end
+  end
+
+  # Gray boundary for a route that shares a vertex with the route being viewed.
+  # The name is drawn on the polygon. Routes with three or fewer points still
+  # contribute their markers, but they have no closed boundary.
+  def nearby_route_polygons(routes)
+    Array(routes).flat_map do |route|
+      route_boundary_polygon(route, label: route.name).map do |polygon|
+        polygon.merge(
+          color: NEARBY_ROUTE_STROKE,
+          fillColor: NEARBY_ROUTE_COLOR,
+          fillOpacity: 0.18,
+          permanentLabel: true
+        )
+      end
+    end
+  end
+
+  # Vertices of nearby routes. They stay visible so the current polygon's sides
+  # can be compared with the shared corners. Clicking one shows its coordinates.
+  def nearby_route_point_markers(routes)
+    Array(routes).flat_map do |route|
+      route.points.sort_by { |point| [ point.order || 0, point.id || 0 ] }.filter_map do |point|
+        next if point.latitude.blank? || point.longitude.blank?
+
+        {
+          id: point.id,
+          lat: point.latitude.to_f,
+          lng: point.longitude.to_f,
+          role: "nearby_route_point",
+          route_name: route.name
+        }
+      end
+    end
+  end
 
   def pickup_status_color(status)
     PICKUP_STATUS_COLORS.fetch(status.to_s, ROUTE_AREA_STROKE)

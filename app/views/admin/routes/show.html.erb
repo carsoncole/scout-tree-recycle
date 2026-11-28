@@ -56,7 +56,13 @@
           <h2 class="admin-panel-title text-ink dark:text-ink-dark">Route map</h2>
           <p class="admin-panel-description text-ink-soft dark:text-ink-soft-dark">
             <% if point_markers.any? %>
-              Route boundary and pickup locations. Turn on Points to show each route point.
+              Route boundary and pickup locations.
+              <% if @nearby_routes.any? %>
+                Nearby routes that border this one are outlined in gray, with their points marked.
+              <% end %>
+              Turn on Points to show this route's points.
+            <% elsif @nearby_routes.any? %>
+              Route boundary area and pickup locations. Nearby routes that border this one are outlined in gray, with their points marked.
             <% else %>
               Route boundary area and pickup locations.
             <% end %>
@@ -74,18 +80,21 @@
         <% end %>
       </div>
       <div class="admin-panel-body">
-        <% boundary_polygons = route_boundary_polygon(@route) %>
-        <% markers = reservation_map_markers(@pickup_reservations) + location_markers_within([ @route ]) + point_markers %>
+        <% current_polygons = route_boundary_polygon(@route) %>
+        <% nearby_polygons = nearby_route_polygons(@nearby_routes) %>
+        <% boundary_polygons = nearby_polygons + current_polygons %>
+        <% markers = reservation_map_markers(@pickup_reservations) + location_markers_within([ @route ]) + nearby_route_point_markers(@nearby_routes) + point_markers %>
         <% if boundary_polygons.any? || markers.any? %>
           <div <% if point_markers.any? %>data-route-map-target="map"<% end %>>
             <%= render "shared/map",
                   polygons: boundary_polygons,
                   markers: markers,
+                  height_class: "h-[36rem]",
                   empty_message: "No map data available for this route." %>
           </div>
-          <% if boundary_polygons.empty? && @route.points.any? %>
+          <% if current_polygons.empty? && @route.points.any? %>
             <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">A bounded area requires more than 3 ordered points. Add more route points to display the route boundary.</p>
-          <% elsif boundary_polygons.empty? %>
+          <% elsif current_polygons.empty? %>
             <p class="admin-table-note mt-3 text-ink-soft dark:text-ink-soft-dark">No route boundary defined. Pickup markers are shown when available.</p>
           <% end %>
         <% else %>

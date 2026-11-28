@@ -3,11 +3,13 @@ class Admin::RoutesController < Admin::BaseController
 
   def index
     @pagy, @routes = pagy(Route.includes(:drivers, :zone).ordered)
+    @map_routes = Route.includes(:points).ordered
     flash.now[:alert] = "Routing is disabled. Enable routing in Settings to automatically route pickups." unless Setting.instance.is_routing_enabled?
   end
 
   def show
     @pickup_reservations = @route.reservations.pickup.where.not(latitude: nil, longitude: nil)
+    @nearby_routes = Route.sharing_a_point_with(@route).includes(:points)
   end
 
   def new

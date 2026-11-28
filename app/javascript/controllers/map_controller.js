@@ -23,6 +23,7 @@ export default class extends Controller {
     this.miniMap = null
     this.miniMarker = null
     this.routePointLayers = []
+    this.polygonLabels = []
     this.routePointsVisible = false
 
     const hasCenter = Array.isArray(this.centerValue) && this.centerValue.length === 2 && this.validCoord(this.centerValue[0], this.centerValue[1])
@@ -110,6 +111,7 @@ export default class extends Controller {
     const zoom = Math.min(17, Math.floor(exactZoom * 10) / 10)
 
     this.map.setView(bounds.getCenter(), zoom, { animate: false })
+    this.separatePolygonLabels()
   }
 
   markersValueChanged() {
@@ -180,6 +182,7 @@ export default class extends Controller {
     this.routePointLayers = []
 
     let polygonBounds = null
+    this.polygonLabels = []
 
     this.polygonsValue.forEach((polygon) => {
       const points = this.normalizePolygon(polygon)
@@ -188,9 +191,13 @@ export default class extends Controller {
           color: polygon.color || "#2563eb",
           weight: 2,
           fillColor: polygon.fillColor || "#3b82f6",
-          fillOpacity: 0.2
+          fillOpacity: polygon.fillOpacity ?? 0.2
         })
-        if (polygon && polygon.label) layer.bindPopup(String(polygon.label))
+        if (polygon?.permanentLabel && polygon.label) {
+          this.addPolygonLabel(points, String(polygon.label))
+        } else if (polygon && polygon.label) {
+          layer.bindPopup(String(polygon.label))
+        }
         layer.addTo(this.layerGroup)
         polygonBounds = polygonBounds ? polygonBounds.extend(layer.getBounds()) : layer.getBounds()
       }
@@ -206,6 +213,14 @@ export default class extends Controller {
       if (marker.role === "route_point") {
         this.routePointLayers.push(this.routePointLayer(marker, lat, lng))
         bounds.push(L.latLngBounds([ [ lat, lng ], [ lat, lng ] ]))
+        return
+      }
+
+      if (marker.role === "nearby_route_point") {
+        this.nearbyRoutePointLayer(marker, lat, lng).addTo(this.layerGroup)
+        if (!polygonBounds || this.nearBounds(polygonBounds, lat, lng)) {
+          bounds.push(L.latLngBounds([ [ lat, lng ], [ lat, lng ] ]))
+        }
         return
       }
 
@@ -464,6 +479,230 @@ export default class extends Controller {
     if (close) {
       close.classList.add("rounded-full", "text-ink", "hover:bg-stone", "dark:text-ink-dark", "dark:hover:bg-stone-dark")
     }
+  }
+
+  // Name drawn on a route polygon. The label sits above the fill and does
+  // not take clicks. It is anchored inside the polygon, then nudged so
+  // neighboring names do not cover each other.
+  addPolygonLabel(points, text) {
+    const [ lat, lng ] = this.polygonLabelPoint(points)
+    const badge = document.createElement("span")
+    badge.className = "route-polygon-label pointer-events-none absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-line bg-surface px-2 py-0.5 text-[0.75rem] font-semibold leading-none text-ink shadow-xs dark:border-line-dark dark:bg-surface-dark dark:text-ink-dark"
+    badge.textContent = text
+
+    const marker = L.marker([ lat, lng ], {
+      interactive: false,
+      keyboard: false,
+      zIndexOffset: 50,
+      icon: L.divIcon({
+        className: "route-polygon-label-icon",
+        html: badge,
+        iconSize: [ 0, 0 ],
+        iconAnchor: [ 0, 0 ]
+      })
+    }).addTo(this.layerGroup)
+
+    this.polygonLabels.push({
+      marker,
+      text,
+      anchor: L.latLng(lat, lng)
+    })
+  }
+
+  // Prefer the interior point farthest from the boundary so a concave route
+  // does not leave its name on a neighbor.
+  polygonLabelPoint(points) {
+    const candidates = []
+    const centroid = this.areaCentroid(points)
+    if (centroid && this.pointInRing(centroid, points)) candidates.push(centroid)
+
+    let minLat = Infinity
+    let maxLat = -Infinity
+    let minLng = Infinity
+    let maxLng = -Infinity
+    points.forEach(([ lat, lng ]) => {
+      minLat = Math.min(minLat, lat)
+      maxLat = Math.max(maxLat, lat)
+      minLng = Math.min(minLng, lng)
+      maxLng = Math.max(maxLng, lng)
+    })
+
+    const steps = 12
+    for (let row = 0; row <= steps; row++) {
+      for (let col = 0; col <= steps; col++) {
+        const point = [
+          minLat + ((maxLat - minLat) * row) / steps,
+          minLng + ((maxLng - minLng) * col) / steps
+        ]
+        if (this.pointInRing(point, points)) candidates.push(point)
+      }
+    }
+
+    if (candidates.length === 0) {
+      const lat = points.reduce((sum, point) => sum + point[0], 0) / points.length
+      const lng = points.reduce((sum, point) => sum + point[1], 0) / points.length
+      return [ lat, lng ]
+    }
+
+    return candidates.reduce((best, point) => (
+      this.ringClearance(point, points) > this.ringClearance(best, points) ? point : best
+    ))
+  }
+
+  areaCentroid(points) {
+    let area = 0
+    let cx = 0
+    let cy = 0
+    points.forEach((point, index) => {
+      const next = points[(index + 1) % points.length]
+      const cross = (point[1] * next[0]) - (next[1] * point[0])
+      area += cross
+      cx += (point[1] + next[1]) * cross
+      cy += (point[0] + next[0]) * cross
+    })
+    area *= 0.5
+    if (Math.abs(area) < 1e-14) return null
+
+    return [ cy / (6 * area), cx / (6 * area) ]
+  }
+
+  pointInRing(point, ring) {
+    const x = point[1]
+    const y = point[0]
+    let inside = false
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const yi = ring[i][0]
+      const xi = ring[i][1]
+      const yj = ring[j][0]
+      const xj = ring[j][1]
+      const crosses = (yi > y) !== (yj > y)
+      if (crosses && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside
+    }
+    return inside
+  }
+
+  ringClearance(point, ring) {
+    let min = Infinity
+    ring.forEach((start, index) => {
+      min = Math.min(min, this.distanceToSegment(point, start, ring[(index + 1) % ring.length]))
+    })
+    return min
+  }
+
+  distanceToSegment(point, start, end) {
+    const scale = Math.cos(point[0] * Math.PI / 180)
+    const ax = start[1] * scale
+    const ay = start[0]
+    const bx = end[1] * scale
+    const by = end[0]
+    const px = point[1] * scale
+    const py = point[0]
+    const dx = bx - ax
+    const dy = by - ay
+    const lengthSquared = (dx * dx) + (dy * dy)
+    const ratio = lengthSquared === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lengthSquared))
+    return Math.hypot(px - (ax + (ratio * dx)), py - (ay + (ratio * dy)))
+  }
+
+  // Shift overlapping names apart in screen space, then convert back to
+  // coordinates. Each pass starts from the polygon anchor so a resize does
+  // not keep pushing labels farther away.
+  separatePolygonLabels() {
+    if (!this.map || !this.polygonLabels || this.polygonLabels.length < 2) return
+
+    const size = this.map.getSize()
+    const boxes = this.polygonLabels.map((entry) => {
+      entry.marker.setLatLng(entry.anchor)
+      const badge = entry.marker.getElement()?.querySelector(".route-polygon-label")
+      const width = badge?.offsetWidth || Math.ceil(entry.text.length * 7.2) + 16
+      const height = badge?.offsetHeight || 18
+      const projected = this.map.latLngToContainerPoint(entry.anchor)
+      return {
+        entry,
+        width,
+        height,
+        x: projected.x - (width / 2),
+        y: projected.y - (height / 2)
+      }
+    })
+
+    for (let pass = 0; pass < 24; pass++) {
+      let moved = false
+      for (let i = 0; i < boxes.length; i++) {
+        for (let j = i + 1; j < boxes.length; j++) {
+          const a = boxes[i]
+          const b = boxes[j]
+          const overlapX = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x)
+          const overlapY = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y)
+          if (overlapX <= 2 || overlapY <= 2) continue
+
+          const gap = 6
+          if (overlapY <= overlapX) {
+            const push = (overlapY + gap) / 2
+            const direction = (a.y + (a.height / 2)) <= (b.y + (b.height / 2)) ? -1 : 1
+            a.y += direction * push
+            b.y -= direction * push
+          } else {
+            const push = (overlapX + gap) / 2
+            const direction = (a.x + (a.width / 2)) <= (b.x + (b.width / 2)) ? -1 : 1
+            a.x += direction * push
+            b.x -= direction * push
+          }
+          moved = true
+        }
+      }
+      if (!moved) break
+    }
+
+    boxes.forEach((box) => {
+      const pad = 4
+      const x = Math.min(Math.max(box.x, pad), Math.max(pad, size.x - box.width - pad))
+      const y = Math.min(Math.max(box.y, pad), Math.max(pad, size.y - box.height - pad))
+      box.entry.marker.setLatLng(this.map.containerPointToLatLng([ x + (box.width / 2), y + (box.height / 2) ]))
+    })
+  }
+
+  // A vertex of a nearby route. Always visible, unlike this route's own points.
+  // Clicking it shows the coordinates used to line the polygons up.
+  nearbyRoutePointLayer(marker, lat, lng) {
+    const layer = L.circleMarker([ lat, lng ], {
+      radius: 6,
+      color: "#4b5563",
+      weight: 2,
+      fillColor: "#f9fafb",
+      fillOpacity: 1,
+      className: "nearby-route-point"
+    })
+    layer.on("add", () => {
+      const element = layer.getElement()
+      if (!element || marker.id === undefined || marker.id === null) return
+
+      element.setAttribute("data-point-id", String(marker.id))
+    })
+
+    const popup = document.createElement("div")
+    popup.className = "nearby-route-point-popup flex flex-col font-sans text-[0.85rem] leading-tight"
+    if (marker.id !== undefined && marker.id !== null) popup.dataset.pointId = String(marker.id)
+
+    const heading = document.createElement("div")
+    heading.className = "font-semibold text-ink dark:text-ink-dark"
+    heading.textContent = marker.route_name ? String(marker.route_name) : "Nearby route"
+
+    const latitude = document.createElement("div")
+    latitude.className = "text-ink dark:text-ink-dark"
+    latitude.textContent = `Latitude ${this.formatCoord(lat)}`
+
+    const longitude = document.createElement("div")
+    longitude.className = "text-ink dark:text-ink-dark"
+    longitude.textContent = `Longitude ${this.formatCoord(lng)}`
+
+    popup.append(heading, latitude, longitude)
+    layer.bindPopup(popup)
+    layer.on("popupopen", (event) => {
+      this.stylePopupChrome(event.popup)
+    })
+
+    return layer
   }
 
   // A route point is a numbered corner of the boundary. It stays off the map

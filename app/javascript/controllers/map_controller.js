@@ -187,21 +187,18 @@ export default class extends Controller {
     this.polygonsValue.forEach((polygon) => {
       const points = this.normalizePolygon(polygon)
       if (points.length > 3) {
-        const url = this.localPath(polygon?.url)
-        const fillOpacity = polygon.fillOpacity ?? 0.2
+        const labelUrl = this.localPath(polygon?.labelUrl)
         const layer = L.polygon(points, {
           color: polygon.color || "#2563eb",
           weight: 2,
           fillColor: polygon.fillColor || "#3b82f6",
-          fillOpacity,
-          className: url ? "route-polygon-link" : ""
+          fillOpacity: polygon.fillOpacity ?? 0.2
         })
         if (polygon?.permanentLabel && polygon.label) {
-          this.addPolygonLabel(points, String(polygon.label), url)
-        } else if (polygon && polygon.label && !url) {
+          this.addPolygonLabel(points, String(polygon.label), labelUrl)
+        } else if (polygon && polygon.label) {
           layer.bindPopup(String(polygon.label))
         }
-        if (url) this.linkPolygon(layer, url, fillOpacity)
         layer.addTo(this.layerGroup)
         polygonBounds = polygonBounds ? polygonBounds.extend(layer.getBounds()) : layer.getBounds()
       }
@@ -485,31 +482,12 @@ export default class extends Controller {
     }
   }
 
-  // A same-site path opens that page. The routes index sends each boundary
-  // to its route. Other maps omit the path, so their polygons stay as they are.
+  // A same-site path opens that page. Route names use it. Polygon fills do not.
   localPath(value) {
     if (typeof value !== "string") return ""
     if (!value.startsWith("/") || value.startsWith("//")) return ""
 
     return value
-  }
-
-  linkPolygon(layer, url, fillOpacity) {
-    layer.on("mouseover", () => {
-      layer.setStyle({ weight: 3, fillOpacity: Math.min(0.55, fillOpacity + 0.15) })
-      layer.bringToFront()
-    })
-    layer.on("mouseout", () => {
-      layer.setStyle({ weight: 2, fillOpacity })
-    })
-    layer.on("click", (event) => {
-      if (event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent)
-      this.visitLocalPath(url, event.originalEvent)
-    })
-    layer.on("add", () => {
-      const element = layer.getElement()
-      if (element) element.setAttribute("data-route-url", url)
-    })
   }
 
   visitLocalPath(url, originalEvent) {
@@ -546,7 +524,18 @@ export default class extends Controller {
     badge.textContent = text
     if (path) {
       badge.href = path
-      badge.classList.add("pointer-events-auto", "cursor-pointer", "no-underline")
+      // Leaflet colors every map link #0078A8, which beats layered utilities.
+      badge.classList.add(
+        "pointer-events-auto",
+        "cursor-pointer",
+        "no-underline",
+        "!text-ink",
+        "hover:!text-ink",
+        "visited:!text-ink",
+        "dark:!text-ink-dark",
+        "dark:hover:!text-ink-dark",
+        "dark:visited:!text-ink-dark"
+      )
       badge.setAttribute("data-route-url", path)
       badge.addEventListener("pointerdown", (event) => event.stopPropagation())
       badge.addEventListener("mousedown", (event) => event.stopPropagation())

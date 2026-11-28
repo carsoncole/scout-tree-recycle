@@ -15,7 +15,7 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h2", text: "Route map"
-    assert_select "p", text: "Every route boundary, labeled with the route name. Click a route to open it."
+    assert_select "p", text: "Every route boundary, labeled with the route name. Click a route name to open it."
     assert_select "table td", text: "Unassigned", count: 0
     map = css_select('[data-controller="map"]').first
     assert_includes map["class"], "h-[calc(100dvh-16rem)]"
@@ -27,13 +27,15 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     neighbor = polygons.find { |polygon| polygon["label"] == other.name }
 
     assert_equal true, current["permanentLabel"]
-    assert_equal admin_route_path(routes(:one)), current["url"]
+    assert_nil current["url"]
+    assert_equal admin_route_path(routes(:one)), current["labelUrl"]
     assert_equal "#8b1818", current["color"]
     assert_equal "#d34545", current["fillColor"]
     assert_equal 0.3, current["fillOpacity"]
     assert_operator current["points"].size, :>, 3
     assert_equal true, neighbor["permanentLabel"]
-    assert_equal admin_route_path(other), neighbor["url"]
+    assert_nil neighbor["url"]
+    assert_equal admin_route_path(other), neighbor["labelUrl"]
     assert_equal "#188b3a", neighbor["color"]
     assert_not_equal current["color"], neighbor["color"]
     assert_nil polygons.find { |polygon| polygon["label"] == routes(:unzoned).name }
@@ -60,7 +62,7 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_select "table a", text: mapped.name, count: 0
 
     polygons = JSON.parse(css_select("[data-map-polygons-value]").first["data-map-polygons-value"])
-    assert polygons.any? { |polygon| polygon["label"] == mapped.name && polygon["permanentLabel"] && polygon["url"] == admin_route_path(mapped) }
+    assert polygons.any? { |polygon| polygon["label"] == mapped.name && polygon["permanentLabel"] && polygon["labelUrl"] == admin_route_path(mapped) && polygon["url"].nil? }
   end
 
   test "index explains when no route has a boundary" do
@@ -115,14 +117,16 @@ class Admin::RoutesControllerTest < ActionDispatch::IntegrationTest
 
     polygons = JSON.parse(css_select("[data-map-polygons-value]").first["data-map-polygons-value"])
     nearby_polygon = polygons.find { |polygon| polygon["label"] == neighbor.name }
-    current_polygon = polygons.find { |polygon| polygon["label"] == "#{route.name} boundary" }
+    current_polygon = polygons.find { |polygon| polygon["label"] == route.name && polygon["color"] == "#2563eb" }
 
     assert_equal "#6b7280", nearby_polygon["color"]
     assert_equal "#9ca3af", nearby_polygon["fillColor"]
     assert_equal true, nearby_polygon["permanentLabel"]
-    assert_equal admin_route_path(neighbor), nearby_polygon["url"]
-    assert_not current_polygon["permanentLabel"]
+    assert_nil nearby_polygon["url"]
+    assert_equal admin_route_path(neighbor), nearby_polygon["labelUrl"]
+    assert_equal true, current_polygon["permanentLabel"]
     assert_nil current_polygon["url"]
+    assert_nil current_polygon["labelUrl"]
     assert_equal "#2563eb", current_polygon["color"]
     assert_nil polygons.find { |polygon| polygon["label"] == shared_only.name }
     assert_nil polygons.find { |polygon| polygon["label"] == outsider.name }

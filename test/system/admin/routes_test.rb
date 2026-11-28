@@ -18,16 +18,17 @@ class Admin::RoutesTest < ApplicationSystemTestCase
     assert_selector "h2", text: "Route map"
     assert_selector ".leaflet-container"
     assert_selector "path.leaflet-interactive[stroke='#8b1818']"
-    assert_selector ".route-polygon-label", text: route.name
+    assert_no_selector "path.route-polygon-link"
+    assert_selector "a.route-polygon-label[href='#{admin_route_path(route)}']", text: route.name
     assert_no_selector ".route-polygon-label", text: routes(:two).name
   end
 
-  test "clicking a route polygon opens that route" do
+  test "clicking a route name opens that route" do
     route = routes(:one)
 
     visit admin_routes_url
 
-    find("path.route-polygon-link[data-route-url='#{admin_route_path(route)}']").click
+    find("a.route-polygon-label[href='#{admin_route_path(route)}']", text: route.name).click
 
     assert_current_path admin_route_path(route)
     assert_selector "h1", text: "Route: #{route.name}"
@@ -40,6 +41,8 @@ class Admin::RoutesTest < ApplicationSystemTestCase
 
     assert_selector "h2", text: "Route map"
     assert_selector '[data-controller="map"]'
+    assert_selector "span.route-polygon-label", text: route.name
+    assert_no_selector "a.route-polygon-label", text: route.name
   end
 
   test "points toggle shows each route point on the map" do
@@ -104,7 +107,9 @@ class Admin::RoutesTest < ApplicationSystemTestCase
 
     assert_selector "path.leaflet-interactive[stroke='#6b7280']"
     assert_selector "path.leaflet-interactive[stroke='#2563eb']"
-    assert_selector ".route-polygon-label", text: neighbor.name
+    assert_no_selector "path.route-polygon-link"
+    assert_selector "span.route-polygon-label", text: route.name
+    assert_selector "a.route-polygon-label[href='#{admin_route_path(neighbor)}']", text: neighbor.name
     assert_no_selector ".route-point-marker"
     assert_text "Nearby routes that border this one are outlined in gray"
 

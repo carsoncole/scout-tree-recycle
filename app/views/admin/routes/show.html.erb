@@ -40,7 +40,7 @@
         <% end %>
       </div>
       <div class="admin-panel-body">
-        <% current_polygons = route_boundary_polygon(@route) %>
+        <% current_polygons = current_route_polygon(@route) %>
         <% nearby_polygons = nearby_route_polygons(@nearby_routes) %>
         <% boundary_polygons = nearby_polygons + current_polygons %>
         <% markers = reservation_map_markers(@pickup_reservations) + location_markers_within([ @route ]) + nearby_route_point_markers(@nearby_routes) + point_markers %>

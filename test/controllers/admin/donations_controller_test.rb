@@ -19,8 +19,14 @@ class Admin::DonationsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get show" do
     sign_in
-    get admin_donation_url(donations(:one))
+    donation = donations(:one)
+    donation.update_columns(receipt_url: "https://pay.stripe.com/receipts/payment/#{"a" * 240}")
+
+    get admin_donation_url(donation)
+
     assert_response :success
+    assert_select "dd.break-all.min-w-0", text: donation.receipt_url
+    assert_select "dt", text: "Receipt email sent", count: 0
   end
 
   test "should destroy" do

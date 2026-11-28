@@ -47,13 +47,10 @@
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Card brand</dt>
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.brand %></dd>
         </div>
-        <div class="admin-detail border-line dark:border-line-dark">
+        <div class="admin-detail min-w-0 border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Receipt URL</dt>
-          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.receipt_url %></dd>
+          <dd class="admin-detail-value min-w-0 break-all text-ink dark:text-ink-dark"><%= @donation.receipt_url %></dd>
         </div>
-        <div class="admin-detail border-line dark:border-line-dark">
-          <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Receipt email sent</dt>
-          <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.receipt_email_sent_at.present? ? "Yes" : "No" %></dd>        </div>
         <div class="admin-detail border-line dark:border-line-dark">
           <dt class="admin-detail-label text-ink-soft dark:text-ink-soft-dark">Created at</dt>
           <dd class="admin-detail-value text-ink dark:text-ink-dark"><%= @donation.created_at.strftime("%b %d, %Y %I:%M %p") %></dd>
